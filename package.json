@@ -59,6 +59,7 @@
     "verify:nova-005b2a": "node scripts/verify/tpi-nova-005b2a-foundation.mjs",
   "verify:nova-005b1": "node scripts/verify/tpi-nova-005b1-home-ribbon.mjs",
     "verify:nova-005b2b": "node scripts/verify/tpi-nova-005b2b-tables.mjs",
+    "verify:nova-006-slides": "node scripts/verify/tpi-nova-006-slides.mjs",
     "verify:nova-004r6b": "node scripts/verify/tpi-nova-004r6b-workflow.mjs",
     "verify:nova-004r6c": "node scripts/verify/tpi-nova-004r6c-submission.mjs",
     "build:nova": "npm --prefix nova-app run build",

@@ -17,6 +17,9 @@ export default defineConfig({
           if (id.includes("node_modules/@tiptap") || id.includes("node_modules/prosemirror")) {
             return "nova-vendor-tiptap";
           }
+          if (id.includes("node_modules/konva") || id.includes("node_modules/react-konva")) {
+            return "nova-vendor-slides";
+          }
           if (id.includes("node_modules/react") || id.includes("node_modules/scheduler")) {
             return "nova-vendor-react";
           }

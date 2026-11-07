@@ -946,6 +946,53 @@ a { color: var(--nova-mint); }
 .nova-ribbon-styles-pane button { color: var(--nova-text); }
 .nova-ribbon-shell + .nova-canvas { border-radius: 0 0 12px 12px; }
 
+.nova-slide-surface { max-width: 1240px; margin: 0 auto; padding: 30px 34px 64px; }
+.nova-slide-list-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 26px; }
+.nova-slide-list-header h1 { margin: 5px 0 4px; color: var(--nova-text); font-family: Georgia, serif; font-size: 32px; font-weight: 500; }
+.nova-slide-list-header p { margin: 0; color: var(--nova-text-muted); }
+.nova-eyebrow { color: var(--nova-mint); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.nova-empty-state { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 80px 20px; border: 1px dashed var(--nova-line); border-radius: 14px; color: var(--nova-text-muted); text-align: center; }
+.nova-empty-state strong { color: var(--nova-text); font-size: 18px; }
+.nova-slide-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+.nova-slide-card { display: flex; flex-direction: column; gap: 8px; padding: 0; border: 1px solid var(--nova-line); border-radius: 12px; overflow: hidden; background: #1a241f; color: var(--nova-text); text-align: left; cursor: pointer; }
+.nova-slide-card:hover { border-color: var(--nova-mint); transform: translateY(-1px); }
+.nova-slide-card-preview { display: flex; align-items: center; min-height: 124px; padding: 18px; background: linear-gradient(135deg, #f7f4ec, #d9e8dc); color: #1d281f; font: 19px Georgia, serif; }
+.nova-slide-card strong, .nova-slide-card small { padding: 0 13px; }
+.nova-slide-card small { padding-bottom: 13px; color: var(--nova-text-muted); font-size: 11px; }
+.nova-slides-editor { display: flex; flex-direction: column; min-height: calc(100vh - 58px); background: #101713; }
+.nova-slides-editor-header { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 8px 16px; border-bottom: 1px solid var(--nova-line); background: #18231d; }
+.nova-icon-button { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--nova-text-secondary); }
+.nova-icon-button:hover { border-color: var(--nova-line); color: var(--nova-text); }
+.nova-slides-title { flex: 1; min-width: 100px; border: 0; outline: 0; background: transparent; color: var(--nova-text); font-size: 16px; }
+.nova-save-state { color: var(--nova-text-muted); font-size: 12px; }
+.nova-save-state.is-dirty { color: #f0c46a; }
+.nova-slides-workspace { display: flex; flex: 1; min-height: 0; }
+.nova-slide-thumbnails { display: flex; flex-direction: column; gap: 10px; width: 192px; padding: 16px 12px; border-right: 1px solid var(--nova-line); background: #17211c; overflow-y: auto; }
+.nova-slide-thumbnail { display: flex; gap: 7px; align-items: flex-start; padding: 5px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--nova-text-muted); text-align: left; cursor: pointer; }
+.nova-slide-thumbnail:hover, .nova-slide-thumbnail.is-selected { border-color: var(--nova-mint); color: var(--nova-text); }
+.nova-slide-thumbnail > span { width: 18px; padding-top: 16px; font-size: 11px; text-align: center; }
+.nova-slide-thumbnail > div { display: flex; align-items: center; width: 132px; height: 74px; padding: 8px; overflow: hidden; color: #1d281f; font: 11px Georgia, serif; box-shadow: 0 3px 10px #08100b66; }
+.nova-slide-thumbnail-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.nova-slide-thumbnail-actions button, .nova-slide-toolbar button { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--nova-line); border-radius: 5px; padding: 7px 9px; background: #1d2a23; color: var(--nova-text-secondary); cursor: pointer; }
+.nova-slide-thumbnail-actions button:hover, .nova-slide-toolbar button:hover:not(:disabled) { color: var(--nova-text); border-color: var(--nova-mint); }
+.nova-slide-thumbnail-actions button:disabled, .nova-slide-toolbar button:disabled { opacity: .4; cursor: default; }
+.nova-slide-stage-area { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 14px 18px 28px; }
+.nova-slide-toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-height: 40px; margin-bottom: 14px; }
+.nova-slide-toolbar-spacer { flex: 1; }
+.nova-slide-canvas-wrap { display: flex; align-items: flex-start; justify-content: center; min-height: 390px; padding: 28px; border: 1px solid var(--nova-line); border-radius: 12px; background: radial-gradient(circle at top, #27392f, #17211c 72%); overflow: auto; }
+.nova-slide-canvas-wrap canvas { display: block; box-shadow: 0 18px 42px #050906aa; }
+.nova-slide-notes { max-width: 860px; width: 100%; margin: 14px auto 0; }
+.nova-slide-notes label { display: flex; flex-direction: column; gap: 6px; color: var(--nova-text-muted); font-size: 12px; }
+.nova-slide-notes textarea { min-height: 72px; resize: vertical; border: 1px solid var(--nova-line); border-radius: 8px; padding: 9px; background: #18231d; color: var(--nova-text); font: inherit; }
+
+@media (max-width: 760px) {
+  .nova-slide-surface { padding: 20px 15px 40px; }
+  .nova-slide-list-header { align-items: flex-start; flex-direction: column; }
+  .nova-slide-thumbnails { width: 142px; }
+  .nova-slide-thumbnail > div { width: 96px; height: 56px; }
+  .nova-slide-canvas-wrap { padding: 12px; }
+}
+
 @media (max-width: 900px) {
   .nova-ribbon-panel { min-height: 118px; }
   .nova-ribbon-groups { height: 105px; }

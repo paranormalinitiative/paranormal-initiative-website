@@ -106,6 +106,7 @@ export function DocumentEditor({ itemId, collections, onBack, onChanged }: Edito
 }
 
 function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspaceProps) {
+  const documentContent = item.content as NovaDocumentEnvelope;
   const [serverItem, setServerItem] = useState<NovaItem>(item);
   const [title, setTitle] = useState(item.title);
   const [saveState, setSaveState] = useState<SaveState>({ kind: "idle" });
@@ -143,7 +144,7 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
 
   const editor = useEditor({
     extensions: novaExtensions,
-    content: item.content.doc,
+    content: documentContent.doc,
     editable: item.status === "active",
     editorProps: {
       attributes: {
@@ -356,7 +357,7 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     conflictRef.current = null;
     setServerItem(fresh);
     setTitle(fresh.title);
-    editorRef.current?.commands.setContent(fresh.content.doc);
+    editorRef.current?.commands.setContent((fresh.content as NovaDocumentEnvelope).doc);
     clearDraft(fresh.id);
     setSaveState({ kind: "saved", at: fresh.updatedAt });
     onChangedRef.current();

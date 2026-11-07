@@ -1,7 +1,7 @@
 import type {
   NovaCollection,
   NovaCollectionListResponse,
-  NovaDocumentEnvelope,
+  NovaContentEnvelope,
   NovaItem,
   NovaItemListResponse,
   NovaItemStatus,
@@ -69,6 +69,7 @@ function query(params: Record<string, string | number | undefined>): string {
 }
 
 export interface ListItemsOptions {
+  type?: "nova-document" | "nova-presentation" | "all";
   status?: NovaItemStatus | "all";
   collectionId?: string;
   search?: string;
@@ -78,7 +79,7 @@ export interface ListItemsOptions {
 export const novaApi = {
   listItems(options: ListItemsOptions = {}) {
     return request<NovaItemListResponse>(`/items${query({
-      type: "nova-document",
+      type: options.type ?? "nova-document",
       status: options.status ?? "active",
       collectionId: options.collectionId,
       search: options.search,
@@ -90,14 +91,14 @@ export const novaApi = {
     return request<{ item: NovaItem }>(`/items/${encodeURIComponent(id)}`);
   },
 
-  createItem(body: { title: string; content: NovaDocumentEnvelope; collectionId?: string | null }) {
+  createItem(body: { title: string; content: NovaContentEnvelope; collectionId?: string | null; templateKey?: string; sourceKind?: string; sourceRef?: string }) {
     return request<{ item: NovaItem }>("/items", { method: "POST", body: JSON.stringify(body) });
   },
 
   updateItem(id: string, body: {
     expectedVersion: number;
     title?: string;
-    content?: NovaDocumentEnvelope;
+    content?: NovaContentEnvelope;
     collectionId?: string | null;
   }) {
     return request<{ item: NovaItem }>(`/items/${encodeURIComponent(id)}`, {

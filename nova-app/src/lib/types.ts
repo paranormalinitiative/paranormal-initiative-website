@@ -10,6 +10,20 @@ export interface NovaDocumentEnvelope {
   doc: JSONContent;
 }
 
+export interface NovaPresentationEnvelope {
+  format: "nova-presentation";
+  version: 1;
+  presentation: {
+    id: string;
+    title: string;
+    width: number;
+    height: number;
+    slides: unknown[];
+  };
+}
+
+export type NovaContentEnvelope = NovaDocumentEnvelope | NovaPresentationEnvelope;
+
 export interface NovaItemSummary {
   id: string;
   type: NovaItemType;
@@ -28,7 +42,7 @@ export interface NovaItemSummary {
 }
 
 export interface NovaItem extends NovaItemSummary {
-  content: NovaDocumentEnvelope;
+  content: NovaContentEnvelope;
 }
 
 export interface NovaCollection {
