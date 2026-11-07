@@ -2273,6 +2273,7 @@ ${articleHtml}
     document.getElementById("nova-editor-view")?.classList.toggle("is-nova-native", !isGrandfatheredLegacy);
     document.querySelectorAll("[data-legacy-only]").forEach(el => { el.hidden = !isGrandfatheredLegacy; });
     titleInput.value = article.title || getCurrentUntitledTitle();
+    syncTitleTooltip();
     subtitleInput.value = article.subtitle || "";
     if (article.destination) setDestinationValue(article.destination);
     if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
@@ -2380,6 +2381,7 @@ ${articleHtml}
 
       currentArticleId = null;
       titleInput.value = record.title;
+      syncTitleTooltip();
       subtitleInput.value = record.subtitle;
       if (record.destination && [...destinationInput.options].some(option => option.value === record.destination)) {
         destinationInput.value = record.destination;
