@@ -1,6 +1,6 @@
 # TPI-NOVA-005B2A Acceptance Report
 
-**Status:** COMPLETE
+**Status:** FOUNDATION COMPLETE — FULL GENOFFICE PARITY NOT COMPLETE
 
 **Date:** 2026-11-07
 
@@ -15,6 +15,10 @@ convergence, bookmarks, safe internal/external links, semantic fields,
 publication-time DATE/TIME/FILENAME evaluation, immutable publication
 snapshots, read-only locks, autosave, expected-version handling, and the
 ephemeral-port verifier correction.
+
+It does not claim full GenOffice feature parity. The project architecture
+records place the complete Home ribbon in 005B1 and defer professional tables,
+images, objects, pagination, and richer Review/View behavior to later tranches.
 
 The persistent 8787 Worker was preserved in place. Production was not
 started, changed, or deployed.
@@ -86,4 +90,4 @@ free ephemeral port and contain no fixed 8792 Worker origin.
 
 ## Completion line
 
-**TPI-NOVA-005B2A — COMPLETE**
+**TPI-NOVA-005B2A — FOUNDATION COMPLETE; FULL GENOFFICE PARITY REMAINS OPEN**

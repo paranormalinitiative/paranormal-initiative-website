@@ -1,9 +1,47 @@
 import StarterKit from "@tiptap/starter-kit";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
+import Paragraph from "@tiptap/extension-paragraph";
+import Heading from "@tiptap/extension-heading";
 import { Extension } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { TpiBookmark, TpiField } from "./bookmarkFieldExtensions";
+import { TpiTextStyle } from "./ribbonExtensions";
 import { findBookmark } from "./commands/bookmarks";
+
+const MAX_INDENT = 288;
+
+function parseIndent(value: string) {
+  const parsed = Number.parseFloat(value);
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.max(0, Math.min(MAX_INDENT, Math.round(parsed)));
+}
+
+function renderBlockStyle(attributes: Record<string, unknown>) {
+  const styles = [
+    typeof attributes.textAlign === "string" && attributes.textAlign ? `text-align:${attributes.textAlign}` : "",
+    Number(attributes.indentLeft) > 0 ? `margin-left:${parseIndent(String(attributes.indentLeft))}px` : "",
+    Number(attributes.indentRight) > 0 ? `margin-right:${parseIndent(String(attributes.indentRight))}px` : ""
+  ].filter(Boolean);
+  return styles.length ? { style: styles.join(";") } : {};
+}
+
+const blockLayoutAttributes = {
+  textAlign: {
+    default: null,
+    parseHTML: (element: HTMLElement) => element.style.textAlign || null,
+    renderHTML: (attributes: Record<string, unknown>) => renderBlockStyle(attributes)
+  },
+  indentLeft: {
+    default: 0,
+    parseHTML: (element: HTMLElement) => parseIndent(element.style.marginLeft),
+    renderHTML: () => ({})
+  },
+  indentRight: {
+    default: 0,
+    parseHTML: (element: HTMLElement) => parseIndent(element.style.marginRight),
+    renderHTML: () => ({})
+  }
+};
 
 // A click on an internal #bookmark link moves the caret to that bookmark inside
 // the editor. It never reaches the browser, so nothing is opened in a new window.
@@ -36,7 +74,8 @@ const InternalBookmarkLinks = Extension.create({
 // Nova-004 formatting set and would add a node the toolbar cannot manage.
 export const novaExtensions = [
   StarterKit.configure({
-    heading: { levels: [1, 2, 3] },
+    paragraph: false,
+    heading: false,
     codeBlock: false,
     link: {
       openOnClick: false,
@@ -46,11 +85,28 @@ export const novaExtensions = [
     },
     underline: {}
   }),
+  Paragraph.extend({
+    addAttributes() {
+      return {
+        ...(this.parent?.() ?? {}),
+        ...blockLayoutAttributes
+      };
+    }
+  }),
+  Heading.extend({
+    addAttributes() {
+      return {
+        ...(this.parent?.() ?? {}),
+        ...blockLayoutAttributes
+      };
+    }
+  }).configure({ levels: [1, 2, 3] }),
   Table.configure({ resizable: false, allowTableNodeSelection: true }),
   TableRow,
   TableHeader,
   TableCell,
   TpiBookmark,
   TpiField,
+  TpiTextStyle,
   InternalBookmarkLinks
 ];

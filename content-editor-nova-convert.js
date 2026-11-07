@@ -128,6 +128,31 @@
     return "nova-bm-" + String(name).toLowerCase().replace(/[^a-z0-9_-]/g, c => "_" + c.codePointAt(0).toString(16) + "_");
   }
 
+  function textStyleCss(attrs) {
+    const css = [];
+    const fonts = new Set(["Georgia", "Arial", "Calibri", "Garamond", "Inter", "Times New Roman"]);
+    const sizes = new Set(["11px", "12px", "14px", "16px", "17px", "18px", "20px", "24px", "28px", "32px", "40px"]);
+    if (fonts.has(String(attrs && attrs.fontFamily || ""))) css.push(`font-family:${attrs.fontFamily}`);
+    if (sizes.has(String(attrs && attrs.fontSize || ""))) css.push(`font-size:${attrs.fontSize}`);
+    if (/^#[0-9a-f]{6}$/i.test(String(attrs && attrs.color || ""))) css.push(`color:${attrs.color}`);
+    if (/^#[0-9a-f]{6}$/i.test(String(attrs && attrs.backgroundColor || ""))) css.push(`background-color:${attrs.backgroundColor}`);
+    return css.join(";");
+  }
+
+  function blockStyle(node) {
+    const align = ["left", "center", "right", "justify"].includes(node.attrs && node.attrs.textAlign) ? node.attrs.textAlign : "";
+    const indent = value => {
+      const parsed = Number.parseFloat(value);
+      return Number.isFinite(parsed) ? Math.max(0, Math.min(288, Math.round(parsed))) : 0;
+    };
+    const styles = [
+      align ? `text-align:${align}` : "",
+      indent(node.attrs && node.attrs.indentLeft) > 0 ? `margin-left:${indent(node.attrs && node.attrs.indentLeft)}px` : "",
+      indent(node.attrs && node.attrs.indentRight) > 0 ? `margin-right:${indent(node.attrs && node.attrs.indentRight)}px` : ""
+    ].filter(Boolean);
+    return styles.length ? ` style="${styles.join(";")}"` : "";
+  }
+
   function fieldDisplayText(fieldType, format, ctx) {
     if (fieldType === "DATE") return ctx.now.toISOString().slice(0, 10);
     if (fieldType === "TIME") return ctx.now.toISOString().slice(11, 16) + " UTC";
@@ -151,6 +176,10 @@
         if (mark.type === "bold") html = `<strong>${html}</strong>`;
         else if (mark.type === "italic") html = `<em>${html}</em>`;
         else if (mark.type === "underline") html = `<u>${html}</u>`;
+        else if (mark.type === "tpiTextStyle") {
+          const style = textStyleCss(mark.attrs);
+          if (style) html = `<span style="${style}">${html}</span>`;
+        }
         else if (mark.type === "link") {
           const href = safeHref(mark.attrs && mark.attrs.href);
           if (href) {
@@ -166,8 +195,8 @@
   function renderBlock(node, ctx) {
     const kids = () => (node.content || []).map(child => renderBlock(child, ctx)).join("");
     switch (node.type) {
-      case "paragraph": return `<p>${renderInline(node.content, ctx)}</p>`;
-      case "heading": return `<h${node.attrs.level}>${renderInline(node.content, ctx)}</h${node.attrs.level}>`;
+      case "paragraph": return `<p${blockStyle(node)}>${renderInline(node.content, ctx)}</p>`;
+      case "heading": return `<h${node.attrs.level}${blockStyle(node)}>${renderInline(node.content, ctx)}</h${node.attrs.level}>`;
       case "bulletList": return `<ul>${kids()}</ul>`;
       case "orderedList": return `<ol>${kids()}</ol>`;
       case "listItem": return `<li>${kids()}</li>`;

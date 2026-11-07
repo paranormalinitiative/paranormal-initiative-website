@@ -144,6 +144,19 @@ function plainText(content) {
   return parts.join(" ").trim();
 }
 
+function normalizedNovaJson(value) {
+  if (Array.isArray(value)) return value.map(normalizedNovaJson);
+  if (!value || typeof value !== "object") return value;
+  const copy = Object.fromEntries(Object.entries(value).map(([key, child]) => [key, normalizedNovaJson(child)]));
+  if (copy.attrs && typeof copy.attrs === "object") {
+    for (const key of ["textAlign", "indentLeft", "indentRight"]) {
+      if (copy.attrs[key] === null || copy.attrs[key] === 0) delete copy.attrs[key];
+    }
+    if (Object.keys(copy.attrs).length === 0) delete copy.attrs;
+  }
+  return copy;
+}
+
 const USERS = {
   owner: { id: "nova004-owner", username: "nova_004_owner", token: "nova004-session-owner", role: "admin" },
   member: { id: "nova004-member", username: "nova_004_member", token: "nova004-session-member", role: "member" }
@@ -377,6 +390,7 @@ async function checkFirefox(driver) {
   const click = async selector => {
     const element = await driver.wait(until.elementLocated(By.css(selector)), 15_000, `missing ${selector}`);
     await driver.wait(until.elementIsVisible(element), 15_000, `hidden ${selector}`);
+    await js("arguments[0].scrollIntoView({block:'center', inline:'nearest'});", element);
     await element.click();
   };
   // geckodriver closes an open Nova dialog when sendKeys receives a whole
@@ -510,6 +524,7 @@ async function checkFirefox(driver) {
   await click("[data-testid='toolbar-delete-column']");
   check("table column can be removed", Number(await js("return document.querySelectorAll('.nova-prose table tr:first-child > *').length;")) === 3);
   const headerCell = await driver.findElement(By.css(".nova-prose table th"));
+  await js("arguments[0].scrollIntoView({block:'center', inline:'nearest'});", headerCell);
   await driver.actions().move({ origin: headerCell }).click().perform();
   await typeFocused("Header cell");
   check("table cells accept typed content", /Header cell/.test(await textOf(".nova-prose table")), (await htmlOf(".nova-prose table")).slice(0, 200));
@@ -517,6 +532,7 @@ async function checkFirefox(driver) {
   // Link dialog (no window.prompt, no window.confirm).
   check("heading survives the surrounding blocks", await exists(".nova-prose h2"), (await htmlOf(".nova-prose")).slice(0, 700));
   const heading = await driver.findElement(By.css(".nova-prose h2"));
+  await js("arguments[0].scrollIntoView({block:'center', inline:'nearest'});", heading);
   await driver.actions().move({ origin: heading }).doubleClick().perform();
   check("link workflow has a text selection", String(await js("return window.getSelection().toString();")).length > 2, String(await js("return window.getSelection().toString();")));
   await click("[data-testid='toolbar-link']");
@@ -624,7 +640,7 @@ async function checkFirefox(driver) {
   check("revision restore creates a new current version", afterRestore.data?.item?.version > versionBeforeRestore, `v${afterRestore.data?.item?.version}`);
   check(
     "revision restore applies the stored revision content",
-    JSON.stringify(afterRestore.data?.item?.content) === JSON.stringify(oldestRevision.content),
+    JSON.stringify(normalizedNovaJson(afterRestore.data?.item?.content)) === JSON.stringify(normalizedNovaJson(oldestRevision.content)),
     JSON.stringify(afterRestore.data?.item?.content).slice(0, 200)
   );
   check("revision restore leaves the editor usable", !(await exists("[data-testid='readonly-banner']")));

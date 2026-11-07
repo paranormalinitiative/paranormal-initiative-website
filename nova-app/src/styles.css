@@ -30,6 +30,8 @@
 * { box-sizing: border-box; }
 
 html, body, #root {
+  width: 100%;
+  min-width: 0;
   min-height: 100%;
   margin: 0;
 }
@@ -49,6 +51,8 @@ a { color: var(--nova-mint); }
 .nova-app {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
   min-height: 100vh;
   background:
     radial-gradient(1200px 600px at 15% -10%, rgba(75, 178, 99, 0.12), transparent 60%),
@@ -136,7 +140,10 @@ a { color: var(--nova-mint); }
 .nova-surface {
   display: grid;
   grid-template-columns: 264px minmax(0, 1fr);
+  width: 100%;
+  max-width: 100%;
   flex: 1;
+  min-width: 0;
   min-height: 0;
 }
 
@@ -264,7 +271,12 @@ a { color: var(--nova-mint); }
   border-top: 1px solid var(--nova-line-soft);
 }
 
-.nova-main { min-width: 0; padding: 26px 30px 48px; }
+.nova-main {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 26px 30px 48px;
+}
 
 /* ---------- Document list ---------- */
 
@@ -407,8 +419,8 @@ a { color: var(--nova-mint); }
 
 /* ---------- Editor workspace ---------- */
 
-.nova-workspace { display: flex; align-items: flex-start; gap: 18px; max-width: 1280px; margin: 0 auto; }
-.nova-editor-main { flex: 1 1 auto; min-width: 0; }
+.nova-workspace { display: flex; align-items: flex-start; gap: 18px; width: 100%; max-width: 1280px; min-width: 0; margin: 0 auto; }
+.nova-editor-main { flex: 1 1 auto; width: 100%; max-width: 100%; min-width: 0; }
 
 .nova-editor-bar {
   display: flex;
@@ -705,7 +717,7 @@ a { color: var(--nova-mint); }
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1080px) {
-  .nova-workspace { flex-direction: column; }
+  .nova-workspace { width: 100%; max-width: 100%; flex-direction: column; }
   .nova-history { position: static; width: 100%; flex: 1 1 auto; max-height: none; }
 }
 
@@ -790,4 +802,147 @@ a { color: var(--nova-mint); }
 @media (max-width: 900px) {
   .nova-toolbar { position: static; flex-wrap: wrap; overflow: visible; }
   .nova-prose { max-width: none; padding: 28px 22px 56px; }
+}
+
+/* ---------- GenOffice-style document ribbon ---------- */
+
+.nova-ribbon-shell {
+  position: relative;
+  z-index: 12;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--nova-line);
+  border-radius: 10px 10px 0 0;
+  background: #18211d;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.nova-ribbon-tab-row {
+  display: flex;
+  max-width: 100%;
+  min-width: 0;
+  align-items: stretch;
+  min-height: 39px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--nova-line-soft);
+  background: #101713;
+  overflow-x: auto;
+}
+.nova-ribbon-quick {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 10px;
+  margin-right: 4px;
+  border-right: 1px solid var(--nova-line-soft);
+}
+.nova-ribbon-tab {
+  position: relative;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--nova-text-muted);
+  padding: 10px 12px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.nova-ribbon-tab:hover { color: var(--nova-text); background: rgba(140, 232, 182, 0.06); }
+.nova-ribbon-tab.is-active { color: var(--nova-text); border-bottom-color: var(--nova-accent); background: rgba(75, 178, 99, 0.08); }
+.nova-ribbon-tab-spacer { flex: 1; min-width: 10px; }
+.nova-ribbon-comments {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: center;
+  border: 1px solid var(--nova-line);
+  border-radius: 6px;
+  padding: 5px 8px;
+  background: #1b2621;
+  color: var(--nova-text-secondary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.nova-ribbon-comments:hover { background: #25332c; color: var(--nova-text); }
+.nova-ribbon-panel {
+  max-width: 100%;
+  min-width: 0;
+  min-height: 100px;
+  padding: 8px 9px 4px;
+  overflow-x: auto;
+  background: linear-gradient(180deg, #1d2923, #19231f);
+}
+.nova-ribbon-groups { display: inline-flex; align-items: stretch; min-width: max-content; height: 87px; }
+.nova-ribbon-planned { display: flex; flex-direction: column; justify-content: center; gap: 8px; min-height: 88px; max-width: 720px; padding: 12px 18px; color: var(--nova-text-secondary); font-size: 12px; line-height: 1.45; }
+.nova-ribbon-planned strong { color: var(--nova-text); font-size: 13px; }
+.nova-ribbon-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 84px;
+  padding: 0 8px 3px;
+}
+.nova-ribbon-group-tools { display: flex; align-items: flex-start; justify-content: center; gap: 3px; flex-wrap: wrap; min-height: 58px; }
+.nova-ribbon-group-label { display: block; text-align: center; color: var(--nova-text-muted); font-size: 10px; letter-spacing: 0.04em; white-space: nowrap; }
+.nova-ribbon-divider { width: 1px; height: 66px; margin: 4px 3px 0; background: var(--nova-line); }
+.nova-ribbon-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 58px;
+  min-height: 58px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 5px 6px;
+  background: transparent;
+  color: var(--nova-text-secondary);
+  font-size: 10px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.nova-ribbon-button:hover:not(:disabled) { background: #2a3831; color: var(--nova-text); border-color: var(--nova-line); }
+.nova-ribbon-button:focus-visible,
+.nova-ribbon-tab:focus-visible,
+.nova-ribbon-comments:focus-visible,
+.nova-ribbon-select:focus-visible,
+.nova-ribbon-color:focus-within { outline: 2px solid rgba(140, 232, 182, 0.75); outline-offset: 2px; }
+.nova-ribbon-button.is-active { color: var(--nova-mint); background: rgba(75, 178, 99, 0.16); border-color: rgba(75, 178, 99, 0.42); }
+.nova-ribbon-button.is-compact { min-width: 28px; min-height: 27px; padding: 4px; gap: 0; }
+.nova-ribbon-button:disabled { opacity: 0.38; }
+.nova-ribbon-stack { display: inline-flex; flex-direction: column; gap: 2px; }
+.nova-ribbon-icon-row { display: inline-flex; align-items: center; gap: 2px; flex-wrap: wrap; max-width: 190px; }
+.nova-ribbon-select {
+  height: 28px;
+  border: 1px solid var(--nova-line);
+  border-radius: 5px;
+  background: #111814;
+  color: var(--nova-text-secondary);
+  font-size: 11px;
+  padding: 0 6px;
+}
+.nova-ribbon-font { width: 116px; }
+.nova-ribbon-size { width: 52px; }
+.nova-ribbon-style { width: 112px; }
+.nova-ribbon-color { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 27px; border-radius: 5px; color: var(--nova-text-secondary); cursor: pointer; }
+.nova-ribbon-color:hover { background: #2a3831; }
+.nova-ribbon-color input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.nova-ribbon-zoom { display: inline-flex; align-items: center; min-width: 34px; justify-content: center; color: var(--nova-text-secondary); font-size: 11px; }
+.nova-ribbon-notice { position: absolute; right: 14px; bottom: -42px; z-index: 20; padding: 9px 12px; border: 1px solid rgba(140, 232, 182, 0.4); border-radius: 7px; background: #16211b; color: var(--nova-mint); box-shadow: var(--nova-shadow); font-size: 12px; }
+.nova-ribbon-side-pane { position: absolute; right: 10px; top: 164px; z-index: 19; display: flex; flex-direction: column; gap: 9px; width: 220px; padding: 14px; border: 1px solid var(--nova-line); border-radius: 8px; background: #202d26; box-shadow: var(--nova-shadow); color: var(--nova-text-secondary); font-size: 12px; }
+.nova-ribbon-side-pane strong { color: var(--nova-text); font-size: 14px; }
+.nova-ribbon-side-pane span { color: var(--nova-text-muted); line-height: 1.45; }
+.nova-ribbon-side-pane button { border: 1px solid var(--nova-line); border-radius: 5px; padding: 6px; background: #17211c; color: var(--nova-text-secondary); text-align: left; }
+.nova-ribbon-side-pane button:hover { background: #2a3831; color: var(--nova-text); }
+.nova-ribbon-styles-pane { right: 240px; }
+.nova-ribbon-styles-pane button { color: var(--nova-text); }
+.nova-ribbon-shell + .nova-canvas { border-radius: 0 0 12px 12px; }
+
+@media (max-width: 900px) {
+  .nova-ribbon-panel { min-height: 118px; }
+  .nova-ribbon-groups { height: 105px; }
+  .nova-ribbon-comments { display: none; }
+  .nova-ribbon-side-pane, .nova-ribbon-styles-pane { position: fixed; top: 120px; right: 12px; }
 }

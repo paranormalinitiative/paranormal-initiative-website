@@ -134,6 +134,8 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
   const inFlightRef = useRef<Promise<void> | null>(null);
   const pendingSaveRef = useRef(false);
   const editorRef = useRef<Editor | null>(null);
+  const pendingDraftRef = useRef<NovaDraft | null>(null);
+  const hydrationReadyRef = useRef(false);
   const draftCheckedRef = useRef(false);
   const onChangedRef = useRef(onChanged);
   const onBackRef = useRef(onBack);
@@ -185,12 +187,17 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     if (draftCheckedRef.current) return;
     draftCheckedRef.current = true;
     const draft = readDraft(item.id);
-    if (!draft) return;
+    if (!draft) {
+      hydrationReadyRef.current = true;
+      return;
+    }
     if (sameJson(draft.content, item.content) && draft.title === item.title) {
       clearDraft(item.id);
+      hydrationReadyRef.current = true;
       return;
     }
     setRecoveredDraft(draft);
+    hydrationReadyRef.current = true;
   }, [item.id, item.content, item.title]);
 
   const buildContent = (instance: Editor) => envelope(instance.getJSON());
@@ -259,6 +266,16 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
       }
       dirtyRef.current = true;
       setDirty(true);
+      const localInstance = editorRef.current;
+      if (localInstance) {
+        writeDraft({
+          itemId: item.id,
+          title: titleRef.current,
+          content: buildContent(localInstance),
+          baseVersion: versionRef.current,
+          updatedAt: new Date().toISOString()
+        });
+      }
     }
   };
 
@@ -275,6 +292,10 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
 
   const markDirty = (instance: Editor) => {
     if (readOnlyRef.current) return;
+    // TipTap can emit one normalization update while it hydrates stored JSON
+    // with schema-default attributes. That update is not a user edit and must
+    // not overwrite a crash draft before the recovery effect reads it.
+    if (!hydrationReadyRef.current) return;
     const content = buildContent(instance);
     // Mounting the editor can emit an update for content that did not actually
     // change. Opening a stored document must not report unsaved changes or
@@ -357,14 +378,28 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
   const restoreDraft = () => {
     const draft = recoveredDraft;
     if (!draft) return;
+    const instance = editorRef.current;
+    if (!instance) {
+      // The recovery banner can render a tick before TipTap finishes mounting.
+      // Keep the draft pending and retry on the next frame instead of losing a
+      // user's only local copy when they click promptly.
+      pendingDraftRef.current = draft;
+      window.requestAnimationFrame(restoreDraft);
+      return;
+    }
+    pendingDraftRef.current = null;
     setRecoveredDraft(null);
-    editorRef.current?.commands.setContent(draft.content.doc);
+    // Restore synchronously and persist explicitly. Depending on the browser,
+    // setContent may not emit an update event, so recovery must not depend on
+    // the normal keystroke/autosave path to notice the restored document.
+    instance.commands.setContent(draft.content.doc, { emitUpdate: false });
     setTitle(draft.title);
     titleRef.current = draft.title;
     dirtyRef.current = true;
     setDirty(true);
     setConflict(null);
     conflictRef.current = null;
+    writeDraft({ ...draft, updatedAt: new Date().toISOString() });
     void persist();
   };
 
