@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Modal } from "./Modal";
+import { validateLinkHref } from "./commands/validation";
 
 interface Props {
   open: boolean;
@@ -9,13 +10,12 @@ interface Props {
   onClose: () => void;
 }
 
-function normalizeUrl(value: string): string | null {
+// Bare domains get https://. Every other value goes through the same validator
+// the command layer uses, so the dialog cannot accept what a command refuses.
+function normalizeUrl(value: string): { ok: true; href: string } | { ok: false; reason: string } {
   const trimmed = value.trim();
-  if (!trimmed) return null;
-  if (/^(https?:|mailto:|tel:)/i.test(trimmed)) return trimmed;
-  if (trimmed.startsWith("/") || trimmed.startsWith("#")) return trimmed;
-  if (/^[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(trimmed)) return `https://${trimmed}`;
-  return null;
+  const candidate = /^[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(trimmed) && !/^(https?:|mailto:|tel:)/i.test(trimmed) ? `https://${trimmed}` : trimmed;
+  return validateLinkHref(candidate);
 }
 
 export function LinkDialog({ open, initialUrl, hasExistingLink, onApply, onClose }: Props) {
@@ -30,12 +30,12 @@ export function LinkDialog({ open, initialUrl, hasExistingLink, onApply, onClose
   }, [open, initialUrl]);
 
   const submit = () => {
-    const normalized = normalizeUrl(value);
-    if (!normalized) {
-      setError("Enter a web address, email link, or a path beginning with /.");
+    const result = normalizeUrl(value);
+    if (!result.ok) {
+      setError(result.reason);
       return;
     }
-    onApply(normalized);
+    onApply(result.href);
   };
 
   return (

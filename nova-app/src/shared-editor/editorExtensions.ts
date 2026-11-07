@@ -1,5 +1,34 @@
 import StarterKit from "@tiptap/starter-kit";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
+import { Extension } from "@tiptap/core";
+import { Plugin } from "@tiptap/pm/state";
+import { TpiBookmark, TpiField } from "./bookmarkFieldExtensions";
+import { findBookmark } from "./commands/bookmarks";
+
+// A click on an internal #bookmark link moves the caret to that bookmark inside
+// the editor. It never reaches the browser, so nothing is opened in a new window.
+const InternalBookmarkLinks = Extension.create({
+  name: "tpiInternalBookmarkLinks",
+  addProseMirrorPlugins() {
+    const editor = this.editor;
+    return [
+      new Plugin({
+        props: {
+          handleClick(_view, _pos, event) {
+            const anchor = (event.target as HTMLElement | null)?.closest?.("a");
+            const href = anchor?.getAttribute("href") || "";
+            if (!href.startsWith("#")) return false;
+            event.preventDefault();
+            const name = decodeURIComponent(href.slice(1));
+            const found = findBookmark(editor, name);
+            if (found) editor.chain().focus().setTextSelection(found.pos + 1).scrollIntoView().run();
+            return true;
+          }
+        }
+      })
+    ];
+  }
+});
 
 // Nova's document schema. StarterKit already includes Link and Underline in the
 // pinned TipTap 3 release, so they are configured here rather than registered a
@@ -20,5 +49,8 @@ export const novaExtensions = [
   Table.configure({ resizable: false, allowTableNodeSelection: true }),
   TableRow,
   TableHeader,
-  TableCell
+  TableCell,
+  TpiBookmark,
+  TpiField,
+  InternalBookmarkLinks
 ];

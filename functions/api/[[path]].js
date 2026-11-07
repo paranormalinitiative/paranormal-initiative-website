@@ -4513,6 +4513,7 @@ async function handleEditorialPublish(path, request, env, user, capabilities) {
   if (!validation.ok) return publicationRefusal(validation);
   // The snapshot is built from the approved document only. Metadata comes from
   // the article row, which was just verified to still match the submission.
+  // One publication timestamp drives every DATE/TIME field in this snapshot.
   const snapshot = buildPublicationSnapshot({
     doc: resolved.doc,
     title,
@@ -4521,7 +4522,8 @@ async function handleEditorialPublish(path, request, env, user, capabilities) {
     articleType,
     source: article.source || "",
     labels: article.labels || "",
-    destination
+    destination,
+    now: new Date()
   });
   const token = new Date().toISOString();
   const claimed = env.TPI_DB.prepare(`

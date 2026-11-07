@@ -8,11 +8,12 @@ import { formatShortTimestamp, formatTimestamp, statusLabel } from "../lib/forma
 import { collectionPath } from "../lib/tree";
 import type { NovaCollection, NovaDocumentEnvelope, NovaItem } from "../lib/types";
 import { AccessNotice } from "./AccessNotice";
-import { EditorToolbar } from "./EditorToolbar";
-import { LinkDialog } from "./LinkDialog";
-import { Modal } from "./Modal";
+import { EditorToolbar } from "../shared-editor/EditorToolbar";
+import { LinkDialog } from "../shared-editor/LinkDialog";
+import { setLink, unsetLink } from "../shared-editor/commands/links";
+import { Modal } from "../shared-editor/Modal";
 import { RevisionsPanel } from "./RevisionsPanel";
-import { novaExtensions } from "./editorExtensions";
+import { novaExtensions } from "../shared-editor/editorExtensions";
 
 // Matches the StudioFlow Notes autosave cadence: long enough to avoid writing on
 // every keystroke, short enough that a lost tab costs little work.
@@ -445,10 +446,10 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
 
   const applyLink = (url: string | null) => {
     setLinkOpen(false);
-    const chain = editorRef.current?.chain().focus();
-    if (!chain) return;
-    if (url === null) chain.extendMarkRange("link").unsetLink().run();
-    else chain.extendMarkRange("link").setLink({ href: url }).run();
+    const editorInstance = editorRef.current;
+    if (!editorInstance) return;
+    if (url === null) unsetLink(editorInstance);
+    else setLink(editorInstance, url);
   };
 
   const handleBack = () => {
@@ -633,6 +634,7 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
         <EditorToolbar
           editor={editor}
           disabled={readOnly || !editor}
+          documentTitle={title}
           onRequestLink={() => setLinkOpen(true)}
         />
 

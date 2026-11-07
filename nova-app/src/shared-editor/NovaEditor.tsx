@@ -4,6 +4,8 @@ import type { Editor, JSONContent } from "@tiptap/core";
 import { novaExtensions } from "./editorExtensions";
 import { EditorToolbar } from "./EditorToolbar";
 import { LinkDialog } from "./LinkDialog";
+import { setLink, unsetLink } from "./commands/links";
+import { refreshFieldDisplays } from "./commands/fields";
 
 // A generic structured-document editor. It knows nothing about destinations,
 // article types, publishing, roles or any product: it takes a TipTap JSON
@@ -18,9 +20,11 @@ export interface NovaEditorProps {
   label?: string;
   /** When true the document cannot be edited: TipTap is not editable and formatting controls are disabled. */
   readOnly?: boolean;
+  /** Logical document title; FILENAME fields display it. */
+  documentTitle?: string;
 }
 
-export function NovaEditor({ content, onChange, label = "Document body", readOnly = false }: NovaEditorProps) {
+export function NovaEditor({ content, onChange, label = "Document body", readOnly = false, documentTitle = "" }: NovaEditorProps) {
   const [linkOpen, setLinkOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [hasLink, setHasLink] = useState(false);
@@ -46,6 +50,10 @@ export function NovaEditor({ content, onChange, label = "Document body", readOnl
     editor?.setEditable(!readOnly);
   }, [editor, readOnly]);
 
+  useEffect(() => {
+    if (editor) refreshFieldDisplays(editor, documentTitle);
+  }, [editor, documentTitle]);
+
   // Reload the document only when a different structured document is supplied.
   const lastLoadedRef = useRef<string>("");
   useEffect(() => {
@@ -65,17 +73,14 @@ export function NovaEditor({ content, onChange, label = "Document body", readOnl
   function applyLink(url: string | null) {
     setLinkOpen(false);
     if (!editor) return;
-    if (url === null) {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    if (url === null) unsetLink(editor);
+    else setLink(editor, url);
   }
 
   return (
     <div className="nova-shared-editor" data-testid="nova-shared-editor">
       {editor ? (
-        <EditorToolbar editor={editor} disabled={readOnly} onRequestLink={() => openLinkDialog(editor)} />
+        <EditorToolbar editor={editor} disabled={readOnly} documentTitle={documentTitle} onRequestLink={() => openLinkDialog(editor)} />
       ) : null}
       <EditorContent editor={editor} data-testid="nova-editor-surface" />
       <LinkDialog

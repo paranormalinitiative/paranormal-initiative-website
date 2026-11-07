@@ -6,7 +6,7 @@ import { AccessNotice } from "./AccessNotice";
 import { CollectionTree } from "./CollectionTree";
 import { DocumentEditor } from "./DocumentEditor";
 import { DocumentList } from "./DocumentList";
-import { Modal } from "./Modal";
+import { Modal } from "../shared-editor/Modal";
 
 interface Props {
   documentId: string | null;

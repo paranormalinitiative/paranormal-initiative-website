@@ -8,11 +8,14 @@ import { spawn, spawnSync } from "node:child_process";
 import { mkdtempSync, mkdirSync, openSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
+import { createServer } from "node:net";
+function freePort() { return new Promise((resolve, reject) => { const srv = createServer(); srv.unref(); srv.on("error", reject); srv.listen(0, "127.0.0.1", () => { const { port } = srv.address(); srv.close(() => resolve(port)); }); }); }
 
 const repoRoot = resolve(import.meta.dirname, "../..");
 const configPath = resolve(repoRoot, "wrangler.local.toml");
 const database = "tpi-local-foundation";
-const port = Number(process.env.TPI_NOVA_TEST_PORT || 8792);
+// TEMPORARY TEST HARNESS — NOT AUTHORITATIVE TPI DEVELOPMENT SITE. Uses a free ephemeral port unless TPI_NOVA_TEST_PORT is set.
+const port = Number(process.env.TPI_NOVA_TEST_PORT || (await freePort()));
 if (port === 8787) throw new Error("TPI-NOVA-004R5 verification must not use the official local environment on port 8787");
 const base = `http://127.0.0.1:${port}`;
 const wrangler = process.env.WRANGLER_BIN || "wrangler";

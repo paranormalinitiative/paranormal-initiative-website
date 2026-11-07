@@ -1,5 +1,7 @@
 import { useEffect, useReducer, type ReactNode } from "react";
 import type { Editor } from "@tiptap/core";
+import { InsertTools } from "./InsertTools";
+import { refreshFieldDisplays } from "./commands/fields";
 import {
   Bold,
   Italic,
@@ -22,6 +24,7 @@ interface Props {
   editor: Editor;
   disabled: boolean;
   onRequestLink: () => void;
+  documentTitle?: string;
 }
 
 interface ButtonProps {
@@ -61,18 +64,31 @@ function ToolGroup({ label, children, className }: { label: string; children: Re
   );
 }
 
-export function EditorToolbar({ editor, disabled, onRequestLink }: Props) {
+export function EditorToolbar({ editor, disabled, onRequestLink, documentTitle = "" }: Props) {
   const [, refresh] = useReducer((value: number) => value + 1, 0);
 
   useEffect(() => {
-    const update = () => refresh();
+    let fieldRefreshTimer: number | undefined;
+    const scheduleFieldRefresh = () => {
+      if (fieldRefreshTimer !== undefined) window.clearTimeout(fieldRefreshTimer);
+      fieldRefreshTimer = window.setTimeout(() => {
+        fieldRefreshTimer = undefined;
+        refreshFieldDisplays(editor, documentTitle);
+      }, 0);
+    };
+    const update = () => {
+      refresh();
+      scheduleFieldRefresh();
+    };
     editor.on("transaction", update);
     editor.on("selectionUpdate", update);
+    scheduleFieldRefresh();
     return () => {
+      if (fieldRefreshTimer !== undefined) window.clearTimeout(fieldRefreshTimer);
       editor.off("transaction", update);
       editor.off("selectionUpdate", update);
     };
-  }, [editor]);
+  }, [editor, documentTitle]);
 
   const block = editor.isActive("heading", { level: 1 })
     ? "h1"
@@ -131,6 +147,8 @@ export function EditorToolbar({ editor, disabled, onRequestLink }: Props) {
         <ToolButton label="Insert table" testId="toolbar-table" icon={Table} disabled={disabled} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} />
         <ToolButton label="Divider" testId="toolbar-hr" icon={Minus} disabled={disabled} onClick={() => editor.chain().focus().setHorizontalRule().run()} />
       </ToolGroup>
+
+      <InsertTools editor={editor} disabled={disabled} documentTitle={documentTitle} />
 
       {inTable ? (
         <ToolGroup label="Table" className="nova-tool-group-table">

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { describeNovaError, novaApi } from "../lib/api";
 import { formatTimestamp } from "../lib/format";
 import type { NovaItem, NovaRevision } from "../lib/types";
-import { Modal } from "./Modal";
+import { Modal } from "../shared-editor/Modal";
 
 interface Props {
   itemId: string;

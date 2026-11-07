@@ -110,41 +110,86 @@
     return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
-  function renderInline(nodes) {
+  // TPI-NOVA-005B2A: mirrors lib/nova-document-html.js exactly. Only these href
+  // schemes may reach article HTML; anything else is dropped to plain text.
+  const SAFE_HREF_SCHEMES = /^(https?:|mailto:|tel:)/i;
+  const BOOKMARK_NAME = /^[A-Za-z\u4e00-\u9fff_][\w\u4e00-\u9fff]*$/;
+
+  function safeHref(href) {
+    const value = String(href || "").trim();
+    if (value.startsWith("#")) {
+      const name = value.slice(1);
+      return BOOKMARK_NAME.test(name) && name.length <= 80 ? value : null;
+    }
+    return SAFE_HREF_SCHEMES.test(value) && !/[\u0000-\u001f\s]/.test(value) ? value : null;
+  }
+
+  function bookmarkDomId(name) {
+    return "nova-bm-" + String(name).toLowerCase().replace(/[^a-z0-9_-]/g, c => "_" + c.codePointAt(0).toString(16) + "_");
+  }
+
+  function fieldDisplayText(fieldType, format, ctx) {
+    if (fieldType === "DATE") return ctx.now.toISOString().slice(0, 10);
+    if (fieldType === "TIME") return ctx.now.toISOString().slice(11, 16) + " UTC";
+    if (fieldType === "FILENAME") return ctx.title.trim() || "Untitled";
+    return "";
+  }
+
+  function renderInline(nodes, ctx) {
     return (nodes || []).map(node => {
       if (node.type === "hardBreak") return "<br>";
+      if (node.type === "tpiBookmark") {
+        const name = node.attrs && node.attrs.name;
+        return typeof name === "string" && BOOKMARK_NAME.test(name) ? `<a id="${bookmarkDomId(name)}"></a>` : "";
+      }
+      if (node.type === "tpiField") {
+        const text = fieldDisplayText(node.attrs && node.attrs.fieldType, node.attrs && node.attrs.format, ctx);
+        return text ? escapeText(text) : "";
+      }
       let html = escapeText(node.text || "");
       for (const mark of node.marks || []) {
         if (mark.type === "bold") html = `<strong>${html}</strong>`;
         else if (mark.type === "italic") html = `<em>${html}</em>`;
         else if (mark.type === "underline") html = `<u>${html}</u>`;
-        else if (mark.type === "link") html = `<a href="${escapeText(mark.attrs.href)}" rel="noopener noreferrer nofollow">${html}</a>`;
+        else if (mark.type === "link") {
+          const href = safeHref(mark.attrs && mark.attrs.href);
+          if (href) {
+            const target = href.startsWith("#") ? `#${bookmarkDomId(href.slice(1))}` : href;
+            html = `<a href="${escapeText(target)}" rel="noopener noreferrer nofollow">${html}</a>`;
+          }
+        }
       }
       return html;
     }).join("");
   }
 
-  function renderBlock(node) {
+  function renderBlock(node, ctx) {
+    const kids = () => (node.content || []).map(child => renderBlock(child, ctx)).join("");
     switch (node.type) {
-      case "paragraph": return `<p>${renderInline(node.content)}</p>`;
-      case "heading": return `<h${node.attrs.level}>${renderInline(node.content)}</h${node.attrs.level}>`;
-      case "bulletList": return `<ul>${(node.content || []).map(renderBlock).join("")}</ul>`;
-      case "orderedList": return `<ol>${(node.content || []).map(renderBlock).join("")}</ol>`;
-      case "listItem": return `<li>${(node.content || []).map(renderBlock).join("")}</li>`;
-      case "blockquote": return `<blockquote>${(node.content || []).map(renderBlock).join("")}</blockquote>`;
+      case "paragraph": return `<p>${renderInline(node.content, ctx)}</p>`;
+      case "heading": return `<h${node.attrs.level}>${renderInline(node.content, ctx)}</h${node.attrs.level}>`;
+      case "bulletList": return `<ul>${kids()}</ul>`;
+      case "orderedList": return `<ol>${kids()}</ol>`;
+      case "listItem": return `<li>${kids()}</li>`;
+      case "blockquote": return `<blockquote>${kids()}</blockquote>`;
       case "horizontalRule": return "<hr>";
-      case "table": return `<table>${(node.content || []).map(renderBlock).join("")}</table>`;
-      case "tableRow": return `<tr>${(node.content || []).map(renderBlock).join("")}</tr>`;
-      case "tableHeader": return `<th>${(node.content || []).map(renderBlock).join("")}</th>`;
-      case "tableCell": return `<td>${(node.content || []).map(renderBlock).join("")}</td>`;
+      case "table": return `<table>${kids()}</table>`;
+      case "tableRow": return `<tr>${kids()}</tr>`;
+      case "tableHeader": return `<th>${kids()}</th>`;
+      case "tableCell": return `<td>${kids()}</td>`;
       default: return "";
     }
   }
 
   // Converts a TipTap JSON document into article HTML for the existing preview
   // and publish pipeline. The caller still sanitises through cleanHtml().
-  function novaDocToHtml(doc) {
-    return (doc && doc.content ? doc.content : []).map(renderBlock).join("");
+  // fieldContext mirrors lib/nova-document-html.js: { now: Date, title: string }.
+  function novaDocToHtml(doc, fieldContext) {
+    const fc = fieldContext || {};
+    // Accept a Date from any realm: an instanceof check fails across frames.
+    const parsed = fc.now ? new Date(Number(fc.now.valueOf ? fc.now.valueOf() : fc.now)) : null;
+    const ctx = { now: parsed && !isNaN(parsed.getTime()) ? parsed : new Date(0), title: String(fc.title || "") };
+    return (doc && doc.content ? doc.content : []).map(node => renderBlock(node, ctx)).join("");
   }
 
   global.TPINovaConvert = { htmlToNovaDoc, novaDocToHtml };
