@@ -59,7 +59,10 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSel
             } : undefined
           };
           if (element.kind === "text") {
-            return <Text key={element.id} {...common} text={element.text} fontSize={element.fontSize} fill={element.fill} width={element.width} height={element.height} padding={8} verticalAlign="middle" />;
+            const isLongCoverTitle = slide.id === presentation.slides[0]?.id && element.x === 112 && element.y === 76 && element.text.length > 36;
+            const displayText = isLongCoverTitle ? element.text.replace(": ", ":\n") : element.text;
+            const displayHeight = isLongCoverTitle ? Math.max(element.height, 112) : element.height;
+            return <Text key={element.id} {...common} text={displayText} fontSize={isLongCoverTitle ? Math.min(element.fontSize, 34) : element.fontSize} fill={element.fill} width={element.width} height={displayHeight} padding={8} verticalAlign="middle" wrap="word" />;
           }
           if (element.kind === "rect") {
             return <Rect key={element.id} {...common} width={element.width} height={element.height} fill={element.fill} cornerRadius={8} />;

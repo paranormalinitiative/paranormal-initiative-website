@@ -21,7 +21,7 @@ const TEMPLATE_OPTIONS: Array<{ key: SlideTemplateKey; label: string; descriptio
 function normalizePresentationLayout(presentation: Presentation): Presentation {
   const cover = presentation.slides[0];
   const legacyImage = cover?.elements.find(element => element.kind === "image" && element.x === 420 && element.y === 160 && element.width === 320 && element.height === 210);
-  const coverTitle = cover?.elements.find((element): element is Extract<SlideElement, { kind: "text" }> => element.kind === "text" && element.text === presentation.title);
+  const coverTitle = cover?.elements.find((element): element is Extract<SlideElement, { kind: "text" }> => element.kind === "text" && (element.text === presentation.title || (element.x === 112 && element.y === 76 && element.fontSize >= 34)));
   const titleNeedsFit = Boolean(coverTitle && presentation.title.length > 36 && (coverTitle.fontSize > 34 || coverTitle.height < 100 || !coverTitle.text.includes("\n")));
   if (!legacyImage && !titleNeedsFit) return presentation;
   return {
