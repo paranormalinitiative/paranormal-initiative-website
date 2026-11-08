@@ -18,6 +18,18 @@ const TEMPLATE_OPTIONS: Array<{ key: SlideTemplateKey; label: string; descriptio
   { key: "blank", label: "Blank Canvas", description: "Start with a clean editable slide" }
 ];
 
+function normalizeLegacyCoverImage(presentation: Presentation): Presentation {
+  const cover = presentation.slides[0];
+  const legacyImage = cover?.elements.find(element => element.kind === "image" && element.x === 420 && element.y === 160 && element.width === 320 && element.height === 210);
+  if (!legacyImage) return presentation;
+  return {
+    ...presentation,
+    slides: presentation.slides.map((slide, index) => index === 0
+      ? { ...slide, elements: slide.elements.map(element => element.id === legacyImage.id ? { ...element, x: 620, y: 320, width: 240, height: 150 } : element) }
+      : slide)
+  };
+}
+
 function imageFileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -121,15 +133,25 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
   const load = useCallback(async () => {
     try {
       const response = await novaApi.getItem(itemId);
-      const loaded = parsePresentation(response.item.content);
-      setItem(response.item);
+      const raw = parsePresentation(response.item.content);
+      const loaded = normalizeLegacyCoverImage(raw);
+      let persistedItem = response.item;
+      if (loaded !== raw && response.item.status === "active") {
+        const migrated = await novaApi.updateItem(response.item.id, {
+          expectedVersion: response.item.version,
+          title: response.item.title,
+          content: envelope(loaded)
+        });
+        persistedItem = migrated.item;
+      }
+      setItem(persistedItem);
       setPresentation(loaded);
-      setTitle(response.item.title);
-      titleRef.current = response.item.title;
+      setTitle(persistedItem.title);
+      titleRef.current = persistedItem.title;
       presentationRef.current = loaded;
       setCurrent(0);
       setSelectedElementId(null);
-      versionRef.current = response.item.version;
+      versionRef.current = persistedItem.version;
       dirtyRef.current = false;
       setDirty(false);
       setStatus("Saved");
@@ -208,7 +230,7 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
   };
   const insertImage = (src: string, alt = "Slide image") => {
     if (!src.trim()) return;
-    addElementAndSelect({ id: crypto.randomUUID(), kind: "image", x: 420, y: 160, width: 320, height: 210, placeholder: alt, src: src.trim(), alt });
+    addElementAndSelect({ id: crypto.randomUUID(), kind: "image", x: 620, y: 320, width: 240, height: 150, placeholder: alt, src: src.trim(), alt });
     setImageUrl("");
   };
   const handleImageFile = async (file: File | undefined) => {
