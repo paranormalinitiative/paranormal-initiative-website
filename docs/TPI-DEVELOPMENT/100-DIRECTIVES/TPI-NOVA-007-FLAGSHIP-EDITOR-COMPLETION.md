@@ -82,6 +82,51 @@ not product UI or active source branding.
 - Rollback Worker: `9906e87a-3332-48e2-8e8c-a7ce27f84e75`
 - Manifest digest: `182dca0d57c996cf9e519870509cdec6a08aa9e8076203ea157153482b9e8c6c`
 
+## Workstation completion release — 2026-11-08
+
+The workstation completion tranche was released through the guarded production
+workflow after host integration was verified on the official localhost. The
+production release includes the linked Content Editor metadata path, Document
+Comments and Page setup panels, structured document fields, the editable Slides
+chart element, and the preserved print surface.
+
+- Website/source commit: `aa1bcd9d92fe69516cdb6ed485577cd7234516f2`
+- Integrated StudioFlow source baseline: `eefb7de9518809d98726062aee478a4111c921a5`
+- Release ID: `rel-aa1bcd9d92fe-0cab15a20e62`
+- Worker version: `3bd482e0-00f3-4b35-ab7d-b372d8468b4d`
+- Traffic: 100%
+- Rollback Worker: `8ad4c7da-c4b9-4e95-9b34-915164559cf4`
+- Manifest digest: `3de1e5bb41a3fea9fe5f5dd2e48c002619aaa09a5134bae294171977e2b62926`
+- Release gates: 30 certified gates PASS
+- Certification fail-closed assertions: 49/49 PASS
+- Local authentication lifecycle: 38/38 PASS
+- Local Firefox release acceptance: 65/65 PASS
+- Production smoke: 10/10 PASS
+- Live isolated Firefox acceptance: 65/65 PASS
+- Focused workstation verifier: 9/9 PASS
+- Documents parity: 9/9 PASS
+- Slides parity: 23/23 PASS
+- Table parity: 6/6 PASS
+- Nova typecheck: PASS
+
+Final production Content Editor assets:
+
+- `content-editor-nova/content-editor.html` — SHA-256
+  `a822139e5644fccf4571ef6e4b841e59b587b2811abe3100aa8c0cc179717c94`
+- `content-editor-nova/assets/content-editor-Bz1s_Qh-.js` — SHA-256
+  `933e6d9d1e013bd4a9df3b22b58cf40c4062b146750f7c9116e534732c25d78c`
+- `content-editor-nova/assets/content-editor-C9qlYDES.css` — SHA-256
+  `4624acbd09df71ac7affcc19dd86807b9e06530dd7ada93e63d6db5530027e90`
+- `content-editor-nova/assets/nova-vendor-slides-CnB9V7H-.js` — SHA-256
+  `e16ff8150886297be969f9e6c48d060cffc5b63bf0a6626185dad5d15b47d22d`
+
+Owner-facing production Firefox verification opened the saved NDE article in
+Documents, rendered Page setup and Print in View, opened the existing saved
+eight-slide paranormal deck, rendered all Slides ribbon tabs including Chart,
+and opened Presenter mode with speaker notes and the next-slide cue. No
+production document or presentation content was changed during this release
+verification.
+
 ## Content Editor assets
 
 - `content-editor-nova/content-editor.html` — SHA-256

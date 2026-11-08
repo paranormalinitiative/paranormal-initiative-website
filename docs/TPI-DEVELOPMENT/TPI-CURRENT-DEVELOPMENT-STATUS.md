@@ -1,6 +1,6 @@
 # TPI Current Development Status
 
-## 2026-11-08 — Workstation editor completion candidate
+## 2026-11-08 — Workstation editor completion deployed
 
 Status: **IMPLEMENTED AND VERIFIED LOCALLY — RELEASE CANDIDATE READY.** The
 authoritative Content Editor at `/paper-editor` now receives the completed
@@ -14,10 +14,31 @@ and archive/Trash/restore/permanent-delete lifecycle controls.
 Focused workstation verification is 9/9, the existing Documents parity suite is
 9/9, the Slides parity suite is 23/23, table parity is 6/6, Nova typecheck
 passes, and official localhost Firefox rendered Page setup, Review comments,
-the full Slides ribbon, chart command, Presenter mode, and the existing seven-
-slide paranormal deck. The candidate assets and hashes are recorded in the
-TPI-NOVA-007 execution record. Production remains on the prior verified
-release until the guarded deployment gate completes.
+the full Slides ribbon, chart command, Presenter mode, and the existing
+eight-slide paranormal deck. The exact candidate passed the guarded release
+path and is live in production.
+
+Release `rel-aa1bcd9d92fe-0cab15a20e62` is active at 100% as Worker
+`3bd482e0-00f3-4b35-ab7d-b372d8468b4d`, with rollback Worker
+`8ad4c7da-c4b9-4e95-9b34-915164559cf4`. Website/source commit:
+`aa1bcd9d92fe69516cdb6ed485577cd7234516f2`. Integrated StudioFlow source
+baseline remains `eefb7de9518809d98726062aee478a4111c921a5`.
+
+Production Content Editor assets:
+
+- `content-editor-nova/content-editor.html` —
+  `a822139e5644fccf4571ef6e4b841e59b587b2811abe3100aa8c0cc179717c94`
+- `content-editor-nova/assets/content-editor-Bz1s_Qh-.js` —
+  `933e6d9d1e013bd4a9df3b22b58cf40c4062b146750f7c9116e534732c25d78c`
+- `content-editor-nova/assets/content-editor-C9qlYDES.css` —
+  `4624acbd09df71ac7affcc19dd86807b9e06530dd7ada93e63d6db5530027e90`
+- `content-editor-nova/assets/nova-vendor-slides-CnB9V7H-.js` —
+  `e16ff8150886297be969f9e6c48d060cffc5b63bf0a6626185dad5d15b47d22d`
+
+Live production smoke passed 10/10 and isolated Firefox release acceptance
+passed 65/65. Owner-facing Firefox verified the live NDE article in Documents,
+Page setup and Print, the saved eight-slide paranormal deck, the complete
+Slides ribbon, and Presenter mode with speaker notes and next-slide context.
 
 ## 2026-11-08 — Flagship Content Editor completion and lifecycle release
 
