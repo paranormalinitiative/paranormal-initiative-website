@@ -39,6 +39,21 @@ The production target remains the existing Content Editor route
 `/paper-editor.html`, not StudioFlow `/studio/`; Nova Edit remains a separate
 future scope.
 
+### 2026-11-08 amendment — GenOffice Slides integrated into Content Editor
+
+The existing Nova Slides foundation is now mounted inside the same production
+Content Editor shell at `/paper-editor.html`. The top-level Documents/Slides
+workspace switcher is active, and Slides uses the existing `SlidesSurface` and
+server-backed `nova-presentation` records. It is not part of StudioFlow
+`/studio/`.
+
+Local Firefox acceptance created a disposable presentation, added a text
+element, saved it, returned to the Slides library, refreshed the page, and
+confirmed persistence. Focused verification passed 11/11; Nova typecheck,
+Content Editor build, and `git diff --check` passed. Production status for this
+amendment is **IMPLEMENTED AND VERIFIED IN DEVELOPMENT — NOT YET DEPLOYED**.
+Execution record: `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006A-EDITORIAL-SLIDES-INTEGRATION.md`.
+
 ## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)
 
 Status: **Member Home reads only the authoritative Contributor API.** Audit found `member-home.html` never read `tpiPublishedArticles`; its article data comes solely from `/api/contributors/me/articles`. The one remaining legacy check, `a.published`, was removed from the My Content count so it uses server `status` only. The API never returns `published`, so the count is unchanged. Remaining `tpiPublishedArticles` readers (`includes.js`, `member-login.js`, `published-article.js`, `search.js`, `paper-editor.js`) are outside Member Home and were not changed. No article was migrated, enrolled or modified. Production untouched.

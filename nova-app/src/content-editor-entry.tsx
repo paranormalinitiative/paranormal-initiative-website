@@ -2,6 +2,7 @@ import { StrictMode, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import type { JSONContent } from "@tiptap/core";
 import { NovaEditor } from "./shared-editor/NovaEditor";
+import SlidesSurface from "./slides/SlidesSurface";
 import "./styles.css";
 
 // Entry for the Content Editor's Nova mode. It mounts only the shared editor
@@ -17,7 +18,8 @@ export interface NovaContentEditorHandle {
 
 const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
 
-let root: Root | null = null;
+let documentRoot: Root | null = null;
+let slidesRoot: Root | null = null;
 let currentDoc: JSONContent | null = null;
 let setExternalDoc: ((doc: JSONContent) => void) | null = null;
 let setExternalReadOnly: ((readOnly: boolean) => void) | null = null;
@@ -39,10 +41,10 @@ function Host({ initial }: { initial: JSONContent }) {
 }
 
 export function mountNovaContentEditor(container: HTMLElement, initial: JSONContent = EMPTY_DOC): NovaContentEditorHandle {
-  if (root) root.unmount();
+  if (documentRoot) documentRoot.unmount();
   currentDoc = initial;
-  root = createRoot(container);
-  root.render(
+  documentRoot = createRoot(container);
+  documentRoot.render(
     <StrictMode>
       <Host initial={initial} />
     </StrictMode>
@@ -55,10 +57,35 @@ export function mountNovaContentEditor(container: HTMLElement, initial: JSONCont
     },
     setReadOnly: readOnly => setExternalReadOnly?.(readOnly),
     unmount: () => {
-      root?.unmount();
-      root = null;
+      documentRoot?.unmount();
+      documentRoot = null;
       setExternalDoc = null;
       setExternalReadOnly = null;
+    }
+  };
+}
+
+export interface NovaSlidesWorkspaceHandle {
+  unmount(): void;
+}
+
+function SlidesHost() {
+  const [presentationId, setPresentationId] = useState<string | null>(null);
+  return <SlidesSurface presentationId={presentationId} onNavigatePresentation={setPresentationId} />;
+}
+
+export function mountNovaSlidesWorkspace(container: HTMLElement): NovaSlidesWorkspaceHandle {
+  if (slidesRoot) slidesRoot.unmount();
+  slidesRoot = createRoot(container);
+  slidesRoot.render(
+    <StrictMode>
+      <SlidesHost />
+    </StrictMode>
+  );
+  return {
+    unmount: () => {
+      slidesRoot?.unmount();
+      slidesRoot = null;
     }
   };
 }
@@ -66,7 +93,9 @@ export function mountNovaContentEditor(container: HTMLElement, initial: JSONCont
 declare global {
   interface Window {
     TPINovaContentEditor?: { mount: typeof mountNovaContentEditor };
+    TPINovaSlidesWorkspace?: { mount: typeof mountNovaSlidesWorkspace };
   }
 }
 
 window.TPINovaContentEditor = { mount: mountNovaContentEditor };
+window.TPINovaSlidesWorkspace = { mount: mountNovaSlidesWorkspace };

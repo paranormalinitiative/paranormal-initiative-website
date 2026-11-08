@@ -97,8 +97,8 @@
         </span>
     </div>
     <nav class="nova-topnav" aria-label="Workspace mode">
-        <button type="button" class="nova-mode is-active" aria-current="page">Documents</button>
-        <button type="button" class="nova-mode" disabled aria-disabled="true">Slides <span class="nova-mode-tag">Later</span></button>
+        <button type="button" class="nova-mode is-active" aria-current="page" data-workspace-mode="documents">Documents</button>
+        <button type="button" class="nova-mode" data-workspace-mode="slides">Slides</button>
     </nav>
     <a class="nova-back" href="member-home.html">Member Home</a>
 </header>
@@ -108,6 +108,8 @@
         <span class="workflow-feedback-kicker">Changes Requested</span>
         <p class="workflow-feedback-note" data-workflow-feedback-note></p>
         <span class="workflow-feedback-time" data-workflow-feedback-time></span>    </div>
+
+    <div id="nova-slides-workspace" class="nova-slides-workspace-host" hidden aria-label="Slides workspace"></div>
 
     <div class="nova-body">
     <aside class="nova-sidebar" aria-label="Documents navigation">
@@ -498,7 +500,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js?v=16"></script>
 <script src="legacy-contributions.js"></script>
-<script src="paper-editor.js?v=17"></script>
+<script src="paper-editor.js?v=18"></script>
 <script src="content-editor-nova-convert.js"></script>
 </body>
 </html>

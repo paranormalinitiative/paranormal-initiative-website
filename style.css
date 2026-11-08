@@ -9069,6 +9069,33 @@ a:hover {
     padding: 18px 22px;
 }
 
+.paper-editor-page .nova-slides-workspace-host {
+    width: 100%;
+    min-height: calc(100vh - 92px);
+    overflow: hidden;
+    border: 1px solid var(--nova-border);
+    border-radius: 12px;
+    background: #101713;
+}
+
+.paper-editor-page .nova-slides-workspace-host[hidden] {
+    display: none !important;
+}
+
+.paper-editor-page .nova-slides-workspace-host.nova-slides-workspace-error {
+    padding: 32px;
+    color: var(--nova-text);
+    font-size: 14px;
+}
+
+.paper-editor-page.nova-slides-open .paper-editor-shell {
+    padding-top: 0;
+}
+
+.paper-editor-page.nova-slides-open .workflow-feedback {
+    display: none;
+}
+
 .paper-editor-page .paper-editor-brand {
     color: var(--nova-muted);
     font-size: 12px;

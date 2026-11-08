@@ -10,6 +10,23 @@ Nova Edit is **not** part of this release and is not being placed in StudioFlow.
 The `/studio/` entrypoint remains on its previous StudioFlow bundle. A future
 directive may add Nova Edit to StudioFlow separately.
 
+## 2026-11-08 — Slides integrated into the Content Editor
+
+The existing GenOffice/Nova Slides surface is now available from the same
+`/paper-editor.html` Content Editor shell. The integration reuses the existing
+`SlidesSurface` and `nova-presentation` API rather than creating a second slide
+system. Documents remain the primary document mode; Slides is a sibling
+workspace mode within the editorial engine. Nova Edit remains outside
+StudioFlow.
+
+Local Firefox verification created a disposable presentation, renamed it,
+added a text element, saved it, returned to the Slides library, refreshed the
+page, and confirmed the presentation persisted. The focused Slides verifier
+passed 11/11, Nova typecheck passed, the Content Editor build passed, and
+`git diff --check` passed. This integration is verified in local development;
+production deployment is recorded separately and is not implied by this
+section.
+
 ## 2026-11-08 conversion correction and live acceptance
 
 The first production deployment correctly routed the Content Editor to Nova,

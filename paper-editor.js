@@ -19,6 +19,7 @@
   const htmlView = document.getElementById("editor-html-view");
   const status = document.getElementById("editor-status");
   const layout = document.querySelector(".paper-editor-layout");
+  const slidesWorkspace = document.getElementById("nova-slides-workspace");
   const resizeHandle = document.querySelector(".editor-resize-handle");
   const viewMode = document.getElementById("editor-view-mode");
   const fontFamilyInput = document.getElementById("editor-font-family");
@@ -828,6 +829,7 @@
   // compatibility fallback for records that cannot be migrated in the current
   // session; metadata, destination and publication workflows remain shared.
   const novaMode = { active: false, doc: null, handle: null, loading: null };
+  const novaSlidesMode = { active: false, handle: null };
 
   // The Nova bundle is built into /content-editor-nova/ (see
   // nova-app/vite.content-editor.config.ts). Its hashed asset names are read from
@@ -891,6 +893,43 @@
     } catch (error) {
       setStatus(error.message || "Nova editor unavailable");
       if (modeSelect) modeSelect.value = "legacy";
+    }
+  }
+
+  async function setWorkspaceMode(mode) {
+    const slidesActive = mode === "slides";
+    const documentBody = document.querySelector(".nova-body");
+    document.querySelectorAll("[data-workspace-mode]").forEach(button => {
+      const active = button.dataset.workspaceMode === mode;
+      button.classList.toggle("is-active", active);
+      if (active) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    });
+
+    document.body.classList.toggle("nova-slides-open", slidesActive);
+    if (documentBody) documentBody.hidden = slidesActive;
+    if (slidesWorkspace) slidesWorkspace.hidden = !slidesActive;
+    if (!slidesActive) {
+      novaSlidesMode.active = false;
+      return;
+    }
+
+    try {
+      if (!novaSlidesMode.handle) {
+        if (!slidesWorkspace) throw new Error("Slides workspace is unavailable.");
+        await loadNovaScripts();
+        if (!window.TPINovaSlidesWorkspace?.mount) throw new Error("Nova Slides bundle is unavailable.");
+        novaSlidesMode.handle = window.TPINovaSlidesWorkspace.mount(slidesWorkspace);
+      }
+      novaSlidesMode.active = true;
+    } catch (error) {
+      novaSlidesMode.active = false;
+      if (slidesWorkspace) {
+        slidesWorkspace.hidden = false;
+        slidesWorkspace.textContent = error.message || "Slides could not be opened.";
+        slidesWorkspace.classList.add("nova-slides-workspace-error");
+      }
+      setStatus(error.message || "Slides unavailable");
     }
   }
 
@@ -2230,6 +2269,9 @@ ${articleHtml}
       if (!article) return;
       setNovaHomeVisible(false);
       await editContentArticle(article.id);
+    });
+    document.querySelectorAll("[data-workspace-mode]").forEach(button => {
+      button.addEventListener("click", () => { void setWorkspaceMode(button.dataset.workspaceMode || "documents"); });
     });
   }
 

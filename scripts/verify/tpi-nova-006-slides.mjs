@@ -9,6 +9,10 @@ const surface = read("nova-app/src/slides/SlidesSurface.tsx");
 const canvas = read("nova-app/src/slides/SlideCanvas.tsx");
 const shell = read("nova-app/src/shell/App.tsx");
 const api = read("nova-app/src/lib/api.ts");
+const contentEntry = read("nova-app/src/content-editor-entry.tsx");
+const contentVite = read("nova-app/vite.content-editor.config.ts");
+const contentShell = read("paper-editor.html");
+const contentScript = read("paper-editor.js");
 const packageJson = JSON.parse(read("nova-app/package.json"));
 
 const checks = [
@@ -19,7 +23,10 @@ const checks = [
   ["Slides is lazy-loaded and routed from the Nova shell", /lazy\(\(\) => import\("\.\.\/slides\/SlidesSurface"\)\)/.test(shell) && /#\/slides/.test(shell)],
   ["Slides uses the Nova presentation API with optimistic versioning", /type: "nova-presentation"/.test(surface) && /expectedVersion: versionRef\.current/.test(surface) && /content: envelope\(presentation\)/.test(surface)],
   ["API supports presentation filtering and content envelopes", /type\?: "nova-document" \| "nova-presentation" \| "all"/.test(api) && /NovaContentEnvelope/.test(api)],
-  ["Konva dependencies are pinned", packageJson.dependencies?.konva === "^10.9.1" && packageJson.dependencies?.["react-konva"] === "^19.3.2"]
+  ["Konva dependencies are pinned", packageJson.dependencies?.konva === "^10.9.1" && packageJson.dependencies?.["react-konva"] === "^19.3.2"],
+  ["Content Editor mounts the existing Slides surface", /mountNovaSlidesWorkspace/.test(contentEntry) && /<SlidesSurface/.test(contentEntry)],
+  ["Content Editor bundle includes the Slides canvas vendor chunk", /node_modules\/konva/.test(contentVite) && /nova-vendor-slides/.test(contentVite)],
+  ["Content Editor exposes an active Slides workspace control", /data-workspace-mode="slides"/.test(contentShell) && /id="nova-slides-workspace"/.test(contentShell) && /setWorkspaceMode/.test(contentScript)]
 ];
 
 let failed = 0;
