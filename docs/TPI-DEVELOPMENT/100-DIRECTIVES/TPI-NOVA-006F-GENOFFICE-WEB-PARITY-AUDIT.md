@@ -15,7 +15,9 @@ document and presentation features that cannot honestly be called complete in a
 browser implementation until their data model, rendering, and persistence
 contracts are ported.
 
-This record does not silently convert those gaps into a false PASS.
+This record does not silently convert those gaps into a false PASS. The core
+web tranche was released through the guarded production workflow after the
+checks below passed.
 
 ## Verified implementation map
 
@@ -83,6 +85,14 @@ Firefox Developer Edition against the authoritative local Worker showed:
 - Slides mode with the full nine-tab ribbon, existing deck thumbnails, speaker
   notes, Present, and saved Slides workspace routing.
 
+Firefox Developer Edition against the live production Content Editor at
+`https://paranormalinitiative.com/paper-editor` showed the same Documents and
+Slides surfaces after deployment. The existing production deck “Beyond the
+Veil: A Field Guide to Paranormal Experiences” opened with eight slide
+thumbnails, speaker notes, Present, Normal/Slide sorter/Reading view, and the
+full Slides tab strip. The production Documents workspace opened with its
+document library and the full Documents ribbon.
+
 Automated checks on this tree:
 
 - `npm --prefix nova-app run typecheck` — PASS
@@ -92,9 +102,34 @@ Automated checks on this tree:
 - `npm run verify:nova-006-editor-parity` — PASS (8/8)
 - `npm run build:content-editor-nova` — PASS
 
-Production was not changed by this audit pass. The generated assets from this
-pass must complete the guarded local-auth, preflight, release, and live Firefox
-acceptance gates before being described as deployed.
+## Production release record
+
+- Release: `rel-c78b1578295e-fa00ad69e51b`
+- Source commit: `c78b1578295e3a6795d6f5d24e881a58b5c93790`
+- Worker: `9906e87a-3332-48e2-8e8c-a7ce27f84e75` at 100% traffic
+- Rollback Worker: `df85737f-5dda-4a81-89fd-76853b7d1d75`
+- Release manifest digest: `1fb2ebbcd185cb9a068092b7c09464418ba06805d2231e186e6ebb99007234ce`
+- Production smoke: 10/10 PASS
+- Isolated Firefox production acceptance: 65/65 PASS; owner profile was not
+  accessed by the release harness
+- Content Editor JavaScript:
+  `content-editor-nova/assets/content-editor-CSAYFnjR.js` —
+  `ca6b91fceab6c87034ef3ed6fa30c684a7d9e8173592a787064f5bfc53678a68`
+- Content Editor CSS:
+  `content-editor-nova/assets/content-editor-DrJeOkTE.css` —
+  `db9bbd8a843f7a482899212d7aad17c14bb1a659e654394e9fc2eefc7222f487`
+- Slides vendor bundle:
+  `content-editor-nova/assets/nova-vendor-slides-CnB9V7H-.js` —
+  `e16ff8150886297be969f9e6c48d060cffc5b63bf0a6626185dad5d15b47d22d`
+- Content Editor entrypoint:
+  `content-editor-nova/content-editor.html` —
+  `ad00a20143644a8ca017fb3af2c7ed543517b22964a27c8ff3fa925145514927`
+- Bridge entrypoint: `paper-editor.js` —
+  `9a199458f53e7505bca3f8cb54fe98b6313bcb1d8eaaa5ffcb2e989ee78ce7cb`
+
+The production release included only the certified candidate assets and the
+existing Content Editor bridge. No StudioFlow application behavior or
+production content was changed by this tranche.
 
 ## Files changed in this audit pass
 
