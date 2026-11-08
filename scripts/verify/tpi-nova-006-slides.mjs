@@ -33,6 +33,9 @@ const checks = [
   ["Slide text is editable after insertion", /SlideInspector/.test(surface) && /Edit this text/.test(surface) && /element\.text/.test(surface)],
   ["Slides support real image sources", /imageFileToDataUrl/.test(surface) && /Upload image/.test(ribbon) && /src\?: string/.test(model) && /KonvaImage/.test(canvas)],
   ["Slides use the full-width GenOffice ribbon and live slide thumbnails", /Ribbon\.tsx/.test(ribbon) && /nova-genoffice-ribbon/.test(ribbon) && /\.nova-genoffice-ribbon \{[^}]*width: 100%/.test(styles) && /\.nova-ribbon-body \{[^}]*width: 100%/.test(styles) && /legacy global `section` rule/.test(styles) && /animation: none/.test(styles) && /PresentationThumbnail/.test(surface) && /data-testid=\"slide-thumbnail\"/.test(surface)],
+  ["Slides workspace and presentation survive host refresh", /persistWorkspaceMode/.test(contentScript) && /restoreRequestedWorkspaceMode/.test(contentScript) && /workspace.*slides/.test(contentScript) && /initialPresentationId/.test(contentEntry) && /presentation/.test(contentScript)],
+  ["All Slides ribbon tabs expose real editing controls", /activeTab === "draw"/.test(ribbon) && /activeTab === "design"/.test(ribbon) && /activeTab === "transitions"/.test(ribbon) && /activeTab === "animations"/.test(ribbon) && /activeTab === "review"/.test(ribbon) && /activeTab === "view"/.test(ribbon) && /onAddLine/.test(ribbon) && /onSetTransition/.test(ribbon) && /onSetAnimation/.test(ribbon)],
+  ["Slides persist themes, transitions, review notes, and sorter view", /SlideTransition/.test(model) && /reviewNotes/.test(model) && /nova-slide-sorter/.test(styles) && /onReviewNoteChange/.test(surface) && /viewMode/.test(surface)],
   ["Presenter mode includes navigation and notes", /PresenterMode/.test(surface) && /Presenter mode/.test(surface) && /Speaker notes/.test(surface) && /PageDown/.test(surface)]
 ];
 

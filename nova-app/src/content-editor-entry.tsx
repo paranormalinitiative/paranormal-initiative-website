@@ -69,17 +69,21 @@ export interface NovaSlidesWorkspaceHandle {
   unmount(): void;
 }
 
-function SlidesHost() {
-  const [presentationId, setPresentationId] = useState<string | null>(null);
-  return <SlidesSurface presentationId={presentationId} onNavigatePresentation={setPresentationId} />;
+function SlidesHost({ initialPresentationId, onNavigatePresentation }: { initialPresentationId: string | null; onNavigatePresentation?: (id: string | null) => void }) {
+  const [presentationId, setPresentationId] = useState<string | null>(initialPresentationId);
+  const navigate = (id: string | null) => {
+    setPresentationId(id);
+    onNavigatePresentation?.(id);
+  };
+  return <SlidesSurface presentationId={presentationId} onNavigatePresentation={navigate} />;
 }
 
-export function mountNovaSlidesWorkspace(container: HTMLElement): NovaSlidesWorkspaceHandle {
+export function mountNovaSlidesWorkspace(container: HTMLElement, initialPresentationId: string | null = null, onNavigatePresentation?: (id: string | null) => void): NovaSlidesWorkspaceHandle {
   if (slidesRoot) slidesRoot.unmount();
   slidesRoot = createRoot(container);
   slidesRoot.render(
     <StrictMode>
-      <SlidesHost />
+      <SlidesHost initialPresentationId={initialPresentationId} onNavigatePresentation={onNavigatePresentation} />
     </StrictMode>
   );
   return {

@@ -4,9 +4,9 @@ import { NovaApiError, describeNovaError, novaApi } from "../lib/api";
 import type { NovaCollection, NovaItem, NovaItemSummary } from "../lib/types";
 import { AccessNotice } from "../documents/AccessNotice";
 import { SlideCanvas } from "./SlideCanvas";
-import { GenOfficeRibbon } from "./GenOfficeRibbon";
+import { GenOfficeRibbon, type SlideThemeKey, type SlideViewMode } from "./GenOfficeRibbon";
 import { PresentationThumbnail } from "./PresentationThumbnail";
-import { addSlide, createPresentationFromTemplate, deleteSlide, duplicateSlide, envelope, parsePresentation, reorderSlide, type Presentation, type SlideElement, type SlideTemplateKey, updateElement } from "./model";
+import { addSlide, createPresentationFromTemplate, deleteSlide, duplicateSlide, envelope, parsePresentation, reorderSlide, type Presentation, type SlideElement, type SlideTemplateKey, type SlideTransition, updateElement } from "./model";
 
 interface Props {
   presentationId: string | null;
@@ -153,6 +153,9 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState("");
   const [presenting, setPresenting] = useState(false);
+  const [viewMode, setViewMode] = useState<SlideViewMode>("normal");
+  const historyRef = useRef<Presentation[]>([]);
+  const futureRef = useRef<Presentation[]>([]);
   const versionRef = useRef(0);
   const dirtyRef = useRef(false);
   const saveTimer = useRef<number | null>(null);
@@ -185,6 +188,8 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
       setTitle(persistedItem.title);
       titleRef.current = persistedItem.title;
       presentationRef.current = loaded;
+      historyRef.current = [];
+      futureRef.current = [];
       setCurrent(0);
       setSelectedElementId(null);
       versionRef.current = persistedItem.version;
@@ -231,9 +236,31 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     setPresentation(value => {
       if (!value) return value;
       const next = updater(value);
+      historyRef.current = [...historyRef.current, value].slice(-50);
+      futureRef.current = [];
       presentationRef.current = next;
       return next;
     });
+    markDirty();
+  };
+
+  const undo = () => {
+    const previous = historyRef.current.pop();
+    const currentValue = presentationRef.current;
+    if (!previous || !currentValue) return;
+    futureRef.current = [...futureRef.current, currentValue];
+    presentationRef.current = previous;
+    setPresentation(previous);
+    markDirty();
+  };
+
+  const redo = () => {
+    const next = futureRef.current.pop();
+    const currentValue = presentationRef.current;
+    if (!next || !currentValue) return;
+    historyRef.current = [...historyRef.current, currentValue];
+    presentationRef.current = next;
+    setPresentation(next);
     markDirty();
   };
 
@@ -275,7 +302,38 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     catch (imageFailure) { setFailure(imageFailure instanceof Error ? imageFailure.message : "The image could not be inserted."); }
   };
 
-  if (presenting) return <PresenterMode presentation={presentation} current={current} title={title} onChangeSlide={setCurrent} onExit={() => setPresenting(false)} />;
+  const setTheme = (theme: SlideThemeKey) => {
+    const palettes: Record<SlideThemeKey, { background: string; accent: string; text: string }> = {
+      "field-report": { background: "#10211b", accent: "#72d6a3", text: "#f5f7f4" },
+      "evidence-brief": { background: "#101a2c", accent: "#f4c95d", text: "#f5f7ff" },
+      lecture: { background: "#1b1630", accent: "#d9a7ff", text: "#fbf7ff" },
+      blank: { background: "#f7f4ec", accent: "#4e8b61", text: "#1d281f" }
+    };
+    const palette = palettes[theme];
+    edit(value => ({
+      ...value,
+      slides: value.slides.map(candidate => ({
+        ...candidate,
+        background: palette.background,
+        elements: candidate.elements.map(element => {
+          if (element.kind === "rect" && element.width <= 16) return { ...element, fill: palette.accent };
+          if (element.kind === "text") return { ...element, fill: element.y < 460 ? palette.text : palette.accent };
+          return element;
+        })
+      }))
+    }));
+  };
+
+  const setCurrentTransition = (transition: SlideTransition) => {
+    edit(value => ({ ...value, slides: value.slides.map((candidate, index) => index === current ? { ...candidate, transition } : candidate) }));
+  };
+
+  const setSelectedAnimation = (animation: "none" | "fade") => {
+    if (!selectedElementId) return;
+    edit(value => updateElement(value, current, selectedElementId, { animation }));
+  };
+
+  if (presenting || viewMode === "reading") return <PresenterMode presentation={presentation} current={current} title={title} onChangeSlide={setCurrent} onExit={() => { setPresenting(false); setViewMode("normal"); }} />;
 
   return (
     <div className="nova-slides-editor" data-testid="slides-editor">
@@ -306,6 +364,21 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
         onMoveDown={() => edit(value => reorderSlide(value, current, current + 1))}
         onPresent={() => setPresenting(true)}
         onSave={() => void save()}
+        onUndo={undo}
+        onRedo={redo}
+        canUndo={historyRef.current.length > 0}
+        canRedo={futureRef.current.length > 0}
+        onAddLine={(stroke, strokeWidth) => addElementAndSelect({ id: crypto.randomUUID(), kind: "line", x: 180, y: 260, width: 300, height: 0, stroke, strokeWidth })}
+        onDeleteSelected={removeSelectedElement}
+        selectedElement={selectedElement}
+        onSetTheme={setTheme}
+        onSetTransition={setCurrentTransition}
+        currentTransition={selectedSlide.transition || "none"}
+        onSetAnimation={setSelectedAnimation}
+        onViewModeChange={mode => { if (mode === "reading") setViewMode("reading"); else setViewMode(mode); }}
+        viewMode={viewMode}
+        reviewNote={presentation.reviewNotes || ""}
+        onReviewNoteChange={value => edit(currentValue => ({ ...currentValue, reviewNotes: value }))}
       />
       <div className="nova-slides-workspace">
         <aside className="nova-slide-thumbnails" aria-label="Slides">
@@ -313,11 +386,9 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
           {presentation.slides.map((candidate, index) => <button type="button" key={candidate.id} className={`nova-slide-thumbnail${index === current ? " is-selected" : ""}`} onClick={() => { setCurrent(index); setSelectedElementId(null); }} data-testid="slide-thumbnail"><span>{index + 1}</span><PresentationThumbnail presentation={presentation} slide={candidate} width={132} /> </button>)}
           <div className="nova-slide-thumbnail-actions"><button type="button" aria-label="Duplicate slide" onClick={() => edit(value => duplicateSlide(value, current))} disabled={readOnly}><Copy size={15} /></button><button type="button" aria-label="Delete slide" onClick={() => { edit(value => deleteSlide(value, current)); setCurrent(value => Math.min(value, Math.max(0, presentation.slides.length - 2))); }} disabled={readOnly || presentation.slides.length <= 1}><Trash2 size={15} /></button></div>
         </aside>
-        <main className="nova-slide-stage-area">
+        <main className={`nova-slide-stage-area${viewMode === "sorter" ? " is-sorter" : ""}`}>
           <input ref={imageFileInput} type="file" accept="image/*" hidden onChange={event => { void handleImageFile(event.target.files?.[0]); event.target.value = ""; }} />
-          <div className="nova-slide-canvas-wrap"><SlideCanvas presentation={presentation} slide={slide} scale={Math.min(0.82, 860 / presentation.width)} onSelectElement={setSelectedElementId} onUpdateElement={(elementId, patch) => edit(value => updateElement(value, current, elementId, patch))} /></div>
-          <SlideInspector element={selectedElement} readOnly={readOnly} onUpdate={updateCurrentElement} onDelete={removeSelectedElement} />
-          <div className="nova-slide-notes"><label>Speaker notes<textarea value={selectedSlide.speakerNotes || ""} disabled={readOnly} onChange={event => edit(value => ({ ...value, slides: value.slides.map((candidate, index) => index === current ? { ...candidate, speakerNotes: event.target.value } : candidate) }))} placeholder="Notes for the presenter…" /></label></div>
+          {viewMode === "sorter" ? <div className="nova-slide-sorter" aria-label="Slide sorter">{presentation.slides.map((candidate, index) => <button type="button" key={candidate.id} className={`nova-slide-sorter-item${index === current ? " is-selected" : ""}`} onClick={() => { setCurrent(index); setViewMode("normal"); }}><span>{index + 1}</span><PresentationThumbnail presentation={presentation} slide={candidate} width={300} /><strong>{candidate.elements.find(element => element.kind === "text")?.text || `Slide ${index + 1}`}</strong></button>)}</div> : <><div className="nova-slide-canvas-wrap"><SlideCanvas presentation={presentation} slide={slide} scale={Math.min(0.82, 860 / presentation.width)} onSelectElement={setSelectedElementId} onUpdateElement={(elementId, patch) => edit(value => updateElement(value, current, elementId, patch))} /></div><SlideInspector element={selectedElement} readOnly={readOnly} onUpdate={updateCurrentElement} onDelete={removeSelectedElement} /><div className="nova-slide-notes"><label>Speaker notes<textarea value={selectedSlide.speakerNotes || ""} disabled={readOnly} onChange={event => edit(value => ({ ...value, slides: value.slides.map((candidate, index) => index === current ? { ...candidate, speakerNotes: event.target.value } : candidate) }))} placeholder="Notes for the presenter…" /></label></div></>}
         </main>
       </div>
     </div>
@@ -328,7 +399,7 @@ function SlideInspector({ element, readOnly, onUpdate, onDelete }: { element: Sl
   if (!element) return <div className="nova-slide-inspector nova-slide-inspector-empty">Select a slide element to edit its text, color, size, or position.</div>;
   return <section className="nova-slide-inspector" aria-label="Selected slide element">
     <div className="nova-slide-inspector-header"><strong>Edit element</strong><button type="button" aria-label="Delete selected element" onClick={onDelete} disabled={readOnly}><Trash2 size={15} /></button></div>
-    {element.kind === "text" ? <><label>Text<textarea value={element.text} disabled={readOnly} onChange={event => onUpdate({ text: event.target.value })} /></label><div className="nova-slide-inspector-grid"><label>Font size<input type="number" min="10" max="120" value={element.fontSize} disabled={readOnly} onChange={event => onUpdate({ fontSize: Number(event.target.value) || 10 })} /></label><label>Color<input type="color" value={element.fill} disabled={readOnly} onChange={event => onUpdate({ fill: event.target.value })} /></label></div></> : element.kind === "rect" ? <label>Fill<input type="color" value={element.fill} disabled={readOnly} onChange={event => onUpdate({ fill: event.target.value })} /></label> : <label>Alt text<input value={element.alt || element.placeholder} disabled={readOnly} onChange={event => onUpdate({ alt: event.target.value, placeholder: event.target.value })} /></label>}
+    {element.kind === "text" ? <><label>Text<textarea value={element.text} disabled={readOnly} onChange={event => onUpdate({ text: event.target.value })} /></label><div className="nova-slide-inspector-grid"><label>Font size<input type="number" min="10" max="120" value={element.fontSize} disabled={readOnly} onChange={event => onUpdate({ fontSize: Number(event.target.value) || 10 })} /></label><label>Color<input type="color" value={element.fill} disabled={readOnly} onChange={event => onUpdate({ fill: event.target.value })} /></label></div></> : element.kind === "rect" ? <label>Fill<input type="color" value={element.fill} disabled={readOnly} onChange={event => onUpdate({ fill: event.target.value })} /></label> : element.kind === "image" ? <label>Alt text<input value={element.alt || element.placeholder} disabled={readOnly} onChange={event => onUpdate({ alt: event.target.value, placeholder: event.target.value })} /></label> : <div className="nova-slide-inspector-grid"><label>Stroke<input type="color" value={element.stroke} disabled={readOnly} onChange={event => onUpdate({ stroke: event.target.value })} /></label><label>Width<input type="number" min="1" max="40" value={element.strokeWidth} disabled={readOnly} onChange={event => onUpdate({ strokeWidth: Number(event.target.value) || 1 })} /></label></div>}
   </section>;
 }
 
@@ -347,6 +418,6 @@ function PresenterMode({ presentation, current, title, onChangeSlide, onExit }: 
   }, [current, onChangeSlide, onExit, presentation.slides.length]);
   return <div ref={presenterRef} className="nova-presenter" role="dialog" aria-modal="true" aria-label="Presenter mode">
     <header className="nova-presenter-header"><div><span className="nova-eyebrow">Presenter mode</span><strong>{title}</strong></div><div className="nova-presenter-actions"><span>Slide {current + 1} of {presentation.slides.length}</span><button type="button" className="nova-button" onClick={() => presenterRef.current?.requestFullscreen?.()}><Maximize size={15} /> Full screen</button><button type="button" className="nova-button" onClick={onExit}><X size={15} /> Exit</button></div></header>
-    <div className="nova-presenter-body"><main className="nova-presenter-stage"><SlideCanvas presentation={presentation} slide={slide} scale={Math.min(1.08, 1120 / presentation.width)} interactive={false} onUpdateElement={() => {}} /><div className="nova-presenter-nav"><button type="button" onClick={() => onChangeSlide(Math.max(0, current - 1))} disabled={current === 0}><ChevronLeft size={18} /> Previous</button><button type="button" onClick={() => onChangeSlide(Math.min(presentation.slides.length - 1, current + 1))} disabled={current === presentation.slides.length - 1}>Next <ChevronRight size={18} /></button></div></main><aside className="nova-presenter-notes"><span className="nova-eyebrow">Speaker notes</span><h2>Presenter view</h2><p>{slide?.speakerNotes || "No speaker notes for this slide."}</p>{next ? <div className="nova-presenter-next"><span className="nova-eyebrow">Up next</span><strong>{next.elements.find(element => element.kind === "text")?.text || `Slide ${current + 2}`}</strong></div> : <div className="nova-presenter-next">Final slide</div>}</aside></div>
+    <div className="nova-presenter-body"><main className="nova-presenter-stage"><SlideCanvas presentation={presentation} slide={slide} scale={Math.min(1.08, 1120 / presentation.width)} interactive={false} presenter onUpdateElement={() => {}} /><div className="nova-presenter-nav"><button type="button" onClick={() => onChangeSlide(Math.max(0, current - 1))} disabled={current === 0}><ChevronLeft size={18} /> Previous</button><button type="button" onClick={() => onChangeSlide(Math.min(presentation.slides.length - 1, current + 1))} disabled={current === presentation.slides.length - 1}>Next <ChevronRight size={18} /></button></div></main><aside className="nova-presenter-notes"><span className="nova-eyebrow">Speaker notes</span><h2>Presenter view</h2><p>{slide?.speakerNotes || "No speaker notes for this slide."}</p>{next ? <div className="nova-presenter-next"><span className="nova-eyebrow">Up next</span><strong>{next.elements.find(element => element.kind === "text")?.text || `Slide ${current + 2}`}</strong></div> : <div className="nova-presenter-next">Final slide</div>}</aside></div>
   </div>;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Group, Image as KonvaImage, Layer, Rect, Stage, Text, Transformer } from "react-konva";
+import { Group, Image as KonvaImage, Layer, Line, Rect, Stage, Text, Transformer } from "react-konva";
 import type Konva from "konva";
 import type { Presentation, Slide, SlideElement } from "./model";
 
@@ -10,11 +10,23 @@ interface Props {
   onUpdateElement: (elementId: string, patch: Partial<SlideElement>) => void;
   onSelectElement?: (elementId: string | null) => void;
   interactive?: boolean;
+  presenter?: boolean;
 }
 
-export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSelectElement, interactive = true }: Props) {
+export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSelectElement, interactive = true, presenter = false }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [transformerNode, setTransformerNode] = useState<Konva.Node | null>(null);
+  const [fadeIn, setFadeIn] = useState(!presenter || slide.transition !== "fade");
+
+  useEffect(() => {
+    if (!presenter || slide.transition !== "fade") {
+      setFadeIn(true);
+      return;
+    }
+    setFadeIn(false);
+    const timer = window.setTimeout(() => setFadeIn(true), 30);
+    return () => window.clearTimeout(timer);
+  }, [presenter, slide.id, slide.transition]);
 
   useEffect(() => {
     if (!slide.elements.some(element => element.id === selectedId)) {
@@ -38,7 +50,7 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSel
       onMouseDown={event => { if (event.target === event.target.getStage()) select("", null); }}
       data-testid="slide-canvas"
     >
-      <Layer>
+      <Layer opacity={fadeIn ? 1 : 0}>
         <Rect x={0} y={0} width={presentation.width} height={presentation.height} fill={slide.background} listening={false} />
         {slide.elements.map(element => {
           const common = {
@@ -66,6 +78,9 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSel
           }
           if (element.kind === "rect") {
             return <Rect key={element.id} {...common} width={element.width} height={element.height} fill={element.fill} cornerRadius={8} />;
+          }
+          if (element.kind === "line") {
+            return <Line key={element.id} {...common} points={[0, 0, element.width, element.height]} stroke={element.stroke} strokeWidth={element.strokeWidth} lineCap="round" />;
           }
           return (
             <Group key={element.id} {...common}>

@@ -831,6 +831,21 @@
   const novaMode = { active: false, doc: null, handle: null, loading: null };
   const novaSlidesMode = { active: false, handle: null };
 
+  // Keep the selected Nova workspace in the URL so a refresh, a copied link,
+  // and the browser back/forward buttons reopen the same surface. The host
+  // page still owns authentication and article state; this parameter only
+  // selects the Documents or Slides workspace inside that shell.
+  function requestedWorkspaceMode() {
+    return new URLSearchParams(window.location.search).get("workspace") === "slides" ? "slides" : "documents";
+  }
+
+  function persistWorkspaceMode(mode) {
+    const url = new URL(window.location.href);
+    if (mode === "slides") url.searchParams.set("workspace", "slides");
+    else url.searchParams.delete("workspace");
+    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+  }
+
   // The Nova bundle is built into /content-editor-nova/ (see
   // nova-app/vite.content-editor.config.ts). Its hashed asset names are read from
   // the built page so a rebuild cannot leave the Content Editor pointing at stale files.
@@ -898,6 +913,7 @@
 
   async function setWorkspaceMode(mode) {
     const slidesActive = mode === "slides";
+    persistWorkspaceMode(slidesActive ? "slides" : "documents");
     const documentBody = document.querySelector(".nova-body");
     document.querySelectorAll("[data-workspace-mode]").forEach(button => {
       const active = button.dataset.workspaceMode === mode;
@@ -919,7 +935,13 @@
         if (!slidesWorkspace) throw new Error("Slides workspace is unavailable.");
         await loadNovaScripts();
         if (!window.TPINovaSlidesWorkspace?.mount) throw new Error("Nova Slides bundle is unavailable.");
-        novaSlidesMode.handle = window.TPINovaSlidesWorkspace.mount(slidesWorkspace);
+        const presentationId = new URLSearchParams(window.location.search).get("presentation");
+        novaSlidesMode.handle = window.TPINovaSlidesWorkspace.mount(slidesWorkspace, presentationId, id => {
+          const url = new URL(window.location.href);
+          if (id) url.searchParams.set("presentation", id);
+          else url.searchParams.delete("presentation");
+          window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+        });
       }
       novaSlidesMode.active = true;
     } catch (error) {
@@ -931,6 +953,10 @@
       }
       setStatus(error.message || "Slides unavailable");
     }
+  }
+
+  async function restoreRequestedWorkspaceMode() {
+    if (requestedWorkspaceMode() === "slides") await setWorkspaceMode("slides");
   }
 
   document.querySelector("[data-editor-mode]")?.addEventListener("change", async event => {
@@ -2995,6 +3021,7 @@ ${articleHtml}
             commentSignatureEnabled: result.user.commentSignatureEnabled,
             active: true
           }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
+          await restoreRequestedWorkspaceMode();
           return;
         }
       } catch (error) {
@@ -3005,6 +3032,7 @@ ${articleHtml}
     const sessionUser = getSessionUser();
     if (sessionUser) {
       unlockEditor(sessionUser, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
+      await restoreRequestedWorkspaceMode();
     } else if (isDevUnlocked()) {
       unlockEditor({
         username: "",
@@ -3012,6 +3040,7 @@ ${articleHtml}
         role: "admin",
         active: true
       }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
+      await restoreRequestedWorkspaceMode();
     } else {
       showAccessGate();
     }

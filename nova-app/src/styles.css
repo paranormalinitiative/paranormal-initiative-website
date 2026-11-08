@@ -984,6 +984,12 @@ a { color: var(--nova-mint); }
 .nova-slide-thumbnail-actions button:hover, .nova-slide-toolbar button:hover:not(:disabled) { color: var(--nova-text); border-color: var(--nova-mint); }
 .nova-slide-thumbnail-actions button:disabled, .nova-slide-toolbar button:disabled { opacity: .4; cursor: default; }
 .nova-slide-stage-area { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 14px 18px 28px; }
+.nova-slide-stage-area.is-sorter { overflow: auto; }
+.nova-slide-sorter { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; padding: 18px; border: 1px solid var(--nova-line); border-radius: 12px; background: #17211c; }
+.nova-slide-sorter-item { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--nova-line); border-radius: 8px; background: #1d2a23; color: var(--nova-text-secondary); text-align: left; }
+.nova-slide-sorter-item:hover, .nova-slide-sorter-item.is-selected { border-color: var(--nova-mint); color: var(--nova-text); }
+.nova-slide-sorter-item .nova-presentation-thumbnail { width: 100%; height: auto; background: #f7f4ec; }
+.nova-slide-sorter-item .nova-presentation-thumbnail canvas { display: block; width: 100% !important; height: auto !important; }
 .nova-slide-toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-height: 40px; margin-bottom: 14px; }
 .nova-slide-toolbar-spacer { flex: 1; }
 .nova-slide-image-url { display: inline-flex; align-items: center; gap: 5px; color: var(--nova-text-muted); font-size: 11px; }
@@ -1025,6 +1031,8 @@ a { color: var(--nova-mint); }
 .nova-ribbon-url-field button { align-self: flex-start; border: 1px solid var(--nova-line); border-radius: 4px; padding: 3px 7px; background: #1d2a23; color: var(--nova-text-secondary); cursor: pointer; font-size: 10px; }
 .nova-ribbon-url-field button:hover:not(:disabled) { border-color: var(--nova-mint); color: var(--nova-text); }
 .nova-ribbon-url-field button:disabled { opacity: .4; cursor: default; }
+.nova-ribbon-review-field { display: flex; flex-direction: column; justify-content: center; gap: 4px; min-width: 320px; color: #8fa89b; font-size: 10px; }
+.nova-ribbon-review-field textarea { width: 320px; min-height: 58px; resize: horizontal; border: 1px solid var(--nova-line); border-radius: 5px; padding: 6px 8px; background: #17211c; color: var(--nova-text); font: inherit; font-size: 11px; }
 .nova-ribbon-placeholder { display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 0 18px; color: var(--nova-text-muted); font-size: 11px; }
 .nova-ribbon-placeholder strong { color: var(--nova-text-secondary); font-size: 12px; }
 .nova-ribbon-placeholder span { max-width: 360px; }

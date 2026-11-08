@@ -2,6 +2,8 @@ export const NOVA_SLIDES_FORMAT = "nova-presentation" as const;
 export const NOVA_SLIDES_VERSION = 1 as const;
 
 export type SlideTemplateKey = "blank" | "field-report" | "evidence-brief" | "lecture";
+export type SlideTransition = "none" | "fade" | "push" | "wipe";
+export type ElementAnimation = "none" | "fade";
 
 export interface TextElement {
   id: string;
@@ -13,6 +15,7 @@ export interface TextElement {
   text: string;
   fontSize: number;
   fill: string;
+  animation?: ElementAnimation;
 }
 
 export interface ShapeElement {
@@ -23,6 +26,7 @@ export interface ShapeElement {
   width: number;
   height: number;
   fill: string;
+  animation?: ElementAnimation;
 }
 
 export interface ImageElement {
@@ -35,15 +39,29 @@ export interface ImageElement {
   placeholder: string;
   src?: string;
   alt?: string;
+  animation?: ElementAnimation;
 }
 
-export type SlideElement = TextElement | ShapeElement | ImageElement;
+export interface LineElement {
+  id: string;
+  kind: "line";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  stroke: string;
+  strokeWidth: number;
+  animation?: ElementAnimation;
+}
+
+export type SlideElement = TextElement | ShapeElement | ImageElement | LineElement;
 
 export interface Slide {
   id: string;
   background: string;
   elements: SlideElement[];
   speakerNotes?: string;
+  transition?: SlideTransition;
 }
 
 export interface Presentation {
@@ -52,6 +70,7 @@ export interface Presentation {
   width: number;
   height: number;
   slides: Slide[];
+  reviewNotes?: string;
 }
 
 export interface PresentationEnvelope {

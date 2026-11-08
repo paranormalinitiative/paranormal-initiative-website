@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## 2026-11-08 — GenOffice editor parity implementation
+
+Status: **IMPLEMENTED — RELEASE VERIFICATION PENDING.** The existing Content
+Editor now keeps Slides selected across refresh, reopens the same presentation,
+and exposes functional ribbon controls across the Documents and Slides tabs.
+This work remains in the Content Editor at `/paper-editor`; it is not
+StudioFlow `/studio`.
+
+The implementation uses the inspected GenOffice ribbon architecture as its
+reference while retaining Nova's server-backed web model and persistence. The
+focused Slides verifier now passes 19/19, Nova typecheck passes, the production
+build passes, and Firefox local interaction verified both workspaces. Execution
+record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006E-GENOFFICE-EDITOR-PARITY.md`.
+
 ## 2026-11-08 — Slides ribbon layout correction deployed
 
 Status: **DEPLOYED AND VERIFIED — EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**

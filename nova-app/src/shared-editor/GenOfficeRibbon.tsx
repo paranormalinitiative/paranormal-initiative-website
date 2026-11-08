@@ -197,6 +197,7 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
   const [showStyles, setShowStyles] = useState(false);
   const [showNav, setShowNav] = useState(false);
   const [zoom, setZoom] = useState(100);
+  const [wordCount, setWordCount] = useState<number | null>(null);
   const [, refreshSelectionState] = useState(0);
 
   useEffect(() => {
@@ -325,6 +326,86 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
     </div>
   );
 
+  const renderDraw = () => (
+    <div className="nova-ribbon-groups">
+      <RibbonGroup label="Markup">
+        <RibbonButton label="Highlight" icon={Highlighter} onClick={() => applyTextStyle({ backgroundColor: highlightColor })} disabled={disabled} />
+        <RibbonButton label="Remove highlight" icon={Eraser} onClick={() => applyTextStyle({ backgroundColor: null })} disabled={disabled} />
+        <RibbonButton label="Horizontal rule" icon={Minus} onClick={() => editor.chain().focus().setHorizontalRule().run()} disabled={disabled} />
+      </RibbonGroup>
+      <Divider />
+      <RibbonGroup label="Ink color">
+        <label className="nova-ribbon-color" title="Markup color"><Highlighter size={15} /><input type="color" aria-label="Markup color" value={highlightColor} disabled={disabled} onChange={event => setHighlightColor(event.target.value)} /></label>
+      </RibbonGroup>
+    </div>
+  );
+
+  const renderDesign = () => (
+    <div className="nova-ribbon-groups">
+      <RibbonGroup label="Document theme">
+        <select className="nova-ribbon-select nova-ribbon-style" aria-label="Document theme" disabled={disabled} value={fontFamily} onChange={event => { setFontFamily(event.target.value); applyTextStyle({ fontFamily: event.target.value }); }}>
+          <option value="Georgia">Editorial Serif</option><option value="Arial">Clean Sans</option><option value="Calibri">Office</option><option value="Times New Roman">Classic</option>
+        </select>
+        <label className="nova-ribbon-color" title="Theme color"><Type size={15} /><input type="color" aria-label="Theme color" value={textColor} disabled={disabled} onChange={event => { setTextColor(event.target.value); applyTextStyle({ color: event.target.value }); }} /></label>
+      </RibbonGroup>
+      <Divider />
+      <RibbonGroup label="Document styles">
+        <RibbonButton label="Title" icon={Type} onClick={() => setBlock("h1")} disabled={disabled} />
+        <RibbonButton label="Heading" icon={Type} onClick={() => setBlock("h2")} disabled={disabled} />
+        <RibbonButton label="Normal" icon={Type} onClick={() => setBlock("p")} disabled={disabled} />
+      </RibbonGroup>
+    </div>
+  );
+
+  const renderLayout = () => (
+    <div className="nova-ribbon-groups">
+      <RibbonGroup label="Paragraph layout">
+        <RibbonButton label="Decrease indent" icon={IndentDecrease} compact disabled={disabled} onClick={() => setIndent(editor, -36)} />
+        <RibbonButton label="Increase indent" icon={IndentIncrease} compact disabled={disabled} onClick={() => setIndent(editor, 36)} />
+        <RibbonButton label="Align left" icon={AlignLeft} compact disabled={disabled} onClick={() => setAlignment(editor, "left")} />
+        <RibbonButton label="Center" icon={AlignCenter} compact disabled={disabled} onClick={() => setAlignment(editor, "center")} />
+        <RibbonButton label="Align right" icon={AlignRight} compact disabled={disabled} onClick={() => setAlignment(editor, "right")} />
+        <RibbonButton label="Justify" icon={AlignJustify} compact disabled={disabled} onClick={() => setAlignment(editor, "justify")} />
+      </RibbonGroup>
+      <Divider />
+      {tableContext ? renderTableLayout() : <RibbonGroup label="Document flow"><RibbonButton label="Quote" icon={Quote} onClick={() => editor.chain().focus().toggleBlockquote().run()} disabled={disabled} /><RibbonButton label="List" icon={List} onClick={() => editor.chain().focus().toggleBulletList().run()} disabled={disabled} /></RibbonGroup>}
+    </div>
+  );
+
+  const renderReferences = () => (
+    <div className="nova-ribbon-groups">
+      <RibbonGroup label="References">
+        <RibbonButton label="Citation" icon={BookOpen} onClick={() => editor.chain().focus().insertContent("[Citation needed]").run()} disabled={disabled} />
+        <RibbonButton label="Footnote marker" icon={Type} onClick={() => editor.chain().focus().insertContent("[^1]").run()} disabled={disabled} />
+        <RibbonButton label="Source link" icon={Link} onClick={onRequestLink} disabled={disabled} />
+      </RibbonGroup>
+    </div>
+  );
+
+  const renderMailings = () => (
+    <div className="nova-ribbon-groups">
+      <RibbonGroup label="Merge fields">
+        <RibbonButton label="Author" icon={Type} onClick={() => editor.chain().focus().insertContent("{{author}}").run()} disabled={disabled} />
+        <RibbonButton label="Organization" icon={Type} onClick={() => editor.chain().focus().insertContent("{{organization}}").run()} disabled={disabled} />
+        <RibbonButton label="Date" icon={Type} onClick={() => editor.chain().focus().insertContent("{{date}}").run()} disabled={disabled} />
+      </RibbonGroup>
+    </div>
+  );
+
+  const renderReview = () => (
+    <div className="nova-ribbon-groups">
+      <RibbonGroup label="Proofing">
+        <RibbonButton label="Word count" icon={BookOpen} onClick={() => setWordCount(editor.getText().trim().split(/\s+/).filter(Boolean).length)} disabled={disabled} />
+        <RibbonButton label="Clear formatting" icon={Eraser} onClick={() => clearFormatting(editor)} disabled={disabled} />
+      </RibbonGroup>
+      <Divider />
+      <RibbonGroup label="Review state">
+        <span className="nova-ribbon-zoom">{editor.getText().trim() ? "Content ready for review" : "Empty document"}</span>
+        {wordCount !== null && <span className="nova-ribbon-zoom">{wordCount} words</span>}
+      </RibbonGroup>
+    </div>
+  );
+
   const renderTableDesign = () => {
     if (!tableContext) return <PlannedPanel tab="Design" available="Select a table cell to enable table design controls." />;
     return (
@@ -409,11 +490,14 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
   const renderTab = () => {
     if (tab === "Home") return renderHome();
     if (tab === "Insert") return renderInsert();
-    if (tab === "Design") return renderTableDesign();
+    if (tab === "Draw") return renderDraw();
+    if (tab === "Design") return tableContext ? renderTableDesign() : renderDesign();
     if (tab === "View") return renderView();
-    if (tab === "Layout") return tableContext ? renderTableLayout() : <PlannedPanel tab={tab} available="Select a table cell to enable table layout controls. Basic paragraph indentation and alignment are live on Home." />;
-    if (tab === "Review") return <PlannedPanel tab={tab} available="Read-only locks and publication review are live in the document workflow; comments and tracked changes are scheduled separately." />;
-    return <PlannedPanel tab={tab} />;
+    if (tab === "Layout") return renderLayout();
+    if (tab === "References") return renderReferences();
+    if (tab === "Mailings") return renderMailings();
+    if (tab === "Review") return renderReview();
+    return renderHome();
   };
 
   return (
