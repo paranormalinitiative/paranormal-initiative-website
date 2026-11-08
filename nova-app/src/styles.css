@@ -964,7 +964,7 @@ a { color: var(--nova-mint); }
 .nova-slide-card-preview .nova-presentation-thumbnail canvas { display: block; width: 100% !important; height: auto !important; }
 .nova-slide-card strong, .nova-slide-card small { padding: 0 13px; }
 .nova-slide-card small { padding-bottom: 13px; color: var(--nova-text-muted); font-size: 11px; }
-.nova-slides-editor { display: flex; flex-direction: column; min-height: calc(100vh - 58px); background: #101713; }
+.nova-slides-editor { display: flex; flex-direction: column; width: 100%; min-height: calc(100vh - 58px); background: #101713; }
 .nova-slides-editor-header { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 8px 16px; border-bottom: 1px solid var(--nova-line); background: #18231d; }
 .nova-icon-button { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--nova-text-secondary); }
 .nova-icon-button:hover { border-color: var(--nova-line); color: var(--nova-text); }
@@ -1004,14 +1004,14 @@ a { color: var(--nova-mint); }
 
 /* GenOffice-derived ribbon: tab strip, grouped commands, separators, and a
    fixed command band. The commands remain Nova's web-safe actions. */
-.nova-genoffice-ribbon { flex-shrink: 0; color: var(--nova-text); background: #111a15; border-bottom: 1px solid var(--nova-line); user-select: none; }
-.nova-ribbon-tabs { display: flex; align-items: center; gap: 2px; padding: 5px 14px 0; overflow-x: auto; background: #18231d; }
+.nova-genoffice-ribbon { display: block; flex: 0 0 auto; align-self: stretch; width: 100%; box-sizing: border-box; color: var(--nova-text); background: #1b2420; border-top: 1px solid var(--nova-line-soft); border-bottom: 1px solid var(--nova-line); user-select: none; }
+.nova-ribbon-tabs { display: flex; align-items: center; width: 100%; box-sizing: border-box; gap: 2px; min-height: 40px; padding: 0 10px; overflow-x: auto; border-bottom: 1px solid var(--nova-line-soft); background: #18231d; }
 .nova-ribbon-tab { position: relative; flex: 0 0 auto; border: 0; border-bottom: 2px solid transparent; border-radius: 4px 4px 0 0; padding: 8px 12px 7px; background: transparent; color: var(--nova-text-secondary); font-size: 12px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .nova-ribbon-tab:hover { color: var(--nova-mint); }
 .nova-ribbon-tab.is-active { color: var(--nova-mint); }
 .nova-ribbon-tab.is-active::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -2px; height: 2px; border-radius: 2px; background: var(--nova-mint); }
-.nova-ribbon-body { display: flex; align-items: stretch; min-height: 86px; padding: 6px 14px 5px; overflow-x: auto; overflow-y: hidden; }
-.nova-ribbon-group { display: flex; flex: 0 0 auto; flex-direction: column; justify-content: center; gap: 3px; padding: 2px 5px; }
+.nova-ribbon-body { display: flex; align-items: stretch; justify-content: flex-start; width: 100%; box-sizing: border-box; min-height: 96px; padding: 7px 10px 6px; overflow-x: auto; overflow-y: hidden; background: #1b2420; }
+.nova-ribbon-group { display: flex; flex: 0 0 auto; flex-direction: column; justify-content: center; gap: 3px; min-height: 78px; padding: 2px 8px; }
 .nova-ribbon-group-items { display: flex; flex: 1; align-items: center; gap: 3px; }
 .nova-ribbon-group-label { color: #8fa89b; font-size: 10px; text-align: center; }
 .nova-ribbon-separator { align-self: stretch; width: 1px; margin: 3px 8px; background: #30463a; }
@@ -1028,6 +1028,20 @@ a { color: var(--nova-mint); }
 .nova-ribbon-placeholder { display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 0 18px; color: var(--nova-text-muted); font-size: 11px; }
 .nova-ribbon-placeholder strong { color: var(--nova-text-secondary); font-size: 12px; }
 .nova-ribbon-placeholder span { max-width: 360px; }
+
+/* The host page has a legacy global `section` rule. Reset only the Slides
+   ribbon and its command groups so that rule cannot turn the ribbon into a
+   narrow, padded floating panel. */
+.paper-editor-page .nova-genoffice-ribbon,
+.paper-editor-page .nova-genoffice-ribbon .nova-ribbon-group {
+  max-width: none;
+  margin: 0;
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+.paper-editor-page .nova-genoffice-ribbon { padding: 0; }
+.paper-editor-page .nova-genoffice-ribbon .nova-ribbon-group { padding: 2px 8px; }
 .nova-presenter { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column; background: #07100b; color: var(--nova-text); }
 .nova-presenter-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 64px; padding: 10px 18px; border-bottom: 1px solid var(--nova-line); background: #111d16; }
 .nova-presenter-header > div:first-child { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
