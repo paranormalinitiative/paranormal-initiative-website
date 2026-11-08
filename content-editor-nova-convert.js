@@ -5,9 +5,13 @@
 // is reported in `unsupported` rather than silently dropped.
 (function (global) {
   const BLOCK_TAGS = new Set(["P", "H1", "H2", "H3", "H4", "H5", "H6", "UL", "OL", "BLOCKQUOTE", "HR", "TABLE", "DIV"]);
+  // Legacy Education Center articles commonly store their document body inside
+  // semantic layout wrappers. These are containers, not document blocks; their
+  // children must be converted instead of being discarded as unsupported tags.
+  const CONTAINER_TAGS = new Set(["ARTICLE", "SECTION", "MAIN", "HEADER", "FOOTER", "ASIDE", "NAV"]);
   const INLINE_MARK_TAGS = { B: "bold", STRONG: "bold", I: "italic", EM: "italic", U: "underline" };
   const SUPPORTED_TAGS = new Set([
-    ...BLOCK_TAGS, "LI", "A", "BR", "SPAN", "TBODY", "THEAD", "TR", "TH", "TD", ...Object.keys(INLINE_MARK_TAGS)
+    ...BLOCK_TAGS, ...CONTAINER_TAGS, "LI", "A", "BR", "SPAN", "TBODY", "THEAD", "TR", "TH", "TD", ...Object.keys(INLINE_MARK_TAGS)
   ]);
 
   function textNode(text, marks) {
@@ -140,21 +144,35 @@
     return null;
   }
 
+  // Walk semantic/layout wrappers without flattening real document blocks.
+  // This preserves the paragraph and heading boundaries in grandfathered
+  // Content Editor HTML such as <section><article><h3>...</h3><div><p>...</p>.
+  function appendBlocks(node, unsupported, out) {
+    if (node.nodeType === 3) {
+      if (node.nodeValue.trim()) out.push({ type: "paragraph", content: [textNode(node.nodeValue)] });
+      return;
+    }
+    if (node.nodeType !== 1) return;
+    const tag = node.tagName;
+    if (CONTAINER_TAGS.has(tag)) {
+      for (const child of node.childNodes) appendBlocks(child, unsupported, out);
+      return;
+    }
+    if (tag === "DIV" && [...node.children].some(child => BLOCK_TAGS.has(child.tagName) || CONTAINER_TAGS.has(child.tagName))) {
+      for (const child of node.childNodes) appendBlocks(child, unsupported, out);
+      return;
+    }
+    const block = blockFromElement(node, unsupported);
+    if (block) out.push(block);
+  }
+
   // Converts article HTML into a TipTap JSON document.
   function htmlToNovaDoc(html) {
     const unsupported = new Set();
     const parser = new DOMParser();
     const doc = parser.parseFromString(`<body>${html || ""}</body>`, "text/html");
     const content = [];
-    for (const child of doc.body.childNodes) {
-      if (child.nodeType === 3) {
-        if (child.nodeValue.trim()) content.push({ type: "paragraph", content: [textNode(child.nodeValue)] });
-        continue;
-      }
-      if (child.nodeType !== 1) continue;
-      const block = blockFromElement(child, unsupported);
-      if (block) content.push(block);
-    }
+    for (const child of doc.body.childNodes) appendBlocks(child, unsupported, content);
     return {
       doc: { type: "doc", content: content.length ? content : [{ type: "paragraph" }] },
       unsupported: [...unsupported]

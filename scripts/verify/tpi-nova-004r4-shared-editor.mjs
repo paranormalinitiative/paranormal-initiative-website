@@ -71,6 +71,13 @@ check("converter exposes htmlToNovaDoc and novaDocToHtml", () => {
   assert.equal(typeof api.novaDocToHtml, "function");
 });
 
+check("converter preserves semantic wrappers used by legacy Education Center articles", () => {
+  assert.match(convertSource, /CONTAINER_TAGS/);
+  assert.match(convertSource, /\"ARTICLE\", \"SECTION\", \"MAIN\"/);
+  assert.match(convertSource, /function appendBlocks\(node, unsupported, out\)/);
+  assert.match(convertSource, /for \(const child of doc\.body\.childNodes\) appendBlocks/);
+});
+
 check("Nova document renders supported formatting to article HTML", () => {
   const api = renderOnly({});
   const doc = {
