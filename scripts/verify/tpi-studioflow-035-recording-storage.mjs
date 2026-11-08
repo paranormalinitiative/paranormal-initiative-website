@@ -218,14 +218,12 @@ try {
   check("Live interaction removed from the right rail", !labels.includes("Live interaction"), JSON.stringify(labels));
   check("Comments removed from the right rail", !labels.includes("Comments"), JSON.stringify(labels));
   check("Widgets removed from the right rail", !labels.includes("Widgets"), JSON.stringify(labels));
-  // TPI-NOVA-004R6D0: the Notes tab presents as Nova Edit and keeps its `Notes`
-  // state key, which `openRail` below still uses.
-  check("Notes preserved in the right rail", labels.includes("Nova Edit"), JSON.stringify(labels));
-  const notesIndex = labels.indexOf("Nova Edit");
+  check("Notes preserved in the right rail", labels.includes("Notes"), JSON.stringify(labels));
+  const notesIndex = labels.indexOf("Notes");
   const teleprompterIndex = labels.indexOf("Teleprompter");
-  check("Teleprompter sits directly beneath Nova Edit", notesIndex >= 0 && teleprompterIndex === notesIndex + 1, JSON.stringify(labels));
+  check("Teleprompter sits directly beneath Notes", notesIndex >= 0 && teleprompterIndex === notesIndex + 1, JSON.stringify(labels));
   check("Recording & Storage is visible in the right rail", labels.includes("Recording & Storage"), JSON.stringify(labels));
-  const expectedTabs = ["Banners", "Media assets", "Voice FX", "Style", "Nova Edit", "Teleprompter", "People", "Private chat", "Recording", "Recording & Storage"];
+  const expectedTabs = ["Banners", "Media assets", "Voice FX", "Style", "Notes", "Teleprompter", "People", "Private chat", "Recording", "Recording & Storage"];
   check("Other navigation items are unaffected and ordered", JSON.stringify(labels) === JSON.stringify(expectedTabs), JSON.stringify(labels));
 
   // ---- Teleprompter panel reuses the existing reader ----

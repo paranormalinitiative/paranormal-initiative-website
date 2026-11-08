@@ -263,14 +263,14 @@ try {
   // TPI-STUDIOFLOW-035: Live interaction, Comments, and Widgets were removed
   // from the right rail; Teleprompter sits beneath Notes and Recording &
   // Storage is the authoritative management section.
-  // TPI-NOVA-004R6D0: the tab's `data-studio-panel-tab` state key is still
-  // `Notes`; its visible rail label and panel heading are `Nova Edit`.
+  // Editorial Nova belongs to the Content Editor. StudioFlow retains its
+  // existing Notes panel and state key for this release.
   const panelTargets = [
     ["Banners", "Banner text"],
     ["Media assets", "Video clips"],
     ["Voice FX", "Voice FX"],
     ["Style", "Brand Presets"],
-    ["Notes", "Nova Edit"],
+    ["Notes", "Notes"],
     ["Teleprompter", "Open teleprompter"],
     ["People", "People"],
     ["Private chat", "Private chat"],
@@ -289,9 +289,8 @@ try {
   const removedTabsGone = await count('[data-studio-panel-tab="Live interaction"]') === 0 && await count('[data-studio-panel-tab="Comments"]') === 0 && await count('[data-studio-panel-tab="Widgets"]') === 0;
   check("Live interaction, Comments, and Widgets are removed from the right rail", removedTabsGone);
   const railOrder = await js("return Array.from(document.querySelectorAll('.right-rail-tab span')).map(function (node) { return node.textContent.trim(); });");
-  check("Teleprompter sits directly beneath Nova Edit", railOrder.indexOf("Teleprompter") === railOrder.indexOf("Nova Edit") + 1 && railOrder.includes("Recording & Storage"), JSON.stringify(railOrder));
-  // TPI-NOVA-004R6D0: presenting the tab as Nova Edit must not rename its state key.
-  check("the Nova Edit tab keeps its Notes state key", (await count('[data-studio-panel-tab="Notes"]')) === 1 && (await count('[data-studio-panel-tab="Nova Edit"]')) === 0, JSON.stringify(railOrder));
+  check("Teleprompter sits directly beneath Notes", railOrder.indexOf("Teleprompter") === railOrder.indexOf("Notes") + 1 && railOrder.includes("Recording & Storage"), JSON.stringify(railOrder));
+  check("the Notes tab keeps its Notes state key", (await count('[data-studio-panel-tab="Notes"]')) === 1 && (await count('[data-studio-panel-tab="Nova Edit"]')) === 0, JSON.stringify(railOrder));
   await click('[data-studio-panel-tab="Media assets"]');
   check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));
   const timerDurationState = await js("var rows=Array.from(document.querySelectorAll('[data-tpi-native-video-timer-controls] .countdown-duration-row')); return {rows:rows.length,labels:rows.length===1?Array.from(rows[0].querySelectorAll('button')).map(function(button){return (button.textContent||'').trim();}):[]};");
