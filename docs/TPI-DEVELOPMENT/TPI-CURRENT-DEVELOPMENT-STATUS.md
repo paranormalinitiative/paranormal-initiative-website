@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-08 final deployment — GenOffice-style Slides ribbon and live previews
+
+Status: **DEPLOYED AND VERIFIED — EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**
+The Nova Slides correction requested from the GenOffice reference repository is
+live at `/paper-editor` on the main production website. The Content Editor now
+shows a professional tabbed ribbon, grouped presentation commands, live slide
+previews in the library and left rail, and the selected slide rendered on the
+main canvas. The existing server-backed Nova presentation model, image controls,
+speaker notes, autosave, and Presenter Mode remain in use.
+
+The guarded release completed as `rel-b5d5819f5e3e-db5e16c2da34` from website
+commit `b5d5819f5e3ee852e85961e4b57fe2bae69985da`, Worker
+`8a0a324c-d666-4d69-afe4-30c636a392e9` at 100% traffic. Rollback Worker:
+`78e86e60-2b45-4b73-bf89-75a53d9f7f42`. Release manifest digest:
+`884647e6bcb87bc4be091658f648483cc36d7e9ba83f794c0b9b00de9fc5bc4f`.
+Anonymous production smoke passed 10/10, isolated Firefox production
+acceptance passed 65/65, and owner Firefox live verification confirmed the
+ribbon and rendered thumbnails without creating or deleting production content.
+Execution record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006C-GENOFFICE-RIBBON-THUMBNAILS.md`.
+
 ## 2026-11-08 amendment — GenOffice-derived Slides ribbon and live previews
 
 Nova Slides now uses the actual GenOffice Slides renderer as its inspected
@@ -16,7 +37,8 @@ patterns in `apps/slides/src/renderer/components/Ribbon.tsx`,
 reference checkout `968d7d23`; Electron-only code and GenOffice branding were
 not imported. Local Firefox verification shows the ribbon, real thumbnails,
 slide selection, and Insert image controls. Focused Slides verification is
-16/16, Nova typecheck passes, and release-safety is 27/27. Execution record:
+16/16, Nova typecheck passes, and release-safety is 27/27. The guarded release
+is now complete; the live production verification is recorded above. Execution record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006C-GENOFFICE-RIBBON-THUMBNAILS.md`.
 
 ## TPI-NOVA — Editorial Workspace primary engine migration (2026-11-07)

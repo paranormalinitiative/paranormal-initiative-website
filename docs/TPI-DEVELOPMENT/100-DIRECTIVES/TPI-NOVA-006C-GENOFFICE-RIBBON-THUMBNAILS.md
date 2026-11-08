@@ -1,7 +1,7 @@
 # TPI-NOVA-006C — GenOffice Ribbon and Live Slide Thumbnails
 
 **Date:** 2026-11-08  
-**Status:** IMPLEMENTED — VERIFIED LOCALLY; RELEASE READY  
+**Status:** DEPLOYED AND VERIFIED IN PRODUCTION
 **Production target:** Existing Content Editor at `/paper-editor`, not StudioFlow `/studio/`
 
 ## Objective
@@ -73,6 +73,26 @@ The current build generated these assets:
 - Entrypoint: `content-editor.html`
   - SHA-256: `888efbbc9af94443050edaaaf3c045ab82cc997c7f9e3564a2f0c281484a3f67`
 
+## Production verification
+
+The guarded production release completed successfully as:
+
+- Release: `rel-b5d5819f5e3e-db5e16c2da34`
+- Website commit: `b5d5819f5e3ee852e85961e4b57fe2bae69985da`
+- Production Worker version: `8a0a324c-d666-4d69-afe4-30c636a392e9`
+- Rollback Worker version: `78e86e60-2b45-4b73-bf89-75a53d9f7f42`
+- Traffic: 100%
+- Manifest digest: `884647e6bcb87bc4be091658f648483cc36d7e9ba83f794c0b9b00de9fc5bc4f`
+
+The release gates passed with a certified candidate. Anonymous production smoke
+passed 10/10 and isolated Firefox Developer Edition acceptance passed 65/65.
+The owner-facing Firefox session then opened `https://paranormalinitiative.com/paper-editor`
+and visibly confirmed the Slides workspace, ribbon tabs, live rendered slide
+thumbnails, selected-slide canvas preview, and the existing Beyond the Veil deck.
+
+The release changed the Content Editor route only; StudioFlow `/studio/` was not
+the deployment target. No production database or creator content was modified.
+
 ## Scope and known limitation
 
 This change is scoped to Nova Slides in the existing Content Editor. The
@@ -82,5 +102,4 @@ state message rather than pretending to provide GenOffice feature parity.
 PPTX/PDF export, collaboration, and advanced transitions/animations remain
 separate future work.
 
-Production deployment follows the canonical guarded Content Editor release
-path after the documentation commit and live production acceptance gates pass.
+The release is now complete through the canonical guarded Content Editor path.
