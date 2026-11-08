@@ -179,6 +179,18 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     markDirty();
   };
 
+  const handleTitleChange = (nextTitle: string) => {
+    const previousTitle = titleRef.current;
+    titleRef.current = nextTitle;
+    setTitle(nextTitle);
+    const coverTitle = presentationRef.current?.slides[0]?.elements.find(element => element.kind === "text" && (element.text === "Untitled Presentation" || element.text === previousTitle));
+    if (coverTitle) {
+      edit(value => updateElement(value, 0, coverTitle.id, { text: nextTitle }));
+    } else {
+      markDirty();
+    }
+  };
+
   if (failure && !item) return <div className="nova-error-panel" role="alert"><h1>This presentation could not be opened</h1><p>{failure}</p><button type="button" className="nova-button" onClick={onBack}>Back to Slides</button></div>;
   if (!item || !presentation) return <div className="nova-booting" role="status">Opening presentation…</div>;
 
@@ -211,7 +223,7 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     <div className="nova-slides-editor" data-testid="slides-editor">
       <header className="nova-slides-editor-header">
         <button type="button" className="nova-icon-button" aria-label="Back to Slides" onClick={onBack}><ArrowLeft size={18} /></button>
-        <input className="nova-slides-title" value={title} aria-label="Presentation title" disabled={readOnly} onChange={event => { titleRef.current = event.target.value; setTitle(event.target.value); markDirty(); }} />
+        <input className="nova-slides-title" value={title} aria-label="Presentation title" disabled={readOnly} onChange={event => handleTitleChange(event.target.value)} />
         <span className={`nova-save-state ${dirty ? "is-dirty" : ""}`}>{status}</span>
         <button type="button" className="nova-button nova-button-present" disabled={!presentation.slides.length} onClick={() => setPresenting(true)}><Maximize size={15} /> Present</button>
         <button type="button" className="nova-button" disabled={readOnly || !dirty} onClick={() => void save()}><Save size={15} /> Save</button>
