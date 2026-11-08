@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Group, Layer, Rect, Stage, Text, Transformer } from "react-konva";
+import { Group, Image as KonvaImage, Layer, Rect, Stage, Text, Transformer } from "react-konva";
 import type Konva from "konva";
 import type { Presentation, Slide, SlideElement } from "./model";
 
@@ -8,9 +8,11 @@ interface Props {
   slide: Slide;
   scale: number;
   onUpdateElement: (elementId: string, patch: Partial<SlideElement>) => void;
+  onSelectElement?: (elementId: string | null) => void;
+  interactive?: boolean;
 }
 
-export function SlideCanvas({ presentation, slide, scale, onUpdateElement }: Props) {
+export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSelectElement, interactive = true }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [transformerNode, setTransformerNode] = useState<Konva.Node | null>(null);
 
@@ -24,6 +26,7 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement }: Pro
   const select = (id: string, node: Konva.Node | null) => {
     setSelectedId(id);
     setTransformerNode(node);
+    onSelectElement?.(id || null);
   };
 
   return (
@@ -42,18 +45,18 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement }: Pro
             id: element.id,
             x: element.x,
             y: element.y,
-            draggable: true,
-            onClick: (event: Konva.KonvaEventObject<MouseEvent>) => select(element.id, event.target),
-            onTap: (event: Konva.KonvaEventObject<Event>) => select(element.id, event.target),
-            onDragEnd: (event: Konva.KonvaEventObject<DragEvent>) => onUpdateElement(element.id, { x: event.target.x(), y: event.target.y() }),
-            onTransformEnd: (event: Konva.KonvaEventObject<Event>) => {
+            draggable: interactive,
+            onClick: interactive ? (event: Konva.KonvaEventObject<MouseEvent>) => select(element.id, event.target) : undefined,
+            onTap: interactive ? (event: Konva.KonvaEventObject<Event>) => select(element.id, event.target) : undefined,
+            onDragEnd: interactive ? (event: Konva.KonvaEventObject<DragEvent>) => onUpdateElement(element.id, { x: event.target.x(), y: event.target.y() }) : undefined,
+            onTransformEnd: interactive ? (event: Konva.KonvaEventObject<Event>) => {
               const node = event.target;
               const width = Math.max(24, node.width() * node.scaleX());
               const height = Math.max(24, node.height() * node.scaleY());
               node.scaleX(1);
               node.scaleY(1);
               onUpdateElement(element.id, { x: node.x(), y: node.y(), width, height });
-            }
+            } : undefined
           };
           if (element.kind === "text") {
             return <Text key={element.id} {...common} text={element.text} fontSize={element.fontSize} fill={element.fill} width={element.width} height={element.height} padding={8} verticalAlign="middle" />;
@@ -63,8 +66,10 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement }: Pro
           }
           return (
             <Group key={element.id} {...common}>
-              <Rect width={element.width} height={element.height} stroke="#53645a" dash={[8, 6]} strokeWidth={2} />
-              <Text text={element.placeholder} width={element.width} height={element.height} align="center" verticalAlign="middle" fontSize={18} fill="#53645a" />
+              {element.src ? <SlideImage src={element.src} width={element.width} height={element.height} /> : <>
+                <Rect width={element.width} height={element.height} stroke="#53645a" dash={[8, 6]} strokeWidth={2} />
+                <Text text={element.placeholder} width={element.width} height={element.height} align="center" verticalAlign="middle" fontSize={18} fill="#53645a" />
+              </>}
             </Group>
           );
         })}
@@ -72,4 +77,15 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement }: Pro
       </Layer>
     </Stage>
   );
+}
+
+function SlideImage({ src, width, height }: { src: string; width: number; height: number }) {
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  useEffect(() => {
+    const next = new window.Image();
+    next.onload = () => setImage(next);
+    next.src = src;
+    return () => { next.onload = null; };
+  }, [src]);
+  return image ? <KonvaImage image={image} width={width} height={height} cornerRadius={8} /> : <Rect width={width} height={height} stroke="#53645a" dash={[8, 6]} strokeWidth={2} />;
 }

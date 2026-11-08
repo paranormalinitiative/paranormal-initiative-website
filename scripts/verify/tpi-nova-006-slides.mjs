@@ -21,12 +21,16 @@ const checks = [
   ["slide operations cover create, duplicate, reorder and delete", ["addSlide", "duplicateSlide", "reorderSlide", "deleteSlide"].every(name => new RegExp(`function ${name}`).test(model))],
   ["canvas adapter writes geometry back to the model", /onDragEnd/.test(canvas) && /onTransformEnd/.test(canvas) && /onUpdateElement/.test(canvas)],
   ["Slides is lazy-loaded and routed from the Nova shell", /lazy\(\(\) => import\("\.\.\/slides\/SlidesSurface"\)\)/.test(shell) && /#\/slides/.test(shell)],
-  ["Slides uses the Nova presentation API with optimistic versioning", /type: "nova-presentation"/.test(surface) && /expectedVersion: versionRef\.current/.test(surface) && /content: envelope\(presentation\)/.test(surface)],
+  ["Slides uses the Nova presentation API with optimistic versioning", /type: "nova-presentation"/.test(surface) && /expectedVersion: versionRef\.current/.test(surface) && /content: envelope\(latestPresentation\)/.test(surface)],
   ["API supports presentation filtering and content envelopes", /type\?: "nova-document" \| "nova-presentation" \| "all"/.test(api) && /NovaContentEnvelope/.test(api)],
   ["Konva dependencies are pinned", packageJson.dependencies?.konva === "^10.9.1" && packageJson.dependencies?.["react-konva"] === "^19.3.2"],
   ["Content Editor mounts the existing Slides surface", /mountNovaSlidesWorkspace/.test(contentEntry) && /<SlidesSurface/.test(contentEntry)],
   ["Content Editor bundle includes the Slides canvas vendor chunk", /node_modules\/konva/.test(contentVite) && /nova-vendor-slides/.test(contentVite)],
-  ["Content Editor exposes an active Slides workspace control", /data-workspace-mode="slides"/.test(contentShell) && /id="nova-slides-workspace"/.test(contentShell) && /setWorkspaceMode/.test(contentScript)]
+  ["Content Editor exposes an active Slides workspace control", /data-workspace-mode="slides"/.test(contentShell) && /id="nova-slides-workspace"/.test(contentShell) && /setWorkspaceMode/.test(contentScript)],
+  ["Slides provides professional templates", /SlideTemplateKey/.test(model) && /field-report/.test(model) && /evidence-brief/.test(model) && /lecture/.test(model) && /Presentation template/.test(surface)],
+  ["Slide text is editable after insertion", /SlideInspector/.test(surface) && /Edit this text/.test(surface) && /element\.text/.test(surface)],
+  ["Slides support real image sources", /imageFileToDataUrl/.test(surface) && /Upload image/.test(surface) && /src\?: string/.test(model) && /KonvaImage/.test(canvas)],
+  ["Presenter mode includes navigation and notes", /PresenterMode/.test(surface) && /Presenter mode/.test(surface) && /Speaker notes/.test(surface) && /PageDown/.test(surface)]
 ];
 
 let failed = 0;

@@ -60,6 +60,26 @@ amendment is **DEPLOYED AND VERIFIED**. The production target is
 `/paper-editor`, not StudioFlow `/studio/`. Execution record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006A-EDITORIAL-SLIDES-INTEGRATION.md`.
 
+### 2026-11-08 amendment — Professional Slides and Presenter Mode
+
+The existing GenOffice/Nova Slides engine was extended in place after local
+acceptance exposed that the initial canvas could persist notes but could not
+produce a presentation-ready deck. The Content Editor now provides Field
+Report, Evidence Brief, Lecture, and Blank Canvas templates; editable selected
+text/shape/image elements; browser image upload and image URL insertion; and a
+Presenter Mode with navigation, next-slide context, full-screen control, and
+speaker notes. Autosave now uses the latest title and presentation refs so
+debounced saves cannot overwrite a freshly edited title with stale state.
+
+Local Firefox verification passed: a seven-slide Field Report deck was created,
+renamed to `Beyond the Veil: A Field Guide to Paranormal Experiences`, saved,
+reopened after refresh, given a real image URL, and opened in Presenter Mode.
+Source typecheck passed; the focused Slides verifier passed 15/15; the Content
+Editor build passed; and `git diff --check` passed. Production status for this
+amendment is **IMPLEMENTED AND VERIFIED IN LOCAL DEVELOPMENT — PENDING GUARDED
+RELEASE**. Execution record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006B-PROFESSIONAL-SLIDES-PRESENTER.md`.
+
 ## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)
 
 Status: **Member Home reads only the authoritative Contributor API.** Audit found `member-home.html` never read `tpiPublishedArticles`; its article data comes solely from `/api/contributors/me/articles`. The one remaining legacy check, `a.published`, was removed from the My Content count so it uses server `status` only. The API never returns `published`, so the count is unchanged. Remaining `tpiPublishedArticles` readers (`includes.js`, `member-login.js`, `published-article.js`, `search.js`, `paper-editor.js`) are outside Member Home and were not changed. No article was migrated, enrolled or modified. Production untouched.
