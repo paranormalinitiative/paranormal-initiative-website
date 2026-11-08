@@ -60,6 +60,30 @@ amendment is **DEPLOYED AND VERIFIED**. The production target is
 `/paper-editor`, not StudioFlow `/studio/`. Execution record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006A-EDITORIAL-SLIDES-INTEGRATION.md`.
 
+### 2026-11-08 final deck refresh — Beyond the Veil
+
+The owner-requested deck is now a ready-to-use seven-slide Nova Slides
+presentation titled **Beyond the Veil: A Field Guide to Paranormal
+Experiences**. It uses the Field Report theme, a real paranormal cover image,
+structured slide content, speaker notes on every slide, and Presenter Mode.
+Owner Firefox verification confirmed the cover title wraps cleanly, the image
+does not overlap the body copy, and Presenter Mode shows the notes and next
+slide. The finished deck is in the existing Content Editor `/paper-editor`
+under Slides; the earlier placeholder deck was left untouched.
+
+The final compatibility correction for older saved cover geometry is deployed
+and verified as Worker `78e86e60-2b45-4b73-bf89-75a53d9f7f42` at 100% traffic,
+release `rel-e7d71a009a4c-4a93cd524017`, from commit
+`e7d71a009a4ceca1f08c32be3b887aa504f0f723`. Guarded preflight passed 30/30
+certification gates; production smoke passed 10/10; isolated Firefox passed
+65/65. The Content Editor assets are `content-editor-FxUho0bs.js`
+(`104a14912935a88f29d4e61e1d56a25fb7690001d46692c75be27c5b828da6e1`) and
+`content-editor-C4FZKtzb.css`
+(`aeb7676f911edb6833d48222858b614a36a16ce668f885d205173552cafe9798`), with
+entrypoint hash
+`af6d7bcf236f9bbd1934795967de1231ac40b1dd168204448dc252989707addd`.
+The production target remains Content Editor/Nova, not StudioFlow `/studio/`.
+
 ### 2026-11-08 amendment — Professional Slides and Presenter Mode
 
 The existing GenOffice/Nova Slides engine was extended in place after local

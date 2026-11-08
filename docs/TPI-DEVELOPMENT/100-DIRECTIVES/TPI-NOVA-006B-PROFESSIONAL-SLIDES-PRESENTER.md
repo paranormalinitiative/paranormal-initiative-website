@@ -88,3 +88,37 @@ service. Those remain separate future capabilities.
 
 The production target is the existing Content Editor at `/paper-editor`; this
 release does not place the Slides engine in StudioFlow `/studio/`.
+
+## Final production refresh — 2026-11-08
+
+Owner Firefox verification found one compatibility edge case in the saved
+presentation: the existing cover title could retain the original one-line
+geometry after the deck was created. The final correction keeps the saved
+deck compatible with that older shape and renders long cover titles as a
+readable two-line title without changing the slide data model.
+
+- Source and website commit: `e7d71a009a4ceca1f08c32be3b887aa504f0f723`
+- Release ID: `rel-e7d71a009a4c-4a93cd524017`
+- Production Worker: `78e86e60-2b45-4b73-bf89-75a53d9f7f42`
+- Rollback Worker: `8c426c47-1a4d-45f7-8e50-9ee5226fa2a1`
+- Traffic: 100%
+- JavaScript: `content-editor-FxUho0bs.js`
+  - SHA-256: `104a14912935a88f29d4e61e1d56a25fb7690001d46692c75be27c5b828da6e1`
+- CSS: `content-editor-C4FZKtzb.css`
+  - SHA-256: `aeb7676f911edb6833d48222858b614a36a16ce668f885d205173552cafe9798`
+- Entrypoint: `content-editor.html`
+  - SHA-256: `af6d7bcf236f9bbd1934795967de1231ac40b1dd168204448dc252989707addd`
+- Certification manifest digest: `5099d64c5ce5512a2f2cbdb05f954beaa6a947152f0352b2bc16d40d67b87f16`
+- Guarded preflight: PASS, 30 certified gates
+- Live anonymous smoke: PASS, 10/10
+- Isolated Firefox production acceptance: PASS, 65/65
+- Owner Firefox live acceptance: PASS — the seven-slide deck renders with a
+  dark green Field Report theme, two-line cover title, mint accent, real cover
+  image, speaker notes, and Presenter Mode showing `Slide 1 of 7`, notes, and
+  the next-slide cue.
+
+The ready-to-use deck is stored in Nova Slides under the existing Content
+Editor at `/paper-editor`. The original placeholder deck remains untouched as
+historical data; the finished seven-slide deck is the newer card with the
+same title. No StudioFlow `/studio/` data was changed, and no PPTX/PDF export
+was introduced by this release.
