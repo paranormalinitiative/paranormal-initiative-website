@@ -552,16 +552,19 @@ R=$(req GET "/contributors/me/articles" tok-a)
 check "member cannot list contributor articles" 403 "$R"
 R=$(req POST /articles tok-a '{"id":"e2e-forbidden","destination":"education-area-general.html","title":"nope","bodyHtml":"<p>x</p>","status":"draft"}')
 check "ordinary member cannot create articles" 403 "$R"
+R=$(req POST /articles tok-admin '{"id":"e2e-pub-article","destination":"education-area-general.html","title":"E2E Editorial Draft","subtitle":"editorial workflow test","articleType":"Research Paper","bodyHtml":"<p>draft body</p>","status":"draft"}')
+check "admin creates an editorial draft" 200 "$R" "d['article']['status']=='draft'"
 R=$(req POST /articles tok-admin '{"id":"e2e-pub-article","destination":"education-area-general.html","title":"E2E Published","subtitle":"published test","articleType":"Research Paper","bodyHtml":"<p>published body</p>","status":"published"}')
-check "admin publishes article" 200 "$R"
+check "direct article publish is refused by the editorial workflow" 409 "$R" "d.get('code')=='editorial_workflow_publish_refused'"
 R=$(req GET "/articles" tok-a)
-check "published article visible to members" 200 "$R" "any(a.get('id')=='e2e-pub-article' for a in (d.get('articles') or []))"
-# republish does not re-notify
+check "published article list remains visible to members" 200 "$R" "any('itc-ethics' in (a.get('id') or '') for a in (d.get('articles') or [])) and not any(a.get('id')=='e2e-pub-article' for a in (d.get('articles') or []))"
+# Saving an editorial draft does not notify members; publication is covered by
+# the dedicated Nova editorial workflow suite after review approval.
 R=$(req GET /notifications tok-b); N1=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(len([n for n in json.load(sys.stdin)['notifications'] if n.get('type')=='education']))")
-R=$(req POST /articles tok-admin '{"id":"e2e-pub-article","destination":"education-area-general.html","title":"E2E Published (edit)","subtitle":"published test","articleType":"Research Paper","bodyHtml":"<p>published body v2</p>","status":"published"}')
-check "re-saving published article does not re-notify" 200 "$R"
+R=$(req POST /articles tok-admin '{"id":"e2e-pub-article","destination":"education-area-general.html","title":"E2E Editorial Draft (edit)","subtitle":"editorial workflow test","articleType":"Research Paper","bodyHtml":"<p>draft body v2</p>","status":"draft"}')
+check "re-saving an editorial draft does not re-notify" 200 "$R" "d['article']['status']=='draft'"
 R=$(req GET /notifications tok-b); N2=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(len([n for n in json.load(sys.stdin)['notifications'] if n.get('type')=='education']))")
-echo "NOTE  education notification count before/after republish: $N1/$N2 (must be equal)"
+echo "NOTE  education notification count before/after editorial draft save: $N1/$N2 (must be equal)"
 R=$(req DELETE "/articles/e2e-draft-article" tok-a)
 check "member cannot delete articles" 403 "$R"
 R=$(req DELETE "/articles/e2e-pub-article" tok-admin)
