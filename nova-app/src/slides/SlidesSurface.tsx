@@ -18,14 +18,20 @@ const TEMPLATE_OPTIONS: Array<{ key: SlideTemplateKey; label: string; descriptio
   { key: "blank", label: "Blank Canvas", description: "Start with a clean editable slide" }
 ];
 
-function normalizeLegacyCoverImage(presentation: Presentation): Presentation {
+function normalizePresentationLayout(presentation: Presentation): Presentation {
   const cover = presentation.slides[0];
   const legacyImage = cover?.elements.find(element => element.kind === "image" && element.x === 420 && element.y === 160 && element.width === 320 && element.height === 210);
-  if (!legacyImage) return presentation;
+  const coverTitle = cover?.elements.find((element): element is Extract<SlideElement, { kind: "text" }> => element.kind === "text" && element.text === presentation.title);
+  const titleNeedsFit = Boolean(coverTitle && presentation.title.length > 36 && (coverTitle.fontSize > 34 || coverTitle.height < 100));
+  if (!legacyImage && !titleNeedsFit) return presentation;
   return {
     ...presentation,
     slides: presentation.slides.map((slide, index) => index === 0
-      ? { ...slide, elements: slide.elements.map(element => element.id === legacyImage.id ? { ...element, x: 620, y: 320, width: 240, height: 150 } : element) }
+      ? { ...slide, elements: slide.elements.map(element => {
+        if (legacyImage && element.id === legacyImage.id) return { ...element, x: 620, y: 320, width: 240, height: 150 };
+        if (coverTitle && element.id === coverTitle.id && titleNeedsFit) return { ...element, fontSize: 34, height: 112 };
+        return element;
+      }) }
       : slide)
   };
 }
@@ -134,7 +140,7 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     try {
       const response = await novaApi.getItem(itemId);
       const raw = parsePresentation(response.item.content);
-      const loaded = normalizeLegacyCoverImage(raw);
+      const loaded = normalizePresentationLayout(raw);
       let persistedItem = response.item;
       if (loaded !== raw && response.item.status === "active") {
         const migrated = await novaApi.updateItem(response.item.id, {
