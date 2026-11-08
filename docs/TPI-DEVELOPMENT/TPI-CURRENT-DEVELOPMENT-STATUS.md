@@ -76,8 +76,14 @@ renamed to `Beyond the Veil: A Field Guide to Paranormal Experiences`, saved,
 reopened after refresh, given a real image URL, and opened in Presenter Mode.
 Source typecheck passed; the focused Slides verifier passed 15/15; the Content
 Editor build passed; and `git diff --check` passed. Production status for this
-amendment is **IMPLEMENTED AND VERIFIED IN LOCAL DEVELOPMENT — PENDING GUARDED
-RELEASE**. Execution record:
+amendment is **DEPLOYED AND VERIFIED**. The guarded release completed with
+release ID `rel-6180a41bbc27-c6d2a3d3ba79`, Worker
+`86c67c55-2e42-410c-98ff-2361564672ef` at 100% traffic, and rollback Worker
+`0e9c8080-4a2d-4451-9a37-464c69301baf`. Isolated Firefox production acceptance
+passed 65/65; live anonymous smoke passed 10/10; and the owner Firefox live
+check confirmed `/paper-editor` serves the Slides workspace without creating
+production content. The production target is the Content Editor `/paper-editor`,
+not StudioFlow `/studio/`. Execution record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006B-PROFESSIONAL-SLIDES-PRESENTER.md`.
 
 ## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)

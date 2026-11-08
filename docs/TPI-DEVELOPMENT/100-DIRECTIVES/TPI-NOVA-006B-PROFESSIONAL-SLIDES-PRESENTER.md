@@ -1,8 +1,8 @@
 # TPI-NOVA-006B — Professional Slides, Images, Templates & Presenter Mode
 
 **Date:** 2026-11-08  
-**Status:** IMPLEMENTED — VERIFIED IN LOCAL DEVELOPMENT  
-**Production deployment:** Pending guarded release verification
+**Status:** COMPLETE — DEPLOYED AND VERIFIED
+**Production deployment:** `DEPLOYED_AND_VERIFIED` on 2026-11-08
 
 ## Objective
 
@@ -66,3 +66,25 @@ This work stays in the existing Content Editor/Nova engine. It is not placed
 in StudioFlow `/studio/`. It does not add PPTX/PDF export, collaborative
 co-editing, a broadcast/StudioFlow production bridge, or a separate asset
 service. Those remain separate future capabilities.
+
+## Production release record
+
+- Release ID: `rel-6180a41bbc27-c6d2a3d3ba79`
+- Source commit: `6180a41bbc27de7f290d064a5a6513fdd7df7c81`
+- Production Worker: `86c67c55-2e42-410c-98ff-2361564672ef`
+- Rollback Worker: `0e9c8080-4a2d-4451-9a37-464c69301baf`
+- Traffic: 100%
+- Integrated Slides JavaScript: `content-editor-B_QHFKn5.js`
+  - SHA-256: `3b35c0f9ab96debfd890f899fad7044abdd4840fc50494de857591e8e9599703`
+- Integrated Slides CSS: `content-editor-C4FZKtzb.css`
+  - SHA-256: `aeb7676f911edb6833d48222858b614a36a16ce668f885d205173552cafe9798`
+- Content Editor entrypoint: `content-editor.html`
+  - SHA-256: `1478599c6a62ed9f517d0ae79511d025d85778a44a6c3929d3f6962c65bfa5bd`
+- Certification manifest digest: `1a9a8e9cd678a58995ddda9789cd5ed303fa1962c9d86d938fd8500cf5e1216d`
+- Guarded preflight: PASS; 30 certified gates
+- Live anonymous smoke: PASS, 10/10
+- Isolated Firefox production acceptance: PASS, 65/65
+- Owner Firefox live check: `/paper-editor` loaded Slides, the Field Report template selector, and the saved presentation card without modifying production content.
+
+The production target is the existing Content Editor at `/paper-editor`; this
+release does not place the Slides engine in StudioFlow `/studio/`.
