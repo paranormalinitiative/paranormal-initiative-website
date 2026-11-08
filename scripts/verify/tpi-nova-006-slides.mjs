@@ -6,6 +6,7 @@ const root = resolve(import.meta.dirname, "../..");
 const read = file => readFileSync(resolve(root, file), "utf8");
 const model = read("nova-app/src/slides/model.ts");
 const surface = read("nova-app/src/slides/SlidesSurface.tsx");
+const ribbon = read("nova-app/src/slides/GenOfficeRibbon.tsx");
 const canvas = read("nova-app/src/slides/SlideCanvas.tsx");
 const shell = read("nova-app/src/shell/App.tsx");
 const api = read("nova-app/src/lib/api.ts");
@@ -29,7 +30,8 @@ const checks = [
   ["Content Editor exposes an active Slides workspace control", /data-workspace-mode="slides"/.test(contentShell) && /id="nova-slides-workspace"/.test(contentShell) && /setWorkspaceMode/.test(contentScript)],
   ["Slides provides professional templates", /SlideTemplateKey/.test(model) && /field-report/.test(model) && /evidence-brief/.test(model) && /lecture/.test(model) && /Presentation template/.test(surface)],
   ["Slide text is editable after insertion", /SlideInspector/.test(surface) && /Edit this text/.test(surface) && /element\.text/.test(surface)],
-  ["Slides support real image sources", /imageFileToDataUrl/.test(surface) && /Upload image/.test(surface) && /src\?: string/.test(model) && /KonvaImage/.test(canvas)],
+  ["Slides support real image sources", /imageFileToDataUrl/.test(surface) && /Upload image/.test(ribbon) && /src\?: string/.test(model) && /KonvaImage/.test(canvas)],
+  ["Slides use the GenOffice ribbon and live slide thumbnails", /Ribbon\.tsx/.test(ribbon) && /nova-genoffice-ribbon/.test(ribbon) && /PresentationThumbnail/.test(surface) && /data-testid=\"slide-thumbnail\"/.test(surface)],
   ["Presenter mode includes navigation and notes", /PresenterMode/.test(surface) && /Presenter mode/.test(surface) && /Speaker notes/.test(surface) && /PageDown/.test(surface)]
 ];
 

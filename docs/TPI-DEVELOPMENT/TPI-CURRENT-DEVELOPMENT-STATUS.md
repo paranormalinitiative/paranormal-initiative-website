@@ -1,5 +1,24 @@
 # TPI Current Development Status
 
+## 2026-11-08 amendment — GenOffice-derived Slides ribbon and live previews
+
+Nova Slides now uses the actual GenOffice Slides renderer as its inspected
+architectural reference for the professional ribbon and thumbnail workflow.
+The Content Editor at `/paper-editor.html` now has a tabbed command ribbon with
+Home, Insert, Design, Slide Show and related presentation tabs, while the
+existing Nova commands remain connected to the same structured presentation
+model and autosave path. The left slide rail and Slides library now render live
+previews from the slide model instead of text-only placeholders.
+
+The implementation is Nova-owned web code adapted from the inspected GenOffice
+patterns in `apps/slides/src/renderer/components/Ribbon.tsx`,
+`ribbon-shared.tsx`, `SlideThumb.tsx`, and `use-visible-thumbs.ts` at local
+reference checkout `968d7d23`; Electron-only code and GenOffice branding were
+not imported. Local Firefox verification shows the ribbon, real thumbnails,
+slide selection, and Insert image controls. Focused Slides verification is
+16/16, Nova typecheck passes, and release-safety is 27/27. Execution record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006C-GENOFFICE-RIBBON-THUMBNAILS.md`.
+
 ## TPI-NOVA — Editorial Workspace primary engine migration (2026-11-07)
 
 Status: **DEPLOYED_AND_VERIFIED — TARGET IS THE EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**

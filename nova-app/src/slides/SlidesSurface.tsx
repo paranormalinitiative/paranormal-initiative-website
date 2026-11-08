@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Copy, Image as ImageIcon, Maximize, Plus, Save, Square, Trash2, Type, Upload, X } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Copy, Maximize, Plus, Save, Trash2, X } from "lucide-react";
 import { NovaApiError, describeNovaError, novaApi } from "../lib/api";
 import type { NovaCollection, NovaItem, NovaItemSummary } from "../lib/types";
 import { AccessNotice } from "../documents/AccessNotice";
 import { SlideCanvas } from "./SlideCanvas";
+import { GenOfficeRibbon } from "./GenOfficeRibbon";
+import { PresentationThumbnail } from "./PresentationThumbnail";
 import { addSlide, createPresentationFromTemplate, deleteSlide, duplicateSlide, envelope, parsePresentation, reorderSlide, type Presentation, type SlideElement, type SlideTemplateKey, updateElement } from "./model";
 
 interface Props {
@@ -59,6 +61,28 @@ function imageFileToDataUrl(file: File): Promise<string> {
   });
 }
 
+function PresentationLibraryCard({ item, onOpen }: { item: NovaItemSummary; onOpen: () => void }) {
+  const [presentation, setPresentation] = useState<Presentation | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void novaApi.getItem(item.id).then(response => {
+      if (active) {
+        try { setPresentation(parsePresentation(response.item.content)); } catch { setPresentation(null); }
+      }
+    }).catch(() => { if (active) setPresentation(null); });
+    return () => { active = false; };
+  }, [item.id]);
+
+  return <button type="button" className="nova-slide-card" key={item.id} onClick={onOpen} data-testid="presentation-card">
+    <span className="nova-slide-card-preview">
+      {presentation?.slides[0] ? <PresentationThumbnail presentation={presentation} slide={presentation.slides[0]} width={286} /> : <span>{item.title.slice(0, 42)}</span>}
+    </span>
+    <strong>{item.title}</strong>
+    <small>{new Date(item.updatedAt).toLocaleString()}</small>
+  </button>;
+}
+
 export default function SlidesSurface({ presentationId, onNavigatePresentation }: Props) {
   const [items, setItems] = useState<NovaItemSummary[]>([]);
   const [collections, setCollections] = useState<NovaCollection[]>([]);
@@ -112,7 +136,7 @@ export default function SlidesSurface({ presentationId, onNavigatePresentation }
       {loading ? <div className="nova-booting" role="status">Loading presentations…</div> : items.length === 0 ? (
         <div className="nova-empty-state"><strong>No presentations yet.</strong><span>Create a deck for a webinar, investigation, class or production.</span><button type="button" className="nova-button" onClick={() => void createPresentation()}>Create your first presentation</button></div>
       ) : (
-        <div className="nova-slide-card-grid">{items.map(item => <button type="button" className="nova-slide-card" key={item.id} onClick={() => onNavigatePresentation(item.id)}><span className="nova-slide-card-preview"><span>{item.title.slice(0, 42)}</span></span><strong>{item.title}</strong><small>{new Date(item.updatedAt).toLocaleString()}</small></button>)}</div>
+        <div className="nova-slide-card-grid">{items.map(item => <PresentationLibraryCard key={item.id} item={item} onOpen={() => onNavigatePresentation(item.id)} />)}</div>
       )}
     </div>
   );
@@ -140,7 +164,13 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     try {
       const response = await novaApi.getItem(itemId);
       const raw = parsePresentation(response.item.content);
-      const loaded = normalizePresentationLayout(raw);
+      // The item title is authoritative for the editor header. Older Nova
+      // drafts could retain a stale presentation.title / cover text after a
+      // title edit, so reconcile that copy before rendering the canvas or any
+      // thumbnail. This keeps the ribbon, title bar, slide preview, and saved
+      // envelope on the same document identity.
+      const titled = raw.title === response.item.title ? raw : { ...raw, title: response.item.title };
+      const loaded = normalizePresentationLayout(titled);
       let persistedItem = response.item;
       if (loaded !== raw && response.item.status === "active") {
         const migrated = await novaApi.updateItem(response.item.id, {
@@ -257,24 +287,34 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
         <button type="button" className="nova-button" disabled={readOnly || !dirty} onClick={() => void save()}><Save size={15} /> Save</button>
       </header>
       {failure ? <div className="nova-banner nova-banner-error" role="alert">{failure}</div> : null}
+      <GenOfficeRibbon
+        readOnly={readOnly}
+        hasSlides={presentation.slides.length > 0}
+        dirty={dirty}
+        canDeleteSlide={presentation.slides.length > 1}
+        imageUrl={imageUrl}
+        onImageUrlChange={setImageUrl}
+        onAddSlide={() => edit(addSlide)}
+        onDuplicateSlide={() => edit(value => duplicateSlide(value, current))}
+        onDeleteSlide={() => { edit(value => deleteSlide(value, current)); setCurrent(value => Math.min(value, Math.max(0, presentation.slides.length - 2))); }}
+        onAddText={() => addElementAndSelect({ id: crypto.randomUUID(), kind: "text", x: 120, y: 180, width: 420, height: 62, text: "Edit this text", fontSize: 28, fill: "#1d281f" })}
+        onAddShape={() => addElementAndSelect({ id: crypto.randomUUID(), kind: "rect", x: 180, y: 220, width: 240, height: 120, fill: "#4e8b61" })}
+        onUploadImage={() => imageFileInput.current?.click()}
+        onAddImageUrl={() => insertImage(imageUrl)}
+        onToggleBackground={() => edit(value => ({ ...value, slides: value.slides.map((candidate, index) => index === current ? { ...candidate, background: candidate.background === "#ffffff" ? "#f7f4ec" : "#ffffff" } : candidate) }))}
+        onMoveUp={() => edit(value => reorderSlide(value, current, current - 1))}
+        onMoveDown={() => edit(value => reorderSlide(value, current, current + 1))}
+        onPresent={() => setPresenting(true)}
+        onSave={() => void save()}
+      />
       <div className="nova-slides-workspace">
         <aside className="nova-slide-thumbnails" aria-label="Slides">
           <button type="button" className="nova-button nova-button-primary" onClick={() => edit(addSlide)} disabled={readOnly}><Plus size={15} /> Slide</button>
-          {presentation.slides.map((candidate, index) => <button type="button" key={candidate.id} className={`nova-slide-thumbnail${index === current ? " is-selected" : ""}`} onClick={() => { setCurrent(index); setSelectedElementId(null); }}><span>{index + 1}</span><div style={{ background: candidate.background }}>{candidate.elements.find(element => element.kind === "text")?.text || "Blank slide"}</div></button>)}
+          {presentation.slides.map((candidate, index) => <button type="button" key={candidate.id} className={`nova-slide-thumbnail${index === current ? " is-selected" : ""}`} onClick={() => { setCurrent(index); setSelectedElementId(null); }} data-testid="slide-thumbnail"><span>{index + 1}</span><PresentationThumbnail presentation={presentation} slide={candidate} width={132} /> </button>)}
           <div className="nova-slide-thumbnail-actions"><button type="button" aria-label="Duplicate slide" onClick={() => edit(value => duplicateSlide(value, current))} disabled={readOnly}><Copy size={15} /></button><button type="button" aria-label="Delete slide" onClick={() => { edit(value => deleteSlide(value, current)); setCurrent(value => Math.min(value, Math.max(0, presentation.slides.length - 2))); }} disabled={readOnly || presentation.slides.length <= 1}><Trash2 size={15} /></button></div>
         </aside>
         <main className="nova-slide-stage-area">
-          <div className="nova-slide-toolbar" role="toolbar" aria-label="Slide tools">
-            <button type="button" onClick={() => addElementAndSelect({ id: crypto.randomUUID(), kind: "text", x: 120, y: 180, width: 420, height: 62, text: "Edit this text", fontSize: 28, fill: "#1d281f" })} disabled={readOnly}><Type size={16} /> Text</button>
-            <button type="button" onClick={() => addElementAndSelect({ id: crypto.randomUUID(), kind: "rect", x: 180, y: 220, width: 240, height: 120, fill: "#4e8b61" })} disabled={readOnly}><Square size={16} /> Shape</button>
-            <button type="button" onClick={() => imageFileInput.current?.click()} disabled={readOnly}><Upload size={16} /> Upload image</button>
-            <input ref={imageFileInput} type="file" accept="image/*" hidden onChange={event => { void handleImageFile(event.target.files?.[0]); event.target.value = ""; }} />
-            <label className="nova-slide-image-url"><span>Image URL</span><input aria-label="Image URL" value={imageUrl} onChange={event => setImageUrl(event.target.value)} placeholder="https://…" /></label>
-            <button type="button" onClick={() => insertImage(imageUrl)} disabled={readOnly || !imageUrl.trim()}><ImageIcon size={16} /> Add URL</button>
-            <button type="button" onClick={() => edit(value => ({ ...value, slides: value.slides.map((candidate, index) => index === current ? { ...candidate, background: candidate.background === "#ffffff" ? "#f7f4ec" : "#ffffff" } : candidate) }))} disabled={readOnly}>Background</button>
-            <span className="nova-slide-toolbar-spacer" />
-            <button type="button" onClick={() => edit(value => reorderSlide(value, current, current - 1))} disabled={readOnly || current === 0}>↑</button><button type="button" onClick={() => edit(value => reorderSlide(value, current, current + 1))} disabled={readOnly || current === presentation.slides.length - 1}>↓</button>
-          </div>
+          <input ref={imageFileInput} type="file" accept="image/*" hidden onChange={event => { void handleImageFile(event.target.files?.[0]); event.target.value = ""; }} />
           <div className="nova-slide-canvas-wrap"><SlideCanvas presentation={presentation} slide={slide} scale={Math.min(0.82, 860 / presentation.width)} onSelectElement={setSelectedElementId} onUpdateElement={(elementId, patch) => edit(value => updateElement(value, current, elementId, patch))} /></div>
           <SlideInspector element={selectedElement} readOnly={readOnly} onUpdate={updateCurrentElement} onDelete={removeSelectedElement} />
           <div className="nova-slide-notes"><label>Speaker notes<textarea value={selectedSlide.speakerNotes || ""} disabled={readOnly} onChange={event => edit(value => ({ ...value, slides: value.slides.map((candidate, index) => index === current ? { ...candidate, speakerNotes: event.target.value } : candidate) }))} placeholder="Notes for the presenter…" /></label></div>
