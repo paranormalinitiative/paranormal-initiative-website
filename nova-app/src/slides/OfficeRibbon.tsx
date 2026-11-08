@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, Bold, Eraser, Image as ImageIcon, Italic, Maximize, MessageSquare, Palette, PenLine, Plus, Redo2, Save, Square, Table2, Type, Undo2, Upload, WandSparkles, X } from "lucide-react";
+import { AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, BarChart3, Bold, Eraser, Image as ImageIcon, Italic, Maximize, MessageSquare, Palette, PenLine, Plus, Redo2, Save, Square, Table2, Type, Undo2, Upload, WandSparkles, X } from "lucide-react";
 import type { ElementAnimation, ShapeKind, SlideElement, SlideLayoutKey, SlideTransition } from "./model";
 
 /**
@@ -28,6 +28,7 @@ interface Props {
   onAddText: () => void;
   onAddShape: (shape?: ShapeKind) => void;
   onAddTable: () => void;
+  onAddChart: () => void;
   onUploadImage: () => void;
   onAddImageUrl: () => void;
   onToggleBackground: () => void;
@@ -88,7 +89,7 @@ export function OfficeRibbon(props: Props) {
   });
   const {
     readOnly, hasSlides, dirty, canDeleteSlide, imageUrl, onImageUrlChange,
-    onAddSlide, onAddSlideWithLayout, onDuplicateSlide, onDeleteSlide, onAddText, onAddShape, onAddTable,
+    onAddSlide, onAddSlideWithLayout, onDuplicateSlide, onDeleteSlide, onAddText, onAddShape, onAddTable, onAddChart,
     onUploadImage, onAddImageUrl, onToggleBackground, onMoveUp, onMoveDown,
     onPresent, onSave, onUndo, onRedo, canUndo, canRedo, onAddLine, onDeleteSelected,
     selectedElement, onSetTheme, onSetTransition, currentTransition, onSetAnimation, onUpdateSelectedElement, onViewModeChange,
@@ -124,6 +125,7 @@ export function OfficeRibbon(props: Props) {
             <Command label="Shape" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("rect")} />
             <Command label="Image" icon={<ImageIcon size={20} />} disabled={readOnly} onClick={onUploadImage} />
             <Command label="Table" icon={<Table2 size={20} />} disabled={readOnly} onClick={onAddTable} />
+            <Command label="Chart" icon={<BarChart3 size={20} />} disabled={readOnly} onClick={onAddChart} />
           </Group>
           {selectedElement?.kind === "text" ? <>
             <Separator />
@@ -150,7 +152,7 @@ export function OfficeRibbon(props: Props) {
         </> : activeTab === "insert" ? <>
           <Group label="Slides"><Command label="New Slide" icon={<Plus size={20} />} disabled={readOnly} onClick={onAddSlide} /><label className="nova-ribbon-select-field"><span>Layout</span><select className="nova-ribbon-select" aria-label="New slide layout" disabled={readOnly} defaultValue="blank" onChange={event => onAddSlideWithLayout(event.target.value as SlideLayoutKey)}><option value="blank">Blank</option><option value="title">Title</option><option value="title-content">Title and content</option><option value="section">Section header</option><option value="quote">Quote</option></select></label></Group>
           <Separator />
-          <Group label="Text and shapes"><Command label="Text" icon={<Type size={20} />} disabled={readOnly} onClick={onAddText} /><Command label="Rectangle" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("rect")} /><Command label="Rounded" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("roundRect")} /><Command label="Circle" icon={<span>◯</span>} disabled={readOnly} onClick={() => onAddShape("ellipse")} /><Command label="Table" icon={<Table2 size={20} />} disabled={readOnly} onClick={onAddTable} /></Group>
+          <Group label="Text and shapes"><Command label="Text" icon={<Type size={20} />} disabled={readOnly} onClick={onAddText} /><Command label="Rectangle" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("rect")} /><Command label="Rounded" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("roundRect")} /><Command label="Circle" icon={<span>◯</span>} disabled={readOnly} onClick={() => onAddShape("ellipse")} /><Command label="Table" icon={<Table2 size={20} />} disabled={readOnly} onClick={onAddTable} /><Command label="Chart" icon={<BarChart3 size={20} />} disabled={readOnly} onClick={onAddChart} /></Group>
           <Separator />
           <Group label="Images"><Command label="Upload image" icon={<Upload size={20} />} disabled={readOnly} onClick={onUploadImage} /><label className="nova-ribbon-url-field"><span>Image URL</span><input aria-label="Image URL" value={imageUrl} onChange={event => onImageUrlChange(event.target.value)} placeholder="https://…" /><button type="button" onClick={onAddImageUrl} disabled={readOnly || !imageUrl.trim()}>Add</button></label></Group>
         </> : activeTab === "draw" ? <>

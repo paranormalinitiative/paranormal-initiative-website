@@ -9,8 +9,11 @@ interface Props {
   onToggleFindReplace?: () => void;
   viewMode?: DocumentViewMode;
   onViewModeChange?: (mode: DocumentViewMode) => void;
+  onOpenPageSetup?: () => void;
+  onToggleComments?: () => void;
+  onPrint?: () => void;
 }
 
-export function EditorToolbar({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode, onViewModeChange }: Props) {
-  return <div data-testid="editor-toolbar"><OfficeRibbon editor={editor} disabled={disabled} onRequestLink={onRequestLink} documentTitle={documentTitle} onToggleFindReplace={onToggleFindReplace} viewMode={viewMode} onViewModeChange={onViewModeChange} /></div>;
+export function EditorToolbar({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode, onViewModeChange, onOpenPageSetup, onToggleComments, onPrint }: Props) {
+  return <div data-testid="editor-toolbar"><OfficeRibbon editor={editor} disabled={disabled} onRequestLink={onRequestLink} documentTitle={documentTitle} onToggleFindReplace={onToggleFindReplace} viewMode={viewMode} onViewModeChange={onViewModeChange} onOpenPageSetup={onOpenPageSetup} onToggleComments={onToggleComments} onPrint={onPrint} /></div>;
 }

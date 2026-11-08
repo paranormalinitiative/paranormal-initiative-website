@@ -1024,6 +1024,7 @@
     try {
       localStorage.setItem(novaDraftKey(novaLink.itemId), JSON.stringify({
         doc: novaMode.handle.getDocument(),
+        meta: novaMode.handle.getDocumentMeta ? novaMode.handle.getDocumentMeta() : undefined,
         baseVersion: novaLink.version,
         savedAt: new Date().toISOString()
       }));
@@ -1036,10 +1037,12 @@
     await loadNovaScripts();
     // The API returns the stored envelope { format, version, doc }; the editor takes the bare doc.
     const doc = item.content && item.content.doc ? item.content.doc : item.content;
+    const meta = item.content && item.content.meta ? item.content.meta : undefined;
     if (!novaMode.handle) {
-      novaMode.handle = window.TPINovaContentEditor.mount(document.getElementById("nova-content-editor"), doc);
+      novaMode.handle = window.TPINovaContentEditor.mount(document.getElementById("nova-content-editor"), doc, meta);
     } else {
       novaMode.handle.setDocument(doc);
+      if (meta && novaMode.handle.setDocumentMeta) novaMode.handle.setDocumentMeta(meta);
     }
     novaMode.doc = doc;
     // TPI-NOVA-005A6F: the server copy is the body baseline; only a real change makes a body write.
@@ -1345,6 +1348,7 @@
     const articleId = currentArticleId;
     if (!articleId) return false;
     const doc = novaMode.handle.getDocument();
+    const meta = novaMode.handle.getDocumentMeta ? novaMode.handle.getDocumentMeta() : undefined;
     // TPI-NOVA-005A6F: body is written only when the document actually differs from the last saved copy.
     const bodyJson = JSON.stringify(doc);
     const bodyDirty = bodyJson !== lastSavedBodyJson;
@@ -1363,7 +1367,7 @@
       method: "PUT",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: { format: "nova-document", version: 1, doc }, expectedVersion: novaLink.version })
+      body: JSON.stringify({ content: { format: "nova-document", version: 1, doc, ...(meta ? { meta } : {}) }, expectedVersion: novaLink.version })
     });
     const data = await response.json().catch(() => ({}));
     if (response.status === 409) {

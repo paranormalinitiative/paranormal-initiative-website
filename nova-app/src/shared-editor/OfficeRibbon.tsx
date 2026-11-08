@@ -39,9 +39,13 @@ import {
   Undo2,
   ZoomIn,
   ZoomOut,
+  FileText,
+  MessageCirclePlus,
+  Printer,
   type LucideIcon
 } from "lucide-react";
 import { InsertTools } from "./InsertTools";
+import { insertField } from "./commands/fields";
 import {
   addNovaColumn,
   addNovaRow,
@@ -75,6 +79,9 @@ interface Props {
   onToggleFindReplace?: () => void;
   viewMode?: DocumentViewMode;
   onViewModeChange?: (mode: DocumentViewMode) => void;
+  onOpenPageSetup?: () => void;
+  onToggleComments?: () => void;
+  onPrint?: () => void;
 }
 interface RibbonButtonProps {
   label: string;
@@ -193,7 +200,7 @@ function PlannedPanel({ tab, available }: { tab: RibbonTab; available?: string }
   );
 }
 
-export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode = "print", onViewModeChange }: Props) {
+export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode = "print", onViewModeChange, onOpenPageSetup, onToggleComments, onPrint }: Props) {
   const [tab, setTab] = useState<RibbonTab>("Home");
   const [fontFamily, setFontFamily] = useState("Georgia");
   const [fontSize, setFontSize] = useState("17px");
@@ -382,7 +389,7 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
     <div className="nova-ribbon-groups">
       <RibbonGroup label="References">
         <RibbonButton label="Citation" icon={BookOpen} onClick={() => editor.chain().focus().insertContent("[Citation needed]").run()} disabled={disabled} />
-        <RibbonButton label="Footnote marker" icon={Type} onClick={() => editor.chain().focus().insertContent("[^1]").run()} disabled={disabled} />
+        <RibbonButton label="Footnote marker" icon={Type} onClick={() => editor.chain().focus().insertContent("[1]").run()} disabled={disabled} />
         <RibbonButton label="Source link" icon={Link} onClick={onRequestLink} disabled={disabled} />
       </RibbonGroup>
     </div>
@@ -391,9 +398,9 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
   const renderMailings = () => (
     <div className="nova-ribbon-groups">
       <RibbonGroup label="Merge fields">
-        <RibbonButton label="Author" icon={Type} onClick={() => editor.chain().focus().insertContent("{{author}}").run()} disabled={disabled} />
-        <RibbonButton label="Organization" icon={Type} onClick={() => editor.chain().focus().insertContent("{{organization}}").run()} disabled={disabled} />
-        <RibbonButton label="Date" icon={Type} onClick={() => editor.chain().focus().insertContent("{{date}}").run()} disabled={disabled} />
+        <RibbonButton label="Document title" icon={Type} onClick={() => insertField(editor, "FILENAME", documentTitle)} disabled={disabled} />
+        <RibbonButton label="Date" icon={Type} onClick={() => insertField(editor, "DATE", documentTitle)} disabled={disabled} />
+        <RibbonButton label="Time" icon={Type} onClick={() => insertField(editor, "TIME", documentTitle)} disabled={disabled} />
       </RibbonGroup>
     </div>
   );
@@ -404,6 +411,8 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
         <RibbonButton label="Word count" icon={BookOpen} onClick={() => setWordCount(editor.getText().trim().split(/\s+/).filter(Boolean).length)} disabled={disabled} />
         <RibbonButton label="Clear formatting" icon={Eraser} onClick={() => clearFormatting(editor)} disabled={disabled} />
       </RibbonGroup>
+      <Divider />
+      <RibbonGroup label="Comments"><RibbonButton label="New comment" icon={MessageCirclePlus} onClick={onToggleComments} disabled={disabled} /><RibbonButton label="Show comments" icon={MessageSquare} onClick={onToggleComments} /></RibbonGroup>
       <Divider />
       <RibbonGroup label="Review state">
         <span className="nova-ribbon-zoom">{editor.getText().trim() ? "Content ready for review" : "Empty document"}</span>
@@ -489,6 +498,7 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
   const renderView = () => (
     <div className="nova-ribbon-groups">
       <RibbonGroup label="Show"><RibbonButton label="Navigation pane" icon={BookOpen} active={showNav} onClick={() => setShowNav(value => !value)} /><RibbonButton label="Styles pane" icon={LayoutDashboard} active={showStyles} onClick={() => setShowStyles(value => !value)} /><RibbonButton label="Find and replace" icon={Search} onClick={onToggleFindReplace} /></RibbonGroup>
+      <Divider /><RibbonGroup label="Page"><RibbonButton label="Page setup" icon={FileText} onClick={onOpenPageSetup} /><RibbonButton label="Print" icon={Printer} onClick={onPrint} /></RibbonGroup>
       <Divider /><RibbonGroup label="Document view"><select className="nova-ribbon-select" aria-label="Document view" value={viewMode} onChange={event => onViewModeChange?.(event.target.value as DocumentViewMode)}><option value="print">Print Layout</option><option value="web">Web Layout</option><option value="outline">Outline</option></select></RibbonGroup>
       <Divider /><RibbonGroup label="Zoom"><RibbonButton label="Zoom out" icon={ZoomOut} onClick={() => setZoom(value => Math.max(70, value - 10))} /><span className="nova-ribbon-zoom">{zoom}%</span><RibbonButton label="Zoom in" icon={ZoomIn} onClick={() => setZoom(value => Math.min(160, value + 10))} /></RibbonGroup>
     </div>
@@ -513,7 +523,7 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
         <div className="nova-ribbon-quick"><RibbonButton label="Undo" icon={Undo2} compact testId="toolbar-undo" disabled={disabled || !editor.can().undo()} onClick={() => editor.chain().focus().undo().run()} /><RibbonButton label="Redo" icon={Redo2} compact testId="toolbar-redo" disabled={disabled || !editor.can().redo()} onClick={() => editor.chain().focus().redo().run()} /></div>
         {TABS.map(item => <button type="button" role="tab" aria-selected={tab === item} className={`nova-ribbon-tab${tab === item ? " is-active" : ""}`} key={item} onClick={() => setTab(item)} data-testid={`ribbon-tab-${item.toLowerCase()}`}>{item}</button>)}
         <div className="nova-ribbon-tab-spacer" />
-        <button type="button" className="nova-ribbon-comments" onClick={() => setTab("Review")}><MessageSquare size={15} /> Show Comments</button>
+        <button type="button" className="nova-ribbon-comments" onClick={onToggleComments}><MessageSquare size={15} /> Show Comments</button>
       </div>
       <div className="nova-ribbon-panel" role="tabpanel" aria-label={`${tab} ribbon`}>{renderTab()}</div>
       {showNav ? <aside className="nova-ribbon-side-pane" aria-label="Navigation pane"><strong>Navigation</strong><span>Headings and document bookmarks</span><button type="button" onClick={() => setShowNav(false)}>Close pane</button></aside> : null}

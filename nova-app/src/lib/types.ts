@@ -8,6 +8,26 @@ export interface NovaDocumentEnvelope {
   format: "nova-document";
   version: 1;
   doc: JSONContent;
+  meta?: NovaDocumentMeta;
+}
+
+export interface NovaDocumentComment {
+  id: string;
+  quote: string;
+  text: string;
+  author: string;
+  createdAt: string;
+  resolved: boolean;
+}
+
+export interface NovaDocumentMeta {
+  pageSize: "letter" | "a4" | "legal";
+  orientation: "portrait" | "landscape";
+  margins: { top: number; right: number; bottom: number; left: number };
+  header: string;
+  footer: string;
+  showPageNumbers: boolean;
+  comments: NovaDocumentComment[];
 }
 
 export interface NovaPresentationEnvelope {

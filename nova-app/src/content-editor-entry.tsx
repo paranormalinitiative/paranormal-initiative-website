@@ -1,6 +1,7 @@
 import { StrictMode, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import type { JSONContent } from "@tiptap/core";
+import type { NovaDocumentMeta } from "./lib/types";
 import { NovaEditor } from "./shared-editor/NovaEditor";
 import SlidesSurface from "./slides/SlidesSurface";
 import "./styles.css";
@@ -11,7 +12,9 @@ import "./styles.css";
 
 export interface NovaContentEditorHandle {
   getDocument(): JSONContent | null;
+  getDocumentMeta(): NovaDocumentMeta;
   setDocument(doc: JSONContent): void;
+  setDocumentMeta(meta: NovaDocumentMeta): void;
   setReadOnly(readOnly: boolean): void;
   unmount(): void;
 }
@@ -23,16 +26,22 @@ let slidesRoot: Root | null = null;
 let currentDoc: JSONContent | null = null;
 let setExternalDoc: ((doc: JSONContent) => void) | null = null;
 let setExternalReadOnly: ((readOnly: boolean) => void) | null = null;
+let currentMeta: NovaDocumentMeta = { pageSize: "letter", orientation: "portrait", margins: { top: 40, right: 44, bottom: 40, left: 44 }, header: "", footer: "", showPageNumbers: false, comments: [] };
+let setExternalMeta: ((meta: NovaDocumentMeta) => void) | null = null;
 
-function Host({ initial }: { initial: JSONContent }) {
+function Host({ initial, initialMeta }: { initial: JSONContent; initialMeta: NovaDocumentMeta }) {
   const [doc, setDoc] = useState<JSONContent>(initial);
   const [readOnly, setReadOnly] = useState(false);
+  const [meta, setMeta] = useState<NovaDocumentMeta>(initialMeta);
   setExternalDoc = setDoc;
   setExternalReadOnly = setReadOnly;
+  setExternalMeta = setMeta;
   return (
     <NovaEditor
       content={doc}
       readOnly={readOnly}
+      documentMeta={meta}
+      onDocumentMetaChange={next => { currentMeta = next; setMeta(next); }}
       onChange={next => {
         currentDoc = next;
       }}
@@ -40,27 +49,31 @@ function Host({ initial }: { initial: JSONContent }) {
   );
 }
 
-export function mountNovaContentEditor(container: HTMLElement, initial: JSONContent = EMPTY_DOC): NovaContentEditorHandle {
+export function mountNovaContentEditor(container: HTMLElement, initial: JSONContent = EMPTY_DOC, initialMeta: NovaDocumentMeta = currentMeta): NovaContentEditorHandle {
   if (documentRoot) documentRoot.unmount();
   currentDoc = initial;
+  currentMeta = initialMeta;
   documentRoot = createRoot(container);
   documentRoot.render(
     <StrictMode>
-      <Host initial={initial} />
+      <Host initial={initial} initialMeta={initialMeta} />
     </StrictMode>
   );
   return {
     getDocument: () => currentDoc,
+    getDocumentMeta: () => currentMeta,
       setDocument: doc => {
       currentDoc = doc;
       setExternalDoc?.(doc);
     },
+    setDocumentMeta: meta => { currentMeta = meta; setExternalMeta?.(meta); },
     setReadOnly: readOnly => setExternalReadOnly?.(readOnly),
     unmount: () => {
       documentRoot?.unmount();
       documentRoot = null;
       setExternalDoc = null;
       setExternalReadOnly = null;
+      setExternalMeta = null;
     }
   };
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { ArrowLeft, Archive, History, Trash2, XCircle } from "lucide-react";
 import type { Editor, JSONContent } from "@tiptap/core";
@@ -6,7 +6,7 @@ import { NovaApiError, describeNovaError, novaApi } from "../lib/api";
 import { clearDraft, readDraft, writeDraft, type NovaDraft } from "../lib/draft";
 import { formatShortTimestamp, formatTimestamp, statusLabel } from "../lib/format";
 import { collectionPath } from "../lib/tree";
-import type { NovaCollection, NovaDocumentEnvelope, NovaItem } from "../lib/types";
+import type { NovaCollection, NovaDocumentComment, NovaDocumentEnvelope, NovaDocumentMeta, NovaItem } from "../lib/types";
 import { AccessNotice } from "./AccessNotice";
 import { EditorToolbar } from "../shared-editor/EditorToolbar";
 import type { DocumentViewMode } from "../shared-editor/OfficeRibbon";
@@ -16,6 +16,8 @@ import { Modal } from "../shared-editor/Modal";
 import { RevisionsPanel } from "./RevisionsPanel";
 import { novaExtensions } from "../shared-editor/editorExtensions";
 import { FindReplacePanel } from "../shared-editor/FindReplacePanel";
+import { DocumentCommentsPanel } from "./DocumentCommentsPanel";
+import { PageSetupPanel } from "./PageSetupPanel";
 
 // Matches the StudioFlow Notes autosave cadence: long enough to avoid writing on
 // every keystroke, short enough that a lost tab costs little work.
@@ -41,8 +43,22 @@ interface WorkspaceProps {
   onChanged: () => void;
 }
 
-function envelope(doc: JSONContent): NovaDocumentEnvelope {
-  return { format: "nova-document", version: 1, doc };
+const DEFAULT_DOCUMENT_META: NovaDocumentMeta = {
+  pageSize: "letter",
+  orientation: "portrait",
+  margins: { top: 40, right: 44, bottom: 40, left: 44 },
+  header: "",
+  footer: "",
+  showPageNumbers: false,
+  comments: []
+};
+
+function documentMeta(value: NovaDocumentEnvelope): NovaDocumentMeta {
+  return { ...DEFAULT_DOCUMENT_META, ...(value.meta || {}), margins: { ...DEFAULT_DOCUMENT_META.margins, ...(value.meta?.margins || {}) }, comments: value.meta?.comments || [] };
+}
+
+function envelope(doc: JSONContent, meta: NovaDocumentMeta): NovaDocumentEnvelope {
+  return { format: "nova-document", version: 1, doc, meta };
 }
 
 function sameJson(a: unknown, b: unknown): boolean {
@@ -119,6 +135,9 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
   const [historyOpen, setHistoryOpen] = useState(false);
   const [linkOpen, setLinkOpen] = useState(false);
   const [findOpen, setFindOpen] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [pageSetupOpen, setPageSetupOpen] = useState(false);
+  const [documentMetaState, setDocumentMetaState] = useState<NovaDocumentMeta>(() => documentMeta(documentContent));
   const [viewMode, setViewMode] = useState<DocumentViewMode>("print");
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -205,7 +224,7 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     hydrationReadyRef.current = true;
   }, [item.id, item.content, item.title]);
 
-  const buildContent = (instance: Editor) => envelope(instance.getJSON());
+  const buildContent = (instance: Editor) => envelope(instance.getJSON(), documentMetaState);
 
   const scheduleSave = (delay = AUTOSAVE_DELAY) => {
     if (timerRef.current !== undefined) window.clearTimeout(timerRef.current);
@@ -344,6 +363,22 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     scheduleSave();
   };
 
+  const updateDocumentMeta = (next: NovaDocumentMeta) => {
+    if (readOnlyRef.current) return;
+    setDocumentMetaState(next);
+    const instance = editorRef.current;
+    if (!instance) return;
+    const content = envelope(instance.getJSON(), next);
+    dirtyRef.current = true;
+    setDirty(true);
+    writeDraft({ itemId: item.id, title: titleRef.current, content, baseVersion: versionRef.current, updatedAt: new Date().toISOString() });
+    scheduleSave();
+  };
+
+  const addComment = (comment: NovaDocumentComment) => updateDocumentMeta({ ...documentMetaState, comments: [...documentMetaState.comments, comment] });
+  const updateComment = (id: string, patch: Partial<NovaDocumentComment>) => updateDocumentMeta({ ...documentMetaState, comments: documentMetaState.comments.map(comment => comment.id === id ? { ...comment, ...patch } : comment) });
+  const deleteComment = (id: string) => updateDocumentMeta({ ...documentMetaState, comments: documentMetaState.comments.filter(comment => comment.id !== id) });
+
   const applyServerItem = (fresh: NovaItem) => {
     if (timerRef.current !== undefined) {
       window.clearTimeout(timerRef.current);
@@ -361,6 +396,7 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     conflictRef.current = null;
     setServerItem(fresh);
     setTitle(fresh.title);
+    setDocumentMetaState(documentMeta(fresh.content as NovaDocumentEnvelope));
     editorRef.current?.commands.setContent((fresh.content as NovaDocumentEnvelope).doc);
     clearDraft(fresh.id);
     setSaveState({ kind: "saved", at: fresh.updatedAt });
@@ -398,6 +434,7 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     // setContent may not emit an update event, so recovery must not depend on
     // the normal keystroke/autosave path to notice the restored document.
     instance.commands.setContent(draft.content.doc, { emitUpdate: false });
+    setDocumentMetaState(documentMeta(draft.content));
     setTitle(draft.title);
     titleRef.current = draft.title;
     dirtyRef.current = true;
@@ -679,12 +716,17 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
           onToggleFindReplace={() => setFindOpen(open => !open)}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
+          onOpenPageSetup={() => setPageSetupOpen(open => !open)}
+          onToggleComments={() => setCommentsOpen(open => !open)}
+          onPrint={() => window.print()}
         />
 
         {findOpen && editor ? <FindReplacePanel editor={editor} onClose={() => setFindOpen(false)} /> : null}
 
-        <div className={`nova-canvas nova-canvas-${viewMode}`} data-testid="editor" data-view-mode={viewMode}>
+        <div className={`nova-canvas nova-canvas-${viewMode}`} data-testid="editor" data-view-mode={viewMode} data-page-size={documentMetaState.pageSize} data-orientation={documentMetaState.orientation} style={{ "--nova-page-margin-top": `${documentMetaState.margins.top}px`, "--nova-page-margin-right": `${documentMetaState.margins.right}px`, "--nova-page-margin-bottom": `${documentMetaState.margins.bottom}px`, "--nova-page-margin-left": `${documentMetaState.margins.left}px` } as CSSProperties}>
+          {documentMetaState.header ? <div className="nova-document-header" aria-label="Document header">{documentMetaState.header}</div> : null}
           <EditorContent editor={editor} />
+          {documentMetaState.footer || documentMetaState.showPageNumbers ? <div className="nova-document-footer"><span>{documentMetaState.footer}</span>{documentMetaState.showPageNumbers ? <span>Page 1</span> : null}</div> : null}
         </div>
       </div>
 
@@ -696,6 +738,9 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
           onClose={() => setHistoryOpen(false)}
         />
       ) : null}
+
+      {commentsOpen && editor ? <DocumentCommentsPanel comments={documentMetaState.comments} readOnly={readOnly} selectedQuote={editor.state.doc.textBetween(editor.state.selection.from, editor.state.selection.to, " ").trim()} onAdd={addComment} onResolve={id => updateComment(id, { resolved: !documentMetaState.comments.find(comment => comment.id === id)?.resolved })} onDelete={deleteComment} onClose={() => setCommentsOpen(false)} /> : null}
+      {pageSetupOpen ? <PageSetupPanel meta={documentMetaState} readOnly={readOnly} onChange={updateDocumentMeta} onClose={() => setPageSetupOpen(false)} /> : null}
 
       <LinkDialog
         open={linkOpen}

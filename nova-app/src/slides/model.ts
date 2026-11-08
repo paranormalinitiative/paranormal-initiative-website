@@ -75,7 +75,21 @@ export interface LineElement {
   animation?: ElementAnimation;
 }
 
-export type SlideElement = TextElement | ShapeElement | ImageElement | LineElement | TableElement;
+export interface ChartElement {
+  id: string;
+  kind: "chart";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  title: string;
+  chartType: "bar" | "line" | "pie";
+  data: Array<{ label: string; value: number }>;
+  accent?: string;
+  animation?: ElementAnimation;
+}
+
+export type SlideElement = TextElement | ShapeElement | ImageElement | LineElement | TableElement | ChartElement;
 
 export interface Slide {
   id: string;
@@ -238,6 +252,17 @@ export function addTableToSlide(presentation: Presentation, slideIndex: number, 
     headerFill: "#2f5f48", cellFill: "#f4f7f2", stroke: "#9bb6a5"
   };
   return { ...presentation, slides: presentation.slides.map((candidate, index) => index === slideIndex ? { ...candidate, elements: [...candidate.elements, table] } : candidate) };
+}
+
+export function addChartToSlide(presentation: Presentation, slideIndex: number): Presentation {
+  const slide = presentation.slides[slideIndex];
+  if (!slide) return presentation;
+  const chart: ChartElement = {
+    id: crypto.randomUUID(), kind: "chart", x: 120, y: 145, width: 720, height: 280,
+    title: "Evidence review", chartType: "bar", accent: "#72d6a3",
+    data: [{ label: "Observed", value: 8 }, { label: "Unresolved", value: 5 }, { label: "Ruled out", value: 3 }]
+  };
+  return { ...presentation, slides: presentation.slides.map((candidate, index) => index === slideIndex ? { ...candidate, elements: [...candidate.elements, chart] } : candidate) };
 }
 
 export function duplicateSlide(presentation: Presentation, index: number): Presentation {

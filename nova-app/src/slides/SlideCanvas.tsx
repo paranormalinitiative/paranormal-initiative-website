@@ -100,6 +100,25 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSel
               {Array.from({ length: rowCount - 1 }, (_, rowIndex) => <Line key={`row-${rowIndex}`} points={[0, (rowIndex + 1) * cellHeight, element.width, (rowIndex + 1) * cellHeight]} stroke={element.stroke || "#9bb6a5"} strokeWidth={1} />)}
             </Group>;
           }
+          if (element.kind === "chart") {
+            const max = Math.max(1, ...element.data.map(point => point.value));
+            const chartHeight = element.height - 70;
+            const barWidth = Math.max(24, (element.width - 80) / Math.max(1, element.data.length) - 18);
+            return <Group key={element.id} {...common}>
+              <Rect width={element.width} height={element.height} fill="#f4f7f2" stroke="#9bb6a5" strokeWidth={2} cornerRadius={8} />
+              <Text text={element.title} x={18} y={12} width={element.width - 36} height={28} fontSize={20} fontStyle="bold" fill="#1d281f" />
+              {element.data.map((point, index) => {
+                const x = 42 + index * ((element.width - 80) / Math.max(1, element.data.length));
+                const barHeight = chartHeight * (point.value / max);
+                return <Group key={point.label} x={x} y={50}>
+                  {element.chartType === "line" ? <Line points={[0, chartHeight - barHeight, index === element.data.length - 1 ? 0 : (element.width - 80) / Math.max(1, element.data.length), chartHeight - (chartHeight * (element.data[index + 1]?.value || point.value) / max)]} stroke={element.accent || "#2f5f48"} strokeWidth={4} /> : null}
+                  {element.chartType === "pie" ? <Ellipse x={barWidth / 2} y={chartHeight / 2} radiusX={Math.max(16, barWidth / 2)} radiusY={Math.max(16, barWidth / 2)} fill={element.accent || "#2f5f48"} opacity={Math.max(.3, point.value / max)} /> : <Rect x={0} y={chartHeight - barHeight} width={barWidth} height={barHeight} fill={element.accent || "#2f5f48"} cornerRadius={4} />}
+                  <Text text={`${point.value}`} x={0} y={chartHeight - barHeight - 22} width={barWidth} height={18} align="center" fontSize={14} fill="#1d281f" />
+                  <Text text={point.label} x={-8} y={chartHeight + 8} width={barWidth + 16} height={28} align="center" fontSize={12} fill="#1d281f" wrap="word" />
+                </Group>;
+              })}
+            </Group>;
+          }
           return (
             <Group key={element.id} {...common}>
               {element.src ? <SlideImage src={element.src} width={element.width} height={element.height} /> : <>

@@ -16,6 +16,21 @@ not product UI or active source branding.
 
 ## Implemented
 
+### Workstation completion tranche — 2026-11-08
+
+- The persisted document envelope now carries page size, orientation, margins,
+  header, footer, page numbering, and editorial comments through the actual
+  `/paper-editor` Content Editor host, not only the standalone editor shell.
+- Documents now exposes Page setup, Print, New comment, Show comments, resolve,
+  reopen, and delete comment controls in the existing ribbon workflow.
+- Structured Mailings fields now use the document-field command path for
+  filename, date, and time insertion.
+- Slides now exposes an editable chart element (bar, line, and pie data) in the
+  existing canvas, Insert ribbon, and inspector while retaining the existing
+  templates, images, tables, thumbnails, Presenter mode, and lifecycle controls.
+- The print path preserves configured document headers and footers in the
+  browser print surface.
+
 - Documents retains the complete Home, Insert, Draw, Design, Layout,
   References, Mailings, Review, and View ribbon surface.
 - Documents retains structured editing, image insertion, find/replace,
@@ -43,6 +58,11 @@ not product UI or active source branding.
 - Slides parity verifier: 23/23 PASS.
 - Nova typecheck: PASS.
 - Content Editor production build: PASS.
+- Workstation verifier: 9/9 PASS.
+- Nova typecheck after host integration: PASS.
+- Official localhost Firefox verification: Documents Page setup and Review
+  comments rendered; Slides full ribbon, chart command, seven-slide deck,
+  speaker notes, Presenter mode, and archive/Trash controls rendered.
 - Local authentication lifecycle: 38/38 PASS.
 - Release preflight: 30 certified gates PASS; Tier 1.
 - Production smoke: 10/10 PASS.
@@ -72,6 +92,15 @@ not product UI or active source branding.
   `30e33a0f4f07a07d12b9948df7a59dccc242db913b528d0a8639ba829470127b`
 - `content-editor-nova/assets/nova-vendor-slides-CnB9V7H-.js` — SHA-256
   `e16ff8150886297be969f9e6c48d060cffc5b63bf0a6626185dad5d15b47d22d`
+
+Workstation candidate assets (built after host integration):
+
+- `content-editor-nova/content-editor.html` — SHA-256
+  `a822139e5644fccf4571ef6e4b841e59b587b2811abe3100aa8c0cc179717c94`
+- `content-editor-nova/assets/content-editor-Bz1s_Qh-.js` — SHA-256
+  `933e6d9d1e013bd4a9df3b22b58cf40c4062b146750f7c9116e534732c25d78c`
+- `content-editor-nova/assets/content-editor-C9qlYDES.css` — SHA-256
+  `4624acbd09df71ac7affcc19dd86807b9e06530dd7ada93e63d6db5530027e90`
 
 ## Known boundary
 
