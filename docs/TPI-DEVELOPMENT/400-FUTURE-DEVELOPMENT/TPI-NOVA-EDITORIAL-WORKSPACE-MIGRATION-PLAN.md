@@ -8,6 +8,16 @@ StudioFlow.
 Repository evidence was taken from branch `codex/tpi-development` after
 TPI-NOVA-004R2 (`e57c281`).
 
+## Current production conversion note — 2026-11-08
+
+The production Content Editor now successfully converts grandfathered legacy
+articles whose bodies use semantic `<section>` / `<article>` wrappers. The
+adapter recursively preserves those containers' block descendants instead of
+returning an empty document. The original publication body remains unchanged;
+the linked Nova document is the owner-scoped editing copy. The live route is
+`/paper-editor.html`; Nova Edit remains deferred to the separate StudioFlow
+product scope.
+
 ## 1. Product truth
 
 - **Nova Edit** — the StudioFlow Notes successor for Creators. Its migration is a

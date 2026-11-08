@@ -10,6 +10,38 @@ Nova Edit is **not** part of this release and is not being placed in StudioFlow.
 The `/studio/` entrypoint remains on its previous StudioFlow bundle. A future
 directive may add Nova Edit to StudioFlow separately.
 
+## 2026-11-08 conversion correction and live acceptance
+
+The first production deployment correctly routed the Content Editor to Nova,
+but one grandfathered article still displayed the compatibility editor. The
+root cause was the legacy article's semantic `<section><article>` wrapper:
+`content-editor-nova-convert.js` treated those containers as unsupported and
+discarded their block descendants, producing an empty Nova document. The API
+correctly rejected that empty conversion with `nova_conversion_empty`; no
+article body or public snapshot was changed.
+
+The focused correction is source commit
+`65481d73c51224abbeab299513633445c44d96a8`. The converter now recursively
+walks semantic containers and block-containing wrappers while preserving
+headings, paragraphs and supported inline content. The shared-editor contract
+is now **14 passed, 0 failed**.
+
+The exact certified candidate `rel-65481d73c512-87f66192b97e` was deployed
+through the guarded release path at `2026-11-08T02:08:18Z` (recorded deploy
+completion), activating Worker `1c063a9c-0c23-4592-ab53-351467442f80` at 100%
+traffic. Rollback remains Worker `42783d89-c43b-4ffe-87ad-e4f7eb4c4d62`.
+All 30 certification gates passed, anonymous production smoke passed 10/10,
+and isolated Firefox Developer Edition release acceptance passed 65/65.
+
+Owner-profile Firefox then opened the affected production article, confirmed
+the explicit conversion, and visibly rendered the GenOffice document ribbon
+with the legacy article content loaded in the document body. Evidence:
+`docs/TPI-DEVELOPMENT/evidence/tpi-nova-editorial/production-genoffice-firefox-20261108.png`
+(SHA-256
+`116e9f5231fab933e97c5316207a3c199640120657402cf7f34d0da0704ca26f`). The
+original `articles.body_html` and public snapshot remain protected; the Nova
+working document is the owner-scoped editing copy.
+
 ## Implementation
 
 - Server-backed editorial articles now open in the Nova editor automatically.
@@ -47,35 +79,41 @@ Verified article columns: `nova_item_id`, `editorial_status`, `affiliation`,
 `organization`, `correspondence`, and `website`.
 
 Verified append-only event triggers remain present. Existing production counts
-after schema application: 25 articles, 7 contributors, 128 Studios, 1 Note,
-0 Nova items, 0 submissions and 0 events.
+after schema application and before the first owner-approved conversion: 25
+articles, 7 contributors, 128 Studios, 1 Note, 0 Nova items, 0 submissions
+and 0 events.
 
 ## Verification
 
 - `node --check paper-editor.js`: PASS
 - `scripts/verify/tpi-nova-editorial-production-schema.mjs`: 12 passed, 0 failed
-- `scripts/verify/tpi-nova-004r4-shared-editor.mjs`: 13 passed, 0 failed
+- `scripts/verify/tpi-nova-004r4-shared-editor.mjs`: 14 passed, 0 failed
 - `npm run build:content-editor-nova`: PASS
 - Existing Nova foundation, workflow, table, submission and Slides checks were
   already passing before this focused migration; they remain release gates.
 
 ## Release state
 
-**DEPLOYED_AND_VERIFIED — 2026-11-08.** The guarded website release completed
-successfully with release ID `rel-a2d10f97af48-579f6bd87a4c`.
+**DEPLOYED_AND_VERIFIED — corrected and reverified 2026-11-08.** The guarded
+website release completed successfully with release ID
+`rel-65481d73c512-87f66192b97e`.
 
-- Production Worker: `42783d89-c43b-4ffe-87ad-e4f7eb4c4d62` at 100% traffic.
-- Rollback Worker: `99ca2347-3181-4525-b9eb-d28cb61cf42a`.
-- Website/source commit: `a2d10f97af482d437044b5a30343ad7a3f10a210`.
+- Production Worker: `1c063a9c-0c23-4592-ab53-351467442f80` at 100% traffic.
+- Rollback Worker: `42783d89-c43b-4ffe-87ad-e4f7eb4c4d62`.
+- Website/source commit: `65481d73c51224abbeab299513633445c44d96a8`.
 - Approved StudioFlow bundle commit: `eefb7de9518809d98726062aee478a4111c921a5`.
-- Deployment timestamp: `2026-11-08T01:38:03.951Z`.
+- Deployment timestamp: `2026-11-08T02:08:18Z` (release completion record).
 - `paper-editor.js`: `7391dc36b1c71629f3288965f6787f9840bf9a23a3a72bff0244817e2580c187`.
 - Nova JavaScript: `content-editor-DImj3Ihg.js`, SHA-256
   `b29738d923cd35055a41182f89aa73709f13a2702d9caffc6e6ae1ee434e4041`.
 - Nova CSS: `content-editor-CRrU71X0.css`, SHA-256
   `44012e8049c14ad32abee0e732c7ddcda3affe8df1ba61909b8a224d4fc7a060`.
+- Converter asset: `content-editor-nova-convert.js`, SHA-256
+  `ef9c20e48a191b900fa111a223ff668ae02817c2d6d8686bf47011ad5713b5bc`.
 - Production smoke: 10/10 PASS.
 - Live isolated Firefox acceptance: 65/65 PASS.
+- Live owner-profile Firefox GenOffice conversion: PASS; the affected legacy
+  article opened with the full Nova ribbon and preserved document content.
 - `/paper-editor.html` remains authentication-protected; the anonymous 403 is
   the expected contributor boundary. The deployed `paper-editor.js` and Nova
   bundle assets are present and served with revalidation headers.
@@ -85,7 +123,9 @@ was intentionally not placed in `/studio/`; the existing Content Editor route
 `/paper-editor.html` is the production home for GenOffice/Nova.
 
 The release reuses the pre-change D1 export above and the focused additive
-schema bootstrap. No production content records were rewritten or deleted.
+schema bootstrap. No production content records were deleted. The one
+explicit owner-approved conversion created and linked the Nova working copy;
+the original article body and public snapshot were preserved byte-for-byte.
 The historical D1 migration ledger drift remains documented; the bootstrap is
 the recorded reconciliation for this release and must not be replayed as a
 normal migration without a separate audit.

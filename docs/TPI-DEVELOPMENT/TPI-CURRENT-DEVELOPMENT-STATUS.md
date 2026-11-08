@@ -4,7 +4,7 @@
 
 Status: **DEPLOYED_AND_VERIFIED — TARGET IS THE EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**
 The GenOffice/Nova editing engine now enters through `/paper-editor.html` for
-server-backed editorial articles. The original article row and public HTML stay
+server-backed editorial articles. The original article body and public HTML stay
 unchanged while an owner-scoped Nova working document is linked automatically;
 the legacy editor remains an explicit compatibility fallback. The StudioFlow
 entrypoint was restored to its prior bundle for this release and Nova Edit is
@@ -17,6 +17,27 @@ website deployment completed as Worker
 `42783d89-c43b-4ffe-87ad-e4f7eb4c4d62` at 100% traffic. Production smoke passed
 10/10 and live isolated Firefox acceptance passed 65/65. The release is served
 through `/paper-editor.html`; Nova Edit was not added to `/studio/`.
+
+### 2026-11-08 amendment — legacy article conversion corrected and verified
+
+The first live Nova pass left one legacy article in Compatibility Fallback
+because its `<section><article>` wrapper was discarded by the HTML-to-Nova
+converter, yielding an empty document. The API correctly failed closed with
+`nova_conversion_empty`; the original article and public snapshot were not
+changed. Source commit `65481d73c51224abbeab299513633445c44d96a8` now walks
+semantic containers recursively and preserves their block descendants.
+
+The corrected certified release `rel-65481d73c512-87f66192b97e` is deployed at
+100% as Worker `1c063a9c-0c23-4592-ab53-351467442f80`, with rollback Worker
+`42783d89-c43b-4ffe-87ad-e4f7eb4c4d62`. Certification passed all 30 gates;
+anonymous production smoke passed 10/10; isolated Firefox release acceptance
+passed 65/65. In the owner Firefox session, the affected legacy article now
+opens with the full GenOffice/Nova ribbon and its content loaded in the Nova
+document body. Evidence is preserved at
+`docs/TPI-DEVELOPMENT/evidence/tpi-nova-editorial/production-genoffice-firefox-20261108.png`.
+The production target remains the existing Content Editor route
+`/paper-editor.html`, not StudioFlow `/studio/`; Nova Edit remains a separate
+future scope.
 
 ## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)
 
