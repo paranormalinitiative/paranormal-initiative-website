@@ -1,5 +1,24 @@
 # TPI Current Development Status
 
+## 2026-11-08 — Slides ribbon layout correction deployed
+
+Status: **DEPLOYED AND VERIFIED — EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**
+The Slides ribbon layout correction is live at `/paper-editor`. The root cause
+was the host site's legacy global `section` styling, which applied a centered
+maximum width, large padding, and an entrance animation to the GenOffice-derived
+Slides ribbon. The correction is a scoped reset for the Nova Slides ribbon only;
+it now matches the Documents editor's full-width toolbar geometry without
+changing the global site rule.
+
+Release `rel-52be2e9f41fa-b1264f456c60` is deployed at 100% as Worker
+`8bbae63d-bf43-4209-9fa3-b0f789ad0073`, with rollback Worker
+`8a0a324c-d666-4d69-afe4-30c636a392e9`. Anonymous production smoke passed
+10/10 and isolated Firefox Developer Edition acceptance passed 65/65. The
+owner-facing Firefox check confirmed the full-width ribbon, live thumbnails,
+main canvas, and speaker notes on the production Content Editor route. No
+production content was changed. Execution record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006D-RIBBON-LAYOUT-CORRECTION.md`.
+
 ## 2026-11-08 final deployment — GenOffice-style Slides ribbon and live previews
 
 Status: **DEPLOYED AND VERIFIED — EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**

@@ -1,7 +1,7 @@
 # TPI-NOVA-006D — Slides Ribbon Layout Correction
 
 **Date:** 2026-11-08  
-**Status:** IMPLEMENTED — LOCAL FIREFOX VERIFIED; RELEASE PENDING  
+**Status:** DEPLOYED AND VERIFIED IN PRODUCTION
 **Scope:** Existing Nova Slides ribbon in the Content Editor only
 
 ## Root cause
@@ -42,5 +42,22 @@ vertical gap visible in Firefox.
 - Entrypoint: `content-editor.html`
   - SHA-256: `aa2d9467357256e98fc56e326de8b40aedf5a7e381f82bd3d0b8a27a2fa23272`
 
-Production deployment is not recorded until the canonical guarded release and
-live Firefox acceptance complete.
+## Production verification
+
+The guarded production release completed from website commit
+`52be2e9f41fa34ee4d21c042b7e131f99853cd48` as release
+`rel-52be2e9f41fa-b1264f456c60`.
+
+- Production Worker: `8bbae63d-bf43-4209-9fa3-b0f789ad0073`
+- Rollback Worker: `8a0a324c-d666-4d69-afe4-30c636a392e9`
+- Traffic: 100%
+- Release manifest digest: `8e5bdd712563b942058d66fd935478189ba7e40d05a5d4948e95ddffd317dba0`
+- Anonymous production smoke: 10/10 PASS
+- Isolated Firefox Developer Edition acceptance: 65/65 PASS
+- Owner-facing Firefox verification: PASS; the live `/paper-editor` Slides
+  workspace now renders a full-width ribbon directly beneath the document
+  header, with left-aligned command groups, live slide previews, the canvas,
+  and speaker notes intact.
+
+The release did not create, delete, or modify production content. The target is
+the existing Content Editor at `/paper-editor`, not StudioFlow `/studio`.
