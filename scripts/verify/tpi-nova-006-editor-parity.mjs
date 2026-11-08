@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
 const read = file => readFileSync(resolve(root, file), "utf8");
-const ribbon = read("nova-app/src/shared-editor/GenOfficeRibbon.tsx");
+const ribbon = read("nova-app/src/shared-editor/OfficeRibbon.tsx");
 const insert = read("nova-app/src/shared-editor/InsertTools.tsx");
 const extensions = read("nova-app/src/shared-editor/editorExtensions.ts");
 const toolbar = read("nova-app/src/shared-editor/EditorToolbar.tsx");
@@ -13,7 +13,7 @@ const findReplace = read("nova-app/src/shared-editor/FindReplacePanel.tsx");
 const styles = read("nova-app/src/styles.css");
 
 const checks = [
-  ["Documents exposes the complete GenOffice tab strip", ["Home", "Insert", "Draw", "Design", "Layout", "References", "Mailings", "Review", "View"].every(tab => ribbon.includes(`"${tab}"`))],
+  ["Documents exposes the complete document tab strip", ["Home", "Insert", "Draw", "Design", "Layout", "References", "Mailings", "Review", "View"].every(tab => ribbon.includes(`"${tab}"`))],
   ["Documents has real editing controls on every main tab", ["renderHome", "renderInsert", "renderDraw", "renderDesign", "renderLayout", "renderReferences", "renderMailings", "renderReview", "renderView"].every(name => ribbon.includes(name)) && !/tab === "(Draw|References|Mailings)"[^]*PlannedPanel/.test(ribbon)],
   ["Documents supports portable image insertion", /NovaImage/.test(extensions) && /type: "novaImage"/.test(insert) && /Insert image from computer/.test(insert) && /Image URL/.test(insert) && /nova-prose img/.test(styles)],
   ["Documents supports find and replace", /FindReplacePanel/.test(documentEditor) && /replaceAll/.test(findReplace) && /Find and replace/.test(ribbon)],
@@ -21,6 +21,7 @@ const checks = [
   ["Documents preserves focus-safe ribbon integration", /onMouseDown=\{event => event\.preventDefault\(\)\}/.test(ribbon) && /onRequestLink/.test(toolbar)],
   ["Documents keeps structured table controls", /renderTableDesign/.test(ribbon) && /renderTableLayout/.test(ribbon) && /setNovaTableStyle/.test(ribbon) && /mergeNovaCells/.test(ribbon)],
   ["Documents keeps bookmarks, fields, and references", /InsertTools/.test(ribbon) && /createBookmark/.test(insert) && /insertField/.test(insert) && /Citation/.test(ribbon)]
+  , ["Documents provide safe Trash restore and permanent deletion", /permanent-delete/.test(documentEditor) && /permanentlyDelete/.test(documentEditor) && /DELETE PERMANENTLY/.test(documentEditor) && /Restore/.test(documentEditor)]
 ];
 
 let failed = 0;

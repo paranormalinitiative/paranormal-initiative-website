@@ -193,7 +193,7 @@ function PlannedPanel({ tab, available }: { tab: RibbonTab; available?: string }
   );
 }
 
-export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode = "print", onViewModeChange }: Props) {
+export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode = "print", onViewModeChange }: Props) {
   const [tab, setTab] = useState<RibbonTab>("Home");
   const [fontFamily, setFontFamily] = useState("Georgia");
   const [fontSize, setFontSize] = useState("17px");
@@ -508,8 +508,8 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
   };
 
   return (
-    <div className="nova-ribbon-shell" data-testid="genoffice-ribbon">
-      <div className="nova-ribbon-tab-row" role="tablist" aria-label="GenOffice document ribbon">
+    <div className="nova-ribbon-shell" data-testid="office-ribbon">
+      <div className="nova-ribbon-tab-row" role="tablist" aria-label="Document editing ribbon">
         <div className="nova-ribbon-quick"><RibbonButton label="Undo" icon={Undo2} compact testId="toolbar-undo" disabled={disabled || !editor.can().undo()} onClick={() => editor.chain().focus().undo().run()} /><RibbonButton label="Redo" icon={Redo2} compact testId="toolbar-redo" disabled={disabled || !editor.can().redo()} onClick={() => editor.chain().focus().redo().run()} /></div>
         {TABS.map(item => <button type="button" role="tab" aria-selected={tab === item} className={`nova-ribbon-tab${tab === item ? " is-active" : ""}`} key={item} onClick={() => setTab(item)} data-testid={`ribbon-tab-${item.toLowerCase()}`}>{item}</button>)}
         <div className="nova-ribbon-tab-spacer" />

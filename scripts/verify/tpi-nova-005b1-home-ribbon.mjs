@@ -8,7 +8,7 @@ import { novaDocToHtml } from "../../lib/nova-document-html.js";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const read = path => readFileSync(resolve(repoRoot, path), "utf8");
-const ribbon = read("nova-app/src/shared-editor/GenOfficeRibbon.tsx");
+const ribbon = read("nova-app/src/shared-editor/OfficeRibbon.tsx");
 const extensions = read("nova-app/src/shared-editor/editorExtensions.ts");
 const mark = read("nova-app/src/shared-editor/ribbonExtensions.ts");
 const renderer = read("lib/nova-document-html.js");

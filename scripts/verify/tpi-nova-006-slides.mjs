@@ -6,7 +6,7 @@ const root = resolve(import.meta.dirname, "../..");
 const read = file => readFileSync(resolve(root, file), "utf8");
 const model = read("nova-app/src/slides/model.ts");
 const surface = read("nova-app/src/slides/SlidesSurface.tsx");
-const ribbon = read("nova-app/src/slides/GenOfficeRibbon.tsx");
+const ribbon = read("nova-app/src/slides/OfficeRibbon.tsx");
 const styles = read("nova-app/src/styles.css");
 const canvas = read("nova-app/src/slides/SlideCanvas.tsx");
 const shell = read("nova-app/src/shell/App.tsx");
@@ -32,12 +32,13 @@ const checks = [
   ["Slides provides professional templates", /SlideTemplateKey/.test(model) && /field-report/.test(model) && /evidence-brief/.test(model) && /lecture/.test(model) && /Presentation template/.test(surface)],
   ["Slide text is editable after insertion", /SlideInspector/.test(surface) && /Edit this text/.test(surface) && /element\.text/.test(surface)],
   ["Slides support real image sources", /imageFileToDataUrl/.test(surface) && /Upload image/.test(ribbon) && /src\?: string/.test(model) && /KonvaImage/.test(canvas)],
-  ["Slides use the full-width GenOffice ribbon and live slide thumbnails", /Ribbon\.tsx/.test(ribbon) && /nova-genoffice-ribbon/.test(ribbon) && /\.nova-genoffice-ribbon \{[^}]*width: 100%/.test(styles) && /\.nova-ribbon-body \{[^}]*width: 100%/.test(styles) && /legacy global `section` rule/.test(styles) && /animation: none/.test(styles) && /PresentationThumbnail/.test(surface) && /data-testid=\"slide-thumbnail\"/.test(surface)],
+  ["Slides use the full-width office ribbon and live slide thumbnails", /OfficeRibbon/.test(ribbon) && /nova-office-ribbon/.test(ribbon) && /\.nova-office-ribbon \{[^}]*width: 100%/.test(styles) && /\.nova-ribbon-body \{[^}]*width: 100%/.test(styles) && /legacy global `section` rule/.test(styles) && /animation: none/.test(styles) && /PresentationThumbnail/.test(surface) && /data-testid=\"slide-thumbnail\"/.test(surface)],
   ["Slides workspace and presentation survive host refresh", /persistWorkspaceMode/.test(contentScript) && /restoreRequestedWorkspaceMode/.test(contentScript) && /workspace.*slides/.test(contentScript) && /initialPresentationId/.test(contentEntry) && /presentation/.test(contentScript)],
   ["All Slides ribbon tabs expose real editing controls", /activeTab === "draw"/.test(ribbon) && /activeTab === "design"/.test(ribbon) && /activeTab === "transitions"/.test(ribbon) && /activeTab === "animations"/.test(ribbon) && /activeTab === "review"/.test(ribbon) && /activeTab === "view"/.test(ribbon) && /onAddLine/.test(ribbon) && /onSetTransition/.test(ribbon) && /onSetAnimation/.test(ribbon)],
   ["Slides persist themes, transitions, review notes, and sorter view", /SlideTransition/.test(model) && /reviewNotes/.test(model) && /nova-slide-sorter/.test(styles) && /onReviewNoteChange/.test(surface) && /viewMode/.test(surface)],
   ["Slides provide layout-aware insertion", /SlideLayoutKey/.test(model) && /addSlideWithLayout/.test(model) && /New slide layout/.test(ribbon) && /onAddSlideWithLayout/.test(surface)],
   ["Slides provide editable tables and shape variants", /TableElement/.test(model) && /addTableToSlide/.test(model) && /element\.kind === \"table\"/.test(canvas) && /roundRect/.test(model) && /ellipse/.test(ribbon)],
+  ["Slides provide safe archive, Trash, restore, and permanent deletion", /PresentationView/.test(surface) && /listItems\(\{ type: \"nova-presentation\", status: view \}\)/.test(surface) && /permanentlyDelete/.test(surface) && /DELETE PERMANENTLY/.test(surface) && /Move to Trash/.test(surface)],
   ["Slides provide selected-text formatting controls", /onUpdateSelectedElement/.test(ribbon) && /fontFamily/.test(model) && /fontWeight/.test(model) && /fontStyle/.test(model) && /selectedElement\?\.kind === \"text\"/.test(ribbon)],
   ["Presenter mode includes navigation and notes", /PresenterMode/.test(surface) && /Presenter mode/.test(surface) && /Speaker notes/.test(surface) && /PageDown/.test(surface)]
 ];

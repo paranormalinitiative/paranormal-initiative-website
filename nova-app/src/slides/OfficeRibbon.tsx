@@ -3,11 +3,11 @@ import { AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, Bold, Eraser, I
 import type { ElementAnimation, ShapeKind, SlideElement, SlideLayoutKey, SlideTransition } from "./model";
 
 /**
- * The ribbon structure follows GenOffice's Slides renderer:
+ * The ribbon follows the established desktop-authoring interaction pattern:
  * apps/slides/src/renderer/components/Ribbon.tsx and ribbon-shared.tsx.
  * Nova keeps its own web-safe commands and presentation model, but uses the
- * same tab-strip/grouped-command interaction so the Content Editor feels like
- * the GenOffice authoring surface without importing Electron-only code.
+ * same tab-strip/grouped-command interaction while keeping the Content Editor
+ * web-native and server-backed.
  */
 
 type RibbonTab = "home" | "insert" | "draw" | "design" | "transitions" | "animations" | "slideShow" | "review" | "view";
@@ -77,7 +77,7 @@ function Separator() {
   return <span className="nova-ribbon-separator" aria-hidden="true" />;
 }
 
-export function GenOfficeRibbon(props: Props) {
+export function OfficeRibbon(props: Props) {
   const [activeTab, setActiveTab] = useState<RibbonTab>(() => {
     try {
       const saved = window.localStorage.getItem("nova-slides-ribbon-tab") as RibbonTab | null;
@@ -101,7 +101,7 @@ export function GenOfficeRibbon(props: Props) {
   };
 
   return (
-    <section className="nova-genoffice-ribbon" aria-label="Presentation ribbon">
+    <section className="nova-office-ribbon" aria-label="Presentation ribbon">
       <nav className="nova-ribbon-tabs" aria-label="Presentation tools">
         {TABS.map(tab => <button key={tab.id} type="button" className={`nova-ribbon-tab${activeTab === tab.id ? " is-active" : ""}`} onClick={() => selectTab(tab.id)} aria-selected={activeTab === tab.id}>{tab.label}</button>)}
       </nav>

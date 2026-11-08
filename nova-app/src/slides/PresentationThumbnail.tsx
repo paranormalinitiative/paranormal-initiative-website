@@ -9,7 +9,7 @@ interface Props {
 }
 
 /**
- * GenOffice's SlideThumb renders the real slide model in a read-only canvas.
+ * The thumbnail renders the real slide model in a read-only canvas.
  * Nova uses the same principle with its existing Konva canvas so thumbnails
  * cannot drift from the editing surface.
  */

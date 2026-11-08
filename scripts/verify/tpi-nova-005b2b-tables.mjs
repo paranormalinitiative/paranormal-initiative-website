@@ -11,7 +11,7 @@ const read = path => readFileSync(resolve(repoRoot, path), "utf8");
 const extensions = read("nova-app/src/shared-editor/editorExtensions.ts");
 const attributes = read("nova-app/src/shared-editor/tableAttributes.ts");
 const commands = read("nova-app/src/shared-editor/commands/tables.ts");
-const ribbon = read("nova-app/src/shared-editor/GenOfficeRibbon.tsx");
+const ribbon = read("nova-app/src/shared-editor/OfficeRibbon.tsx");
 const renderer = read("lib/nova-document-html.js");
 const converterSource = read("content-editor-nova-convert.js");
 let passed = 0;

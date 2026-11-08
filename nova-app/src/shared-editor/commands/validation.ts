@@ -2,7 +2,7 @@
 // dialog is not trusted: commands and the publication renderer both check these.
 
 // Bookmark names: letters (including CJK), digits and underscore, starting with a
-// letter or underscore. Matches the GenOffice bookmark rule, up to 80 characters.
+// letter or underscore, up to 80 characters.
 const BOOKMARK_NAME = /^[A-Za-z\u4e00-\u9fff_][\w\u4e00-\u9fff]*$/;
 const MAX_BOOKMARK_LENGTH = 80;
 

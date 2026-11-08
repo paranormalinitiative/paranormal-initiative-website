@@ -170,7 +170,7 @@ check("field commands preserve semantic identity and refresh labels without rewr
 });
 
 check("Insert controls are wired into the shared toolbar and honor read-only state", () => {
-  assert.match(commandSources.toolbar + read("nova-app/src/shared-editor/GenOfficeRibbon.tsx"), /<InsertTools/);
+  assert.match(commandSources.toolbar + read("nova-app/src/shared-editor/OfficeRibbon.tsx"), /<InsertTools/);
   assert.match(commandSources.insertTools, /disabled=\{disabled\}/);
   assert.match(commandSources.insertTools, /navigateBookmark/);
   assert.match(commandSources.editor, /readOnly \|\| !editor/);

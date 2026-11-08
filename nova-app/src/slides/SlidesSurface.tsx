@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Copy, Maximize, Plus, Save, Trash2, X } from "lucide-react";
+import { Archive, ArrowLeft, ChevronLeft, ChevronRight, Copy, Maximize, Plus, Save, Trash2, X, XCircle } from "lucide-react";
 import { NovaApiError, describeNovaError, novaApi } from "../lib/api";
 import type { NovaCollection, NovaItem, NovaItemSummary } from "../lib/types";
 import { AccessNotice } from "../documents/AccessNotice";
 import { SlideCanvas } from "./SlideCanvas";
-import { GenOfficeRibbon, type SlideThemeKey, type SlideViewMode } from "./GenOfficeRibbon";
+import { OfficeRibbon, type SlideThemeKey, type SlideViewMode } from "./OfficeRibbon";
 import { PresentationThumbnail } from "./PresentationThumbnail";
+import { Modal } from "../shared-editor/Modal";
 import { addSlide, addSlideWithLayout, addTableToSlide, createPresentationFromTemplate, deleteSlide, duplicateSlide, envelope, parsePresentation, reorderSlide, type Presentation, type ShapeKind, type SlideElement, type SlideLayoutKey, type SlideTemplateKey, type SlideTransition, updateElement } from "./model";
 
 interface Props {
@@ -61,8 +62,14 @@ function imageFileToDataUrl(file: File): Promise<string> {
   });
 }
 
-function PresentationLibraryCard({ item, onOpen }: { item: NovaItemSummary; onOpen: () => void }) {
+type PresentationView = "active" | "archived" | "trash";
+
+function PresentationLibraryCard({ item, onOpen, onChanged }: { item: NovaItemSummary; onOpen: () => void; onChanged: () => void }) {
   const [presentation, setPresentation] = useState<Presentation | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [failure, setFailure] = useState("");
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -74,13 +81,65 @@ function PresentationLibraryCard({ item, onOpen }: { item: NovaItemSummary; onOp
     return () => { active = false; };
   }, [item.id]);
 
-  return <button type="button" className="nova-slide-card" key={item.id} onClick={onOpen} data-testid="presentation-card">
-    <span className="nova-slide-card-preview">
-      {presentation?.slides[0] ? <PresentationThumbnail presentation={presentation} slide={presentation.slides[0]} width={286} /> : <span>{item.title.slice(0, 42)}</span>}
-    </span>
-    <strong>{item.title}</strong>
-    <small>{new Date(item.updatedAt).toLocaleString()}</small>
-  </button>;
+  const runAction = async (action: "archive" | "trash" | "restore") => {
+    if (busy) return;
+    setBusy(true);
+    setFailure("");
+    try {
+      await novaApi.act(item.id, action, item.version);
+      onChanged();
+    } catch (actionFailure) {
+      setFailure(describeNovaError(actionFailure));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const permanentlyDelete = async () => {
+    if (deleteConfirm !== "DELETE PERMANENTLY") {
+      setFailure("Type DELETE PERMANENTLY exactly to confirm permanent deletion.");
+      return;
+    }
+    setBusy(true);
+    setFailure("");
+    try {
+      await novaApi.permanentlyDelete(item.id, item.version);
+      setDeleteOpen(false);
+      onChanged();
+    } catch (deleteFailure) {
+      setFailure(describeNovaError(deleteFailure));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return <article className="nova-slide-card" data-testid="presentation-card">
+    <button type="button" className="nova-slide-card-open" onClick={onOpen}>
+      <span className="nova-slide-card-preview">
+        {presentation?.slides[0] ? <PresentationThumbnail presentation={presentation} slide={presentation.slides[0]} width={286} /> : <span>{item.title.slice(0, 42)}</span>}
+      </span>
+      <strong>{item.title}</strong>
+      <small>{item.status !== "active" ? `${item.status === "archived" ? "Archived" : "In Trash"} · ` : ""}{new Date(item.updatedAt).toLocaleString()}</small>
+    </button>
+    {failure ? <p className="nova-slide-card-error" role="alert">{failure}</p> : null}
+    <div className="nova-slide-card-actions" aria-label={`${item.title} actions`}>
+      {item.status === "active" ? <>
+        <button type="button" className="nova-button nova-button-small" disabled={busy} onClick={() => void runAction("archive")}><Archive size={13} /> Archive</button>
+        <button type="button" className="nova-button nova-button-small nova-button-danger-quiet" disabled={busy} onClick={() => void runAction("trash")}><Trash2 size={13} /> Move to Trash</button>
+      </> : <button type="button" className="nova-button nova-button-small" disabled={busy} onClick={() => void runAction("restore")}>Restore</button>}
+      {item.status === "trash" ? <button type="button" className="nova-button nova-button-small nova-button-danger-quiet" disabled={busy} onClick={() => { setDeleteConfirm(""); setDeleteOpen(true); }}><XCircle size={13} /> Delete permanently</button> : null}
+    </div>
+    <Modal
+      open={deleteOpen}
+      title="Delete this presentation permanently?"
+      description="Permanent deletion removes this presentation and every stored revision. This cannot be undone, and it is only available for presentations already in Trash."
+      onClose={() => setDeleteOpen(false)}
+      testId={`presentation-delete-dialog-${item.id}`}
+      footer={<><span className="nova-spacer" /><button type="button" className="nova-button" onClick={() => setDeleteOpen(false)}>Cancel</button><button type="button" className="nova-button nova-button-danger" disabled={busy} onClick={() => void permanentlyDelete()}>{busy ? "Deleting…" : "Delete permanently"}</button></>}
+    >
+      <label className="nova-field"><span>Type DELETE PERMANENTLY to confirm</span><input type="text" value={deleteConfirm} autoComplete="off" onChange={event => setDeleteConfirm(event.target.value)} /></label>
+    </Modal>
+  </article>;
 }
 
 export default function SlidesSurface({ presentationId, onNavigatePresentation }: Props) {
@@ -90,12 +149,13 @@ export default function SlidesSurface({ presentationId, onNavigatePresentation }
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(0);
   const [templateKey, setTemplateKey] = useState<SlideTemplateKey>("field-report");
+  const [view, setView] = useState<PresentationView>("active");
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const [itemResponse, collectionResponse] = await Promise.all([
-        novaApi.listItems({ type: "nova-presentation" }),
+        novaApi.listItems({ type: "nova-presentation", status: view }),
         novaApi.listCollections()
       ]);
       setItems(itemResponse.items);
@@ -106,7 +166,7 @@ export default function SlidesSurface({ presentationId, onNavigatePresentation }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [view]);
 
   useEffect(() => { void load(); }, [load, refresh]);
 
@@ -118,6 +178,11 @@ export default function SlidesSurface({ presentationId, onNavigatePresentation }
     } catch (failure) {
       setError({ status: failure instanceof NovaApiError ? failure.status : null, message: describeNovaError(failure) });
     }
+  };
+
+  const selectView = (nextView: PresentationView) => {
+    setView(nextView);
+    if (presentationId) onNavigatePresentation(null);
   };
 
   if (error && (error.status === 401 || error.status === 403)) return <AccessNotice status={error.status} message={error.message} onRetry={() => void load()} />;
@@ -132,11 +197,14 @@ export default function SlidesSurface({ presentationId, onNavigatePresentation }
           <button type="button" className="nova-button nova-button-primary" data-testid="new-presentation" onClick={() => void createPresentation()}><Plus size={16} /> New presentation</button>
         </div>
       </div>
+      <div className="nova-slide-view-tabs" role="tablist" aria-label="Presentation views">
+        {(["active", "archived", "trash"] as PresentationView[]).map(candidate => <button key={candidate} type="button" role="tab" aria-selected={view === candidate} className={`nova-view-tab${view === candidate ? " is-active" : ""}`} onClick={() => selectView(candidate)}>{candidate === "active" ? "Presentations" : candidate === "archived" ? "Archive" : "Trash"}</button>)}
+      </div>
       {error ? <div className="nova-banner nova-banner-error" role="alert">{error.message}</div> : null}
       {loading ? <div className="nova-booting" role="status">Loading presentations…</div> : items.length === 0 ? (
-        <div className="nova-empty-state"><strong>No presentations yet.</strong><span>Create a deck for a webinar, investigation, class or production.</span><button type="button" className="nova-button" onClick={() => void createPresentation()}>Create your first presentation</button></div>
+        <div className="nova-empty-state"><strong>{view === "active" ? "No presentations yet." : view === "archived" ? "Nothing archived." : "Trash is empty."}</strong><span>{view === "active" ? "Create a deck for a webinar, investigation, class or production." : view === "archived" ? "Archived presentations remain available and can be restored." : "Presentations in Trash can be restored until permanently deleted."}</span>{view === "active" ? <button type="button" className="nova-button" onClick={() => void createPresentation()}>Create your first presentation</button> : null}</div>
       ) : (
-        <div className="nova-slide-card-grid">{items.map(item => <PresentationLibraryCard key={item.id} item={item} onOpen={() => onNavigatePresentation(item.id)} />)}</div>
+        <div className="nova-slide-card-grid">{items.map(item => <PresentationLibraryCard key={item.id} item={item} onOpen={() => onNavigatePresentation(item.id)} onChanged={() => setRefresh(value => value + 1)} />)}</div>
       )}
     </div>
   );
@@ -149,6 +217,9 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("Saved");
   const [failure, setFailure] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
   const [dirty, setDirty] = useState(false);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState("");
@@ -333,6 +404,43 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     edit(value => updateElement(value, current, selectedElementId, { animation }));
   };
 
+  const runItemAction = async (action: "archive" | "trash" | "restore") => {
+    if (!item || busy) return;
+    setBusy(true);
+    setFailure("");
+    try {
+      const response = await novaApi.act(item.id, action, versionRef.current);
+      setItem(response.item);
+      versionRef.current = response.item.version;
+      onChanged();
+      if (action === "trash") onBack();
+    } catch (actionFailure) {
+      setFailure(describeNovaError(actionFailure));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const permanentlyDelete = async () => {
+    if (!item) return;
+    if (deleteConfirm !== "DELETE PERMANENTLY") {
+      setFailure("Type DELETE PERMANENTLY exactly to confirm permanent deletion.");
+      return;
+    }
+    setBusy(true);
+    setFailure("");
+    try {
+      await novaApi.permanentlyDelete(item.id, versionRef.current);
+      setDeleteOpen(false);
+      onChanged();
+      onBack();
+    } catch (deleteFailure) {
+      setFailure(describeNovaError(deleteFailure));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (presenting || viewMode === "reading") return <PresenterMode presentation={presentation} current={current} title={title} onChangeSlide={setCurrent} onExit={() => { setPresenting(false); setViewMode("normal"); }} />;
 
   return (
@@ -342,10 +450,15 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
         <input className="nova-slides-title" value={title} aria-label="Presentation title" disabled={readOnly} onChange={event => handleTitleChange(event.target.value)} />
         <span className={`nova-save-state ${dirty ? "is-dirty" : ""}`}>{status}</span>
         <button type="button" className="nova-button nova-button-present" disabled={!presentation.slides.length} onClick={() => setPresenting(true)}><Maximize size={15} /> Present</button>
-        <button type="button" className="nova-button" disabled={readOnly || !dirty} onClick={() => void save()}><Save size={15} /> Save</button>
+        <button type="button" className="nova-button" disabled={readOnly || !dirty || busy} onClick={() => void save()}><Save size={15} /> Save</button>
+        {item.status === "active" ? <>
+          <button type="button" className="nova-button nova-button-small" disabled={busy || dirty} onClick={() => void runItemAction("archive")}><Archive size={14} /> Archive</button>
+          <button type="button" className="nova-button nova-button-small nova-button-danger-quiet" disabled={busy || dirty} onClick={() => void runItemAction("trash")}><Trash2 size={14} /> Move to Trash</button>
+        </> : <button type="button" className="nova-button nova-button-small" disabled={busy} onClick={() => void runItemAction("restore")}>Restore</button>}
+        {item.status === "trash" ? <button type="button" className="nova-button nova-button-small nova-button-danger-quiet" disabled={busy} onClick={() => { setDeleteConfirm(""); setDeleteOpen(true); }}><XCircle size={14} /> Delete permanently</button> : null}
       </header>
       {failure ? <div className="nova-banner nova-banner-error" role="alert">{failure}</div> : null}
-      <GenOfficeRibbon
+      <OfficeRibbon
         readOnly={readOnly}
         hasSlides={presentation.slides.length > 0}
         dirty={dirty}
@@ -394,6 +507,16 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
           {viewMode === "sorter" ? <div className="nova-slide-sorter" aria-label="Slide sorter">{presentation.slides.map((candidate, index) => <button type="button" key={candidate.id} className={`nova-slide-sorter-item${index === current ? " is-selected" : ""}`} onClick={() => { setCurrent(index); setViewMode("normal"); }}><span>{index + 1}</span><PresentationThumbnail presentation={presentation} slide={candidate} width={300} /><strong>{candidate.elements.find(element => element.kind === "text")?.text || `Slide ${index + 1}`}</strong></button>)}</div> : <><div className="nova-slide-canvas-wrap"><SlideCanvas presentation={presentation} slide={slide} scale={Math.min(0.82, 860 / presentation.width)} onSelectElement={setSelectedElementId} onUpdateElement={(elementId, patch) => edit(value => updateElement(value, current, elementId, patch))} /></div><SlideInspector element={selectedElement} readOnly={readOnly} onUpdate={updateCurrentElement} onDelete={removeSelectedElement} /><div className="nova-slide-notes"><label>Speaker notes<textarea value={selectedSlide.speakerNotes || ""} disabled={readOnly} onChange={event => edit(value => ({ ...value, slides: value.slides.map((candidate, index) => index === current ? { ...candidate, speakerNotes: event.target.value } : candidate) }))} placeholder="Notes for the presenter…" /></label></div></>}
         </main>
       </div>
+      <Modal
+        open={deleteOpen}
+        title="Delete this presentation permanently?"
+        description="Permanent deletion removes this presentation and every stored revision. This cannot be undone, and it is only available for presentations already in Trash."
+        onClose={() => setDeleteOpen(false)}
+        testId="presentation-editor-delete-dialog"
+        footer={<><span className="nova-spacer" /><button type="button" className="nova-button" onClick={() => setDeleteOpen(false)}>Cancel</button><button type="button" className="nova-button nova-button-danger" disabled={busy} onClick={() => void permanentlyDelete()}>{busy ? "Deleting…" : "Delete permanently"}</button></>}
+      >
+        <label className="nova-field"><span>Type DELETE PERMANENTLY to confirm</span><input type="text" value={deleteConfirm} autoComplete="off" onChange={event => setDeleteConfirm(event.target.value)} /></label>
+      </Modal>
     </div>
   );
 }

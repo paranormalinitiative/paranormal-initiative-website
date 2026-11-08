@@ -1,5 +1,5 @@
 import type { Editor } from "@tiptap/core";
-import { GenOfficeRibbon, type DocumentViewMode } from "./GenOfficeRibbon";
+import { OfficeRibbon, type DocumentViewMode } from "./OfficeRibbon";
 
 interface Props {
   editor: Editor;
@@ -12,5 +12,5 @@ interface Props {
 }
 
 export function EditorToolbar({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode, onViewModeChange }: Props) {
-  return <div data-testid="editor-toolbar"><GenOfficeRibbon editor={editor} disabled={disabled} onRequestLink={onRequestLink} documentTitle={documentTitle} onToggleFindReplace={onToggleFindReplace} viewMode={viewMode} onViewModeChange={onViewModeChange} /></div>;
+  return <div data-testid="editor-toolbar"><OfficeRibbon editor={editor} disabled={disabled} onRequestLink={onRequestLink} documentTitle={documentTitle} onToggleFindReplace={onToggleFindReplace} viewMode={viewMode} onViewModeChange={onViewModeChange} /></div>;
 }

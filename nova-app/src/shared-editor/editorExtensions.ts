@@ -91,7 +91,7 @@ const NovaTableHeader = TableHeader.extend({
   }
 });
 
-// GenOffice's document editor treats pictures as first-class inline document
+// The document editor treats pictures as first-class inline document
 // content. Nova keeps the same portable shape (src/alt/title) so an inserted
 // image is persisted in the existing document JSON instead of living in a
 // second attachment store.

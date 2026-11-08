@@ -9,7 +9,7 @@ import { collectionPath } from "../lib/tree";
 import type { NovaCollection, NovaDocumentEnvelope, NovaItem } from "../lib/types";
 import { AccessNotice } from "./AccessNotice";
 import { EditorToolbar } from "../shared-editor/EditorToolbar";
-import type { DocumentViewMode } from "../shared-editor/GenOfficeRibbon";
+import type { DocumentViewMode } from "../shared-editor/OfficeRibbon";
 import { LinkDialog } from "../shared-editor/LinkDialog";
 import { setLink, unsetLink } from "../shared-editor/commands/links";
 import { Modal } from "../shared-editor/Modal";

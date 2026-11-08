@@ -39,7 +39,7 @@ const textStyleAttrs = {
   }
 };
 
-/** Persistent character formatting used by the GenOffice-style ribbon. */
+/** Persistent character formatting used by the document ribbon. */
 export const TpiTextStyle = Mark.create({
   name: "tpiTextStyle",
   addAttributes() {
