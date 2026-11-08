@@ -2,7 +2,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import Paragraph from "@tiptap/extension-paragraph";
 import Heading from "@tiptap/extension-heading";
-import { Extension } from "@tiptap/core";
+import { Extension, Node } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { TpiBookmark, TpiField } from "./bookmarkFieldExtensions";
 import { TpiTextStyle } from "./ribbonExtensions";
@@ -91,6 +91,31 @@ const NovaTableHeader = TableHeader.extend({
   }
 });
 
+// GenOffice's document editor treats pictures as first-class inline document
+// content. Nova keeps the same portable shape (src/alt/title) so an inserted
+// image is persisted in the existing document JSON instead of living in a
+// second attachment store.
+const NovaImage = Node.create({
+  name: "novaImage",
+  group: "inline",
+  inline: true,
+  atom: true,
+  draggable: true,
+  addAttributes() {
+    return {
+      src: { default: null },
+      alt: { default: "" },
+      title: { default: null }
+    };
+  },
+  parseHTML() {
+    return [{ tag: "img[src]" }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["img", { ...HTMLAttributes, loading: "lazy" }];
+  }
+});
+
 // A click on an internal #bookmark link moves the caret to that bookmark inside
 // the editor. It never reaches the browser, so nothing is opened in a new window.
 const InternalBookmarkLinks = Extension.create({
@@ -153,6 +178,7 @@ export const novaExtensions = [
   NovaTableRow,
   NovaTableHeader,
   NovaTableCell,
+  NovaImage,
   TpiBookmark,
   TpiField,
   TpiTextStyle,

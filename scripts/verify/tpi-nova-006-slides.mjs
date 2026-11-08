@@ -36,6 +36,9 @@ const checks = [
   ["Slides workspace and presentation survive host refresh", /persistWorkspaceMode/.test(contentScript) && /restoreRequestedWorkspaceMode/.test(contentScript) && /workspace.*slides/.test(contentScript) && /initialPresentationId/.test(contentEntry) && /presentation/.test(contentScript)],
   ["All Slides ribbon tabs expose real editing controls", /activeTab === "draw"/.test(ribbon) && /activeTab === "design"/.test(ribbon) && /activeTab === "transitions"/.test(ribbon) && /activeTab === "animations"/.test(ribbon) && /activeTab === "review"/.test(ribbon) && /activeTab === "view"/.test(ribbon) && /onAddLine/.test(ribbon) && /onSetTransition/.test(ribbon) && /onSetAnimation/.test(ribbon)],
   ["Slides persist themes, transitions, review notes, and sorter view", /SlideTransition/.test(model) && /reviewNotes/.test(model) && /nova-slide-sorter/.test(styles) && /onReviewNoteChange/.test(surface) && /viewMode/.test(surface)],
+  ["Slides provide layout-aware insertion", /SlideLayoutKey/.test(model) && /addSlideWithLayout/.test(model) && /New slide layout/.test(ribbon) && /onAddSlideWithLayout/.test(surface)],
+  ["Slides provide editable tables and shape variants", /TableElement/.test(model) && /addTableToSlide/.test(model) && /element\.kind === \"table\"/.test(canvas) && /roundRect/.test(model) && /ellipse/.test(ribbon)],
+  ["Slides provide selected-text formatting controls", /onUpdateSelectedElement/.test(ribbon) && /fontFamily/.test(model) && /fontWeight/.test(model) && /fontStyle/.test(model) && /selectedElement\?\.kind === \"text\"/.test(ribbon)],
   ["Presenter mode includes navigation and notes", /PresenterMode/.test(surface) && /Presenter mode/.test(surface) && /Speaker notes/.test(surface) && /PageDown/.test(surface)]
 ];
 

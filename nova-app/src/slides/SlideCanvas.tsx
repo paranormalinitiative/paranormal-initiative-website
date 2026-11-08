@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Group, Image as KonvaImage, Layer, Line, Rect, Stage, Text, Transformer } from "react-konva";
+import { Ellipse, Group, Image as KonvaImage, Layer, Line, Rect, Stage, Text, Transformer } from "react-konva";
 import type Konva from "konva";
 import type { Presentation, Slide, SlideElement } from "./model";
 
@@ -74,13 +74,31 @@ export function SlideCanvas({ presentation, slide, scale, onUpdateElement, onSel
             const isLongCoverTitle = slide.id === presentation.slides[0]?.id && element.x === 112 && element.y === 76 && element.text.length > 36;
             const displayText = isLongCoverTitle ? element.text.replace(": ", ":\n") : element.text;
             const displayHeight = isLongCoverTitle ? Math.max(element.height, 112) : element.height;
-            return <Text key={element.id} {...common} text={displayText} fontSize={isLongCoverTitle ? Math.min(element.fontSize, 34) : element.fontSize} fill={element.fill} width={element.width} height={displayHeight} padding={8} verticalAlign="middle" wrap="word" />;
+            return <Text key={element.id} {...common} text={displayText} fontFamily={element.fontFamily} fontStyle={element.fontStyle} fontSize={isLongCoverTitle ? Math.min(element.fontSize, 34) : element.fontSize} fontWeight={element.fontWeight} align={element.align} fill={element.fill} width={element.width} height={displayHeight} padding={8} verticalAlign="middle" wrap="word" />;
           }
           if (element.kind === "rect") {
-            return <Rect key={element.id} {...common} width={element.width} height={element.height} fill={element.fill} cornerRadius={8} />;
+            if (element.shape === "ellipse") {
+              return <Ellipse key={element.id} {...common} radiusX={element.width / 2} radiusY={element.height / 2} fill={element.fill} />;
+            }
+            return <Rect key={element.id} {...common} width={element.width} height={element.height} fill={element.fill} cornerRadius={element.shape === "roundRect" ? 18 : 8} />;
           }
           if (element.kind === "line") {
             return <Line key={element.id} {...common} points={[0, 0, element.width, element.height]} stroke={element.stroke} strokeWidth={element.strokeWidth} lineCap="round" />;
+          }
+          if (element.kind === "table") {
+            const rowCount = element.rows.length;
+            const columnCount = Math.max(1, ...element.rows.map(row => row.length));
+            const cellWidth = element.width / columnCount;
+            const cellHeight = element.height / rowCount;
+            return <Group key={element.id} {...common}>
+              <Rect width={element.width} height={element.height} fill={element.cellFill || "#f4f7f2"} stroke={element.stroke || "#9bb6a5"} strokeWidth={2} />
+              {element.rows.map((row, rowIndex) => row.map((value, columnIndex) => <Group key={`${rowIndex}-${columnIndex}`} x={columnIndex * cellWidth} y={rowIndex * cellHeight}>
+                {rowIndex === 0 ? <Rect width={cellWidth} height={cellHeight} fill={element.headerFill || "#2f5f48"} /> : null}
+                <Text text={value} width={cellWidth} height={cellHeight} padding={7} fontSize={16} fill={rowIndex === 0 ? "#ffffff" : "#1d281f"} verticalAlign="middle" wrap="word" />
+              </Group>))}
+              {Array.from({ length: columnCount - 1 }, (_, columnIndex) => <Line key={`column-${columnIndex}`} points={[(columnIndex + 1) * cellWidth, 0, (columnIndex + 1) * cellWidth, element.height]} stroke={element.stroke || "#9bb6a5"} strokeWidth={1} />)}
+              {Array.from({ length: rowCount - 1 }, (_, rowIndex) => <Line key={`row-${rowIndex}`} points={[0, (rowIndex + 1) * cellHeight, element.width, (rowIndex + 1) * cellHeight]} stroke={element.stroke || "#9bb6a5"} strokeWidth={1} />)}
+            </Group>;
           }
           return (
             <Group key={element.id} {...common}>

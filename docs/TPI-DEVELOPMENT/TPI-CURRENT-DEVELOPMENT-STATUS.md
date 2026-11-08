@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-08 — GenOffice web parity audit and core completion tranche
+
+Status: **LOCAL IMPLEMENTATION VERIFIED; PRODUCTION RELEASE PENDING GUARDED
+GATES.** The Content Editor remains the authoritative home for both Nova
+Documents and Nova Slides at `/paper-editor`; no work was moved into
+StudioFlow. The current pass adds portable image insertion, find/replace,
+document view modes, layout/table controls, slide layouts, shapes, tables,
+text formatting, and an explicit parity audit against the inspected GenOffice
+reference checkout (`968d7d23`).
+
+Local verification: `verify:nova-006-slides` 22/22, editor parity 8/8, Nova
+typecheck PASS, `paper-editor.js` syntax PASS, diff check PASS, and the
+Content Editor build PASS. Firefox on the authoritative local Worker showed
+the full Documents and Slides tab strips and the new control groups.
+
+This pass does not falsely claim literal Electron parity. Native-only or
+unported systems remain documented in:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006F-GENOFFICE-WEB-PARITY-AUDIT.md`.
+The guarded release and live Firefox acceptance must complete before this
+tranche is marked deployed.
+
 ## 2026-11-08 — GenOffice editor parity implementation
 
 Status: **DEPLOYED AND VERIFIED IN PRODUCTION.** The existing Content

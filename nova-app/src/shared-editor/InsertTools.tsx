@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Editor } from "@tiptap/core";
-import { Bookmark, CalendarDays } from "lucide-react";
+import { Bookmark, CalendarDays, Image as ImageIcon, Upload } from "lucide-react";
 import { createBookmark, listBookmarks, navigateBookmark, removeBookmark } from "./commands/bookmarks";
 import { insertField } from "./commands/fields";
 import { FIELD_TYPES } from "./bookmarkFieldExtensions";
@@ -19,11 +19,29 @@ export function InsertTools({ editor, disabled, documentTitle }: Props) {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [fieldType, setFieldType] = useState<(typeof FIELD_TYPES)[number]>("DATE");
+  const [imageUrl, setImageUrl] = useState("");
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
   const bookmarks = listBookmarks(editor);
 
   const report = (result: { ok: boolean; reason?: string }) => {
     setMessage(result.ok ? "" : (result.reason ?? "That action could not be completed."));
     return result.ok;
+  };
+
+  const insertImage = (src: string, alt = "Document image") => {
+    const trimmed = src.trim();
+    if (!trimmed) return report({ ok: false, reason: "Choose an image or enter an image URL." });
+    editor.chain().focus().insertContent({ type: "novaImage", attrs: { src: trimmed, alt } }).run();
+    setImageUrl("");
+    return true;
+  };
+
+  const readImage = (file: File | undefined) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => insertImage(String(reader.result || ""), file.name.replace(/\.[^.]+$/, "") || "Document image");
+    reader.onerror = () => setMessage("The selected image could not be read.");
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -106,6 +124,17 @@ export function InsertTools({ editor, disabled, documentTitle }: Props) {
           onClick={() => report(insertField(editor, fieldType, documentTitle))}
         >
           <CalendarDays size={16} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+        </button>
+      </div>
+
+      <div className="nova-tool-group" role="group" aria-label="Images">
+        <input ref={imageInputRef} type="file" accept="image/*" hidden onChange={event => { readImage(event.target.files?.[0]); event.target.value = ""; }} />
+        <button type="button" className="nova-tool" aria-label="Insert image from computer" title="Insert image from computer" disabled={disabled} onMouseDown={event => event.preventDefault()} onClick={() => imageInputRef.current?.click()}>
+          <Upload size={16} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+        </button>
+        <input type="url" className="nova-bookmark-input" aria-label="Image URL" title="Image URL" placeholder="Image URL" value={imageUrl} disabled={disabled} onChange={event => setImageUrl(event.target.value)} />
+        <button type="button" className="nova-tool" aria-label="Insert image from URL" title="Insert image from URL" disabled={disabled || !imageUrl.trim()} onMouseDown={event => event.preventDefault()} onClick={() => insertImage(imageUrl)}>
+          <ImageIcon size={16} strokeWidth={1.9} aria-hidden="true" focusable="false" />
         </button>
       </div>
 

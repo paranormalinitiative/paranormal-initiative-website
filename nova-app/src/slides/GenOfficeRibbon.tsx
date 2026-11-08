@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, Eraser, Image as ImageIcon, Maximize, MessageSquare, Palette, PenLine, Plus, Redo2, Save, Square, Type, Undo2, Upload, WandSparkles, X } from "lucide-react";
-import type { ElementAnimation, SlideElement, SlideTransition } from "./model";
+import { AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, Bold, Eraser, Image as ImageIcon, Italic, Maximize, MessageSquare, Palette, PenLine, Plus, Redo2, Save, Square, Table2, Type, Undo2, Upload, WandSparkles, X } from "lucide-react";
+import type { ElementAnimation, ShapeKind, SlideElement, SlideLayoutKey, SlideTransition } from "./model";
 
 /**
  * The ribbon structure follows GenOffice's Slides renderer:
@@ -22,10 +22,12 @@ interface Props {
   imageUrl: string;
   onImageUrlChange: (value: string) => void;
   onAddSlide: () => void;
+  onAddSlideWithLayout: (layout: SlideLayoutKey) => void;
   onDuplicateSlide: () => void;
   onDeleteSlide: () => void;
   onAddText: () => void;
-  onAddShape: () => void;
+  onAddShape: (shape?: ShapeKind) => void;
+  onAddTable: () => void;
   onUploadImage: () => void;
   onAddImageUrl: () => void;
   onToggleBackground: () => void;
@@ -44,6 +46,7 @@ interface Props {
   onSetTransition: (transition: SlideTransition) => void;
   currentTransition: SlideTransition;
   onSetAnimation: (animation: ElementAnimation) => void;
+  onUpdateSelectedElement: (patch: Partial<SlideElement>) => void;
   onViewModeChange: (mode: SlideViewMode) => void;
   viewMode: SlideViewMode;
   reviewNote: string;
@@ -85,10 +88,10 @@ export function GenOfficeRibbon(props: Props) {
   });
   const {
     readOnly, hasSlides, dirty, canDeleteSlide, imageUrl, onImageUrlChange,
-    onAddSlide, onDuplicateSlide, onDeleteSlide, onAddText, onAddShape,
+    onAddSlide, onAddSlideWithLayout, onDuplicateSlide, onDeleteSlide, onAddText, onAddShape, onAddTable,
     onUploadImage, onAddImageUrl, onToggleBackground, onMoveUp, onMoveDown,
     onPresent, onSave, onUndo, onRedo, canUndo, canRedo, onAddLine, onDeleteSelected,
-    selectedElement, onSetTheme, onSetTransition, currentTransition, onSetAnimation, onViewModeChange,
+    selectedElement, onSetTheme, onSetTransition, currentTransition, onSetAnimation, onUpdateSelectedElement, onViewModeChange,
     viewMode, reviewNote, onReviewNoteChange
   } = props;
 
@@ -111,15 +114,29 @@ export function GenOfficeRibbon(props: Props) {
           <Separator />
           <Group label="Slides">
             <Command label="New Slide" icon={<Plus size={20} />} disabled={readOnly} onClick={onAddSlide} />
+            <label className="nova-ribbon-select-field"><span>Layout</span><select className="nova-ribbon-select" aria-label="New slide layout" disabled={readOnly} defaultValue="blank" onChange={event => onAddSlideWithLayout(event.target.value as SlideLayoutKey)}><option value="blank">Blank</option><option value="title">Title</option><option value="title-content">Title and content</option><option value="section">Section header</option><option value="quote">Quote</option></select></label>
             <Command label="Duplicate" icon={<span className="nova-ribbon-stack-icon">▣</span>} disabled={readOnly || !hasSlides} onClick={onDuplicateSlide} />
             <Command label="Delete" icon={<X size={20} />} disabled={readOnly || !canDeleteSlide} onClick={onDeleteSlide} />
           </Group>
           <Separator />
           <Group label="Editing">
             <Command label="Text" icon={<Type size={20} />} disabled={readOnly} onClick={onAddText} />
-            <Command label="Shape" icon={<Square size={20} />} disabled={readOnly} onClick={onAddShape} />
+            <Command label="Shape" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("rect")} />
             <Command label="Image" icon={<ImageIcon size={20} />} disabled={readOnly} onClick={onUploadImage} />
+            <Command label="Table" icon={<Table2 size={20} />} disabled={readOnly} onClick={onAddTable} />
           </Group>
+          {selectedElement?.kind === "text" ? <>
+            <Separator />
+            <Group label="Text formatting">
+              <select className="nova-ribbon-select" aria-label="Slide font" disabled={readOnly} value={selectedElement.fontFamily || "Arial"} onChange={event => onUpdateSelectedElement({ fontFamily: event.target.value })}><option>Arial</option><option>Calibri</option><option>Georgia</option><option>Inter</option><option>Times New Roman</option></select>
+              <input className="nova-ribbon-number" aria-label="Slide font size" type="number" min="10" max="120" disabled={readOnly} value={selectedElement.fontSize} onChange={event => onUpdateSelectedElement({ fontSize: Number(event.target.value) || 10 })} />
+              <Command label="Bold" icon={<Bold size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ fontWeight: selectedElement.fontWeight === 700 ? 400 : 700 })} />
+              <Command label="Italic" icon={<Italic size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ fontStyle: selectedElement.fontStyle === "italic" ? "normal" : "italic" })} />
+              <Command label="Left" icon={<AlignLeft size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ align: "left" })} />
+              <Command label="Center" icon={<AlignCenter size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ align: "center" })} />
+              <Command label="Right" icon={<AlignRight size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ align: "right" })} />
+            </Group>
+          </> : null}
           <Separator />
           <Group label="Arrange">
             <Command label="Move up" icon={<ArrowUp size={20} />} disabled={readOnly} onClick={onMoveUp} />
@@ -131,9 +148,9 @@ export function GenOfficeRibbon(props: Props) {
             <Command label="Save" icon={<Save size={20} />} disabled={readOnly || !dirty} onClick={onSave} />
           </Group>
         </> : activeTab === "insert" ? <>
-          <Group label="Slides"><Command label="New Slide" icon={<Plus size={20} />} disabled={readOnly} onClick={onAddSlide} /></Group>
+          <Group label="Slides"><Command label="New Slide" icon={<Plus size={20} />} disabled={readOnly} onClick={onAddSlide} /><label className="nova-ribbon-select-field"><span>Layout</span><select className="nova-ribbon-select" aria-label="New slide layout" disabled={readOnly} defaultValue="blank" onChange={event => onAddSlideWithLayout(event.target.value as SlideLayoutKey)}><option value="blank">Blank</option><option value="title">Title</option><option value="title-content">Title and content</option><option value="section">Section header</option><option value="quote">Quote</option></select></label></Group>
           <Separator />
-          <Group label="Text and shapes"><Command label="Text" icon={<Type size={20} />} disabled={readOnly} onClick={onAddText} /><Command label="Shape" icon={<Square size={20} />} disabled={readOnly} onClick={onAddShape} /></Group>
+          <Group label="Text and shapes"><Command label="Text" icon={<Type size={20} />} disabled={readOnly} onClick={onAddText} /><Command label="Rectangle" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("rect")} /><Command label="Rounded" icon={<Square size={20} />} disabled={readOnly} onClick={() => onAddShape("roundRect")} /><Command label="Circle" icon={<span>◯</span>} disabled={readOnly} onClick={() => onAddShape("ellipse")} /><Command label="Table" icon={<Table2 size={20} />} disabled={readOnly} onClick={onAddTable} /></Group>
           <Separator />
           <Group label="Images"><Command label="Upload image" icon={<Upload size={20} />} disabled={readOnly} onClick={onUploadImage} /><label className="nova-ribbon-url-field"><span>Image URL</span><input aria-label="Image URL" value={imageUrl} onChange={event => onImageUrlChange(event.target.value)} placeholder="https://…" /><button type="button" onClick={onAddImageUrl} disabled={readOnly || !imageUrl.trim()}>Add</button></label></Group>
         </> : activeTab === "draw" ? <>

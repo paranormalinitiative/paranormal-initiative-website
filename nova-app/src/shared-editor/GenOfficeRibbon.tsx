@@ -28,6 +28,7 @@ import {
   Quote,
   Redo2,
   Rows3,
+  Search,
   Scissors,
   Split,
   Strikethrough,
@@ -64,12 +65,16 @@ import {
 import { CELL_VERTICAL_ALIGNMENTS, TABLE_ALIGNMENTS, TABLE_AUTOFIT, TABLE_BORDER_STYLES, TABLE_STYLE_PRESETS } from "./tableAttributes";
 
 type RibbonTab = "Home" | "Insert" | "Draw" | "Design" | "Layout" | "References" | "Mailings" | "Review" | "View";
+export type DocumentViewMode = "print" | "web" | "outline";
 
 interface Props {
   editor: Editor;
   disabled: boolean;
   onRequestLink: () => void;
   documentTitle?: string;
+  onToggleFindReplace?: () => void;
+  viewMode?: DocumentViewMode;
+  onViewModeChange?: (mode: DocumentViewMode) => void;
 }
 interface RibbonButtonProps {
   label: string;
@@ -188,7 +193,7 @@ function PlannedPanel({ tab, available }: { tab: RibbonTab; available?: string }
   );
 }
 
-export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle = "" }: Props) {
+export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle = "", onToggleFindReplace, viewMode = "print", onViewModeChange }: Props) {
   const [tab, setTab] = useState<RibbonTab>("Home");
   const [fontFamily, setFontFamily] = useState("Georgia");
   const [fontSize, setFontSize] = useState("17px");
@@ -290,6 +295,7 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
       <RibbonGroup label="Document">
         <RibbonButton label="Table" icon={Table} testId="toolbar-table" onClick={() => insertNovaTable(editor)} disabled={disabled} />
         <RibbonButton label="Link" icon={Link} testId="toolbar-link" onClick={onRequestLink} disabled={disabled} />
+        <RibbonButton label="Find and replace" icon={Search} onClick={onToggleFindReplace} />
         <div className="nova-ribbon-icon-row">
           <RibbonButton label="Add row" icon={Plus} compact testId="toolbar-add-row" onClick={() => addNovaRow(editor)} disabled={disabled || !tableContext} />
           <RibbonButton label="Add column" icon={Plus} compact testId="toolbar-add-column" onClick={() => addNovaColumn(editor)} disabled={disabled || !tableContext} />
@@ -482,7 +488,8 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
 
   const renderView = () => (
     <div className="nova-ribbon-groups">
-      <RibbonGroup label="Show"><RibbonButton label="Navigation pane" icon={BookOpen} active={showNav} onClick={() => setShowNav(value => !value)} /><RibbonButton label="Styles pane" icon={LayoutDashboard} active={showStyles} onClick={() => setShowStyles(value => !value)} /></RibbonGroup>
+      <RibbonGroup label="Show"><RibbonButton label="Navigation pane" icon={BookOpen} active={showNav} onClick={() => setShowNav(value => !value)} /><RibbonButton label="Styles pane" icon={LayoutDashboard} active={showStyles} onClick={() => setShowStyles(value => !value)} /><RibbonButton label="Find and replace" icon={Search} onClick={onToggleFindReplace} /></RibbonGroup>
+      <Divider /><RibbonGroup label="Document view"><select className="nova-ribbon-select" aria-label="Document view" value={viewMode} onChange={event => onViewModeChange?.(event.target.value as DocumentViewMode)}><option value="print">Print Layout</option><option value="web">Web Layout</option><option value="outline">Outline</option></select></RibbonGroup>
       <Divider /><RibbonGroup label="Zoom"><RibbonButton label="Zoom out" icon={ZoomOut} onClick={() => setZoom(value => Math.max(70, value - 10))} /><span className="nova-ribbon-zoom">{zoom}%</span><RibbonButton label="Zoom in" icon={ZoomIn} onClick={() => setZoom(value => Math.min(160, value + 10))} /></RibbonGroup>
     </div>
   );

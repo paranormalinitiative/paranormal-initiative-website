@@ -4,6 +4,8 @@ export const NOVA_SLIDES_VERSION = 1 as const;
 export type SlideTemplateKey = "blank" | "field-report" | "evidence-brief" | "lecture";
 export type SlideTransition = "none" | "fade" | "push" | "wipe";
 export type ElementAnimation = "none" | "fade";
+export type SlideLayoutKey = "blank" | "title" | "title-content" | "section" | "quote";
+export type ShapeKind = "rect" | "roundRect" | "ellipse";
 
 export interface TextElement {
   id: string;
@@ -15,6 +17,10 @@ export interface TextElement {
   text: string;
   fontSize: number;
   fill: string;
+  fontFamily?: string;
+  fontWeight?: number;
+  fontStyle?: "normal" | "italic";
+  align?: "left" | "center" | "right";
   animation?: ElementAnimation;
 }
 
@@ -26,6 +32,21 @@ export interface ShapeElement {
   width: number;
   height: number;
   fill: string;
+  shape?: ShapeKind;
+  animation?: ElementAnimation;
+}
+
+export interface TableElement {
+  id: string;
+  kind: "table";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rows: string[][];
+  headerFill?: string;
+  cellFill?: string;
+  stroke?: string;
   animation?: ElementAnimation;
 }
 
@@ -54,7 +75,7 @@ export interface LineElement {
   animation?: ElementAnimation;
 }
 
-export type SlideElement = TextElement | ShapeElement | ImageElement | LineElement;
+export type SlideElement = TextElement | ShapeElement | ImageElement | LineElement | TableElement;
 
 export interface Slide {
   id: string;
@@ -180,16 +201,43 @@ export function updateElement(presentation: Presentation, slideIndex: number, el
 }
 
 export function addSlide(presentation: Presentation): Presentation {
+  return addSlideWithLayout(presentation, "blank");
+}
+
+export function createSlideElements(layout: SlideLayoutKey, index: number): SlideElement[] {
+  const title = (text: string, y: number, fontSize: number, align: TextElement["align"] = "left"): TextElement => ({
+    id: crypto.randomUUID(), kind: "text", x: align === "center" ? 120 : 72, y, width: align === "center" ? 720 : 816,
+    height: fontSize > 30 ? 70 : 150, text, fontSize, fill: "#1d281f", align
+  });
+  if (layout === "title") return [title(`Slide ${index}`, 96, 38)];
+  if (layout === "title-content") return [title(`Slide ${index}`, 70, 36), title("Add your content here", 172, 24)];
+  if (layout === "section") return [title(`Section ${index}`, 160, 44, "center"), title("Add a section subtitle", 244, 22, "center")];
+  if (layout === "quote") return [title("Add a quote", 128, 36, "center"), title("Speaker or source", 278, 18, "center")];
+  return [{ id: crypto.randomUUID(), kind: "text", x: 72, y: 64, width: 816, height: 64, text: `Slide ${index}`, fontSize: 36, fill: "#1d281f" }];
+}
+
+export function addSlideWithLayout(presentation: Presentation, layout: SlideLayoutKey): Presentation {
   const index = presentation.slides.length + 1;
   return {
     ...presentation,
     slides: [...presentation.slides, {
       id: crypto.randomUUID(),
       background: "#ffffff",
-      elements: [{ id: crypto.randomUUID(), kind: "text", x: 72, y: 64, width: 816, height: 64, text: `Slide ${index}`, fontSize: 36, fill: "#1d281f" }],
+      elements: createSlideElements(layout, index),
       speakerNotes: ""
     }]
   };
+}
+
+export function addTableToSlide(presentation: Presentation, slideIndex: number, rows = 3, columns = 3): Presentation {
+  const slide = presentation.slides[slideIndex];
+  if (!slide) return presentation;
+  const table: TableElement = {
+    id: crypto.randomUUID(), kind: "table", x: 120, y: 170, width: 720, height: 220,
+    rows: Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => row === 0 ? `Header ${column + 1}` : `Cell ${row},${column + 1}`)),
+    headerFill: "#2f5f48", cellFill: "#f4f7f2", stroke: "#9bb6a5"
+  };
+  return { ...presentation, slides: presentation.slides.map((candidate, index) => index === slideIndex ? { ...candidate, elements: [...candidate.elements, table] } : candidate) };
 }
 
 export function duplicateSlide(presentation: Presentation, index: number): Presentation {

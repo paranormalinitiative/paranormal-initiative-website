@@ -9,11 +9,13 @@ import { collectionPath } from "../lib/tree";
 import type { NovaCollection, NovaDocumentEnvelope, NovaItem } from "../lib/types";
 import { AccessNotice } from "./AccessNotice";
 import { EditorToolbar } from "../shared-editor/EditorToolbar";
+import type { DocumentViewMode } from "../shared-editor/GenOfficeRibbon";
 import { LinkDialog } from "../shared-editor/LinkDialog";
 import { setLink, unsetLink } from "../shared-editor/commands/links";
 import { Modal } from "../shared-editor/Modal";
 import { RevisionsPanel } from "./RevisionsPanel";
 import { novaExtensions } from "../shared-editor/editorExtensions";
+import { FindReplacePanel } from "../shared-editor/FindReplacePanel";
 
 // Matches the StudioFlow Notes autosave cadence: long enough to avoid writing on
 // every keystroke, short enough that a lost tab costs little work.
@@ -116,6 +118,8 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
   const [busy, setBusy] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [linkOpen, setLinkOpen] = useState(false);
+  const [findOpen, setFindOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<DocumentViewMode>("print");
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [dirty, setDirty] = useState(false);
@@ -672,9 +676,14 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
           disabled={readOnly || !editor}
           documentTitle={title}
           onRequestLink={() => setLinkOpen(true)}
+          onToggleFindReplace={() => setFindOpen(open => !open)}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
 
-        <div className="nova-canvas" data-testid="editor">
+        {findOpen && editor ? <FindReplacePanel editor={editor} onClose={() => setFindOpen(false)} /> : null}
+
+        <div className={`nova-canvas nova-canvas-${viewMode}`} data-testid="editor" data-view-mode={viewMode}>
           <EditorContent editor={editor} />
         </div>
       </div>
