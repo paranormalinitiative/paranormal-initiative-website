@@ -1,5 +1,27 @@
 # TPI Current Development Status
 
+## 2026-11-08 — Flagship Content Editor completion and lifecycle release
+
+Status: **DEPLOYED AND VERIFIED IN PRODUCTION.** The authoritative editorial
+workspace is `/paper-editor`, not StudioFlow `/studio`. Documents and Slides
+now share the completed web editing surface, persistence, presentation
+controls, and guarded archive/Trash/restore/permanent-delete lifecycle.
+
+The active product source uses neutral Nova-owned editor naming. Historical
+audit records remain preserved as historical provenance and are not active
+product branding.
+
+Release `rel-21899dea371d-bfe1a68ef72a` is active at 100% as Worker
+`8ad4c7da-c4b9-4e95-9b34-915164559cf4`, with rollback Worker
+`9906e87a-3332-48e2-8e8c-a7ce27f84e75`. Website commit:
+`21899dea371dc2515e1d757272db190fdae0fa03`. Integrated StudioFlow source
+baseline: `eefb7de9518809d98726062aee478a4111c921a5`.
+
+Release preflight certified 30 gates. Production smoke passed 10/10 and
+isolated Firefox production acceptance passed 65/65. The Documents parity
+verifier passed 9/9 and the Slides parity verifier passed 23/23. The execution
+record is `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-007-FLAGSHIP-EDITOR-COMPLETION.md`.
+
 ## 2026-11-08 — GenOffice web parity audit and core completion tranche
 
 Status: **DEPLOYED AND VERIFIED IN PRODUCTION.** The Content Editor remains the
