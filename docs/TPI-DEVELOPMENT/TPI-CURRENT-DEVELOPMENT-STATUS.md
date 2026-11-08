@@ -2,7 +2,7 @@
 
 ## 2026-11-08 — GenOffice editor parity implementation
 
-Status: **IMPLEMENTED — RELEASE VERIFICATION PENDING.** The existing Content
+Status: **DEPLOYED AND VERIFIED IN PRODUCTION.** The existing Content
 Editor now keeps Slides selected across refresh, reopens the same presentation,
 and exposes functional ribbon controls across the Documents and Slides tabs.
 This work remains in the Content Editor at `/paper-editor`; it is not
@@ -14,6 +14,13 @@ focused Slides verifier now passes 19/19, Nova typecheck passes, the production
 build passes, and Firefox local interaction verified both workspaces. Execution
 record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006E-GENOFFICE-EDITOR-PARITY.md`.
+
+Release `rel-b64510defa5a-a5958c7afcd7` is deployed at 100% as Worker
+`df85737f-5dda-4a81-89fd-76853b7d1d75`, with rollback Worker
+`8bbae63d-bf43-4209-9fa3-b0f789ad0073`. Production smoke passed 10/10 and
+isolated Firefox production acceptance passed 65/65. Live Firefox confirmed
+that `/paper-editor?workspace=slides&presentation=...` reopens the same deck
+after refresh. No production document or presentation content was changed.
 
 ## 2026-11-08 — Slides ribbon layout correction deployed
 
