@@ -23,9 +23,19 @@ Local Firefox verification created a disposable presentation, renamed it,
 added a text element, saved it, returned to the Slides library, refreshed the
 page, and confirmed the presentation persisted. The focused Slides verifier
 passed 11/11, Nova typecheck passed, the Content Editor build passed, and
-`git diff --check` passed. This integration is verified in local development;
-production deployment is recorded separately and is not implied by this
-section.
+`git diff --check` passed. This integration was then deployed through the
+guarded production release recorded below.
+
+The deployed release is `rel-ae6854fcec4e-fe465822e352`, Worker
+`0e9c8080-4a2d-4451-9a37-464c69301baf` at 100% traffic, with rollback Worker
+`1c063a9c-0c23-4592-ab53-351467442f80`. The exact release source commit is
+`ae6854fcec4e7c6275c3cedc57b1f9a443042dea`; the approved StudioFlow bundle
+remains `eefb7de9518809d98726062aee478a4111c921a5`.
+
+Live Firefox verification opened the production Content Editor at
+`/paper-editor`, switched to Slides, and rendered the integrated Slides
+workspace. No production presentation was created. The NDE draft remained
+unchanged.
 
 ## 2026-11-08 conversion correction and live acceptance
 

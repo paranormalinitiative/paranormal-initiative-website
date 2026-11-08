@@ -50,9 +50,15 @@ server-backed `nova-presentation` records. It is not part of StudioFlow
 Local Firefox acceptance created a disposable presentation, added a text
 element, saved it, returned to the Slides library, refreshed the page, and
 confirmed persistence. Focused verification passed 11/11; Nova typecheck,
-Content Editor build, and `git diff --check` passed. Production status for this
-amendment is **IMPLEMENTED AND VERIFIED IN DEVELOPMENT — NOT YET DEPLOYED**.
-Execution record: `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006A-EDITORIAL-SLIDES-INTEGRATION.md`.
+Content Editor build, and `git diff --check` passed. The guarded production
+release then completed as `rel-ae6854fcec4e-fe465822e352`, Worker
+`0e9c8080-4a2d-4451-9a37-464c69301baf` at 100% traffic, with rollback Worker
+`1c063a9c-0c23-4592-ab53-351467442f80`. Isolated Firefox production acceptance
+passed 65/65 and owner Firefox live verification rendered the Slides workspace
+inside the existing Content Editor without creating production content. This
+amendment is **DEPLOYED AND VERIFIED**. The production target is
+`/paper-editor`, not StudioFlow `/studio/`. Execution record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-006A-EDITORIAL-SLIDES-INTEGRATION.md`.
 
 ## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)
 
