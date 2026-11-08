@@ -497,10 +497,11 @@ Remaining open Nova work:
 - **`member-home.html` `published` fallback removal**, which was not part of R6F.
 - **Nova revision retention review** beyond editorial pinning, if ordinary revision trimming ever
   needs a different policy.
-- **Visual Nova Editorial Workspace migration** — adopting the standalone Nova visual system in
-  `/paper-editor.html`, then Documents, Nova document editing, integrated Education Center
-  metadata and workflow presentation, and finally Slides as a second workspace mode. Not started;
-  the old Content Editor presentation should not be extended further before it.
+- **Visual Nova Editorial Workspace migration** — `/paper-editor.html` now uses the Nova
+  Editorial Workspace as its primary document engine, with Documents, Nova document editing,
+  integrated Education Center metadata and workflow presentation, and Slides retained in the
+  same product family. The existing Content Editor route remains authoritative. Nova Edit inside
+  StudioFlow is intentionally deferred to a separate directive.
 
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**
 remains the next governance section, but it is not scheduled to begin until the

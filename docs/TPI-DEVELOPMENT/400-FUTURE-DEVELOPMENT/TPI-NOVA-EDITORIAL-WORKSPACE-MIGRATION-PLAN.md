@@ -356,8 +356,9 @@ controls are deferred to a later Editorial Workspace milestone. Nova lifecycle
 separation is verified at the persistence/API layer. Contributor-facing
 archive/trash/restore controls are deferred.
 
-**Production has not received migrations 0059/0060 or the 004R5 application
-changes.**
+Production now has the focused additive Nova Editorial schema bootstrap
+`scripts/sql/tpi-nova-editorial-production-reconciliation.sql`; the historical
+global migration ledger remains unreconciled and was not replayed.
 
 ## 19. TPI-NOVA-005A — Nova Editorial Workspace visual foundation (complete, local)
 
@@ -386,8 +387,9 @@ snapshot until an authorised publication. The public route serves `articles.body
 and `articles.article_html`, and the unpublished working document stays private.
 
 **Legacy compatibility.** Grandfathered legacy articles (`editorial_status = legacy`,
-no Nova item) remain usable inside Nova. They are not converted automatically; the
-user must choose Convert to Nova.
+no Nova item) enter Nova automatically when they are opened from the server-backed
+Content Editor. Conversion preserves the original article body and public snapshot.
+If Nova is unavailable, the original editor remains an explicit compatibility fallback.
 
 **Slides.** Reserved. Not implemented.
 

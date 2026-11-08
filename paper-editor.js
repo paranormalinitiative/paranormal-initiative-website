@@ -824,9 +824,9 @@
     return activeView === "html" ? htmlView.value : editor.innerHTML;
   }
 
-  // Nova editor mode (development). The Nova document is the body source only
-  // while this mode is active; metadata, destination and publish code are shared
-  // and unchanged. Legacy mode is the default.
+  // Nova is the primary editorial document engine. The legacy editor remains a
+  // compatibility fallback for records that cannot be migrated in the current
+  // session; metadata, destination and publication workflows remain shared.
   const novaMode = { active: false, doc: null, handle: null, loading: null };
 
   // The Nova bundle is built into /content-editor-nova/ (see
@@ -985,6 +985,9 @@
     novaMode.active = true;
     editor.hidden = true;
     document.getElementById("nova-content-editor").hidden = false;
+    document.body.dataset.legacyCompat = "false";
+    document.getElementById("nova-editor-view")?.classList.add("is-nova-native");
+    document.querySelectorAll("[data-legacy-only]").forEach(el => { el.hidden = true; });
     document.body.classList.add("nova-document-open");
     const modeSelect = document.querySelector("[data-editor-mode]");
     if (modeSelect) modeSelect.value = "nova";
@@ -1174,7 +1177,7 @@
     await refreshWorkflowState(articleId);
   });
 
-  // Opens a linked article in Nova mode. Unlinked legacy articles are not converted here.
+  // Opens a linked article in Nova mode.
   async function openLinkedNovaArticle(articleId) {
     // TPI-NOVA-005A6E: the metadata baseline belongs to the article being opened.
     lastSavedMetadata = null;
@@ -1230,6 +1233,37 @@
       // Persist the notice: setStatus would otherwise overwrite it after 1.8s.
       window.clearTimeout(setStatus.timer);
       status.textContent = unsupportedNotice;
+    }
+  }
+
+  // TPI-NOVA-EDITORIAL-MIGRATION: server-backed editorial articles now enter
+  // Nova automatically. The original article row and published HTML remain
+  // untouched; the Nova document is an owner-scoped working copy linked to the
+  // existing article. TPI Video stays on its specialized editor path.
+  async function openPrimaryEditorialEditor(article) {
+    if (!article) return;
+    if (article.novaItemId) {
+      await setEditorMode("nova");
+      await openLinkedNovaArticle(article.id);
+      return;
+    }
+
+    loadArticleIntoEditor(article);
+    const canMigrate = Boolean(
+      !article.legacy &&
+      article.contributionType !== "TPI Video" &&
+      window.TPIApi &&
+      await window.TPIApi.isAvailable()
+    );
+    if (!canMigrate) return;
+
+    setStatus("Preparing this document in Nova…");
+    try {
+      await convertLegacyArticleToNova(article.id);
+    } catch (error) {
+      // Keep the compatibility editor usable if a single legacy record contains
+      // unsupported or unavailable data. No article row was changed on failure.
+      setStatus(`Nova migration unavailable: ${error.message || "try again later"}. Compatibility editor remains available.`);
     }
   }
 
@@ -2298,14 +2332,7 @@ ${articleHtml}
       setStatus("Article could not be found");
       return;
     }
-    if (article.novaItemId) {
-      // TPI-NOVA-005A4: a Nova-linked article opens its Nova document, which binds the
-      // save path, version and workflow state. The legacy body is not loaded over it.
-      await setEditorMode("nova");
-      await openLinkedNovaArticle(article.id);
-    } else {
-      loadArticleIntoEditor(article);
-    }
+    await openPrimaryEditorialEditor(article);
     document.getElementById("content-library-modal")?.remove();
   }
 
@@ -2982,14 +3009,10 @@ ${articleHtml}
 
     if (!article) return false;
     currentArticleId = article.id;
-    loadArticleIntoEditor(article);
-    if (article.novaItemId) {
-      // Linked article: open its Nova document. Never convert an unlinked legacy article here.
-      try {
-        await openLinkedNovaArticle(article.id);
-      } catch (error) {
-        setStatus(error.message || "Nova document could not be opened");
-      }
+    try {
+      await openPrimaryEditorialEditor(article);
+    } catch (error) {
+      setStatus(error.message || "Nova document could not be opened");
     }
     return true;
   }

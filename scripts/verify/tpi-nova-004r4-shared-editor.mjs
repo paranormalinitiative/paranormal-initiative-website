@@ -25,13 +25,10 @@ function check(name, fn) {
 const html = read("paper-editor.html");
 const js = read("paper-editor.js");
 
-check("Content Editor keeps the legacy editor as the default mode", () => {
-  assert.match(html, /<option value="legacy" selected>Compatibility<\/option>/);
-  assert.doesNotMatch(html, /<option value="nova" selected>/);
-});
-
-check("Nova mode is offered as a development option, not the default", () => {
-  assert.match(html, /<option value="nova">Nova<\/option>/);
+check("Content Editor keeps the compatibility editor only as a hidden fallback", () => {
+  assert.match(html, /data-legacy-only hidden/);
+  assert.match(html, /Compatibility Fallback/);
+  assert.match(html, /Retry Nova/);
 });
 
 check("legacy body and Nova container both exist in the Compose pane", () => {
@@ -48,6 +45,13 @@ check("metadata controls remain in the page (title, subtitle, author, contributi
 check("Nova mode loads only the built Content Editor bundle, not /nova/", () => {
   assert.match(js, /\/content-editor-nova\/content-editor\.html/);
   assert.doesNotMatch(js, /\/nova\/assets\//);
+});
+
+check("server-backed editorial articles enter Nova as the primary engine", () => {
+  assert.match(js, /async function openPrimaryEditorialEditor\(article\)/);
+  assert.match(js, /await convertLegacyArticleToNova\(article\.id\)/);
+  assert.match(js, /Compatibility editor remains available/);
+  assert.doesNotMatch(js, /Never convert an unlinked legacy article here/);
 });
 
 check("publish/save are not rewritten: buildPublishedRecord still reads the shared body", () => {

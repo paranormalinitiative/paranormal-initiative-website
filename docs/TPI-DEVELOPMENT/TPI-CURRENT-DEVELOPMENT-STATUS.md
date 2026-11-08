@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## TPI-NOVA — Editorial Workspace primary engine migration (2026-11-07)
+
+Status: **IN PROGRESS — TARGET IS THE EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**
+The GenOffice/Nova editing engine now enters through `/paper-editor.html` for
+server-backed editorial articles. The original article row and public HTML stay
+unchanged while an owner-scoped Nova working document is linked automatically;
+the legacy editor remains an explicit compatibility fallback. The StudioFlow
+entrypoint was restored to its prior bundle for this release and Nova Edit is
+deferred to a separate StudioFlow directive.
+
+Production D1 received the focused additive Nova schema bootstrap
+`scripts/sql/tpi-nova-editorial-production-reconciliation.sql` after a verified
+pre-change export. Existing production data counts were preserved. The guarded
+website deployment and live Firefox acceptance are still pending.
+
 ## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)
 
 Status: **Member Home reads only the authoritative Contributor API.** Audit found `member-home.html` never read `tpiPublishedArticles`; its article data comes solely from `/api/contributors/me/articles`. The one remaining legacy check, `a.published`, was removed from the My Content count so it uses server `status` only. The API never returns `published`, so the count is unchanged. Remaining `tpiPublishedArticles` readers (`includes.js`, `member-login.js`, `published-article.js`, `search.js`, `paper-editor.js`) are outside Member Home and were not changed. No article was migrated, enrolled or modified. Production untouched.
