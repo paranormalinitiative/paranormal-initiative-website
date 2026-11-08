@@ -22,14 +22,14 @@ function normalizePresentationLayout(presentation: Presentation): Presentation {
   const cover = presentation.slides[0];
   const legacyImage = cover?.elements.find(element => element.kind === "image" && element.x === 420 && element.y === 160 && element.width === 320 && element.height === 210);
   const coverTitle = cover?.elements.find((element): element is Extract<SlideElement, { kind: "text" }> => element.kind === "text" && element.text === presentation.title);
-  const titleNeedsFit = Boolean(coverTitle && presentation.title.length > 36 && (coverTitle.fontSize > 34 || coverTitle.height < 100));
+  const titleNeedsFit = Boolean(coverTitle && presentation.title.length > 36 && (coverTitle.fontSize > 34 || coverTitle.height < 100 || !coverTitle.text.includes("\n")));
   if (!legacyImage && !titleNeedsFit) return presentation;
   return {
     ...presentation,
     slides: presentation.slides.map((slide, index) => index === 0
       ? { ...slide, elements: slide.elements.map(element => {
         if (legacyImage && element.id === legacyImage.id) return { ...element, x: 620, y: 320, width: 240, height: 150 };
-        if (coverTitle && element.id === coverTitle.id && titleNeedsFit) return { ...element, fontSize: 34, height: 112 };
+        if (coverTitle && element.id === coverTitle.id && titleNeedsFit) return { ...element, text: presentation.title.replace(": ", ":\n"), fontSize: 34, height: 112 };
         return element;
       }) }
       : slide)
@@ -211,7 +211,7 @@ function PresentationEditor({ itemId, collections: _collections, onBack, onChang
     const previousTitle = titleRef.current;
     titleRef.current = nextTitle;
     setTitle(nextTitle);
-    const coverTitle = presentationRef.current?.slides[0]?.elements.find(element => element.kind === "text" && (element.text === "Untitled Presentation" || element.text === previousTitle));
+    const coverTitle = presentationRef.current?.slides[0]?.elements.find(element => element.kind === "text" && (element.text === "Untitled Presentation" || element.text === previousTitle || element.text === previousTitle.replace(": ", ":\n")));
     if (coverTitle) {
       edit(value => updateElement(value, 0, coverTitle.id, { text: nextTitle }));
     } else {
