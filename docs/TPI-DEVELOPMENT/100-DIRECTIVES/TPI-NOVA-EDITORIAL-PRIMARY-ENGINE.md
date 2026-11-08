@@ -61,7 +61,32 @@ after schema application: 25 articles, 7 contributors, 128 Studios, 1 Note,
 
 ## Release state
 
-The application release is not yet marked live until the guarded website
-release, live Firefox acceptance of `/paper-editor.html`, and GitHub parity
-are complete. No StudioFlow Nova Edit bundle is authorized in this release.
+**DEPLOYED_AND_VERIFIED — 2026-11-08.** The guarded website release completed
+successfully with release ID `rel-a2d10f97af48-579f6bd87a4c`.
+
+- Production Worker: `42783d89-c43b-4ffe-87ad-e4f7eb4c4d62` at 100% traffic.
+- Rollback Worker: `99ca2347-3181-4525-b9eb-d28cb61cf42a`.
+- Website/source commit: `a2d10f97af482d437044b5a30343ad7a3f10a210`.
+- Approved StudioFlow bundle commit: `eefb7de9518809d98726062aee478a4111c921a5`.
+- Deployment timestamp: `2026-11-08T01:38:03.951Z`.
+- `paper-editor.js`: `7391dc36b1c71629f3288965f6787f9840bf9a23a3a72bff0244817e2580c187`.
+- Nova JavaScript: `content-editor-DImj3Ihg.js`, SHA-256
+  `b29738d923cd35055a41182f89aa73709f13a2702d9caffc6e6ae1ee434e4041`.
+- Nova CSS: `content-editor-CRrU71X0.css`, SHA-256
+  `44012e8049c14ad32abee0e732c7ddcda3affe8df1ba61909b8a224d4fc7a060`.
+- Production smoke: 10/10 PASS.
+- Live isolated Firefox acceptance: 65/65 PASS.
+- `/paper-editor.html` remains authentication-protected; the anonymous 403 is
+  the expected contributor boundary. The deployed `paper-editor.js` and Nova
+  bundle assets are present and served with revalidation headers.
+
+The production release keeps StudioFlow on its prior Notes bundle. Nova Edit
+was intentionally not placed in `/studio/`; the existing Content Editor route
+`/paper-editor.html` is the production home for GenOffice/Nova.
+
+The release reuses the pre-change D1 export above and the focused additive
+schema bootstrap. No production content records were rewritten or deleted.
+The historical D1 migration ledger drift remains documented; the bootstrap is
+the recorded reconciliation for this release and must not be replayed as a
+normal migration without a separate audit.
 

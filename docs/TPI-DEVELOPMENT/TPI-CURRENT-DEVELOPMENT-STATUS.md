@@ -2,7 +2,7 @@
 
 ## TPI-NOVA — Editorial Workspace primary engine migration (2026-11-07)
 
-Status: **IN PROGRESS — TARGET IS THE EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**
+Status: **DEPLOYED_AND_VERIFIED — TARGET IS THE EXISTING CONTENT EDITOR, NOT STUDIOFLOW.**
 The GenOffice/Nova editing engine now enters through `/paper-editor.html` for
 server-backed editorial articles. The original article row and public HTML stay
 unchanged while an owner-scoped Nova working document is linked automatically;
@@ -13,7 +13,10 @@ deferred to a separate StudioFlow directive.
 Production D1 received the focused additive Nova schema bootstrap
 `scripts/sql/tpi-nova-editorial-production-reconciliation.sql` after a verified
 pre-change export. Existing production data counts were preserved. The guarded
-website deployment and live Firefox acceptance are still pending.
+website deployment completed as Worker
+`42783d89-c43b-4ffe-87ad-e4f7eb4c4d62` at 100% traffic. Production smoke passed
+10/10 and live isolated Firefox acceptance passed 65/65. The release is served
+through `/paper-editor.html`; Nova Edit was not added to `/studio/`.
 
 ## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)
 

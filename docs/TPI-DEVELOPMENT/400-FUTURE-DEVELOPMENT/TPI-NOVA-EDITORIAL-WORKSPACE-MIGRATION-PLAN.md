@@ -1,8 +1,9 @@
 # TPI-NOVA-004R3 — Nova Editorial Workspace Controlled Migration Plan
 
-Status: planning only. No application code, database migration, content migration,
-template change, Education Center routing change or production deployment is
-authorized by this document.
+Status: historical plan; primary-engine implementation deployed and verified
+under `TPI-NOVA-EDITORIAL-PRIMARY` on 2026-11-08. This document remains the
+architecture and deferred-work record; it does not authorize Nova Edit inside
+StudioFlow.
 
 Repository evidence was taken from branch `codex/tpi-development` after
 TPI-NOVA-004R2 (`e57c281`).
@@ -359,6 +360,12 @@ archive/trash/restore controls are deferred.
 Production now has the focused additive Nova Editorial schema bootstrap
 `scripts/sql/tpi-nova-editorial-production-reconciliation.sql`; the historical
 global migration ledger remains unreconciled and was not replayed.
+
+The primary editing engine is now live through the existing `/paper-editor.html`
+Content Editor route. Grandfathered server-backed articles enter Nova when
+opened, with the original article/public snapshot preserved and an explicit
+compatibility fallback if conversion is unavailable. Nova Edit remains a
+separate future StudioFlow scope.
 
 ## 19. TPI-NOVA-005A — Nova Editorial Workspace visual foundation (complete, local)
 
