@@ -18,6 +18,7 @@ const checks = [
   ["Documents supports portable image insertion", /NovaImage/.test(extensions) && /type: "novaImage"/.test(insert) && /Insert image from computer/.test(insert) && /Image URL/.test(insert) && /nova-prose img/.test(styles)],
   ["Documents supports find and replace", /FindReplacePanel/.test(documentEditor) && /replaceAll/.test(findReplace) && /Find and replace/.test(ribbon)],
   ["Documents supports document view modes", /DocumentViewMode/.test(ribbon) && /viewMode/.test(toolbar) && /setViewMode/.test(documentEditor) && /data-view-mode/.test(documentEditor) && /nova-canvas-web/.test(styles)],
+  ["Print-layout document surface is centered and page-bounded", /\.nova-canvas-print \.nova-prose[\s\S]*width:\s*min\(100%,\s*var\(--nova-page-width/.test(styles) && /margin-inline:\s*auto/.test(styles)],
   ["Documents preserves focus-safe ribbon integration", /onMouseDown=\{event => event\.preventDefault\(\)\}/.test(ribbon) && /onRequestLink/.test(toolbar)],
   ["Documents keeps structured table controls", /renderTableDesign/.test(ribbon) && /renderTableLayout/.test(ribbon) && /setNovaTableStyle/.test(ribbon) && /mergeNovaCells/.test(ribbon)],
   ["Documents keeps bookmarks, fields, and references", /InsertTools/.test(ribbon) && /createBookmark/.test(insert) && /insertField/.test(insert) && /Citation/.test(ribbon)]
