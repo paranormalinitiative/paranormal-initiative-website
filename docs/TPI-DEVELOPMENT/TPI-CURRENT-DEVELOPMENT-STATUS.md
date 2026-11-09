@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Founding Membership issuance repair deployed
+
+Status: **COMPLETE — DEVELOPMENT VERIFIED AND DEPLOYED.** The Administration
+Center Founding Memberships workflow now supports administrator-only search by
+username, display name, or registered email; account selection; explicit
+issuance review; and transactional assignment of the existing FC, FCT, and FAA
+classes without changing numbering or capability rules.
+
+Production release: website commit
+`8798717c5577eec4cf11ad78658e382560d35504`, integrated StudioFlow source
+`0061dc692b07d571f9b1e022ef3949d9a50f4bf2`, Worker
+`8ad865f0-14a5-402d-8349-fbe8c9b45cd2` at 100% traffic. Rollback Worker:
+`3bd482e0-00f3-4b35-ab7d-b372d8468b4d`. Live smoke passed 10/10 and isolated
+Firefox release acceptance passed 65/65. No production migration or creator
+data deletion was performed. Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-ADMIN-FOUNDING-MEMBERSHIP-ISSUANCE-REPAIR.md`.
+
 ## 2026-11-08 — StudioFlow Nova Edit Documents, Slides, and Brand Fonts
 
 Status: **IMPLEMENTED AND VERIFIED LOCALLY — NOT DEPLOYED.** StudioFlow now
