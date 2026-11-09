@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Mobile member header and Messenger correction
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** On narrow mobile viewports, the
+authenticated member greeting now occupies its own header row instead of
+overlapping the Paranormal Initiative title/logo. Messenger defaults to a
+minimized frame on mobile when no explicit mobile expansion preference exists;
+an intentional Show action remains available and is preserved.
+
+Focused member-home QA passed 40/40. The guarded release preflight certified 30
+gates, production smoke passed 10/10, live isolated Firefox acceptance passed
+65/65, and the live asset check confirmed HTTP 200 for the entrypoint and shell,
+the `member-shell.js?v=56` reference, and the mobile correction logic. No
+creator data or database records were changed.
+
+Production release: website commit
+`d81da4e7d08673098d68fd9f17e48959dcd95b4c`, release
+`rel-d81da4e7d086-71f677773147`, Worker
+`2ce0b94d-5eb7-45dd-a55f-7965da187668` at 100% traffic. Rollback Worker:
+`bcb18b54-6841-46ef-9996-973ec061b251`. Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-MEMBER-MOBILE-HEADER-CHAT.md`.
+
 ## 2026-11-09 — Community feed posts made openable
 
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** Community feed cards now expose a
