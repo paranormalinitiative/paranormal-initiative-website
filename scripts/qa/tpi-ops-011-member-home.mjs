@@ -13,6 +13,7 @@ if (!existsSync(credentialPath)) throw new Error("local authentication fixtures 
 const credentials = JSON.parse(readFileSync(credentialPath, "utf8"));
 const memberShell = readFileSync("member-shell.js", "utf8");
 const memberShellCss = readFileSync("member-shell.css", "utf8");
+const apiSource = readFileSync("functions/api/[[path]].js", "utf8");
 const checks = [];
 
 function check(name, condition, detail = "") {
@@ -74,6 +75,8 @@ const memberHome = await request("/member-home", { headers: authHeaders(member) 
 check("authenticated member-home returns 200", memberHome.response.status === 200 && memberHome.text.includes("member-home-layout"));
 check("member-home contains community section", memberHome.text.includes("Community") || memberHome.text.includes("community"));
 check("community feed posts have open targets", memberHome.text.includes('data-post-open') && memberHome.text.includes('id="post-') && memberHome.text.includes("focusPostFromHash"));
+check("community feed renders complete post bodies with safe links", memberHome.text.includes("renderFeedBody(item.body || \"\")") && !memberHome.text.includes("substring(0, 400)"));
+check("open post navigation loads a target outside the first feed page", memberHome.text.includes("getRequestedPostId") && memberHome.text.includes("postId") && apiSource.includes("requestedPostId") && apiSource.includes("requestedPost"));
 check("mobile member header gives the authenticated greeting its own row", memberHome.text.includes("body.member-mode .command-header .member-greeting") && memberHome.text.includes("position: static;") && memberHome.text.includes("body.member-mode .command-header h1"));
 check("mobile Messenger defaults to minimized without a saved mobile expansion", memberShell.includes("isMobileChatViewport") && memberShell.includes("frame.mobileExpanded") && memberShellCss.includes(".member-floating-chat.is-collapsed"));
 check("member-home contains events section", memberHome.text.includes("data-events-body"));

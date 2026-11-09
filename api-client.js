@@ -102,7 +102,7 @@
     deleteArticle: id => request(`/articles/${encodeURIComponent(id)}`, { method: "DELETE" }),
     articleReactions: pageId => request(`/articles/reactions?pageId=${encodeURIComponent(pageId)}`),
     setArticleReaction: (pageId, reaction) => request("/articles/reactions", { method: "POST", body: { pageId, reaction } }),
-    communityFeed: (limit, offset, scope) => request(`/feed?limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}${scope ? `&scope=${encodeURIComponent(scope)}` : ""}`),
+    communityFeed: (limit, offset, scope, postId) => request(`/feed?limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}${scope ? `&scope=${encodeURIComponent(scope)}` : ""}${postId ? `&postId=${encodeURIComponent(postId)}` : ""}`),
     userFeed: (username, limit, offset, scope) => request(`/feed/user?username=${encodeURIComponent(username || "")}&limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}${scope ? `&scope=${encodeURIComponent(scope)}` : ""}`),
     myPulse: () => request("/me/pulse"),
     communityCategories: () => request("/community/categories"),

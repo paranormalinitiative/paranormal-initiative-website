@@ -1638,6 +1638,14 @@
             word-break: break-word;
         }
 
+        .feed-card-post-title {
+            margin: 0;
+            color: #f4f8fb;
+            font-size: 17px;
+            line-height: 1.3;
+            font-weight: 800;
+        }
+
         .feed-card-body a {
             color: var(--accent);
             text-decoration: none;
@@ -3624,10 +3632,11 @@
         feedContainer.innerHTML = '<p class="access-note" style="text-align:center; padding:24px;">Loading...</p>';
         feedOffset = 0;
         var username = profileUser.username;
+        var requestedPostId = getRequestedPostId();
 
         try {
             if (viewingOwnProfile) {
-                var ownFeedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community");
+                var ownFeedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community", requestedPostId);
                 var ownItems = ownFeedData.items || [];
                 renderFeed(ownItems, false);
                 feedOffset = ownItems.length;
@@ -3643,6 +3652,17 @@
             feedContainer.innerHTML = '<div class="member-empty"><h3>No posts yet.</h3><p>When this member shares something, it will appear here.</p></div>';
             loadMoreWrap.hidden = true;
         }
+    }
+
+    function getRequestedPostId() {
+        var params = new URLSearchParams(window.location.search);
+        var fromQuery = params.get("post");
+        if (fromQuery) return fromQuery;
+        var hash = window.location.hash || "";
+        if (hash.indexOf("#post-") === 0) {
+            try { return decodeURIComponent(hash.substring("#post-".length)); } catch (e) { return hash.substring("#post-".length); }
+        }
+        return "";
     }
 
     function setupLoadMore() {
@@ -3701,10 +3721,9 @@
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
         }
-        var postUrl = window.preserveMemberMode ? window.preserveMemberMode("/member-home?member=1#post-" + encodeURIComponent(item.postId || "")) : "/member-home?member=1#post-" + encodeURIComponent(item.postId || "");
+        var postUrl = window.preserveMemberMode ? window.preserveMemberMode("/member-home?member=1&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "")) : "/member-home?member=1&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "");
         var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";
-        var previewText = escapeHtml(item.body || "").substring(0, 400);
-        if ((item.body || "").length > 400) previewText += "...";
+        var bodyHtml = renderFeedBody(item.body || "");
 
         var attachmentsHtml = renderFeedAttachments(item.attachments);
         var linksHtml = renderFeedLinks(item.attachments);
@@ -3733,7 +3752,8 @@
                 toolsHtml +
             '</div>' +
             '<div class="feed-card-body-wrap" data-body-wrap="' + escapeAttr(item.postId) + '">' +
-                (previewText ? '<div class="feed-card-body">' + previewText + '</div>' : "") +
+                (item.title ? '<h3 class="feed-card-post-title">' + escapeHtml(item.title) + '</h3>' : "") +
+                (bodyHtml ? '<div class="feed-card-body">' + bodyHtml + '</div>' : "") +
             '</div>' +
             attachmentsHtml +
             linksHtml +
@@ -3746,6 +3766,26 @@
             '</div>' +
             '<div class="feed-comments" data-comments-panel hidden></div>' +
         '</article>';
+    }
+
+    function renderFeedBody(body) {
+        var text = String(body || "");
+        var urlPattern = /https?:\/\/[^\s<>"']+|\/(?:education-center|published-article|paper-editor|member-home)(?:\?[^\s<>"']*)?(?:#[^\s<>"']*)?/gi;
+        var html = "";
+        var cursor = 0;
+        text.replace(urlPattern, function(match, offset) {
+            var cleanMatch = match;
+            var trailing = cleanMatch.match(/[),.!?;:]+$/);
+            if (trailing) cleanMatch = cleanMatch.slice(0, -trailing[0].length);
+            html += escapeHtml(text.slice(cursor, offset));
+            var href = /^https?:\/\//i.test(cleanMatch) ? cleanMatch : (window.preserveMemberMode ? window.preserveMemberMode(cleanMatch) : cleanMatch);
+            html += '<a href="' + escapeAttr(href) + '"' + (/^https?:\/\//i.test(cleanMatch) ? ' target="_blank" rel="noopener noreferrer ugc"' : '') + '>' + escapeHtml(cleanMatch) + '</a>';
+            if (trailing) html += escapeHtml(trailing[0]);
+            cursor = offset + match.length;
+            return match;
+        });
+        html += escapeHtml(text.slice(cursor));
+        return html;
     }
 
     // ===== LINK PREVIEW CARDS (Facebook-style) =====
@@ -3999,9 +4039,8 @@
         try {
             var result = await window.TPIApi.updateCommunityPost(postId, { body: ta.value.trim() });
             var bodyWrap = card.querySelector("[data-body-wrap]");
-            var newText = escapeHtml(result.body || ta.value.trim());
-            if (newText.length > 400) newText = newText.substring(0, 400) + "...";
-            bodyWrap.innerHTML = '<div class="feed-card-body">' + newText + '</div>';
+            var newText = result.body || ta.value.trim();
+            bodyWrap.innerHTML = (card.querySelector(".feed-card-post-title") ? card.querySelector(".feed-card-post-title").outerHTML : "") + '<div class="feed-card-body">' + renderFeedBody(newText) + '</div>';
             delete bodyWrap.dataset.editing;
             delete bodyWrap.dataset.originalHtml;
             var detail = card.querySelector(".feed-card-detail");
