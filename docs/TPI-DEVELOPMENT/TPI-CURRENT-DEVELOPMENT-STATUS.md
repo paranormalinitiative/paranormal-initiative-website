@@ -124,9 +124,41 @@ Firefox release acceptance passed 65/65. No production migration or creator
 data deletion was performed. Full record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-ADMIN-FOUNDING-MEMBERSHIP-ISSUANCE-REPAIR.md`.
 
+## 2026-11-09 — StudioFlow Nova Edit production release
+
+Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** StudioFlow now presents the
+full shared Documents and Slides engine under the visible **Nova Edit** rail and
+panel label. The underlying Notes state key remains `Notes` for compatibility,
+so the accepted Notes workspace, Trash, export, Teleprompter, and project data
+remain intact.
+
+The guarded release certified 30/30 gates, built reproducibly from source
+`2c7c651f34839b0115596d632f1009214e4cd63d`, passed live anonymous smoke 10/10,
+and passed isolated Firefox Developer Edition acceptance 65/65 with owner
+profile access false. Production Worker version
+`b40bd498-5b70-43e5-be33-c6a312964eae` receives 100% traffic; rollback Worker
+is `13805918-374e-471a-adc9-01beb98c6e13`.
+
+Website release commit: `6a9dbc3bf4ac45be1de692032515b2ffc8203e24`; release
+`rel-6a9dbc3bf4ac-9e05557aea4b`; manifest digest
+`82ed373fdfe87003a976314a988e78eacc9d902695142694fa66c1939c5a25d0`.
+Deployed StudioFlow assets are `index-BAUieVoD.js`
+(`06315f104af7ddef7637d4f2001556d50a1770fc9b21e354ffaa60ab946bfb0b`) and
+`index-V2mQ_DP8.css`
+(`6e68faa590fb4a116d57b71bb768835e6b901c8ffdd903eee75267d4fad9899b`). The
+deployed `studio/index.html` SHA-256 is
+`98f050274c7855e0f74ee74d10951564715269a4557bb99d8ae959dae1dd49d2`.
+
+The shared Documents/Slides ribbons, Presenter mode, notes, templates,
+imagery, lifecycle controls, and Brand fonts support remain available. Brand
+font bytes remain browser-local by design; server synchronization is deferred.
+Full execution record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-008-STUDIOFLOW-NOVA-EDIT.md`.
+
 ## 2026-11-08 — StudioFlow Nova Edit Documents, Slides, and Brand Fonts
 
-Status: **IMPLEMENTED AND VERIFIED LOCALLY — NOT DEPLOYED.** StudioFlow now
+Historical status at the time of that record: **IMPLEMENTED AND VERIFIED LOCALLY
+— NOT YET DEPLOYED.** StudioFlow now
 opens the shared Nova Documents and Slides engine inside a focused Nova Edit
 workspace at `/studio/`. Both surfaces retain their full ribbon, templates,
 imagery, speaker notes, Presenter mode, and existing persistence/lifecycle

@@ -1,7 +1,7 @@
 # TPI-NOVA-008 — StudioFlow Nova Edit Documents, Slides, and Brand Fonts
 
 Date: 2026-11-08
-Status: **IMPLEMENTED AND VERIFIED LOCALLY — NOT DEPLOYED**
+Status: **DEPLOYED AND VERIFIED IN PRODUCTION**
 
 ## Outcome
 
@@ -95,9 +95,29 @@ They are not yet server-synchronized or shared across devices. A future
 server-backed brand-font library can be added separately without changing the
 document or slide formatting model.
 
-## Release status
+## Final production release
 
-No production deployment occurred under this record. The official local Worker
-was rebuilt, staged, restarted, and verified only. The website worktree contains
-the intended Nova bundles, source changes, baseline update, and this execution
-record; unrelated application areas were not changed.
+The visible Nova Edit rail/panel label correction was integrated on top of the
+complete approved StudioFlow lineage and deployed through the guarded release
+workflow. The underlying Notes state key remains `Notes`; only the user-facing
+label is `Nova Edit`, preserving existing Notes data and behavior.
+
+- Website release commit: `6a9dbc3bf4ac45be1de692032515b2ffc8203e24`
+- StudioFlow source commit: `2c7c651f34839b0115596d632f1009214e4cd63d`
+- Release: `rel-6a9dbc3bf4ac-9e05557aea4b`
+- Production Worker version: `b40bd498-5b70-43e5-be33-c6a312964eae`
+- Rollback Worker: `13805918-374e-471a-adc9-01beb98c6e13`
+- Traffic: 100%
+- JavaScript: `studio/assets/index-BAUieVoD.js`
+- JavaScript SHA-256: `06315f104af7ddef7637d4f2001556d50a1770fc9b21e354ffaa60ab946bfb0b`
+- CSS: `studio/assets/index-V2mQ_DP8.css`
+- CSS SHA-256: `6e68faa590fb4a116d57b71bb768835e6b901c8ffdd903eee75267d4fad9899b`
+- Entrypoint SHA-256: `98f050274c7855e0f74ee74d10951564715269a4557bb99d8ae959dae1dd49d2`
+- Certification: 30/30 release gates passed; reproducible staging matched.
+- Live anonymous smoke: 10/10 PASS.
+- Live isolated Firefox Developer Edition acceptance: 65/65 PASS.
+
+The deployed candidate preserves the complete Documents and Slides engine,
+full ribbons, Presenter mode, speaker notes, templates, imagery, lifecycle
+controls, and the browser-local Brand fonts library. Custom fonts remain
+device-local in this tranche; server synchronization is intentionally deferred.
