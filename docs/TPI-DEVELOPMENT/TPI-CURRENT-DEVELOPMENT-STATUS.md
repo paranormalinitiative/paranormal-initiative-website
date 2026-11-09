@@ -1,5 +1,30 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Community feed full posts and canonical open links
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** Community feed cards now display
+the complete post body directly, with safe clickable URLs for destinations such
+as the Education Center. The existing **Open post** action remains available as
+the canonical link to the post's location and now loads a requested post even
+when it is beyond the first feed page. The Steve Glanz post was not modified;
+the correction applies to all authorized community posts.
+
+Focused member-home QA passed 42/42. The isolated Firefox disposable-post check
+confirmed full-body rendering, a visible hash-selected target, a clickable
+Education Center URL, and targeted API loading. Guarded preflight certified 30
+gates, production smoke passed 10/10, and live isolated Firefox acceptance
+passed 65/65. The live entrypoint returned HTTP 200 with
+`public, max-age=0, must-revalidate` and contained the new feed rendering and
+target-navigation markers.
+
+Production release: website commit
+`c916ee45fa2b99aaa69d0d87413da851dc879c83`, release
+`rel-c916ee45fa2b-0232626142f1`, Worker
+`ae0e5d09-543a-4979-974d-b28174088c42` at 100% traffic. Rollback Worker:
+`2ce0b94d-5eb7-45dd-a55f-7965da187668`. Live entrypoint SHA-256:
+`d5f1a20f246ff10349a8d4a4981db52aa0d13829ac1362c8d6c30faed3a33993`. Full
+record: `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-MEMBER-COMMUNITY-FULL-POST.md`.
+
 ## 2026-11-09 — Mobile member header and Messenger correction
 
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** On narrow mobile viewports, the
