@@ -4850,6 +4850,7 @@ async function handleUserFeed(request, env) {
   const username = clean(url.searchParams.get("username") || "");
   const limit = Math.min(Number(url.searchParams.get("limit")) || 20, 50);
   const offset = Number(url.searchParams.get("offset")) || 0;
+  const requestedPostId = clean(url.searchParams.get("postId") || "");
   const socialOnly = url.searchParams.get("scope") === "community";
   if (!username) return json({ error: "Username is required." }, 400);
 
@@ -4956,6 +4957,10 @@ async function handleUserFeed(request, env) {
   });
 
   var page = all.slice(offset, offset + limit);
+  if (requestedPostId && !page.some(function(item) { return item.type === "community_post" && item.postId === requestedPostId; })) {
+    var requestedPost = all.find(function(item) { return item.type === "community_post" && item.postId === requestedPostId; });
+    if (requestedPost) page = [requestedPost].concat(page).slice(0, limit);
+  }
   return json({ items: page, total: all.length });
 }
 

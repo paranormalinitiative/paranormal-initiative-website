@@ -103,7 +103,7 @@
     articleReactions: pageId => request(`/articles/reactions?pageId=${encodeURIComponent(pageId)}`),
     setArticleReaction: (pageId, reaction) => request("/articles/reactions", { method: "POST", body: { pageId, reaction } }),
     communityFeed: (limit, offset, scope, postId) => request(`/feed?limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}${scope ? `&scope=${encodeURIComponent(scope)}` : ""}${postId ? `&postId=${encodeURIComponent(postId)}` : ""}`),
-    userFeed: (username, limit, offset, scope) => request(`/feed/user?username=${encodeURIComponent(username || "")}&limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}${scope ? `&scope=${encodeURIComponent(scope)}` : ""}`),
+    userFeed: (username, limit, offset, scope, postId) => request(`/feed/user?username=${encodeURIComponent(username || "")}&limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}${scope ? `&scope=${encodeURIComponent(scope)}` : ""}${postId ? `&postId=${encodeURIComponent(postId)}` : ""}`),
     myPulse: () => request("/me/pulse"),
     communityCategories: () => request("/community/categories"),
     communityPosts: (limit, offset) => request(`/community/posts?limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}`),

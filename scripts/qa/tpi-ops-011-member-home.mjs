@@ -14,6 +14,7 @@ const credentials = JSON.parse(readFileSync(credentialPath, "utf8"));
 const memberShell = readFileSync("member-shell.js", "utf8");
 const memberShellCss = readFileSync("member-shell.css", "utf8");
 const apiSource = readFileSync("functions/api/[[path]].js", "utf8");
+const apiClient = readFileSync("api-client.js", "utf8");
 const checks = [];
 
 function check(name, condition, detail = "") {
@@ -79,6 +80,10 @@ check("community feed uses compact safe previews", memberHome.text.includes("pre
 check("open post target renders the full body", memberHome.text.includes("isOpenPost") && memberHome.text.includes("isOpenPost ? 0 : 400"));
 check("community feed offers a non-disruptive refresh prompt", memberHome.text.includes('data-feed-refresh-notice') && memberHome.text.includes("FEED_REFRESH_MS = 5 * 60 * 1000") && memberHome.text.includes("checkForNewFeedPosts"));
 check("open post navigation loads a target outside the first feed page", memberHome.text.includes("getRequestedPostId") && memberHome.text.includes("postId") && apiSource.includes("requestedPostId") && apiSource.includes("requestedPost"));
+check("open post navigation stays in-page", memberHome.text.includes('data-post-open') && memberHome.text.includes('window.history.pushState') && memberHome.text.includes('await loadFeed()'));
+check("member-profile feed receives the requested post id", memberHome.text.includes('userFeed(username, FEED_LIMIT, feedOffset, "community", requestedPostId)') && apiClient.includes('userFeed: (username, limit, offset, scope, postId)'));
+check("education categories link to their area pages", memberHome.text.includes("educationCategoryUrl") && memberHome.text.includes("education-area-ethics-professional-standards.html"));
+check("General Discussion remains a non-education badge", memberHome.text.includes('categoryUrls[String(categoryId || "")] || ""') && !memberHome.text.includes('"general": "/education'));
 check("mobile member header gives the authenticated greeting its own row", memberHome.text.includes("body.member-mode .command-header .member-greeting") && memberHome.text.includes("position: static;") && memberHome.text.includes("body.member-mode .command-header h1"));
 check("mobile Messenger defaults to minimized without a saved mobile expansion", memberShell.includes("isMobileChatViewport") && memberShell.includes("frame.mobileExpanded") && memberShellCss.includes(".member-floating-chat.is-collapsed"));
 check("member-home contains events section", memberHome.text.includes("data-events-body"));

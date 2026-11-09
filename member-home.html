@@ -3736,7 +3736,7 @@
                 feedOffset = ownItems.length;
                 loadMoreWrap.hidden = ownItems.length < FEED_LIMIT;
             } else {
-                var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset, "community");
+                var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset, "community", requestedPostId);
                 var items = feedData.items || [];
                 renderFeed(items, false);
                 feedOffset = items.length;
@@ -3805,17 +3805,42 @@
         return "";
     }
 
+    function educationCategoryUrl(categoryId) {
+        var categoryUrls = {
+            "investigation": "/education-area-investigation-science.html",
+            "evidence-science": "/education-area-evidence-science-analysis.html",
+            "equipment": "/education-area-instrumentation-technology.html",
+            "environmental-research": "/education-area-environmental-research.html",
+            "evp-itc": "/education-area-evp-itc-research.html",
+            "consciousness": "/education-area-consciousness-human-experience.html",
+            "ethics-standards": "/education-area-ethics-professional-standards.html",
+            "reporting-documentation": "/education-area-reporting-documentation.html",
+            "community-development": "/education-area-education-community-development.html",
+            "technology-development": "/education-area-technology-development-ai.html",
+            "science-ai": "/education-area-artificial-intelligence.html",
+            "locations": "/education-area-historical-cultural-research.html"
+        };
+        return categoryUrls[String(categoryId || "")] || "";
+    }
+
     function renderCommunityCard(item) {
         var avatar = item.authorPhotoUrl
             ? '<img class="feed-card-avatar" src="' + escapeAttr(item.authorPhotoUrl) + '" alt="' + escapeAttr(item.authorName || "Member") + '">'
             : '<div class="feed-card-avatar-initial" style="border-color:' + escapeAttr(item.authorChatColor || 'var(--accent)') + ';background:' + escapeAttr(item.authorChatColor || 'var(--accent)') + '">' + escapeHtml((item.authorName || "M").charAt(0).toUpperCase()) + '</div>';
-        var categoryBadge = item.categoryTitle ? '<span class="feed-card-badge badge-category">' + escapeHtml(item.categoryTitle) + '</span>' : "";
+        var categoryUrl = educationCategoryUrl(item.categoryId);
+        var categoryBadge = item.categoryTitle
+            ? (categoryUrl
+                ? '<a class="feed-card-badge badge-category feed-category-link" href="' + escapeAttr(categoryUrl) + '">' + escapeHtml(item.categoryTitle) + '</a>'
+                : '<span class="feed-card-badge badge-category">' + escapeHtml(item.categoryTitle) + '</span>')
+            : "";
         var commentCount = Number(item.commentCount || item.replyCount || 0);
         var reactionTotal = 0;
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
         }
-        var postUrl = window.preserveMemberMode ? window.preserveMemberMode("/member-home?member=1&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "")) : "/member-home?member=1&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "");
+        var profileContext = !viewingOwnProfile && profileUser && profileUser.username ? "&username=" + encodeURIComponent(profileUser.username) : "";
+        var postPath = "/member-home?member=1" + profileContext + "&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "");
+        var postUrl = window.preserveMemberMode ? window.preserveMemberMode(postPath) : postPath;
         var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";
         var isOpenPost = getRequestedPostId() === String(item.postId || "");
         var bodyHtml = renderFeedBody(item.body || "", isOpenPost ? 0 : 400);
@@ -3958,6 +3983,16 @@
             if (mediaEl) {
                 e.preventDefault();
                 openFeedMediaViewer(mediaEl);
+                return;
+            }
+            var openPostBtn = e.target.closest("[data-post-open]");
+            if (openPostBtn) {
+                e.preventDefault();
+                var openHref = openPostBtn.getAttribute("href");
+                if (!openHref) return;
+                var openUrl = new URL(openHref, window.location.href);
+                window.history.pushState({}, "", openUrl.pathname + openUrl.search + openUrl.hash);
+                await loadFeed();
                 return;
             }
             var menuBtn = e.target.closest("[data-post-menu]");
