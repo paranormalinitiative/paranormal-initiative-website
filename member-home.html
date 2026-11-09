@@ -1540,6 +1540,11 @@
             border-color: #2b3d4f;
         }
 
+        .feed-card.is-hash-target {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+        }
+
         .feed-card-header {
             display: grid;
             grid-template-columns: 38px 1fr auto;
@@ -2660,7 +2665,32 @@
     var composerPreviewRequest = 0;
     var COMMUNITY_FILE_ACCEPT = ".pdf,.txt,.csv,.json,.rtf,.doc,.docx,.odt,.xls,.xlsx,.zip,application/pdf,text/plain,text/csv,application/json,application/rtf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.text,application/zip,application/octet-stream";
 
+    window.addEventListener("hashchange", focusPostFromHash);
     init();
+
+    function focusPostFromHash() {
+        var hash = window.location.hash || "";
+        if (hash.indexOf("#post-") !== 0) return false;
+        var encodedId = hash.substring("#post-".length);
+        var postId = "";
+        try {
+            postId = decodeURIComponent(encodedId);
+        } catch (e) {
+            postId = encodedId;
+        }
+        if (!postId) return false;
+        var card = document.getElementById("post-" + postId);
+        if (!card) return false;
+        document.querySelectorAll(".feed-card.is-hash-target").forEach(function(previous) {
+            previous.classList.remove("is-hash-target");
+        });
+        card.classList.add("is-hash-target");
+        card.scrollIntoView({ block: "center", behavior: "smooth" });
+        window.setTimeout(function() {
+            card.classList.remove("is-hash-target");
+        }, 5000);
+        return true;
+    }
 
     async function init() {
         activeUser = await getActiveUser();
@@ -3612,6 +3642,7 @@
         setupFeedPostTools();
         setupCommentForms();
         hydrateLinkPreviews(items);
+        window.setTimeout(focusPostFromHash, 0);
     }
 
     function renderFeedCard(item) {
@@ -3652,7 +3683,7 @@
             '</div>'
             : "";
 
-        return '<article class="feed-card" data-feed-type="community" data-post-id="' + escapeAttr(item.postId) + '">' +
+        return '<article id="post-' + escapeAttr(item.postId) + '" class="feed-card" data-feed-type="community" data-post-id="' + escapeAttr(item.postId) + '" tabindex="-1">' +
             '<div class="feed-card-header">' +
                 avatar +
                 '<div class="feed-card-meta">' +
@@ -3669,6 +3700,7 @@
             linksHtml +
             '<div data-link-preview-slot="' + escapeAttr(item.postId) + '"></div>' +
             '<div class="feed-card-actions">' +
+                '<a class="feed-action-btn feed-open-btn" data-post-open href="' + escapeAttr(postUrl) + '">Open post</a>' +
                 '<button class="feed-action-btn" type="button" data-comments-toggle>💬 Comment' + (commentCount > 0 ? ' <span class="action-count">' + commentCount + '</span>' : '') + '</button>' +
                 '<button class="feed-action-btn feed-like-btn' + liked + '" type="button" data-post-like title="Like">&#128077;' + (reactionTotal > 0 ? ' <span class="action-count">' + reactionTotal + '</span>' : '') + '</button>' +
                 '<button class="feed-action-btn" type="button" data-share-url="' + escapeAttr(postUrl) + '" data-share-title="' + escapeAttr(item.title || "") + '">Share</button>' +

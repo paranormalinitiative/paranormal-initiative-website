@@ -71,6 +71,7 @@ check("member identity is correct", me.response.status === 200 && me.body?.user?
 const memberHome = await request("/member-home", { headers: authHeaders(member) });
 check("authenticated member-home returns 200", memberHome.response.status === 200 && memberHome.text.includes("member-home-layout"));
 check("member-home contains community section", memberHome.text.includes("Community") || memberHome.text.includes("community"));
+check("community feed posts have open targets", memberHome.text.includes('data-post-open') && memberHome.text.includes('id="post-') && memberHome.text.includes("focusPostFromHash"));
 check("member-home contains events section", memberHome.text.includes("data-events-body"));
 check("member-home contains news section", memberHome.text.includes("data-news-body"));
 check("member-home contains video section", memberHome.text.includes("data-video-body"));
