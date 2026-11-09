@@ -5,7 +5,7 @@ Environment: Official local Worker, `http://127.0.0.1:8787`
 Production: **UNCHANGED — NO DEPLOYMENT AUTHORIZED**  
 Status: **COMPLETE — DEVELOPMENT VERIFIED**
 
-Implementation commit: `3ac6c6c`  
+Implementation commit: final repository commit reported in the completion handoff  
 Website/source repository: `codex/tpi-development`
 
 ## Root cause
