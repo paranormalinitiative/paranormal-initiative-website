@@ -5,6 +5,14 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## Community Feed Open post — no-reload correction
+
+Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact **Open post**
+control now expands the complete post in place without a full page refresh.
+Focused QA passed 48/48 and the live isolated Firefox interaction passed with a
+disposable post. See
+[`TPI-MEMBER-COMMUNITY-OPEN-POST-REFRESH.md`](TPI-MEMBER-COMMUNITY-OPEN-POST-REFRESH.md).
+
 ## Community feed post opening — production repair
 
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** Community feed cards now have a

@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Community Feed Open post no-reload correction
+
+Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact Community Feed
+**Open post** action now expands the full post in place instead of refreshing
+the whole page. The canonical `post=<id>#post-<id>` URL is preserved with
+`history.pushState`, and requested posts outside the first feed page are loaded
+through the existing feed API. Real Education Center categories remain
+clickable; General Discussion remains a feed-only label.
+
+Focused member-home QA passed 48/48. The guarded preflight passed 30 gates,
+production smoke passed 10/10, live isolated Firefox release acceptance passed
+65/65, and the focused live Firefox test confirmed compact-to-full expansion
+without a page reload. The disposable live post was removed after testing.
+
+Production release: website commit
+`0a2fc260fa1ccd4ac56856a6992b7de56f1e1199`, release
+`rel-0a2fc260fa1c-9033787d36ef`, Worker
+`13805918-374e-471a-adc9-01beb98c6e13` at 100% traffic. Rollback Worker:
+`cd4a233c-8d05-4fcc-b244-b1fc01dd20dc`. Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-MEMBER-COMMUNITY-OPEN-POST-REFRESH.md`.
+
 ## 2026-11-09 — Nova editor caret and compact community feed release
 
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** The regular Nova Content Editor
