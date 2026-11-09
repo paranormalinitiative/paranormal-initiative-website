@@ -4,13 +4,13 @@
   "description": "Release baseline for the StudioFlow Nova Edit entrypoint. The source build keeps StudioFlow's production workflow intact and adds a focused Nova authoring hub that opens the shared Documents and Slides engine in StudioFlow mode.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "2c7c651f34839b0115596d632f1009214e4cd63d",
+    "approvedCommit": "0061dc692b07d571f9b1e022ef3949d9a50f4bf2",
     "previousApprovedCommit": "22a7804bf98f90402ab55f6d3ff2ba3d406ee4d7"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-BAUieVoD.js",
-      "sha256": "06315f104af7ddef7637d4f2001556d50a1770fc9b21e354ffaa60ab946bfb0b"
+      "name": "index-Dvu9OCYf.js",
+      "sha256": "765299359001600d4f5e9a982f9d243c1d5de2f9a03dbc114fc34d227be71607"
     },
     "css": {
       "name": "index-V2mQ_DP8.css",
