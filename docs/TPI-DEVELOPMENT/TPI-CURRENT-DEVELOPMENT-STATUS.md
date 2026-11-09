@@ -1,5 +1,27 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Friends, bug reporting, and Messenger identity release
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** The authenticated member shell
+now includes Friends search/follow/unfollow and a protected **Report a bug**
+form. Bug reports enter the Administration Center queue, while Messenger
+rosters and messages preserve readable display names plus normalized usernames.
+
+Migration `0065_member_social_and_bug_reports.sql` was applied additively to
+local and production D1; no existing creator rows or storage objects were
+modified. Focused workstation checks passed 9/9. The guarded release passed 30
+certification gates, local auth passed 38/38, live anonymous smoke passed 10/10,
+and isolated Firefox production acceptance passed 65/65.
+
+Production release: commit `9a1ccc6a3b570fc8e2c3f9e84a7c479c84c63a75`, release
+`rel-9a1ccc6a3b57-00b3315dfc7e`, Worker
+`a74f05ae-3026-44f9-9eeb-41f45019a315` at 100% traffic. Rollback Worker:
+`b40bd498-5b70-43e5-be33-c6a312964eae`. Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-COMMUNITY-WORKSTATION-FRIENDS-BUG-REPORTS.md`.
+
+The requested privileged Sol account remains intentionally uncreated pending a
+real account identity and explicit entitlement record.
+
 ## 2026-11-09 — Community Feed Open post no-reload correction
 
 Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact Community Feed

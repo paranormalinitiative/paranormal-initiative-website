@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## Community workstation — Friends, bug reports, and Messenger identity
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** The member shell now provides
+Friends search/follow/unfollow, a protected **Report a bug** form routed to the
+Administration Center queue, and normalized Messenger names/usernames. Focused
+checks passed 9/9; the guarded release passed 30/30 certification gates, live
+production smoke passed 10/10, and isolated Firefox production acceptance
+passed 65/65. Record:
+[TPI-COMMUNITY-WORKSTATION-FRIENDS-BUG-REPORTS.md](TPI-COMMUNITY-WORKSTATION-FRIENDS-BUG-REPORTS.md).
+
 ## Community Feed Open post — no-reload correction
 
 Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact **Open post**
