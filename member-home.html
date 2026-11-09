@@ -2033,6 +2033,45 @@
         /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=62) ===== */
         @media (max-width: 700px) {
 
+            /* Keep the authenticated greeting out of the site title on phones.
+               The greeting is a real header control, so it gets its own row
+               instead of competing with the logo/title for absolute space. */
+            body.member-mode .command-header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 18px 14px;
+            }
+
+            body.member-mode .command-header .header-content {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            body.member-mode .command-header .member-greeting {
+                position: static;
+                box-sizing: border-box;
+                width: min(100%, 360px);
+                max-width: 100%;
+                margin-top: 14px;
+                justify-content: center;
+            }
+
+            body.member-mode .command-header .member-dashboard-link {
+                min-width: 0;
+            }
+
+            body.member-mode .command-header h1 {
+                font-size: 24px;
+                line-height: 1.15;
+                overflow-wrap: anywhere;
+            }
+
+            body.member-mode .command-header p {
+                font-size: 12px;
+                line-height: 1.35;
+            }
+
             .member-profile-identity {
                 grid-template-columns: 1fr;
                 justify-items: center;
@@ -2624,7 +2663,7 @@
 
 <script src="api-client.js?v=17"></script>
 <script src="includes.js"></script>
-<script src="member-shell.js?v=55"></script>
+<script src="member-shell.js?v=56"></script>
 <script>
 (function () {
     var FEED_LIMIT = 20;

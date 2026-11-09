@@ -4781,6 +4781,7 @@
 
   function applyStoredChatFrame(chat, forceOpen) {
     var frame = getStoredChatFrame();
+    var mobileViewport = isMobileChatViewport();
     chat.style.width = frame && frame.width ? Math.max(420, frame.width) + "px" : "520px";
     chat.style.height = frame && frame.height ? Math.max(360, frame.height) + "px" : "520px";
     if (frame && frame.left && frame.top) {
@@ -4794,10 +4795,18 @@
       chat.style.right = "24px";
       chat.style.bottom = "24px";
     }
-    if (!forceOpen && frame && frame.collapsed) {
+    var shouldCollapse = !forceOpen && (
+      Boolean(frame && frame.collapsed) ||
+      (mobileViewport && !(frame && frame.mobileExpanded))
+    );
+    if (shouldCollapse) {
       chat.classList.add("is-collapsed");
       dockCollapsedChat(chat);
     }
+  }
+
+  function isMobileChatViewport() {
+    return Boolean(window.matchMedia && window.matchMedia("(max-width: 760px)").matches);
   }
 
   function dockCollapsedChat(chat) {
@@ -4841,19 +4850,23 @@
   function storeChatFrame(chat) {
     try {
       var existing = getStoredChatFrame() || {};
+      var mobileViewport = isMobileChatViewport();
       if (chat.classList.contains("is-collapsed")) {
         existing.collapsed = true;
+        if (mobileViewport) existing.mobileExpanded = false;
         localStorage.setItem("tpiFloatingChatFrame", JSON.stringify(existing));
         return;
       }
       var rect = chat.getBoundingClientRect();
-      localStorage.setItem("tpiFloatingChatFrame", JSON.stringify({
+      var nextFrame = {
         left: Math.round(rect.left),
         top: Math.round(rect.top),
         width: Math.round(rect.width),
         height: Math.round(rect.height),
         collapsed: false
-      }));
+      };
+      if (mobileViewport) nextFrame.mobileExpanded = true;
+      localStorage.setItem("tpiFloatingChatFrame", JSON.stringify(nextFrame));
     } catch (e) {}
   }
 
