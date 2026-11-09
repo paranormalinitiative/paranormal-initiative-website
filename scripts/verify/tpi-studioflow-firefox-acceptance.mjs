@@ -264,21 +264,23 @@ try {
   // from the right rail; Teleprompter sits beneath Notes and Recording &
   // Storage is the authoritative management section.
   // Editorial Nova belongs to the Content Editor. StudioFlow retains its
-  // existing Notes panel and state key for this release.
+  // existing Notes panel and state key for this release. Its visible label is
+  // Nova Edit; the stable data attribute intentionally remains Notes so the
+  // older scratchpad state does not change.
   const panelTargets = [
-    ["Banners", "Banner text"],
-    ["Media assets", "Video clips"],
-    ["Voice FX", "Voice FX"],
-    ["Style", "Brand Presets"],
-    ["Notes", "Notes"],
-    ["Teleprompter", "Open teleprompter"],
-    ["People", "People"],
-    ["Private chat", "Private chat"],
-    ["Recording", "Recording"],
-    ["Recording & Storage", "Save Destination"]
+    ["Banners", "Banners", "Banner text"],
+    ["Media assets", "Media assets", "Video clips"],
+    ["Voice FX", "Voice FX", "Voice FX"],
+    ["Style", "Style", "Brand Presets"],
+    ["Nova Edit", "Notes", "No notes yet"],
+    ["Teleprompter", "Teleprompter", "Open teleprompter"],
+    ["People", "People", "People"],
+    ["Private chat", "Private chat", "Private chat"],
+    ["Recording", "Recording", "Recording"],
+    ["Recording & Storage", "Recording & Storage", "Save Destination"]
   ];
-  for (const [label, expected] of panelTargets) {
-    const opened = await click(`[data-studio-panel-tab="${label}"]`);
+  for (const [label, stateKey, expected] of panelTargets) {
+    const opened = await click(`[data-studio-panel-tab="${stateKey}"]`);
     await waitFor(`${label} panel`, async () => (await text(".asset-panel")).includes(expected));
     check(`${label} panel opens from the right rail`, opened && (await text(".asset-panel")).includes(expected));
     const sectionTitles = await visibleAssetSectionTitles();
@@ -289,8 +291,8 @@ try {
   const removedTabsGone = await count('[data-studio-panel-tab="Live interaction"]') === 0 && await count('[data-studio-panel-tab="Comments"]') === 0 && await count('[data-studio-panel-tab="Widgets"]') === 0;
   check("Live interaction, Comments, and Widgets are removed from the right rail", removedTabsGone);
   const railOrder = await js("return Array.from(document.querySelectorAll('.right-rail-tab span')).map(function (node) { return node.textContent.trim(); });");
-  check("Teleprompter sits directly beneath Notes", railOrder.indexOf("Teleprompter") === railOrder.indexOf("Notes") + 1 && railOrder.includes("Recording & Storage"), JSON.stringify(railOrder));
-  check("the Notes tab keeps its Notes state key", (await count('[data-studio-panel-tab="Notes"]')) === 1 && (await count('[data-studio-panel-tab="Nova Edit"]')) === 0, JSON.stringify(railOrder));
+  check("Teleprompter sits directly beneath Nova Edit", railOrder.indexOf("Teleprompter") === railOrder.indexOf("Nova Edit") + 1 && railOrder.includes("Recording & Storage"), JSON.stringify(railOrder));
+  check("the Nova Edit tab keeps its Notes state key", (await count('[data-studio-panel-tab="Notes"]')) === 1 && (await count('[data-studio-panel-tab="Nova Edit"]')) === 0, JSON.stringify(railOrder));
   await click('[data-studio-panel-tab="Media assets"]');
   check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));
   const timerDurationState = await js("var rows=Array.from(document.querySelectorAll('[data-tpi-native-video-timer-controls] .countdown-duration-row')); return {rows:rows.length,labels:rows.length===1?Array.from(rows[0].querySelectorAll('button')).map(function(button){return (button.textContent||'').trim();}):[]};");
