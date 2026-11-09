@@ -85,14 +85,13 @@ const excludedDirectories = new Set([".git", ".wrangler", ".local-dev", "node_mo
 // it would only certify a byte that is never deployed and let a stray Finder
 // touch invalidate an otherwise valid certification.
 const excludedFiles = new Set([".dev.vars", ".env", ".DS_Store", "wrangler.toml", "wrangler.dev.toml", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]);
-// TPI-CREATOR-INCENTIVE-001B: authoritative badge masters and the not-yet
-// implemented Society / Leadership artwork are repository sources, not published
-// assets. `.assetsignore` already blocks them at the edge; excluding them here as
-// well keeps the certified candidate and its digest equal to what is uploaded,
-// instead of carrying ~10 MB of source art through every stage and hash.
+// Badge masters remain repository sources and are not published. The approved
+// leadership distinction feature publishes only optimized Society / Leadership
+// derivatives; excluding the masters here keeps the certified candidate and its
+// digest equal to what is uploaded without carrying source art through staging.
 const unpublishedAssetPrefixes = [
   `assets${sep}founding-memberships${sep}masters${sep}`,
-  `assets${sep}society-leadership${sep}`,
+  `assets${sep}society-leadership${sep}masters${sep}`,
 ];
 
 const filter = (source) => {

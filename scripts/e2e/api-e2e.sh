@@ -155,7 +155,7 @@ check "an ordinary member has no founding badge at all" 200 "$(req GET /me/entit
 check "a client-supplied badge is ignored and the class artwork is used" 200 "$(req GET /admin/members/e2e_mbr_forged/entitlements tok-owner)" "d['badge']['classCode']=='FC' and d['badge']['asset']['png'].endswith('founding-creator-256.png')"
 check "published badge derivative is served" 200 "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "${BASE%/api}/assets/founding-memberships/web/founding-all-access-256.png")|"
 check "badge master artwork is not published" 404 "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "${BASE%/api}/assets/founding-memberships/masters/FoundingAllAcceessBadgeMaster.png")|"
-check "society artwork is not published before its feature exists" 404 "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "${BASE%/api}/assets/society-leadership/web/gold-256.png")|"
+check "society Gold derivative is published for leadership profiles" 200 "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "${BASE%/api}/assets/society-leadership/web/gold-256.png")|"
 check "ordinary member holds no capability and no badge" 200 "$(req GET /me/entitlements tok-plain)" "d['capabilities']==[] and not d['creator'] and not d['contributor'] and d['badge'] is None"
 
 check "creator-only account can use Creator Studio" 200 "$(req GET /studio/production/active tok-mbr-creator)"

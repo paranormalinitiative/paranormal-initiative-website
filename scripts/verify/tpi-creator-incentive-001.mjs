@@ -160,9 +160,9 @@ section("Asset packaging: masters stay in Git, derivatives are published");
 
 const assetsIgnore = readFileSync(resolve(repoRoot, ".assetsignore"), "utf8");
 check("founding badge masters are excluded from the published package", /^assets\/founding-memberships\/masters\/$/m.test(assetsIgnore));
-check("society artwork is excluded until its feature exists", /^assets\/society-leadership\/$/m.test(assetsIgnore));
+check("society badge masters remain excluded while derivatives publish", /^assets\/society-leadership\/masters\/$/m.test(assetsIgnore));
 check("founding badge derivatives are not excluded", !/^assets\/founding-memberships\/web\/?\**$/m.test(assetsIgnore));
-check("no society derivative is individually published", !/^!assets\/society-leadership/m.test(assetsIgnore));
+check("society badge derivatives are not excluded", !/^assets\/society-leadership\/web\/?\**$/m.test(assetsIgnore));
 const trackedMasters = execFileSync("git", ["ls-files", "assets/founding-memberships/masters", "assets/society-leadership/masters"], { cwd: repoRoot, encoding: "utf8" }).trim().split("\n").filter(Boolean);
 check("all six badge masters remain version-controlled", trackedMasters.length === 6, trackedMasters.join(" | "));
 
