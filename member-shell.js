@@ -81,6 +81,8 @@
     "member-videos",
     "member-files",
     "member-notifications",
+    "friends",
+    "bug-report",
     "creator-videos",
     "admin-panel",
     "admin-advanced-settings",
@@ -3144,7 +3146,7 @@
         return '<button class="member-chat-online-person' + (selectedForRoom ? ' is-room-selected' : '') + '" type="button" data-online-member="' + escapeHtml(member.username) + '"' +
           (selectingForRoom ? ' aria-pressed="' + (selectedForRoom ? 'true' : 'false') + '"' : '') + '>' +
           renderChatAvatar(member) +
-          '<span class="member-chat-person-copy"><strong>' + escapeHtml(member.displayName) + '</strong>' +
+          '<span class="member-chat-person-copy"><strong>' + escapeHtml(chatMemberName(member)) + '</strong><small>' + escapeHtml(chatMemberUsername(member)) + '</small>' +
           '<span class="member-chat-presence ' + presenceClass + '">' + escapeHtml(selectedForRoom ? "Added to room" : presenceText) + '</span></span>' +
         '</button>';
       }).join("") : '<p class="member-chat-list-empty">No members found.</p>';
@@ -3337,8 +3339,8 @@
       membersEl.innerHTML = selectedRoster.length ? selectedRoster.map(function(member) {
         return '<div class="member-chat-member-option is-room-selected">' +
           renderChatAvatar(member) +
-          '<span><strong>' + escapeHtml(member.displayName) + '</strong><small>' + escapeHtml(member.title || member.role || "Member") + '</small></span>' +
-          '<button type="button" data-chat-member-remove="' + escapeHtml(member.username) + '" aria-label="Remove ' + escapeHtml(member.displayName) + ' from room">Remove</button>' +
+          '<span><strong>' + escapeHtml(chatMemberName(member)) + '</strong><small>' + escapeHtml(chatMemberUsername(member) || member.title || member.role || "Member") + '</small></span>' +
+          '<button type="button" data-chat-member-remove="' + escapeHtml(member.username) + '" aria-label="Remove ' + escapeHtml(chatMemberName(member)) + ' from room">Remove</button>' +
         '</div>';
       }).join("") : '<p class="member-chat-list-empty">No members added yet. Click names in the left column.</p>';
       membersEl.querySelectorAll("[data-chat-member-remove]").forEach(function(button) {
@@ -4113,7 +4115,7 @@
 
       menu.innerHTML = '<div class="report-dialog" style="padding: 12px; min-width: 280px;">' +
         '<div style="color: #c7d5e2; font-size: 12px; margin-bottom: 8px;">Report Conversation</div>' +
-        (isGroupConversation(currentChat) ? '<div style="margin-bottom: 12px;"><label style="display: block; color: #c7d5e2; font-size: 11px; margin-bottom: 4px;">Member</label><select data-report-member style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 12px;">' + (currentChat.members || []).filter(function(member) { return !isCurrentChatUser(member, user); }).map(function(member) { return '<option value="' + escapeHtml(member.username) + '">' + escapeHtml(member.displayName) + '</option>'; }).join('') + '</select></div>' : '') +
+        (isGroupConversation(currentChat) ? '<div style="margin-bottom: 12px;"><label style="display: block; color: #c7d5e2; font-size: 11px; margin-bottom: 4px;">Member</label><select data-report-member style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 12px;">' + (currentChat.members || []).filter(function(member) { return !isCurrentChatUser(member, user); }).map(function(member) { return '<option value="' + escapeHtml(member.username) + '">' + escapeHtml(chatMemberName(member)) + ' (' + escapeHtml(chatMemberUsername(member)) + ')</option>'; }).join('') + '</select></div>' : '') +
         '<div style="margin-bottom: 12px;">' +
           '<label style="display: block; color: #c7d5e2; font-size: 11px; margin-bottom: 4px;">Reason</label>' +
           '<select data-report-reason style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 12px;">' +
@@ -4160,7 +4162,7 @@
     var isOwn = currentUsername && normalizeChatUsername(author.username) === currentUsername;
       var canEditDelete = Boolean(isOwn && ((!isRemoteConversation(currentChat) && !message.id) || (isRemoteConversation(currentChat) && message.id)));
       return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
-      '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
+      '<div class="member-chat-bubble"><strong>' + escapeHtml(chatMemberName(author)) + '</strong><small class="member-chat-author-username">' + escapeHtml(chatMemberUsername(author)) + '</small>' +
       '<span class="member-chat-message-actions">' +
         (isOwn && canEditDelete ? '<button class="member-chat-edit" type="button" data-chat-edit="' + escapeHtml(String(index)) + '" title="Edit message">Edit</button>' : '') +
         (canEditDelete ? '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Remove message">Remove</button>' : '') +
@@ -4169,7 +4171,7 @@
       (message.editedAt ? '<small>Edited</small>' : '') +
       (message.body ? '<p>' + escapeHtml(message.body) + '</p>' : '') +
       renderChatAttachments(message.attachments) +
-      (isOwn && Array.isArray(message.readBy) && message.readBy.length ? '<span class="member-chat-read-receipt">Seen by ' + escapeHtml(message.readBy.map(function(reader) { return reader.displayName || reader.username; }).join(", ")) + '</span>' : '') + '</div>' +
+      (isOwn && Array.isArray(message.readBy) && message.readBy.length ? '<span class="member-chat-read-receipt">Seen by ' + escapeHtml(message.readBy.map(function(reader) { return chatMemberName(reader); }).join(", ")) + '</span>' : '') + '</div>' +
     '</article>';
   }
 
@@ -4204,10 +4206,13 @@
   }
 
   function normalizeChatMember(member, online) {
-    var name = member.displayName || member.display_name || member.name || member.username || "Member";
+    member = member || {};
+    var username = String(member.username || "").trim().replace(/^@+/, "").replace(/\s+/g, "_");
+    var name = String(member.displayName || member.display_name || member.name || "").trim().replace(/\s+/g, " ");
+    if (!name) name = username || "Member";
     return {
       id: member.id || member.contributorId || member.contributor_id || "",
-      username: String(member.username || name).trim().replace(/\s+/g, "_"),
+      username: username || name.replace(/\s+/g, "_").replace(/^@+/, ""),
       displayName: name,
       title: member.title || "",
       role: member.role || "",
@@ -4217,6 +4222,15 @@
       lastSeenAt: member.lastSeenAt || member.last_seen_at || null,
       status: member.status || (online ? "online" : "offline")
     };
+  }
+
+  function chatMemberName(member) {
+    return String(member && (member.displayName || member.display_name || member.name || member.username) || "Member").trim().replace(/\s+/g, " ");
+  }
+
+  function chatMemberUsername(member) {
+    var username = String(member && (member.username || member.userName) || "").trim().replace(/^@+/, "").replace(/\s+/g, "_");
+    return username ? "@" + username : "";
   }
 
   function dedupeChatMembers(members) {

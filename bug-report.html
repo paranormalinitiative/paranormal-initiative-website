@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Report a bug | The Paranormal Initiative</title>
+  <link rel="stylesheet" href="style.css?v=89">
+  <link rel="stylesheet" href="member-shell.css?v=62">
+  <style>
+    .bug-workspace { max-width: 860px; margin: 0 auto; }
+    .bug-panel { background: #10141c; border: 1px solid #263646; border-radius: 20px; padding: 24px; }
+    .bug-panel h1 { margin: 0 0 8px; color: #f4f8fb; }
+    .bug-panel p { color: #9aa6b5; line-height: 1.55; }
+    .bug-form { display: grid; gap: 16px; margin-top: 22px; }
+    .bug-form label { display: grid; gap: 7px; color: #dce5ef; font-weight: 600; }
+    .bug-form textarea { min-height: 180px; resize: vertical; }
+    .bug-form button { justify-self: start; }
+    .bug-status { min-height: 1.4em; color: #a8d5b6; }
+    @media (max-width: 640px) { .bug-panel { padding: 16px; } }
+  </style>
+</head>
+<body class="workspace-page">
+  <div id="site-header"></div>
+  <div data-member-content hidden>
+    <div class="member-main-inner bug-workspace">
+      <section class="bug-panel" aria-labelledby="bug-title">
+        <p class="portal-kicker">Support</p>
+        <h1 id="bug-title">Report a bug</h1>
+        <p>Send a reproducible problem directly to the protected Administration Center. Please do not include passwords, private messages, or access tokens.</p>
+        <form class="bug-form" data-bug-form>
+          <label>Short title <input name="title" required minlength="3" maxlength="160" placeholder="What went wrong?" autocomplete="off"></label>
+          <label>What happened? <textarea name="description" required minlength="10" maxlength="5000" placeholder="Tell us what you expected, what happened, and the steps to reproduce it."></textarea></label>
+          <button type="submit">Submit bug report</button>
+          <p class="bug-status" data-bug-status role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+  </div>
+  <div id="site-footer"></div>
+  <script src="includes.js"></script>
+  <script src="api-client.js"></script>
+  <script src="member-shell.js?v=58"></script>
+  <script>
+    (function () { var form = document.querySelector('[data-bug-form]'); var status = document.querySelector('[data-bug-status]'); form.addEventListener('submit', async function (event) { event.preventDefault(); var button = form.querySelector('button'); button.disabled = true; status.textContent = 'Submitting…'; var data = Object.fromEntries(new FormData(form).entries()); data.pageUrl = window.location.href; try { var response = await fetch('/api/bug-reports', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); var body = {}; try { body = await response.json(); } catch (e) {} if (!response.ok) throw new Error(body.error || 'The bug report could not be submitted.'); form.reset(); status.textContent = 'Bug report submitted to the Administration Center.'; } catch (error) { status.textContent = error.message; } finally { button.disabled = false; } }); }());
+  </script>
+</body>
+</html>

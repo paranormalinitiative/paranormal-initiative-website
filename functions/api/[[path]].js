@@ -106,8 +106,8 @@ export async function onRequest(context) {
     if ((request.method === "PUT" || request.method === "PATCH") && path.match(/^\/admin\/articles\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminArticleUpdate(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/articles\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminArticleStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
-    if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
-    if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger|bug)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger|bug)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/notifications\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminNotificationDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/notifications\/[^/]+\/(read|unread)$/)) return requireAdmin(request, env, user => handleAdminNotificationState(path, env, user));
@@ -138,6 +138,10 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
+    if (request.method === "GET" && path === "/friends") return requireMember(request, env, user => handleListFriends(env, user));
+    if (request.method === "POST" && path === "/friends/follow") return requireMember(request, env, user => handleFollowMember(request, env, user));
+    if (request.method === "POST" && path === "/friends/unfollow") return requireMember(request, env, user => handleUnfollowMember(request, env, user));
+    if (request.method === "POST" && path === "/bug-reports") return requireMember(request, env, user => handleCreateBugReport(request, env, user));
     if (request.method === "POST" && path === "/messenger/presence") return requireMember(request, env, user => handlePresenceHeartbeat(request, env, user));
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
     if (request.method === "POST" && path === "/conversations") return requireMember(request, env, user => handleCreateConversation(request, env, user));
@@ -1756,7 +1760,7 @@ async function handleAdminReports(request, env) {
   const status = allowedStatuses.includes(requestedStatus) ? requestedStatus : "open";
   const search = clean(url.searchParams.get("search") || "").slice(0, 120);
   const requestedType = clean(url.searchParams.get("type") || "all").toLowerCase();
-  const reportType = ["video", "messenger", "all"].includes(requestedType) ? requestedType : "all";
+  const reportType = ["video", "messenger", "bug", "all"].includes(requestedType) ? requestedType : "all";
   const from = clean(url.searchParams.get("from") || "");
   const to = clean(url.searchParams.get("to") || "");
   const requestedSort = clean(url.searchParams.get("sort") || "created").toLowerCase();
@@ -1805,6 +1809,17 @@ async function handleAdminReports(request, env) {
       LEFT JOIN contributors reporter ON reporter.id = mr.reporter_id
       LEFT JOIN contributors reported ON reported.id = mr.reported_contributor_id
       LEFT JOIN contributors reviewer ON reviewer.id = mr.reviewed_by
+      UNION ALL
+      SELECT br.id, 'bug' AS reportType, 'member-bug-report' AS contentType,
+             br.page_url AS contentId, br.title AS contentLabel, br.description AS reason,
+             br.status, reporter.username AS reporterUsername,
+             reporter.display_name AS reporterName, NULL AS reportedUsername,
+             NULL AS reportedName, br.created_at AS createdAt,
+             br.reviewed_at AS reviewedAt, reviewer.username AS reviewedBy,
+             'Member bug-report details are limited to the authenticated submission metadata.' AS evidenceNote
+      FROM member_bug_reports br
+      LEFT JOIN contributors reporter ON reporter.id = br.reporter_id
+      LEFT JOIN contributors reviewer ON reviewer.id = br.reviewed_by
     ) reportQueue`;
   const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total ${queueSource} ${where}`).bind(...binds).first();
   const { results } = await env.TPI_DB.prepare(`
@@ -1840,7 +1855,7 @@ async function handleAdminReportDetail(path, env) {
         LEFT JOIN contributors reviewer ON reviewer.id = vr.reviewed_by
         WHERE vr.id = ?
       `).bind(reportId).first();
-    } else {
+    } else if (reportType === "messenger") {
       report = await env.TPI_DB.prepare(`
         SELECT mr.id, 'messenger' AS reportType, 'private-conversation' AS contentType,
                NULL AS contentId, NULL AS contentLabel, mr.reason, mr.status,
@@ -1854,6 +1869,22 @@ async function handleAdminReportDetail(path, env) {
         LEFT JOIN contributors reported ON reported.id = mr.reported_contributor_id
         LEFT JOIN contributors reviewer ON reviewer.id = mr.reviewed_by
         WHERE mr.id = ?
+      `).bind(reportId).first();
+    } else {
+      report = await env.TPI_DB.prepare(`
+        SELECT br.id, 'bug' AS reportType, 'member-bug-report' AS contentType,
+               br.page_url AS contentId, br.title AS contentLabel,
+               br.description AS reason, br.status,
+               reporter.username AS reporterUsername,
+               reporter.display_name AS reporterName,
+               NULL AS reportedUsername, NULL AS reportedName,
+               br.created_at AS createdAt, br.reviewed_at AS reviewedAt,
+               reviewer.username AS reviewedBy,
+               'Member bug-report details are limited to the authenticated submission metadata.' AS evidenceNote
+        FROM member_bug_reports br
+        LEFT JOIN contributors reporter ON reporter.id = br.reporter_id
+        LEFT JOIN contributors reviewer ON reviewer.id = br.reviewed_by
+        WHERE br.id = ?
       `).bind(reportId).first();
     }
     if (!report) return json({ error: "Report was not found." }, 404);
@@ -1879,12 +1910,12 @@ async function handleAdminReportStatus(path, request, env, actingUser) {
   const data = await readJson(request);
   const status = clean(data.status).toLowerCase();
   const reason = clean(data.reason).slice(0, 500);
-  const allowedStatuses = reportType === "video"
-    ? ["open", "reviewed", "dismissed", "actioned"]
-    : ["pending", "reviewed", "dismissed", "actioned"];
+  const allowedStatuses = reportType === "messenger"
+    ? ["pending", "reviewed", "dismissed", "actioned"]
+    : ["open", "reviewed", "dismissed", "actioned"];
   if (!reportId) return json({ error: "Report id is required." }, 400);
   if (!allowedStatuses.includes(status)) return json({ error: "Report status was not recognized." }, 400);
-  const table = reportType === "video" ? "video_reports" : "messenger_reports";
+  const table = reportType === "video" ? "video_reports" : reportType === "messenger" ? "messenger_reports" : "member_bug_reports";
   const current = await env.TPI_DB.prepare(`SELECT id, status FROM ${table} WHERE id = ?`).bind(reportId).first();
   if (!current) return json({ error: "Report was not found." }, 404);
   if (status === "open" || status === "pending") {
@@ -9127,6 +9158,7 @@ function directoryMember(user) {
   const lastSeen = user.last_seen_at ? new Date(user.last_seen_at) : null;
   const isOnline = Boolean(lastSeen && (now - lastSeen) <= 90 * 1000 && user.status === 'online');
   return {
+    id: user.id,
     username: user.username,
     displayName: user.display_name,
     title: user.title || "",
@@ -9134,6 +9166,7 @@ function directoryMember(user) {
     photoUrl: user.photo_url || "",
     chatColor: normalizeChatColor(user.chat_color || "#a855f7"),
     canMessage: user.can_message !== 0,
+    following: user.following === 1 || user.following === true,
     active: user.active !== 0,
     online: isOnline,
     lastSeenAt: user.last_seen_at || null,
@@ -9148,6 +9181,7 @@ async function handleMemberDirectory(request, env, user) {
   const stmt = search
     ? env.TPI_DB.prepare(`
         SELECT c.id, c.username, c.display_name, c.title, c.role, c.photo_url, c.chat_color, c.can_message, c.active,
+               EXISTS (SELECT 1 FROM member_follows mf WHERE mf.follower_id = ? AND mf.following_id = c.id) AS following,
                mp.last_seen_at, mp.status
         FROM contributors c
         LEFT JOIN member_presence mp ON mp.contributor_id = c.id
@@ -9155,21 +9189,89 @@ async function handleMemberDirectory(request, env, user) {
           AND (lower(c.username) LIKE ? OR lower(c.display_name) LIKE ?)
         ORDER BY c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
         LIMIT 200
-      `).bind(like, like)
+      `).bind(user.id, like, like)
     : env.TPI_DB.prepare(`
         SELECT c.id, c.username, c.display_name, c.title, c.role, c.photo_url, c.chat_color, c.can_message, c.active,
+               EXISTS (SELECT 1 FROM member_follows mf WHERE mf.follower_id = ? AND mf.following_id = c.id) AS following,
                mp.last_seen_at, mp.status
         FROM contributors c
         LEFT JOIN member_presence mp ON mp.contributor_id = c.id
         WHERE c.active = 1
         ORDER BY c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
         LIMIT 200
-      `);
+      `).bind(user.id);
   const { results } = await stmt.all();
   const members = (results || [])
     .map(directoryMember)
     .filter(member => member.username !== user.username);
   return json({ members }, 200, { "Cache-Control": "no-store" });
+}
+
+async function resolveActiveMember(env, identifier) {
+  const value = clean(identifier || "").replace(/^@+/, "").slice(0, 120);
+  if (!value) return null;
+  return env.TPI_DB.prepare(`
+    SELECT id, username, display_name AS displayName, title, role, photo_url AS photoUrl,
+           can_message AS canMessage, active
+    FROM contributors
+    WHERE active = 1 AND (id = ? OR lower(username) = lower(?) OR lower(display_name) = lower(?))
+    LIMIT 1
+  `).bind(value, value, value).first();
+}
+
+async function handleListFriends(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.username, c.display_name AS displayName, c.title, c.role,
+           c.photo_url AS photoUrl, c.can_message AS canMessage,
+           f.created_at AS followedAt
+    FROM member_follows f
+    JOIN contributors c ON c.id = f.following_id
+    WHERE f.follower_id = ? AND c.active = 1
+    ORDER BY lower(c.display_name), lower(c.username)
+  `).bind(user.id).all();
+  const counts = await env.TPI_DB.prepare(`
+    SELECT
+      (SELECT COUNT(*) FROM member_follows WHERE follower_id = ?) AS following,
+      (SELECT COUNT(*) FROM member_follows WHERE following_id = ?) AS followers
+  `).bind(user.id, user.id).first();
+  return json({ friends: results || [], counts: { following: Number(counts?.following || 0), followers: Number(counts?.followers || 0) } }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleFollowMember(request, env, user) {
+  const data = await readJson(request);
+  const target = await resolveActiveMember(env, data.targetId || data.targetUsername || data.username);
+  if (!target) return json({ error: "That active member could not be found." }, 404);
+  if (target.id === user.id) return json({ error: "You cannot follow your own account." }, 400);
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_follows (follower_id, following_id)
+    VALUES (?, ?)
+    ON CONFLICT(follower_id, following_id) DO NOTHING
+  `).bind(user.id, target.id).run();
+  return json({ ok: true, following: true, member: target }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleUnfollowMember(request, env, user) {
+  const data = await readJson(request);
+  const target = await resolveActiveMember(env, data.targetId || data.targetUsername || data.username);
+  if (!target) return json({ error: "That active member could not be found." }, 404);
+  await env.TPI_DB.prepare("DELETE FROM member_follows WHERE follower_id = ? AND following_id = ?").bind(user.id, target.id).run();
+  return json({ ok: true, following: false, member: target }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleCreateBugReport(request, env, user) {
+  const data = await readJson(request);
+  const title = clean(data.title || "").slice(0, 160);
+  const description = clean(data.description || "").slice(0, 5000);
+  if (title.length < 3) return json({ error: "Please provide a short title for the problem." }, 400);
+  if (description.length < 10) return json({ error: "Please describe what happened, including the steps to reproduce it." }, 400);
+  const id = crypto.randomUUID();
+  const pageUrl = clean(data.pageUrl || "").slice(0, 500);
+  const userAgent = clean(request.headers.get("user-agent") || "").slice(0, 500);
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_bug_reports (id, reporter_id, title, description, page_url, user_agent, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).bind(id, user.id, title, description, pageUrl, userAgent, new Date().toISOString()).run();
+  return json({ ok: true, reportId: id, message: "Bug report submitted to the Administration Center." }, 201, { "Cache-Control": "no-store" });
 }
 
 // ---- Messenger conversations and messages ----

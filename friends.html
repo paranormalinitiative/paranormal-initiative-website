@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Friends | The Paranormal Initiative</title>
+  <link rel="stylesheet" href="style.css?v=89">
+  <link rel="stylesheet" href="member-shell.css?v=62">
+  <style>
+    .social-workspace { max-width: 980px; margin: 0 auto; }
+    .social-panel { background: #10141c; border: 1px solid #263646; border-radius: 20px; padding: 24px; }
+    .social-panel h1 { margin: 0 0 8px; color: #f4f8fb; }
+    .social-panel p { color: #9aa6b5; line-height: 1.55; }
+    .social-search { display: flex; gap: 10px; margin: 20px 0; }
+    .social-search input { flex: 1; min-width: 0; }
+    .social-list { display: grid; gap: 10px; }
+    .social-member { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px; border: 1px solid #263646; border-radius: 14px; background: #0d1219; }
+    .social-member-copy { min-width: 0; display: grid; gap: 3px; }
+    .social-member-copy strong { color: #f4f8fb; }
+    .social-member-copy span { color: #8d99a8; font-size: 0.86rem; overflow-wrap: anywhere; }
+    .social-member button { flex: 0 0 auto; }
+    .social-status { min-height: 1.4em; color: #a8d5b6; }
+    @media (max-width: 640px) { .social-panel { padding: 16px; } .social-search { flex-direction: column; } .social-member { align-items: flex-start; flex-direction: column; } }
+  </style>
+</head>
+<body class="workspace-page">
+  <div id="site-header"></div>
+  <div data-member-content hidden>
+    <div class="member-main-inner social-workspace">
+      <section class="social-panel" aria-labelledby="friends-title">
+        <p class="portal-kicker">Community</p>
+        <h1 id="friends-title">Friends</h1>
+        <p>Find TPI members, follow people whose work you want to keep up with, and manage your current following list. Following is reversible and does not expose private profile data.</p>
+        <form class="social-search" data-friends-search>
+          <input type="search" name="search" placeholder="Search username or display name" aria-label="Search members" autocomplete="off">
+          <button type="submit">Find members</button>
+        </form>
+        <p class="social-status" data-friends-status role="status" aria-live="polite"></p>
+        <h2>People you follow</h2>
+        <div class="social-list" data-friends-list><p>Loading your Friends list…</p></div>
+        <h2>Member search</h2>
+        <div class="social-list" data-friends-results><p>Search for a member to get started.</p></div>
+      </section>
+    </div>
+  </div>
+  <div id="site-footer"></div>
+  <script src="includes.js"></script>
+  <script src="api-client.js"></script>
+  <script src="member-shell.js?v=58"></script>
+  <script>
+    (function () {
+      var list = document.querySelector('[data-friends-list]');
+      var results = document.querySelector('[data-friends-results]');
+      var form = document.querySelector('[data-friends-search]');
+      var status = document.querySelector('[data-friends-status]');
+      function esc(value) { var div = document.createElement('div'); div.textContent = value == null ? '' : String(value); return div.innerHTML; }
+      function label(member) { return esc(member.displayName || member.username || 'Member'); }
+      function row(member, following) {
+        var name = label(member);
+        var username = member.username ? '@' + String(member.username).replace(/^@+/, '') : '';
+        return '<div class="social-member"><div class="social-member-copy"><strong>' + name + '</strong><span>' + esc(username) + (member.title ? ' · ' + esc(member.title) : '') + '</span></div><button type="button" data-social-action="' + (following ? 'unfollow' : 'follow') + '" data-social-target="' + esc(member.id || member.username) + '">' + (following ? 'Unfollow' : 'Follow') + '</button></div>';
+      }
+      async function api(path, options) { var response = await fetch('/api' + path, Object.assign({ credentials: 'same-origin', cache: 'no-store', headers: { 'Content-Type': 'application/json' } }, options || {})); var body = {}; try { body = await response.json(); } catch (e) {} if (!response.ok) throw new Error(body.error || 'The request could not be completed.'); return body; }
+      async function loadFriends() { var body = await api('/friends'); list.innerHTML = body.friends && body.friends.length ? body.friends.map(function (member) { return row(member, true); }).join('') : '<p>You are not following any members yet.</p>'; }
+      async function searchMembers(query) { if (!query) { results.innerHTML = '<p>Search for a member to get started.</p>'; return; } var body = await api('/members/directory?search=' + encodeURIComponent(query)); results.innerHTML = body.members && body.members.length ? body.members.map(function (member) { return row(member, Boolean(member.following)); }).join('') : '<p>No active members matched that search.</p>'; }
+      document.addEventListener('click', async function (event) { var button = event.target.closest('[data-social-action]'); if (!button) return; button.disabled = true; status.textContent = 'Saving…'; try { await api('/friends/' + button.dataset.socialAction, { method: 'POST', body: JSON.stringify({ targetId: button.dataset.socialTarget }) }); status.textContent = button.dataset.socialAction === 'follow' ? 'Member added to Friends.' : 'Member removed from Friends.'; await loadFriends(); var input = form.querySelector('input'); await searchMembers(input.value.trim()); } catch (error) { status.textContent = error.message; button.disabled = false; } });
+      form.addEventListener('submit', function (event) { event.preventDefault(); searchMembers(form.querySelector('input').value.trim()).catch(function (error) { status.textContent = error.message; }); });
+      loadFriends().catch(function (error) { list.innerHTML = '<p>' + esc(error.message) + '</p>'; });
+    }());
+  </script>
+</body>
+</html>

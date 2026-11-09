@@ -1224,7 +1224,7 @@ function Reports({ onNotice }: { onNotice: (value: string) => void }) {
 
 function ReportRow({ report, onNotice, onReload, onOpen }: { report: AdminReport; onNotice: (value: string) => void; onReload: () => void; onOpen: () => void }) {
   const [busy, setBusy] = useState(false);
-  const options = report.reportType === "video" ? ["open", "reviewed", "dismissed", "actioned"] : ["pending", "reviewed", "dismissed", "actioned"];
+  const options = report.reportType === "messenger" ? ["pending", "reviewed", "dismissed", "actioned"] : ["open", "reviewed", "dismissed", "actioned"];
   const updateStatus = async (status: string) => {
     if (status === report.status) return;
     setBusy(true);
