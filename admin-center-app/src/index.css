@@ -230,6 +230,15 @@ tbody tr { cursor: pointer; }
 .founding-class-heading { display: flex; align-items: center; gap: 12px; }
 .founding-registry-number { display: flex; align-items: center; gap: 10px; }
 .founding-badge-identity { display: inline-flex; align-items: center; gap: 10px; }
+.member-search-row { display: flex; align-items: center; gap: 8px; }
+.member-search-row .search-field { flex: 1 1 auto; margin-top: 0; }
+.founding-member-results { display: grid; gap: 6px; margin-top: 8px; }
+.founding-member-result { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--tpi-radius-sm); background: var(--tpi-bg-secondary); color: var(--foreground); font: inherit; text-align: left; cursor: pointer; }
+.founding-member-result:hover, .founding-member-result.is-selected { border-color: var(--tpi-accent); background: var(--tpi-accent-muted); }
+.founding-member-result strong, .founding-member-result small { display: block; }
+.founding-member-result small { margin-top: 3px; color: var(--muted-foreground); font-size: .75rem; }
+.selected-member { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-top: 8px; padding: 8px 10px; border: 1px solid var(--tpi-accent-border); border-radius: var(--tpi-radius-sm); background: var(--tpi-accent-muted); color: var(--tpi-text-secondary); }
+.selected-member strong { color: var(--foreground); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
 .detail-stack h4 { margin: 0 0 10px; }
 .activity-item, .audit-row, .moderation-row { border-bottom: 1px solid var(--border); }
 .activity-item { display: flex; align-items: flex-start; gap: 8px; padding: 9px 0; font-size: .82rem; line-height: 1.45; }

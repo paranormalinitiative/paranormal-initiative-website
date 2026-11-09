@@ -71,6 +71,7 @@ export async function onRequest(context) {
     // or administrator session (server-side). Ordinary members, including a
     // forged request from a member session, cannot reach any of them.
     if (request.method === "GET" && path === "/admin/founding-memberships") return requireAdmin(request, env, user => handleAdminFoundingMemberships(request, env, user));
+    if (request.method === "GET" && path === "/admin/founding-memberships/members") return requireAdmin(request, env, user => handleAdminFoundingMembershipMembers(request, env, user));
     if (request.method === "POST" && path === "/admin/founding-memberships/assign") return requireAdmin(request, env, user => handleAdminAssignFoundingMembership(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/founding-memberships\/[^/]+\/history$/)) return requireAdmin(request, env, user => handleAdminFoundingMembershipHistory(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/founding-memberships\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminFoundingMembershipStatus(path, request, env, user));
@@ -1371,9 +1372,44 @@ function membershipErrorResponse(error) {
 }
 
 async function findExistingMember(env, username) {
-  const member = await getUserByUsername(env, clean(username));
+  const member = await getUserByUsername(env, normalizeAdminMemberUsername(username));
   if (!member || !member.active) return null;
   return member;
+}
+
+function normalizeAdminMemberUsername(value) {
+  return clean(value).replace(/^@+/, "");
+}
+
+function maskAdminMemberEmail(value) {
+  const email = clean(value);
+  const at = email.indexOf("@");
+  if (at <= 0 || at === email.length - 1) return "";
+  const local = email.slice(0, at);
+  return `${local.slice(0, 1)}${local.length > 1 ? "***" : ""}@${email.slice(at + 1)}`;
+}
+
+async function handleAdminFoundingMembershipMembers(request, env) {
+  const url = new URL(request.url);
+  const search = normalizeAdminMemberUsername(url.searchParams.get("search")).slice(0, 120);
+  if (search.length < 2) return json({ members: [] }, 200, { "Cache-Control": "no-store" });
+  const like = `%${search}%`;
+  const exact = search.toLowerCase();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id, username, display_name AS displayName, correspondence, role
+    FROM contributors
+    WHERE active = 1
+      AND (lower(username) LIKE lower(?) OR lower(display_name) LIKE lower(?) OR lower(correspondence) LIKE lower(?))
+    ORDER BY CASE WHEN lower(username) = ? THEN 0 WHEN lower(display_name) = ? THEN 1 ELSE 2 END, lower(username)
+    LIMIT 25
+  `).bind(like, like, like, exact, exact).all();
+  return json({ members: (results || []).map((row) => ({
+    id: row.id,
+    username: row.username,
+    displayName: row.displayName || row.username,
+    role: row.role || "member",
+    maskedEmail: maskAdminMemberEmail(row.correspondence),
+  })) }, 200, { "Cache-Control": "no-store" });
 }
 
 async function participationStateFor(env, contributorId) {
@@ -1431,7 +1467,10 @@ async function handleAdminFoundingMemberships(request, env) {
 async function handleAdminAssignFoundingMembership(request, env, actingUser) {
   const data = await readJson(request);
   const classCode = clean(data.classCode || data.class).toUpperCase();
-  const member = await findExistingMember(env, data.username || data.accountUsername);
+  const accountId = clean(data.accountId);
+  const member = accountId
+    ? await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ? AND active = 1 LIMIT 1").bind(accountId).first()
+    : await findExistingMember(env, data.username || data.accountUsername);
   if (!member) {
     return json({ error: "An active existing TPI account is required. Founding Memberships are never issued to placeholder or self-declared accounts." }, 400, { "Cache-Control": "no-store" });
   }

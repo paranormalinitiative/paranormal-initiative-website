@@ -157,8 +157,8 @@ async function runFirefox() {
     // TPI-CREATOR-INCENTIVE-001A: the class label must not run into its select.
     const fieldGeometry = await driver.executeScript(`
       const measure = (control) => {
-        const label = control && control.closest('label');
-        const span = label && label.querySelector('span');
+        const label = control && control.closest('.form-field');
+        const span = label && label.querySelector(':scope > span');
         if (!span) return null;
         const controlBox = control.getBoundingClientRect();
         const labelBox = span.getBoundingClientRect();
@@ -173,7 +173,7 @@ async function runFirefox() {
       };
       return {
         klass: measure(document.querySelector("select[aria-label='Founding Membership class']")),
-        username: measure(document.querySelector("input[placeholder='existing account username']")),
+        username: measure(document.querySelector("input[aria-label='Search registered members']")),
         notes: measure(document.querySelector("input[placeholder='optional administrative note']")),
       };
     `);
@@ -188,12 +188,18 @@ async function runFirefox() {
     // Issue through the normal administrator form.
     const classSelect = await driver.findElement(By.css("select[aria-label='Founding Membership class']"));
     await new Select(classSelect).selectByValue("FC");
-    const usernameInput = await driver.findElement(By.css("input[placeholder='existing account username']"));
+    const usernameInput = await driver.findElement(By.css("input[aria-label='Search registered members']"));
     await usernameInput.clear();
     await usernameInput.sendKeys(uiAccountUsername);
+    await driver.findElement(By.xpath("//button[normalize-space()='Search']")).click();
+    await driver.wait(until.elementLocated(By.xpath(`//div[@role='listbox']//button[contains(., '@${uiAccountUsername}')]`)), 20000, "member search result did not appear");
+    await driver.findElement(By.xpath(`//div[@role='listbox']//button[contains(., '@${uiAccountUsername}')]`)).click();
     const notesInput = await driver.findElement(By.css("input[placeholder='optional administrative note']"));
     await notesInput.sendKeys("Firefox acceptance issuance");
-    await driver.findElement(By.xpath("//button[normalize-space()='Issue membership']")).click();
+    await driver.findElement(By.xpath("//button[normalize-space()='Review issuance']")).click();
+    await driver.wait(until.elementLocated(By.css("[role='dialog']")), 20000, "issuance confirmation did not appear");
+    check("Firefox: issuance confirmation identifies the selected member and class", /Confirm Founding Membership issuance/.test(await driver.findElement(By.css("[role='dialog']")).getText()) && (await driver.findElement(By.css("[role='dialog']")).getText()).includes(uiAccountUsername));
+    await driver.findElement(By.xpath("//button[normalize-space()='Confirm issuance']")).click();
 
     await driver.wait(async () => /(FC|FCT|FAA)-0\d\d/.test(await driver.findElement(By.css(".preview-notice")).getText().catch(() => "")), 20000, "issuance notice did not appear");
     const notice = await driver.findElement(By.css(".preview-notice")).getText();
@@ -353,9 +359,15 @@ async function runChromium() {
     check("Chromium: class and registry badge artwork loads", chromiumBadges.count >= 3 && chromiumBadges.loaded === chromiumBadges.count, JSON.stringify(chromiumBadges));
 
     await page.selectOption("select[aria-label='Founding Membership class']", "FC");
-    await page.fill("input[placeholder='existing account username']", uiAccountUsername);
+    await page.fill("input[aria-label='Search registered members']", uiAccountUsername);
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    await page.getByRole("listbox", { name: "Registered member search results" }).getByRole("button", { name: new RegExp(`@${uiAccountUsername}`) }).click();
     await page.fill("input[placeholder='optional administrative note']", "Chromium smoke issuance");
-    await page.getByRole("button", { name: "Issue membership" }).click();
+    await page.getByRole("button", { name: "Review issuance" }).click();
+    const confirmation = page.getByRole("dialog", { name: "Confirm Founding Membership issuance" });
+    await confirmation.waitFor();
+    check("Chromium: issuance confirmation identifies the selected member and class", (await confirmation.innerText()).includes(uiAccountUsername));
+    await confirmation.getByRole("button", { name: "Confirm issuance" }).click();
     await page.waitForFunction(() => /FC-0\d\d/.test(document.querySelector(".preview-notice")?.textContent || ""), { timeout: 20000 });
     const notice = await page.locator(".preview-notice").innerText();
     check("Chromium: duplicate issuance is refused with the existing number, never a new one", /already holds .*?(FC|FCT|FAA)-0\d\d/.test(notice), notice);

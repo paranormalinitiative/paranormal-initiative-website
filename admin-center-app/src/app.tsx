@@ -875,6 +875,7 @@ type FoundingBadge = { classCode?: string; key?: string; label: string; color?: 
 type FoundingMembershipClass = { classCode: string; displayName: string; numberPrefix: string; lifetimeCapacity: number; issued: number; active: number; remaining: number; exhausted: boolean; nextNumber: string | null; badgeColor: string; badgeAsset?: FoundingBadgeAsset; capabilities: string[] };
 type FoundingMembershipRow = { id: string; membershipNumber: string; classCode: string; className: string; state: string; issuedAt: string; issuedBy?: string | null; username: string; displayName?: string; role?: string; active: boolean; badge?: FoundingBadge | null };
 type FoundingRegistryResponse = { classes: FoundingMembershipClass[]; memberships: FoundingMembershipRow[]; numbering?: string; schemaPending?: boolean; lifetimeIssuanceTotal?: number; lifetimeCapacityTotal?: number; localReviewData?: boolean };
+type FoundingMemberSearchResult = { id: string; username: string; displayName: string; role: string; maskedEmail?: string };
 type MemberEntitlementsResponse = { account: { username: string; displayName?: string; role: string; active: boolean }; capabilities: string[]; creator: boolean; contributor: boolean; memberships: Array<{ membershipNumber: string; state: string; displayName: string }>; badge?: FoundingBadge | null; creatorIncentive?: { eligible: boolean; participationState: string; creatorCapable: boolean; financialPolicyStatus?: string } };
 
 // One badge identity per class. The src comes from the server-side class
@@ -889,8 +890,13 @@ function FoundingBadgeArt({ badge, size = 40 }: { badge?: FoundingBadge | null; 
 function FoundingMemberships({ onNotice }: { onNotice: (value: string) => void }) {
   const [registry, setRegistry] = useState<FoundingRegistryResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ username: "", classCode: "FC", notes: "" });
+  const [form, setForm] = useState({ accountId: "", username: "", classCode: "FC", notes: "" });
   const [busy, setBusy] = useState(false);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [memberResults, setMemberResults] = useState<FoundingMemberSearchResult[]>([]);
+  const [memberSearching, setMemberSearching] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<FoundingMemberSearchResult | null>(null);
+  const [pendingAssignment, setPendingAssignment] = useState(false);
   const [inspectName, setInspectName] = useState("");
   const [inspection, setInspection] = useState<MemberEntitlementsResponse | null>(null);
   const [inspectionError, setInspectionError] = useState("");
@@ -899,15 +905,42 @@ function FoundingMemberships({ onNotice }: { onNotice: (value: string) => void }
   const load = () => { setLoading(true); adminFetch<FoundingRegistryResponse>("/admin/founding-memberships?pageSize=150").then(setRegistry).catch((error) => onNotice((error as Error).message)).finally(() => setLoading(false)); };
   useEffect(load, []);
 
-  const assign = async (event: FormEvent) => {
+  const searchMembers = async () => {
+    const query = memberSearch.trim();
+    if (query.length < 2) { setMemberResults([]); onNotice("Enter at least two characters to search registered members."); return; }
+    setMemberSearching(true);
+    try {
+      const result = await adminFetch<{ members: FoundingMemberSearchResult[] }>(`/admin/founding-memberships/members?search=${encodeURIComponent(query)}`);
+      setMemberResults(result.members || []);
+      if (!(result.members || []).length) onNotice("No active registered members matched that search.");
+    } catch (error) {
+      setMemberResults([]);
+      onNotice((error as Error).message);
+    } finally {
+      setMemberSearching(false);
+    }
+  };
+
+  const assign = (event: FormEvent) => {
     event.preventDefault();
+    if (!selectedMember) { onNotice("Search for and select an existing registered member before issuing a membership."); return; }
+    setPendingAssignment(true);
+  };
+
+  const confirmAssignment = async () => {
+    if (!selectedMember) return;
     setBusy(true);
     try {
       const result = await adminFetch<{ membership: { membershipNumber: string; displayName: string }; account: { username: string }; capabilities: string[] }>("/admin/founding-memberships/assign", { method: "POST", body: JSON.stringify(form) });
       onNotice(`${result.membership.displayName} ${result.membership.membershipNumber} issued to ${result.account.username}. Capabilities: ${(result.capabilities || []).join(" + ") || "none"}.`);
-      setForm({ username: "", classCode: form.classCode, notes: "" });
+      setForm({ accountId: "", username: "", classCode: form.classCode, notes: "" });
+      setMemberSearch("");
+      setMemberResults([]);
+      setSelectedMember(null);
+      setPendingAssignment(false);
       load();
     } catch (error) {
+      setPendingAssignment(false);
       onNotice((error as Error).message);
     } finally {
       setBusy(false);
@@ -930,14 +963,16 @@ function FoundingMemberships({ onNotice }: { onNotice: (value: string) => void }
   };
 
   const classes = registry?.classes || [];
+  const selectedClass = classes.find((entry) => entry.classCode === form.classCode);
   return <section className="content-stack">
     <div className="page-intro"><div><p className="eyebrow">Permanent issuance</p><h2>Founding Memberships</h2><p>Founding Creator (FC-001–050), Founding Contributor (FCT-001–050), and Founding All-Access (FAA-001–050) are permanent, administrator-assigned identities. Numbers are never recycled, and All-Access holds the union of the Creator and Contributor capability sets.</p></div><Button variant="outline" onClick={load} disabled={loading}><RefreshCw size={16} />Refresh</Button></div>
     {registry?.schemaPending && <div className="notice-panel"><Badge variant="warning">Schema pending</Badge><p>The additive membership migration is not applied in this environment.</p></div>}
     {registry?.localReviewData && <div className="notice-panel review-data-indicator"><Badge variant="warning">Local review data</Badge><p>Development review fixtures — these memberships are not production memberships and do not consume or reserve any production Founding number.</p></div>}
     <div className="metric-grid">{classes.map((entry) => <Card key={entry.classCode}><CardHeader><div className="founding-class-heading"><FoundingBadgeArt badge={{ label: entry.displayName, alt: `${entry.displayName} badge`, asset: entry.badgeAsset }} size={44} /><CardDescription>{entry.displayName}</CardDescription></div><CardTitle className="metric-value">{entry.exhausted ? "Exhausted" : `${entry.remaining} left`}</CardTitle></CardHeader><CardContent><div className="status-list"><div><Badge variant={entry.exhausted ? "warning" : "success"}>{entry.numberPrefix}-001 to {entry.numberPrefix}-{String(entry.lifetimeCapacity).padStart(3, "0")}</Badge><span>{entry.issued} issued · {entry.active} active</span></div><div><Badge variant="outline">Next</Badge><span>{entry.exhausted ? "Permanently closed — no further issuance" : entry.nextNumber || "Unavailable"}</span></div><div><Badge variant="outline">Capabilities</Badge><span>{(entry.capabilities || []).join(" + ")} · badge {entry.badgeColor}</span></div></div></CardContent></Card>)}</div>
-    <Card><CardHeader><CardTitle>Issue a Founding Membership</CardTitle><CardDescription>Assigns the next permanent number in the class to an existing registered account. Assigning the same class twice is refused and the existing number is reported. Suspended or revoked numbers still count toward the lifetime limit.</CardDescription></CardHeader><CardContent><form className="detail-stack" onSubmit={assign}><div className="two-column"><label className="form-field"><span>Founding Membership class</span><select value={form.classCode} onChange={(event) => setForm((current) => ({ ...current, classCode: event.target.value }))} aria-label="Founding Membership class"><option value="FC">Founding Creator (FC)</option><option value="FCT">Founding Contributor (FCT)</option><option value="FAA">Founding All-Access (FAA)</option></select></label><label className="form-field"><span>Existing registered account username</span><Input required value={form.username} onChange={(event) => setForm((current) => ({ ...current, username: event.target.value }))} placeholder="existing account username" autoComplete="off" /></label></div><label className="form-field"><span>Administrative note</span><Input value={form.notes} maxLength={2000} placeholder="optional administrative note" onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} /></label><div className="detail-actions"><Button type="submit" disabled={busy || classes.every((entry) => entry.exhausted)}>{busy ? "Issuing…" : "Issue membership"}</Button><span className="muted">{registry?.numbering || "Permanent, non-recycled numbering."}</span></div></form></CardContent></Card>
+    <Card><CardHeader><CardTitle>Issue a Founding Membership</CardTitle><CardDescription>Search and select an existing registered account, review the proposed permanent number, then explicitly confirm issuance. Assigning the same class twice is refused and suspended or revoked numbers still count toward the lifetime limit.</CardDescription></CardHeader><CardContent><form className="detail-stack" onSubmit={assign}><div className="two-column"><label className="form-field"><span>Founding Membership class</span><select value={form.classCode} onChange={(event) => setForm((current) => ({ ...current, classCode: event.target.value }))} aria-label="Founding Membership class"><option value="FC">Founding Creator (FC)</option><option value="FCT">Founding Contributor (FCT)</option><option value="FAA">Founding All-Access (FAA)</option></select></label><div className="form-field"><span>Existing registered account</span><div className="member-search-row"><div className="search-field"><Search size={16} /><Input value={memberSearch} onChange={(event) => { setMemberSearch(event.target.value); if (selectedMember && event.target.value !== selectedMember.username) { setSelectedMember(null); setForm((current) => ({ ...current, accountId: "", username: "" })); } }} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void searchMembers(); } }} placeholder="Search username, name, or email" aria-label="Search registered members" autoComplete="off" /></div><Button type="button" variant="outline" onClick={() => void searchMembers()} disabled={memberSearching}>{memberSearching ? "Searching…" : "Search"}</Button></div>{memberResults.length > 0 && <div className="founding-member-results" role="listbox" aria-label="Registered member search results">{memberResults.map((member) => <button type="button" className={selectedMember?.id === member.id ? "founding-member-result is-selected" : "founding-member-result"} key={member.id} onClick={() => { setSelectedMember(member); setForm((current) => ({ ...current, accountId: member.id, username: member.username })); setMemberSearch(member.username); setMemberResults([]); }}><span><strong>{member.displayName}</strong><small>@{member.username} · {member.role}{member.maskedEmail ? ` · ${member.maskedEmail}` : ""}</small></span><span>{selectedMember?.id === member.id ? "Selected" : "Select"}</span></button>)}</div>}{selectedMember && <div className="selected-member" role="status"><strong>Selected member</strong><span>{selectedMember.displayName} · @{selectedMember.username}</span></div>}</div></div><label className="form-field"><span>Administrative note</span><Input value={form.notes} maxLength={2000} placeholder="optional administrative note" onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} /></label><div className="detail-actions"><Button type="submit" disabled={busy || !selectedMember || classes.every((entry) => entry.exhausted)}>{busy ? "Issuing…" : "Review issuance"}</Button><span className="muted">{registry?.numbering || "Permanent, non-recycled numbering."}</span></div></form></CardContent></Card>
     <Card><CardHeader><CardTitle>Capability inspection</CardTitle><CardDescription>Resolves the account's real server-side capability set, badge identity, and Creator Incentive eligibility. Nothing here is inferred from a membership label.</CardDescription></CardHeader><CardContent><form className="filter-bar" onSubmit={inspect}><div className="search-field"><Search size={16} /><Input value={inspectName} onChange={(event) => setInspectName(event.target.value)} placeholder="Existing account username" aria-label="Account username to inspect" /></div><Button type="submit" variant="outline" disabled={inspecting}>{inspecting ? "Resolving…" : "Resolve capabilities"}</Button></form>{inspectionError && <p className="access-note" role="alert">{inspectionError}</p>}{inspection && <div className="detail-stack"><div className="detail-facts"><span><strong>Account</strong>{inspection.account.displayName || inspection.account.username}</span><span><strong>Role</strong>{inspection.account.role}</span><span><strong>Status</strong>{inspection.account.active ? "active" : "inactive"}</span><span><strong>Creator capability</strong><Badge variant={inspection.creator ? "success" : "outline"}>{inspection.creator ? "Yes" : "No"}</Badge></span><span><strong>Contributor capability</strong><Badge variant={inspection.contributor ? "success" : "outline"}>{inspection.contributor ? "Yes" : "No"}</Badge></span><span><strong>Badge</strong>{inspection.badge ? <span className="founding-badge-identity"><FoundingBadgeArt badge={inspection.badge} size={40} />{`${inspection.badge.label} (${inspection.badge.color})`}</span> : "None"}</span><span><strong>Memberships</strong>{inspection.memberships.length ? inspection.memberships.map((row) => `${row.membershipNumber} ${row.state}`).join(" · ") : "None"}</span><span><strong>Creator Incentive</strong>{inspection.creatorIncentive?.eligible ? "Eligible" : "Not eligible"} · {inspection.creatorIncentive?.participationState || "not_enrolled"}</span></div><p className="access-note">Financial incentive policy remains {inspection.creatorIncentive?.financialPolicyStatus || "UNRESOLVED — OWNER DECISION REQUIRED"}. Only eligibility and participation are tracked here.</p></div>}</CardContent></Card>
     <Card><CardHeader><CardTitle>Permanent registry</CardTitle><CardDescription>{registry?.lifetimeIssuanceTotal ?? 0} lifetime issuances of {registry?.lifetimeCapacityTotal ?? 150} possible. Historical issuance is never deleted.</CardDescription></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>Number</TableHead><TableHead>Account</TableHead><TableHead>Class</TableHead><TableHead>State</TableHead><TableHead>Issued</TableHead><TableHead>Issued by</TableHead></TableRow></TableHeader><TableBody>{loading ? <TableRow><TableCell colSpan={6}><LoadingState label="Loading the permanent registry…" /></TableCell></TableRow> : (registry?.memberships || []).length ? (registry?.memberships || []).map((row) => <TableRow key={row.id}><TableCell><div className="founding-registry-number"><FoundingBadgeArt badge={row.badge} size={30} /><strong>{row.membershipNumber}</strong></div></TableCell><TableCell>{row.displayName || row.username}<span className="table-subtext">@{row.username}{row.role ? ` · ${row.role}` : ""}</span></TableCell><TableCell>{row.className}</TableCell><TableCell><Badge variant={row.state === "active" ? "success" : "warning"}>{row.state}</Badge></TableCell><TableCell>{row.issuedAt ? new Date(row.issuedAt).toLocaleString() : "—"}</TableCell><TableCell>{row.issuedBy || "—"}</TableCell></TableRow>) : <TableRow><TableCell colSpan={6}><EmptyState label="No Founding Memberships have been issued." /></TableCell></TableRow>}</TableBody></Table></CardContent></Card>
+    {pendingAssignment && selectedMember && <ConfirmDialog title="Confirm Founding Membership issuance" message={`Selected Member: ${selectedMember.username} (${selectedMember.displayName}). Membership Class: ${selectedClass?.displayName || form.classCode}. Permanent Membership Number: ${selectedClass?.nextNumber || "allocated transactionally"}. Capabilities: ${(selectedClass?.capabilities || []).join(" + ") || "server-verified capabilities"}. This issues a permanent, non-recycled membership number.`} confirmLabel={busy ? "Issuing…" : "Confirm issuance"} onCancel={() => { if (!busy) setPendingAssignment(false); }} onConfirm={() => { if (!busy) void confirmAssignment(); }} />}
   </section>;
 }
 
