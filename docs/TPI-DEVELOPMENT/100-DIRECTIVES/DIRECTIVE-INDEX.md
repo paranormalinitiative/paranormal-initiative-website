@@ -5,6 +5,14 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## Community feed post opening — production repair
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** Community feed cards now have a
+visible **Open post** action, stable post anchors, and hash navigation. Focused
+member-home QA passed 38/38; release preflight certified 30 gates; production
+smoke passed 10/10; and live Firefox acceptance passed 65/65. See
+[`TPI-MEMBER-HOME-COMMUNITY-POST-OPEN.md`](TPI-MEMBER-HOME-COMMUNITY-POST-OPEN.md).
+
 ## TPI-CREATOR-INCENTIVE-001B — Badge integration and production readiness
 
 Status: **COMPLETE, CERTIFIED — NOT DEPLOYED.**

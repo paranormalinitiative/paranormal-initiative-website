@@ -1,5 +1,21 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Community feed posts made openable
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** Community feed cards now expose a
+visible **Open post** action, stable `post-<id>` anchors, and hash navigation
+that scrolls to and highlights the selected post. Existing comment, reaction,
+share, edit, and delete controls were preserved. The focused member-home QA
+passed 38/38; the guarded release preflight certified 30 gates; production
+smoke passed 10/10; and live isolated Firefox acceptance passed 65/65.
+
+Production release: website commit
+`23e457e2f9dc503dbe92719db6b1dce5b06dc341`, release
+`rel-23e457e2f9dc-b823f53ac601`, Worker
+`bcb18b54-6841-46ef-9996-973ec061b251` at 100% traffic. Rollback Worker:
+`8ad865f0-14a5-402d-8349-fbe8c9b45cd2`. Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-MEMBER-HOME-COMMUNITY-POST-OPEN.md`.
+
 ## 2026-11-09 — Founding Membership issuance repair deployed
 
 Status: **COMPLETE — DEVELOPMENT VERIFIED AND DEPLOYED.** The Administration
