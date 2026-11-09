@@ -59,6 +59,12 @@ expected unauthenticated `403` plus `Cache-Control: no-store`; the authenticated
 isolated Firefox acceptance passed. The public member-home shell contained the
 refresh-notice and full-post markers.
 
+An additional read-only authenticated check with the isolated production QA
+account returned `200` for `/nova/` and
+`/content-editor-nova/content-editor.html`, each referencing the expected
+hashed bundles. `/paper-editor` returned `403` for that QA account because it is
+not contributor-authorized; no authorization was broadened for this release.
+
 ## Scope and preservation
 
 - No production database migration was run.
