@@ -585,6 +585,8 @@ a { color: var(--nova-mint); }
   font-size: 17px;
   line-height: 1.72;
   color: #eef4ef;
+  caret-color: var(--nova-mint);
+  cursor: text;
   overflow-wrap: anywhere;
 }
 .nova-prose > * + * { margin-top: 0.85em; }
@@ -999,6 +1001,7 @@ a { color: var(--nova-mint); }
   margin-inline: auto;
   background: #f8f7f1;
   color: #1d281f;
+  caret-color: #1d281f;
   min-height: 72vh;
   box-sizing: border-box;
   box-shadow: 0 12px 32px #05090688;

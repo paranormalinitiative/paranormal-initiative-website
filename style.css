@@ -9443,16 +9443,33 @@ body.paper-editor-page.nova-home-open .workflow-feedback {
     gap: 6px;
 }
 
-/* Nova-native document canvas: fill the centre pane (no 860px cap or centred inset) with a modest gutter, aligned with the header and toolbar. Scoped to the paper editor so standalone /nova/ is unchanged. */
+/* Nova-native document canvas: keep the regular Content Editor on a centered,
+   readable document surface. Scoped to the paper editor so standalone /nova/
+   remains unchanged. */
+.paper-editor-page #nova-content-editor .nova-shared-document-canvas {
+  padding: 26px 18px 48px;
+  background: #0f1712;
+  border-color: var(--nova-border);
+}
+
 .paper-editor-page #nova-content-editor .nova-prose {
-  max-width: none;
-  margin: 0;
+  width: min(100%, 816px);
+  max-width: 816px;
   min-height: 62vh;
-  padding: 36px 20px 72px;
+  margin: 0 auto;
+  padding: 64px 72px 96px;
+  box-sizing: border-box;
+  background: #202b25;
+  color: #eef4ef;
+  caret-color: #f8fff9;
+  cursor: text;
+  border: 1px solid var(--nova-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 .paper-editor-page #nova-content-editor .nova-prose > * {
-  max-width: 48rem;
+  max-width: 100%;
 }
 
 /* Normal text focus must not draw a full-canvas focus ring on the ProseMirror root. The caret, selection and keyboard editing are unaffected; controls keep their own focus-visible styles. */

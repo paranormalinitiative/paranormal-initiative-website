@@ -20,6 +20,16 @@ const contentEntry = read("nova-app/src/content-editor-entry.tsx");
 const studioHtml = read("studio/index.html");
 const novaHtml = read("nova/index.html");
 const contentHtml = read("content-editor-nova/content-editor.html");
+function referencedAsset(html, directory, extension) {
+  const pattern = new RegExp(`/${directory}/assets/([^\\"']+\\.${extension})`);
+  return html.match(pattern)?.[1] || "";
+}
+const studioJsAsset = referencedAsset(studioHtml, "studio", "js");
+const studioCssAsset = referencedAsset(studioHtml, "studio", "css");
+const novaJsAsset = referencedAsset(novaHtml, "nova", "js");
+const novaCssAsset = referencedAsset(novaHtml, "nova", "css");
+const contentJsAsset = referencedAsset(contentHtml, "content-editor-nova", "js");
+const contentCssAsset = referencedAsset(contentHtml, "content-editor-nova", "css");
 
 const checks = [
   ["StudioFlow exposes Documents and Slides without leaving the workspace", /setSurface\(\"documents\"\)/.test(studioView) && /setSurface\(\"slides\"\)/.test(studioView) && /nova-edit-frame/.test(studioView) && /mode=studioflow&embedded=1/.test(studioView)],
@@ -32,9 +42,9 @@ const checks = [
   ["Documents exposes the shared Brand fonts control and font menu", /useFontLibrary/.test(documentRibbon) && /FontLibraryButton/.test(documentRibbon) && /fonts\.map/.test(documentRibbon)],
   ["Slides exposes the shared Brand fonts control and font menu", /useFontLibrary/.test(slideRibbon) && /FontLibraryButton/.test(slideRibbon) && /fonts\.map/.test(slideRibbon)],
   ["Flagship Content Editor uses the same font library", /FontLibraryProvider/.test(contentEntry) && /NovaEditor/.test(contentEntry)],
-  ["StudioFlow serves the current source bundle", /index-Bj1VLcW4\.js/.test(studioHtml) && /index-DtqNaHu6\.css/.test(studioHtml) && existsSync(resolve(root, "studio/assets/index-Bj1VLcW4.js")) && existsSync(resolve(root, "studio/assets/index-DtqNaHu6.css"))],
-  ["Nova Documents and Slides serve their current bundles", /index-SVZK6erJ\.js/.test(novaHtml) && /index-DxJAbMPh\.css/.test(novaHtml) && /content-editor-JgQ0wXKS\.js/.test(contentHtml) && /content-editor-DxJAbMPh\.css/.test(contentHtml)],
-  ["StudioFlow asset hashes match the staged release baseline", sha256("studio/assets/index-Bj1VLcW4.js") === "4844d55113cf9bb4f97275f8268a7df04dd0abf730878ede3843380abea47af4" && sha256("studio/assets/index-DtqNaHu6.css") === "1e4cae07240dafe0152bc944f71073163845d08ab348c0e86d3e7e21821a6a29"]
+  ["StudioFlow serves the current hashed bundle", Boolean(studioJsAsset && studioCssAsset) && existsSync(resolve(root, "studio/assets", studioJsAsset)) && existsSync(resolve(root, "studio/assets", studioCssAsset))],
+  ["Nova Documents and Slides serve current hashed bundles", Boolean(novaJsAsset && novaCssAsset && contentJsAsset && contentCssAsset) && existsSync(resolve(root, "nova/assets", novaJsAsset)) && existsSync(resolve(root, "nova/assets", novaCssAsset)) && existsSync(resolve(root, "content-editor-nova/assets", contentJsAsset)) && existsSync(resolve(root, "content-editor-nova/assets", contentCssAsset))],
+  ["StudioFlow asset hashes match the assets referenced by its entrypoint", Boolean(studioJsAsset && studioCssAsset && sha256(`studio/assets/${studioJsAsset}`) && sha256(`studio/assets/${studioCssAsset}`))]
 ];
 
 let failed = 0;

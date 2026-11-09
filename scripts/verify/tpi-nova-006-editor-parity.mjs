@@ -11,6 +11,7 @@ const toolbar = read("nova-app/src/shared-editor/EditorToolbar.tsx");
 const documentEditor = read("nova-app/src/documents/DocumentEditor.tsx");
 const findReplace = read("nova-app/src/shared-editor/FindReplacePanel.tsx");
 const styles = read("nova-app/src/styles.css");
+const hostStyles = read("style.css");
 
 const checks = [
   ["Documents exposes the complete document tab strip", ["Home", "Insert", "Draw", "Design", "Layout", "References", "Mailings", "Review", "View"].every(tab => ribbon.includes(`"${tab}"`))],
@@ -19,6 +20,7 @@ const checks = [
   ["Documents supports find and replace", /FindReplacePanel/.test(documentEditor) && /replaceAll/.test(findReplace) && /Find and replace/.test(ribbon)],
   ["Documents supports document view modes", /DocumentViewMode/.test(ribbon) && /viewMode/.test(toolbar) && /setViewMode/.test(documentEditor) && /data-view-mode/.test(documentEditor) && /nova-canvas-web/.test(styles)],
   ["Print-layout document surface is centered and page-bounded", /\.nova-canvas-print \.nova-prose[\s\S]*width:\s*min\(100%,\s*var\(--nova-page-width/.test(styles) && /margin-inline:\s*auto/.test(styles)],
+  ["Content Editor regular surface is centered with a visible native caret", /#nova-content-editor \.nova-shared-document-canvas[\s\S]*padding: 26px 18px 48px/.test(hostStyles) && /#nova-content-editor \.nova-prose[\s\S]*width: min\(100%, 816px\)[\s\S]*caret-color: #f8fff9/.test(hostStyles)],
   ["Documents preserves focus-safe ribbon integration", /onMouseDown=\{event => event\.preventDefault\(\)\}/.test(ribbon) && /onRequestLink/.test(toolbar)],
   ["Documents keeps structured table controls", /renderTableDesign/.test(ribbon) && /renderTableLayout/.test(ribbon) && /setNovaTableStyle/.test(ribbon) && /mergeNovaCells/.test(ribbon)],
   ["Documents keeps bookmarks, fields, and references", /InsertTools/.test(ribbon) && /createBookmark/.test(insert) && /insertField/.test(insert) && /Citation/.test(ribbon)]

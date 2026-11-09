@@ -1526,6 +1526,42 @@
             gap: 16px;
         }
 
+        .feed-refresh-notice {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 12px 0;
+            padding: 10px 12px;
+            color: #c3cfda;
+            background: color-mix(in srgb, var(--accent) 8%, #131318);
+            border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .feed-refresh-notice button {
+            flex: 0 0 auto;
+            padding: 6px 10px;
+            color: var(--accent);
+            background: transparent;
+            border: 1px solid color-mix(in srgb, var(--accent) 48%, transparent);
+            border-radius: 999px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .feed-refresh-notice[hidden] { display: none; }
+
+        .feed-refresh-notice button:hover:not(:disabled) {
+            color: #fff;
+            background: color-mix(in srgb, var(--accent) 18%, transparent);
+        }
+
+        @media (max-width: 600px) {
+            .feed-refresh-notice { align-items: flex-start; flex-direction: column; }
+        }
+
         .feed-card {
             display: grid;
             gap: 12px;
@@ -2507,6 +2543,11 @@
                 <button type="button" class="member-feed-tab active" data-feed-tab="activity">Community Feed</button>
             </div>
 
+            <div class="feed-refresh-notice" data-feed-refresh-notice hidden role="status" aria-live="polite">
+                <span>New community posts may be available.</span>
+                <button type="button" data-feed-refresh>Refresh now</button>
+            </div>
+
             <!-- FEED -->
             <div class="member-feed" data-member-feed>
                 <p class="access-note" style="text-align:center; padding:24px;">Loading activity...</p>
@@ -2680,6 +2721,10 @@
     var profileUser = null;
     var currentTab = "activity";
     var viewingOwnProfile = true;
+    var feedRefreshTimer = null;
+    var feedRefreshPending = false;
+    var feedRefreshCheckInFlight = false;
+    var FEED_REFRESH_MS = 5 * 60 * 1000;
 
     var greetingEl = document.querySelector("[data-member-greeting]");
     var profilePhoto = document.querySelector("[data-member-photo]");
@@ -2708,6 +2753,8 @@
     var feedContainer = document.querySelector("[data-member-feed]");
     var loadMoreWrap = document.querySelector("[data-feed-load-more]");
     var loadMoreBtn = document.querySelector("[data-load-more-btn]");
+    var feedRefreshNotice = document.querySelector("[data-feed-refresh-notice]");
+    var feedRefreshBtn = document.querySelector("[data-feed-refresh]");
     var pendingAttachments = [];
     var composerPreviewRequest = 0;
     var COMMUNITY_FILE_ACCEPT = ".pdf,.txt,.csv,.json,.rtf,.doc,.docx,.odt,.xls,.xlsx,.zip,application/pdf,text/plain,text/csv,application/json,application/rtf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.text,application/zip,application/octet-stream";
@@ -2787,6 +2834,7 @@
         await loadFeed();
         setupLoadMore();
         setupTabs();
+        setupFeedRefresh();
         if (viewingOwnProfile) {
             loadRightRail();
         } else {
@@ -2843,15 +2891,61 @@
         loadRailNews();
         loadRailVideo();
         loadRailFeatured();
-        // The main Activity feed refreshes too, so anything posted by any
-        // member shows up for everyone without a reload.
-        if (viewingOwnProfile && currentTab === "activity") {
-            feedOffset = 0;
-            await loadFeed();
-        }
         // Fade back in after the swap window; loaders fill in whenever their
         // fetches resolve, the fade just softens the moment of replacement.
         setTimeout(endRailFade, 350);
+    }
+
+    function setupFeedRefresh() {
+        if (feedRefreshTimer) window.clearInterval(feedRefreshTimer);
+        feedRefreshTimer = window.setInterval(checkForNewFeedPosts, FEED_REFRESH_MS);
+        if (feedRefreshBtn) {
+            feedRefreshBtn.addEventListener("click", async function() {
+                feedRefreshBtn.disabled = true;
+                feedRefreshBtn.textContent = "Refreshing…";
+                feedRefreshPending = false;
+                if (feedRefreshNotice) feedRefreshNotice.hidden = true;
+                try {
+                    await loadFeed();
+                } finally {
+                    feedRefreshBtn.disabled = false;
+                    feedRefreshBtn.textContent = "Refresh now";
+                }
+            });
+        }
+        document.addEventListener("visibilitychange", function() {
+            if (!document.hidden && feedRefreshPending) showFeedRefreshNotice();
+        });
+        window.addEventListener("focus", function() {
+            if (feedRefreshPending) showFeedRefreshNotice();
+        });
+    }
+
+    async function checkForNewFeedPosts() {
+        if (document.hidden || !document.hasFocus() || feedRefreshCheckInFlight) return;
+        if (!profileUser || currentTab !== "activity") return;
+        feedRefreshCheckInFlight = true;
+        try {
+            var latestData = viewingOwnProfile
+                ? await window.TPIApi.communityFeed(1, 0, "community")
+                : await window.TPIApi.userFeed(profileUser.username, 1, 0, "community");
+            var latest = (latestData.items || []).find(function(item) { return item.type === "community_post"; });
+            var visibleLatest = feedContainer.querySelector("[data-feed-type='community'][data-post-id]");
+            if (latest && visibleLatest && latest.postId !== visibleLatest.getAttribute("data-post-id")) {
+                feedRefreshPending = true;
+                showFeedRefreshNotice();
+            }
+        } catch (e) {
+            // A refresh check is advisory; never replace usable feed content on
+            // a transient network failure.
+        } finally {
+            feedRefreshCheckInFlight = false;
+        }
+    }
+
+    function showFeedRefreshNotice() {
+        if (!feedRefreshNotice || document.hidden || !document.hasFocus()) return;
+        feedRefreshNotice.hidden = false;
     }
 
     // Re-runs the rail loaders every few minutes while the tab is visible,
@@ -3723,7 +3817,8 @@
         }
         var postUrl = window.preserveMemberMode ? window.preserveMemberMode("/member-home?member=1&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "")) : "/member-home?member=1&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "");
         var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";
-        var bodyHtml = renderFeedBody(item.body || "");
+        var isOpenPost = getRequestedPostId() === String(item.postId || "");
+        var bodyHtml = renderFeedBody(item.body || "", isOpenPost ? 0 : 400);
 
         var attachmentsHtml = renderFeedAttachments(item.attachments);
         var linksHtml = renderFeedLinks(item.attachments);
@@ -3759,7 +3854,7 @@
             linksHtml +
             '<div data-link-preview-slot="' + escapeAttr(item.postId) + '"></div>' +
             '<div class="feed-card-actions">' +
-                '<a class="feed-action-btn feed-open-btn" data-post-open href="' + escapeAttr(postUrl) + '">Open post</a>' +
+                '<a class="feed-action-btn feed-open-btn" data-post-open href="' + escapeAttr(postUrl) + '">' + (isOpenPost ? "Permalink" : "Open post") + '</a>' +
                 '<button class="feed-action-btn" type="button" data-comments-toggle>💬 Comment' + (commentCount > 0 ? ' <span class="action-count">' + commentCount + '</span>' : '') + '</button>' +
                 '<button class="feed-action-btn feed-like-btn' + liked + '" type="button" data-post-like title="Like">&#128077;' + (reactionTotal > 0 ? ' <span class="action-count">' + reactionTotal + '</span>' : '') + '</button>' +
                 '<button class="feed-action-btn" type="button" data-share-url="' + escapeAttr(postUrl) + '" data-share-title="' + escapeAttr(item.title || "") + '">Share</button>' +
@@ -3768,8 +3863,15 @@
         '</article>';
     }
 
-    function renderFeedBody(body) {
+    function renderFeedBody(body, previewLimit) {
         var text = String(body || "");
+        var preview = previewLimit && text.length > previewLimit;
+        if (preview) {
+            var clipped = text.substring(0, previewLimit);
+            var lastSpace = clipped.lastIndexOf(" ");
+            if (lastSpace > Math.floor(previewLimit * 0.65)) clipped = clipped.substring(0, lastSpace);
+            text = clipped.trimEnd() + "…";
+        }
         var urlPattern = /https?:\/\/[^\s<>"']+|\/(?:education-center|published-article|paper-editor|member-home)(?:\?[^\s<>"']*)?(?:#[^\s<>"']*)?/gi;
         var html = "";
         var cursor = 0;
