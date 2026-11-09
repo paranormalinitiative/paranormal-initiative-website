@@ -1,11 +1,11 @@
 import { Mark, mergeAttributes } from "@tiptap/core";
 
-const FONT_FAMILIES = new Set(["Georgia", "Arial", "Calibri", "Garamond", "Inter", "Times New Roman"]);
 const FONT_SIZES = new Set(["11px", "12px", "14px", "16px", "17px", "18px", "20px", "24px", "28px", "32px", "40px"]);
 const HEX_COLOR = /^#[0-9a-f]{6}$/i;
+const SAFE_FONT = /^[a-zA-Z0-9][a-zA-Z0-9 _-]{0,79}$/;
 
 function safeFontFamily(value: unknown) {
-  return typeof value === "string" && FONT_FAMILIES.has(value) ? value : null;
+  return typeof value === "string" && SAFE_FONT.test(value.trim()) ? value.trim() : null;
 }
 
 function safeFontSize(value: unknown) {

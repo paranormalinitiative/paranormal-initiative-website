@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-NOVA-EDITORIAL-PRIMARY",
-  "description": "Release baseline for the Editorial Workspace primary-engine migration. This release intentionally preserves the previously approved StudioFlow bundle and does not ship the later Nova Edit StudioFlow entrypoint. Production deployment additionally requires the existing Notes schema tables recorded in productionSchemaRequirements.",
+  "recordedDirective": "TPI-NOVA-008-STUDIOFLOW-NOVA-EDIT",
+  "description": "Release baseline for the StudioFlow Nova Edit entrypoint. The source build keeps StudioFlow's production workflow intact and adds a focused Nova authoring hub that opens the shared Documents and Slides engine in StudioFlow mode.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "eefb7de9518809d98726062aee478a4111c921a5",
-    "previousApprovedCommit": "8aba8dd563574556b080234839c57e4d01cd0957"
+    "approvedCommit": "c42bad300bc516756d7738e32f6bb201c7fc007b",
+    "previousApprovedCommit": "22a7804bf98f90402ab55f6d3ff2ba3d406ee4d7"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-ChuELpxr.js",
-      "sha256": "7e7406463a7ba7ff52966e3aa0a001e0990f63d69d3febdbfe3fdedfe67a3e82"
+      "name": "index-Bj1VLcW4.js",
+      "sha256": "4844d55113cf9bb4f97275f8268a7df04dd0abf730878ede3843380abea47af4"
     },
     "css": {
-      "name": "index-CxnemqTQ.css",
-      "sha256": "cc1c01425b52bbca24c315c513016e0eeffaacb734f405904217597a88c32bcf"
+      "name": "index-DtqNaHu6.css",
+      "sha256": "1e4cae07240dafe0152bc944f71073163845d08ab348c0e86d3e7e21821a6a29"
     }
   },
   "productionSchemaRequirements": {

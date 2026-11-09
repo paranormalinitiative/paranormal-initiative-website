@@ -1,5 +1,32 @@
 # TPI Current Development Status
 
+## 2026-11-08 — StudioFlow Nova Edit Documents, Slides, and Brand Fonts
+
+Status: **IMPLEMENTED AND VERIFIED LOCALLY — NOT DEPLOYED.** StudioFlow now
+opens the shared Nova Documents and Slides engine inside a focused Nova Edit
+workspace at `/studio/`. Both surfaces retain their full ribbon, templates,
+imagery, speaker notes, Presenter mode, and existing persistence/lifecycle
+behavior. The selected Nova Edit surface survives Firefox refresh.
+
+The shared Brand fonts library is available in both Nova Editorial Workspace
+and StudioFlow Nova Edit Documents/Slides. It accepts WOFF2, WOFF, TTF, and OTF
+files, installs them through FontFace, and stores them privately in browser-local
+IndexedDB. Server synchronization of custom fonts remains a documented future
+limitation.
+
+Local verification: Nova Edit 13/13; workstation 9/9; Documents parity 9/9;
+Slides parity 23/23; release safety 27/27; reproducible authoritative source
+staging PASS; Firefox embedded Documents, Slides, Brand fonts dialog, Presenter
+entry point, and Slides refresh persistence PASS.
+
+Source baseline: `c42bad300bc516756d7738e32f6bb201c7fc007b`. Local Worker assets:
+`index-Bj1VLcW4.js` SHA-256
+`4844d55113cf9bb4f97275f8268a7df04dd0abf730878ede3843380abea47af4` and
+`index-DtqNaHu6.css` SHA-256
+`1e4cae07240dafe0152bc944f71073163845d08ab348c0e86d3e7e21821a6a29`.
+Execution record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-008-STUDIOFLOW-NOVA-EDIT.md`.
+
 ## 2026-11-08 — Workstation editor completion deployed
 
 Status: **IMPLEMENTED AND VERIFIED LOCALLY — RELEASE CANDIDATE READY.** The

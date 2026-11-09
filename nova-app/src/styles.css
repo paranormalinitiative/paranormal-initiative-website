@@ -73,6 +73,16 @@ a { color: var(--nova-mint); }
   z-index: 20;
   backdrop-filter: blur(8px);
 }
+.nova-app-studioflow .nova-topbar { border-bottom-color: rgba(155, 227, 180, .34); }
+.nova-app-studioflow .nova-sidebar-footnote { display: none; }
+.nova-app-studioflow .nova-topnav-link.is-active { color: #9be3b4; }
+.nova-font-library-button { display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 5px 8px; border: 1px solid rgba(140, 232, 182, .28); border-radius: 6px; color: inherit; background: rgba(140, 232, 182, .08); font-size: 11px; cursor: pointer; }
+.nova-font-library-button:hover { border-color: #8ce8b6; background: rgba(140, 232, 182, .16); }
+.nova-font-library { display: grid; gap: 12px; }
+.nova-font-library-list { display: grid; gap: 8px; margin-top: 8px; }
+.nova-font-library-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px; border: 1px solid rgba(140, 232, 182, .18); border-radius: 7px; background: rgba(140, 232, 182, .06); }
+.nova-font-library-row > span { display: grid; gap: 2px; }
+.nova-font-library-row small { color: var(--nova-text-muted); font-size: 11px; }
 
 .nova-brand {
   display: inline-flex;

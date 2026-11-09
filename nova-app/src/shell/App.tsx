@@ -42,6 +42,8 @@ function useDocumentRoute(): [string | null, (id: string | null) => void] {
 }
 
 export function App() {
+  const studioflowMode = new URLSearchParams(window.location.search).get("mode") === "studioflow";
+  const embeddedMode = studioflowMode && new URLSearchParams(window.location.search).get("embedded") === "1";
   const [documentId, navigate] = useDocumentRoute();
   const [presentationId, setPresentationId] = useState<string | null>(() => parsePresentationRoute(window.location.hash));
   const [slidesActive, setSlidesActive] = useState(() => window.location.hash.startsWith("#/slides"));
@@ -60,20 +62,20 @@ export function App() {
   };
 
   return (
-    <div className="nova-app">
+    <div className={`nova-app${studioflowMode ? " nova-app-studioflow" : ""}`} data-product-mode={studioflowMode ? "studioflow" : "editorial"}>
       <header className="nova-topbar">
         <a className="nova-brand" href="#/documents" aria-label="Nova home">
           <span className="nova-brand-mark" aria-hidden="true">N</span>
           <span className="nova-brand-text">
             <span className="nova-brand-name">Nova</span>
-            <span className="nova-brand-sub">Editorial Workspace</span>
+            <span className="nova-brand-sub">{studioflowMode ? "Nova Edit" : "Editorial Workspace"}</span>
           </span>
         </a>
         <nav className="nova-topnav" aria-label="Nova sections">
           <a className={`nova-topnav-link${!slidesActive ? " is-active" : ""}`} href="#/documents" aria-current={!slidesActive ? "page" : undefined}>Documents</a>
           <a className={`nova-topnav-link${slidesActive ? " is-active" : ""}`} href="#/slides" aria-current={slidesActive ? "page" : undefined}>Slides</a>
         </nav>
-        <a className="nova-return" href="/">The Paranormal Initiative</a>
+        {!embeddedMode ? <a className="nova-return" href={studioflowMode ? "/studio/" : "/"}>{studioflowMode ? "Back to StudioFlow" : "The Paranormal Initiative"}</a> : null}
       </header>
 
       <Suspense fallback={<div className="nova-booting" role="status">Opening Nova…</div>}>

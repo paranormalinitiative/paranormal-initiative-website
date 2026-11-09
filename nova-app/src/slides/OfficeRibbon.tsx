@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, BarChart3, Bold, Eraser, Image as ImageIcon, Italic, Maximize, MessageSquare, Palette, PenLine, Plus, Redo2, Save, Square, Table2, Type, Undo2, Upload, WandSparkles, X } from "lucide-react";
 import type { ElementAnimation, ShapeKind, SlideElement, SlideLayoutKey, SlideTransition } from "./model";
+import { FontLibraryButton, useFontLibrary } from "../shared-editor/FontLibrary";
 
 /**
  * The ribbon follows the established desktop-authoring interaction pattern:
@@ -79,6 +80,7 @@ function Separator() {
 }
 
 export function OfficeRibbon(props: Props) {
+  const { fonts } = useFontLibrary();
   const [activeTab, setActiveTab] = useState<RibbonTab>(() => {
     try {
       const saved = window.localStorage.getItem("nova-slides-ribbon-tab") as RibbonTab | null;
@@ -130,13 +132,14 @@ export function OfficeRibbon(props: Props) {
           {selectedElement?.kind === "text" ? <>
             <Separator />
             <Group label="Text formatting">
-              <select className="nova-ribbon-select" aria-label="Slide font" disabled={readOnly} value={selectedElement.fontFamily || "Arial"} onChange={event => onUpdateSelectedElement({ fontFamily: event.target.value })}><option>Arial</option><option>Calibri</option><option>Georgia</option><option>Inter</option><option>Times New Roman</option></select>
+              <select className="nova-ribbon-select" aria-label="Slide font" disabled={readOnly} value={selectedElement.fontFamily || "Arial"} onChange={event => onUpdateSelectedElement({ fontFamily: event.target.value })}><option>Arial</option><option>Calibri</option><option>Georgia</option><option>Inter</option><option>Times New Roman</option>{fonts.map(font => <option key={font.id}>{font.family}</option>)}</select>
               <input className="nova-ribbon-number" aria-label="Slide font size" type="number" min="10" max="120" disabled={readOnly} value={selectedElement.fontSize} onChange={event => onUpdateSelectedElement({ fontSize: Number(event.target.value) || 10 })} />
               <Command label="Bold" icon={<Bold size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ fontWeight: selectedElement.fontWeight === 700 ? 400 : 700 })} />
               <Command label="Italic" icon={<Italic size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ fontStyle: selectedElement.fontStyle === "italic" ? "normal" : "italic" })} />
               <Command label="Left" icon={<AlignLeft size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ align: "left" })} />
               <Command label="Center" icon={<AlignCenter size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ align: "center" })} />
               <Command label="Right" icon={<AlignRight size={18} />} disabled={readOnly} onClick={() => onUpdateSelectedElement({ align: "right" })} />
+              <FontLibraryButton />
             </Group>
           </> : null}
           <Separator />

@@ -3,6 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import type { JSONContent } from "@tiptap/core";
 import type { NovaDocumentMeta } from "./lib/types";
 import { NovaEditor } from "./shared-editor/NovaEditor";
+import { FontLibraryProvider } from "./shared-editor/FontLibrary";
 import SlidesSurface from "./slides/SlidesSurface";
 import "./styles.css";
 
@@ -36,17 +37,13 @@ function Host({ initial, initialMeta }: { initial: JSONContent; initialMeta: Nov
   setExternalDoc = setDoc;
   setExternalReadOnly = setReadOnly;
   setExternalMeta = setMeta;
-  return (
-    <NovaEditor
+  return <FontLibraryProvider><NovaEditor
       content={doc}
       readOnly={readOnly}
       documentMeta={meta}
       onDocumentMetaChange={next => { currentMeta = next; setMeta(next); }}
-      onChange={next => {
-        currentDoc = next;
-      }}
-    />
-  );
+      onChange={next => { currentDoc = next; }}
+    /></FontLibraryProvider>;
 }
 
 export function mountNovaContentEditor(container: HTMLElement, initial: JSONContent = EMPTY_DOC, initialMeta: NovaDocumentMeta = currentMeta): NovaContentEditorHandle {

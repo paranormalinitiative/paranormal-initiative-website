@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { installDiagnostics } from "./lib/diagnostics";
 import { App } from "./shell/App";
+import { FontLibraryProvider } from "./shared-editor/FontLibrary";
 import "./styles.css";
 
 installDiagnostics();
@@ -11,6 +12,6 @@ if (!container) throw new Error("Nova root element is missing.");
 
 createRoot(container).render(
   <StrictMode>
-    <App />
+    <FontLibraryProvider><App /></FontLibraryProvider>
   </StrictMode>
 );

@@ -45,6 +45,7 @@ import {
   type LucideIcon
 } from "lucide-react";
 import { InsertTools } from "./InsertTools";
+import { FontLibraryButton, useFontLibrary } from "./FontLibrary";
 import { insertField } from "./commands/fields";
 import {
   addNovaColumn,
@@ -210,6 +211,7 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
   const [showNav, setShowNav] = useState(false);
   const [zoom, setZoom] = useState(100);
   const [wordCount, setWordCount] = useState<number | null>(null);
+  const { fonts } = useFontLibrary();
   const [, refreshSelectionState] = useState(0);
 
   useEffect(() => {
@@ -261,7 +263,7 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
       <Divider />
       <RibbonGroup label="Font">
         <select className="nova-ribbon-select nova-ribbon-font" aria-label="Font family" value={fontFamily} disabled={disabled} onChange={event => { setFontFamily(event.target.value); applyTextStyle({ fontFamily: event.target.value }); }}>
-          <option>Georgia</option><option>Arial</option><option>Calibri</option><option>Garamond</option><option>Inter</option><option>Times New Roman</option>
+          <option>Georgia</option><option>Arial</option><option>Calibri</option><option>Garamond</option><option>Inter</option><option>Times New Roman</option>{fonts.map(font => <option key={font.id}>{font.family}</option>)}
         </select>
         <select className="nova-ribbon-select nova-ribbon-size" aria-label="Font size" value={fontSize} disabled={disabled} onChange={event => { setFontSize(event.target.value); applyTextStyle({ fontSize: event.target.value }); }}>
           {["11px", "12px", "14px", "16px", "17px", "18px", "20px", "24px", "28px", "32px", "40px"].map(size => <option key={size}>{size}</option>)}
@@ -273,6 +275,7 @@ export function OfficeRibbon({ editor, disabled, onRequestLink, documentTitle = 
           <RibbonButton label="Strikethrough" icon={Strikethrough} compact active={editor.isActive("strike")} disabled={disabled} onClick={() => editor.chain().focus().toggleStrike().run()} />
           <label className="nova-ribbon-color" title="Font color"><Type size={15} /><input type="color" aria-label="Font color" value={textColor} disabled={disabled} onChange={event => { setTextColor(event.target.value); applyTextStyle({ color: event.target.value }); }} /></label>
           <label className="nova-ribbon-color" title="Text highlight"><Highlighter size={15} /><input type="color" aria-label="Text highlight" value={highlightColor} disabled={disabled} onChange={event => { setHighlightColor(event.target.value); applyTextStyle({ backgroundColor: event.target.value }); }} /></label>
+          <FontLibraryButton />
           <RibbonButton label="Clear formatting" icon={Eraser} compact disabled={disabled} onClick={() => clearFormatting(editor)} />
         </div>
       </RibbonGroup>
