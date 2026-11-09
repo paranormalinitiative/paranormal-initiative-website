@@ -73,7 +73,7 @@ governance office is created by being named in this list.
 
 ### TPI Leadership Medallions & Honors
 
-Status: **IMPLEMENTED IN DEVELOPMENT — PRODUCTION RELEASE PENDING.**
+Status: **IMPLEMENTED — DEPLOYED AND LIVE VERIFIED.**
 
 Known assets already preserved in [`assets/society-leadership/`](../../../assets/society-leadership/)
 as byte-identical masters with PNG/JPEG mismatch recorded and web derivatives for the
@@ -101,7 +101,8 @@ Still intentionally deferred:
 - a future Honors Wall and broader succession policy.
 
 The owner authorized the focused implementation in TPI-GOVERNANCE-004. The
-implemented layer is owner-gated, audited, profile-visible, and recognition-only.
+implemented layer is authenticated owner/admin-gated, audited, profile-visible,
+and recognition-only.
 It does not assign permissions or create a Sol login. See
 `100-DIRECTIVES/TPI-GOVERNANCE-004-LEADERSHIP-DISTINCTIONS.md`.
 

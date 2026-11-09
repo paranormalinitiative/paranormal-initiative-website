@@ -1,7 +1,7 @@
 # TPI-GOVERNANCE-004 — Leadership Profiles and Gold/Silver/Bronze Distinctions
 
 Date: 2026-11-09
-Status: **IMPLEMENTED — LOCAL VERIFIED; PRODUCTION RELEASE PENDING GUARDED DEPLOYMENT**
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED**
 
 ## Purpose
 
@@ -26,6 +26,19 @@ Memberships or account permissions.
 - Adds the public Sol profile at `leadership-profile.html?slug=sol`.
 - Publishes only optimized web derivatives; badge masters remain Git-only.
 
+## Production release
+
+- Website/source commit: `779a723be02e4244b300a824d8bce02c27bcdb39`.
+- Release: `rel-779a723be02e-d5ef57799b3a`.
+- Worker: `0debc66f-58db-41d7-8323-b44681fee655` at 100% traffic.
+- Rollback Worker: `a74f05ae-3026-44f9-9eeb-41f45019a315`.
+- Additive production migration: `0066_leadership_profiles_and_distinctions.sql`;
+  production schema readiness passed with both new tables present and no pending
+  migrations.
+- Live checks: anonymous production smoke **10/10 PASS**; isolated Firefox
+  Developer Edition acceptance **65/65 PASS**; public Sol profile API **200**;
+  anonymous leadership assignment API **403**; Gold derivative **200 image/png**.
+
 ## Safety boundary
 
 The Gold/Silver/Bronze artwork is visual recognition only. It never grants a
@@ -47,7 +60,9 @@ registry and were not changed by this directive.
   anonymous admin distinction API **403**; Gold web derivative **200 image/png**.
 - Local additive migration `0066_leadership_profiles_and_distinctions.sql`
   applied to the isolated persistent local D1 only.
-- No production D1 or R2 records were changed in this implementation pass.
+- No existing creator records or R2 objects were changed. The additive D1
+  migration created the two leadership tables and seeded only the transparent
+  Sol profile plus its recognition row.
 
 ## Known limitation
 
@@ -55,7 +70,8 @@ The production Owner account has not been assigned a member-record Gold
 Medallion yet because this implementation pass does not guess the owner’s
 internal account identifier. After deployment, an owner can assign the
 distinction to the verified account from Administration Center → Leadership &
-Honors. The assignment route is restricted to authenticated owner/admin sessions and audited.
+Honors. The assignment route is restricted to authenticated owner/admin sessions
+and audited.
 
 ## Files
 

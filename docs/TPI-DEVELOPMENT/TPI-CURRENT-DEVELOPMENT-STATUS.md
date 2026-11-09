@@ -2,8 +2,8 @@
 
 ## 2026-11-09 — Leadership profiles and Gold/Silver/Bronze distinctions
 
-Status: **IMPLEMENTED — LOCAL VERIFIED; PRODUCTION RELEASE PENDING GUARDED
-DEPLOYMENT.** The preserved Society / Leadership artwork is now backed by an
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The preserved Society /
+Leadership artwork is now backed by an
 audited, authenticated owner/admin-gated distinction layer separate from Founding Memberships and
 account permissions. Profiles can display Gold, Silver, and Bronze Medallions;
 the Admin Center can assign or revoke them for existing accounts; and a
@@ -18,8 +18,13 @@ the verified member account remains an explicit Admin Center action after the
 release rather than an inferred identity match.
 
 Focused contract verification passed 15/15, local assignment/revocation
-integration passed 10/10, and release-safety source checks passed 27/27. Full
-guarded release and live Firefox acceptance remain pending.
+integration passed 10/10, and release-safety source checks passed 27/27. The
+guarded release passed 30/30 gates, anonymous production smoke passed 10/10,
+and isolated Firefox production acceptance passed 65/65.
+Production release: commit `779a723be02e4244b300a824d8bce02c27bcdb39`, release
+`rel-779a723be02e-d5ef57799b3a`, Worker
+`0debc66f-58db-41d7-8323-b44681fee655` at 100% traffic. Rollback Worker:
+`a74f05ae-3026-44f9-9eeb-41f45019a315`.
 Full record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-GOVERNANCE-004-LEADERSHIP-DISTINCTIONS.md`.
 
