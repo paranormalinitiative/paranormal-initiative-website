@@ -1,5 +1,29 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Nova editor caret and compact community feed release
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** The regular Nova Content Editor
+now presents a centered document surface with an explicit native blinking caret;
+the browser's normal keyboard editing behavior remains intact. Community Feed
+cards are compact again, while **Open post** loads the canonical full-post view
+and a visible-page five-minute check offers **Refresh now** when newer content
+is detected without replacing the post being read.
+
+Guarded preflight passed all 30 certification gates, including isolated Firefox
+acceptance, StudioFlow lifecycle/deletion/ownership regressions, Notes
+restoration and visual acceptance, mobile layout, and release safety. Production
+smoke passed 10/10 and live isolated Firefox acceptance passed 65/65. No owner
+Firefox profile, creator data, Studio records, Notes, recordings, or production
+database/storage records were modified.
+
+Production release: website/source integration commit
+`f3a91b7d13e6f6e277ca145adf06e1e78857466b`, release
+`rel-f3a91b7d13e6-3b622c5b1134`, Worker
+`cd4a233c-8d05-4fcc-b244-b1fc01dd20dc` at 100% traffic. Rollback Worker:
+`ae0e5d09-543a-4979-974d-b28174088c42`. The certified release manifest digest is
+`1f6c202b81ac01ca08b944b0305a5c5b1a12c59e8135a8f665e006c3383e34c3`. Full
+record: `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-NOVA-010-EDITOR-CARET-COMMUNITY-FEED-RELEASE.md`.
+
 ## 2026-11-09 — Community feed full posts and canonical open links
 
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** Community feed cards now display

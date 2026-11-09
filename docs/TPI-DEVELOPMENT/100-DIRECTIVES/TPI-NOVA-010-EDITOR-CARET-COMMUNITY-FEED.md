@@ -60,3 +60,52 @@ The full post view is intentionally a canonical member-home target rather than
 a second post system. If the stored post body contains intentional spaces, the
 caret remains after those stored characters; the editor does not rewrite user
 content while correcting caret visibility.
+
+## Production release closure
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.**
+
+The guarded release candidate was certified and deployed without changing the
+application data model or owner browser data.
+
+- Release ID: `rel-f3a91b7d13e6-3b622c5b1134`
+- Website/source integration commit: `f3a91b7d13e6f6e277ca145adf06e1e78857466b`
+- Integrated StudioFlow source commit: `0061dc692b07d571f9b1e022ef3949d9a50f4bf2`
+- Deployed Worker version: `cd4a233c-8d05-4fcc-b244-b1fc01dd20dc`
+- Rollback Worker: `ae0e5d09-543a-4979-974d-b28174088c42`
+- Production traffic: 100%
+- Certification manifest digest: `1f6c202b81ac01ca08b944b0305a5c5b1a12c59e8135a8f665e006c3383e34c3`
+- Deployment timestamp: `2026-11-09T04:12:51.204Z`
+
+Release verification passed:
+
+- Certification and release gates: 30/30
+- Focused Nova parity: 11/11; Slides parity: 23/23; workstation: 9/9;
+  StudioFlow parity: 13/13
+- Community Feed focused QA: 44/44
+- Release safety: 27/27
+- Production smoke: 10/10
+- Live isolated Firefox Developer Edition acceptance: 65/65
+
+Relevant deployed asset hashes:
+
+| Asset | SHA-256 |
+| --- | --- |
+| `nova/assets/index-B7tgv28H.js` | `ad59c89e7287d98ec442020c9abc8b823d3e08e80f86afec6955b74755e1be4f` |
+| `nova/assets/index-BuYuxzMn.css` | `e2ac5cad555b5de08c0ff61ee2fae717ef8c841aa291b73c0a102238add99e32` |
+| `content-editor-nova/assets/content-editor-C6ABjka3.js` | `6b8071842a19ddcbf1816c4e6ce235cc7b903720f27f9c30e02f9b6a5ac9653b` |
+| `content-editor-nova/assets/content-editor-BuYuxzMn.css` | `e2ac5cad555b5de08c0ff61ee2fae717ef8c841aa291b73c0a102238add99e32` |
+| `style.css` | `745486287df76b6b4e512668e962a1be01379f31b7296c670a1a0dc520545732` |
+| `member-home.html` | `2c79d551a387887947134c0b1520280d3d5b1d10bbfe6b88f0d07c5e3ea2d728` |
+
+The deployed Content Editor Nova JavaScript and CSS were fetched from the live
+production URLs and matched these hashes. Protected `/paper-editor`, `/nova/`,
+and `/studio/` entrypoints correctly return `403` without authentication and
+`Cache-Control: no-store`; live authenticated browser acceptance is the source
+of truth for those routes. The unauthed member-home document contains the new
+refresh-notice and full-post markers.
+
+The release preflight used the documented sibling-lineage override because the
+dedicated approved StudioFlow release branch is a deliberate port of the
+previous baseline. Its staged assets were reproducible and the continuity guard
+passed with that written justification.
