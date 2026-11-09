@@ -17,10 +17,12 @@ records. No image, CSS class, DOM element, or client-side state grants access.
 | Silver | `masters/Silver Badge.png` | `web/silver-{512,256,128}.png`, `web/silver-{512,256}.webp` |
 | Bronze | `masters/Bronze Badge.png` | `web/bronze-{512,256,128}.png`, `web/bronze-{512,256}.webp` |
 
-Qualification and assignment rules for Gold, Silver, and Bronze are **not
-defined**. **UNRESOLVED — OWNER DECISION REQUIRED.** The assets are preserved,
-version-controlled, and available for a future implementation; they must not be
-assigned automatically or inferred from a Founding Membership.
+Qualification and assignment are now explicit owner/admin-controlled recognition
+records. Gold, Silver, and Bronze are assigned through the authenticated
+owner/admin-gated Leadership & Honors workflow and are never inferred from a
+Founding Membership.
+They remain visual recognition only; server-side account records continue to
+decide permissions and access.
 
 ## Master artwork (preserved unchanged)
 
@@ -72,18 +74,16 @@ membership/recognition displays, responsive/mobile use, and high-DPI display.
 |---|---|
 | Master artwork version-controlled | **DONE** |
 | Web derivatives | **DONE** |
-| Qualification / assignment rules | **UNRESOLVED — OWNER DECISION REQUIRED** |
-| Assignment authority, audit history, revocation/status handling | **NOT IMPLEMENTED** |
-| Profile / community / leadership display surfaces | **NOT IMPLEMENTED** |
+| Qualification / assignment rules | **DONE — authenticated owner/admin-gated explicit assignment** |
+| Assignment authority, audit history, revocation/status handling | **DONE** |
+| Profile / leadership display surfaces | **DONE** |
+| Community-feed author identity | **DEFERRED — separate projection work** |
 
 Tracked as the roadmap item **TPI Society / Leadership Badge System**; see
 `docs/TPI-DEVELOPMENT/TPI-FOUNDING-MEMBERSHIP-REGISTRY.md`.
 
 ## Publishing
 
-Nothing in this directory is published. `.assetsignore` excludes
-`assets/society-leadership/` from the deployed asset package, so the masters and
-derivatives stay in Git (1,205,829 bytes of masters, 1,769,855 bytes of
-derivatives) without shipping unbuilt artwork to production. Remove those ignore
-lines, keeping masters excluded, when a directive implements the Society /
-Leadership system.
+Only the optimized `web/` derivatives are published. `.assetsignore` keeps
+`masters/` Git-only, so the authoritative artwork stays version-controlled while
+profile surfaces can load the intended derivative assets.

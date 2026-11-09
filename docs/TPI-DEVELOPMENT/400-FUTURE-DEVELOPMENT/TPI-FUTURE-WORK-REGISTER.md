@@ -73,7 +73,7 @@ governance office is created by being named in this list.
 
 ### TPI Leadership Medallions & Honors
 
-Status: **FUTURE ARCHITECTURE — ASSETS PARTIALLY SUPPLIED, POLICY UNRESOLVED.**
+Status: **IMPLEMENTED IN DEVELOPMENT — PRODUCTION RELEASE PENDING.**
 
 Known assets already preserved in [`assets/society-leadership/`](../../../assets/society-leadership/)
 as byte-identical masters with PNG/JPEG mismatch recorded and web derivatives for the
@@ -89,7 +89,7 @@ Known direction:
 - **Primary Distinction** should eventually control the featured profile presentation.
 - Multiple legitimate distinctions may coexist on one account.
 
-Still unresolved:
+Still intentionally deferred:
 
 - Silver qualification;
 - Bronze qualification;
@@ -97,11 +97,13 @@ Still unresolved:
 - relationship between each Medallion and specific organizational offices;
 - whether a separate Board Member medallion is needed;
 - other future leadership medallions;
-- exact public display behavior;
-- succession and history rules.
+- community-feed author projection;
+- a future Honors Wall and broader succession policy.
 
-Not to be implemented until the owner has completed and approved the larger medallion
-set and its policy.
+The owner authorized the focused implementation in TPI-GOVERNANCE-004. The
+implemented layer is owner-gated, audited, profile-visible, and recognition-only.
+It does not assign permissions or create a Sol login. See
+`100-DIRECTIVES/TPI-GOVERNANCE-004-LEADERSHIP-DISTINCTIONS.md`.
 
 ---
 
@@ -435,7 +437,7 @@ current architecture work.
 |---|---|---|
 | TPI-GOVERNANCE-003C governance architecture | Next governance section — deferred | Owner directive after the Nova program |
 | Full Platform Authority definition | Part of 003C | 003C |
-| Gold / Silver / Bronze medallion policy | Unresolved | Owner decisions on qualification |
+| Gold / Silver / Bronze medallion policy | Implemented in development | Production release and future qualification refinement |
 | Board and leadership medallions | Unresolved | Owner artwork and policy |
 | Additional badge / medallion artwork | Owner dependency | Owner artwork |
 | Senior / Lead / Platform role finalization | Unresolved | Owner decisions |
@@ -445,7 +447,7 @@ current architecture work.
 | Community Help Center | Not built | Community Standards and help directive |
 | Internal Help Desk | Not built | Staff policy finalization |
 | Mystic help integration | Not built | Help Center / Help Desk content |
-| Honors & Distinctions system | Not implemented | Policy and profile design |
+| Honors & Distinctions system | Implemented in development | Production release; future Honors Wall |
 | Honors Wall | Not implemented | Honors policy |
 | Achievement system | Not implemented | Owner policy |
 | Education credentials on Honors Wall | Not implemented | Education policy |

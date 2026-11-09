@@ -31,14 +31,12 @@ functions/**
 migrations
 migrations/**
 assets/anabela-cardoso/papers/Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf
-# TPI-CREATOR-INCENTIVE-001B: badge masters stay in Git as authoritative
-# originals, but only the optimized web derivatives are published. The Society /
-# Leadership family is not displayed yet, so nothing under it is deployed until
-# that feature exists (remove these two lines then, derivatives only).
+# TPI-GOVERNANCE-004: badge masters stay in Git as authoritative originals;
+# optimized Society / Leadership derivatives are published for profile surfaces.
 assets/founding-memberships/masters/
 assets/founding-memberships/masters/**
-assets/society-leadership/
-assets/society-leadership/**
+assets/society-leadership/masters/
+assets/society-leadership/masters/**
 # TPI-GOVERNANCE-003B: operational-role (Moderator/Administrator) masters stay in
 # Git but are not published. No display surface or derivative exists yet; add
 # derivatives and a narrower rule when the operational insignia feature is built.

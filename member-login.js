@@ -1473,6 +1473,25 @@
       </div>`;
   }
 
+  // TPI-GOVERNANCE-004: leadership distinctions are server-resolved visual
+  // recognition. Their markup never grants or implies account capability.
+  function renderLeadershipDistinctions(distinctions) {
+    const rows = Array.isArray(distinctions) ? distinctions.filter(item => item && item.status === "active" && item.assetPath) : [];
+    if (!rows.length) return "";
+    return `
+      <section class="leadership-distinction-list" aria-label="Leadership honors">
+        <p class="portal-kicker">Honors &amp; Distinctions</p>
+        <div class="leadership-distinction-grid">
+          ${rows.map(item => `
+            <div class="leadership-distinction-card" style="--distinction-color:${escapeHtml(item.color || "#d6a84f")}">
+              <img src="${escapeHtml(item.assetPath)}" width="56" height="56" alt="${escapeHtml(item.label || "Leadership distinction")}" loading="lazy" decoding="async">
+              <div><strong>${escapeHtml(item.label || "Leadership distinction")}</strong><span>${escapeHtml(item.description || "Recognition assigned by TPI leadership.")}</span></div>
+            </div>`).join("")}
+        </div>
+        <small class="distinction-disclaimer">Visual recognition only. Access and authority remain server-side account records.</small>
+      </section>`;
+  }
+
   function renderDashboardProfile(user) {
     if (!user) return;
     updateDashboardToolVisibility(user);
@@ -1512,6 +1531,7 @@
           <p class="public-profile-title">${escapeHtml(user.title || "Contributor")}</p>
           <p class="member-profile-role">${escapeHtml(getAccountAccessDetail(user.role))}</p>
           ${renderFoundingBadgeIdentity(user.foundingMembership)}
+          ${renderLeadershipDistinctions(user.leadershipDistinctions)}
         </div>
       </div>
       <div class="member-profile-facts">
@@ -1662,6 +1682,7 @@
             <h2>${escapeHtml(profileName)}</h2>
             ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : ""}
             ${renderFoundingBadgeIdentity(data.foundingMembership)}
+            ${renderLeadershipDistinctions(data.leadershipDistinctions)}
             ${renderContributionLevel(contributionLevel, "public-contribution-level")}
           </aside>
           <div class="public-profile-main">

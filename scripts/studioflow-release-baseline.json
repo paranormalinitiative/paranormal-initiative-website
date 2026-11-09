@@ -23,7 +23,8 @@
       "0055_studioflow_notes.sql",
       "0056_studioflow_note_automatic_titles.sql",
       "0057_studioflow_note_trash_metadata.sql",
-      "0065_member_social_and_bug_reports.sql"
+      "0065_member_social_and_bug_reports.sql",
+      "0066_leadership_profiles_and_distinctions.sql"
     ],
     "requiredTables": [
       "studio_notes",
@@ -31,7 +32,9 @@
       "studio_note_revisions",
       "studio_note_attachments",
       "member_follows",
-      "member_bug_reports"
+      "member_bug_reports",
+      "leadership_profiles",
+      "leadership_distinctions"
     ]
   }
 }

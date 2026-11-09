@@ -45,3 +45,13 @@
 .founding-badge-chip-text strong { color: var(--text-primary); font-size: 14px; font-weight: 700; line-height: 1.25; }
 .founding-badge-chip-text span { color: var(--text-secondary); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
 @media(max-width:640px) { .founding-badge-chip { width: 100%; } .founding-badge-chip-art { width: 40px; height: 40px; } }
+
+/* TPI-GOVERNANCE-004: visible recognition is separate from access control. */
+.leadership-distinction-list { margin-top: 18px; }
+.leadership-distinction-grid { display: grid; gap: 10px; }
+.leadership-distinction-card { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid color-mix(in srgb,var(--distinction-color) 55%,var(--border-default)); border-radius: var(--radius-sm); background: color-mix(in srgb,var(--distinction-color) 8%,var(--bg-surface)); }
+.leadership-distinction-card img { width: 56px; height: 56px; flex: none; border-radius: var(--radius-full); object-fit: cover; border: 2px solid var(--distinction-color); }
+.leadership-distinction-card div { display: grid; gap: 3px; min-width: 0; }
+.leadership-distinction-card strong { color: var(--text-primary); font-size: 13px; line-height: 1.25; }
+.leadership-distinction-card span { color: var(--text-secondary); font-size: 12px; line-height: 1.4; }
+.distinction-disclaimer { display: block; margin-top: 9px; color: var(--text-secondary); font-size: 11px; line-height: 1.4; }

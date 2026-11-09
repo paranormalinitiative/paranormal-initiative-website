@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <title>Leadership Profile | The Paranormal Initiative</title>
+  <link rel="stylesheet" href="style.css?v=89">
+  <link rel="stylesheet" href="profile-style.css?v=1">
+  <style>
+    .leadership-profile-shell { max-width: 1040px; margin: 48px auto; padding: 0 24px; }
+    .leadership-profile-card { display: grid; grid-template-columns: minmax(220px, .7fr) minmax(0, 1.3fr); gap: 28px; padding: 30px; border: 1px solid var(--border-default); border-radius: 20px; background: var(--bg-surface); }
+    .leadership-profile-identity { display: grid; align-content: start; gap: 12px; }
+    .leadership-profile-identity h1 { margin: 0; }
+    .leadership-profile-identity h2 { margin: 0; color: var(--text-accent); font-size: 16px; line-height: 1.35; }
+    .leadership-profile-main { display: grid; gap: 20px; }
+    .leadership-profile-main section { padding-top: 18px; border-top: 1px solid var(--border-default); }
+    .leadership-profile-main h2 { margin: 0 0 8px; font-size: 18px; }
+    .leadership-profile-main p { line-height: 1.7; }
+    @media(max-width:700px) { .leadership-profile-card { grid-template-columns: 1fr; padding: 22px; } .leadership-profile-shell { margin-top: 24px; padding: 0 14px; } }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="leadership-profile-shell" data-leadership-profile>
+    <p class="access-note">Loading leadership profile...</p>
+  </main>
+  <div id="site-footer"></div>
+  <script src="includes.js"></script>
+  <script>
+    (() => {
+      const root = document.querySelector("[data-leadership-profile]");
+      const esc = value => String(value ?? "").replace(/[&<>\"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+      const slug = new URLSearchParams(location.search).get("slug") || "sol";
+      fetch(`/api/leadership/profiles/${encodeURIComponent(slug)}`, { credentials: "same-origin" })
+        .then(response => response.ok ? response.json() : response.json().then(data => Promise.reject(new Error(data.error || "Leadership profile not found."))))
+        .then(({ profile }) => {
+          document.title = `${profile.displayName} | Leadership | The Paranormal Initiative`;
+          root.innerHTML = `<article class="leadership-profile-card">
+            <aside class="leadership-profile-identity">
+              <p class="portal-kicker">${esc(profile.identityType === "ai_collaborator" ? "AI Advisory Identity" : "TPI Leadership")}</p>
+              <h1>${esc(profile.displayName)}</h1>
+              <h2>${esc(profile.roleTitle)}</h2>
+              ${(profile.distinctions || []).map(item => `<div class="leadership-distinction-card" style="--distinction-color:${esc(item.color || "#d6a84f")}"><img src="${esc(item.assetPath)}" width="72" height="72" alt="${esc(item.label)}"><div><strong>${esc(item.label)}</strong><span>${esc(item.description)}</span></div></div>`).join("")}
+            </aside>
+            <div class="leadership-profile-main">
+              <section><h2>Role</h2><p>${esc(profile.roleSummary)}</p></section>
+              <section><h2>Responsibilities</h2><p>${esc(profile.responsibilities)}</p></section>
+              <section><h2>Transparency</h2><p>${esc(profile.transparencyNote)}</p></section>
+            </div>
+          </article>`;
+        })
+        .catch(error => { root.innerHTML = `<p class="access-note">${esc(error.message)}</p>`; });
+    })();
+  </script>
+</body>
+</html>

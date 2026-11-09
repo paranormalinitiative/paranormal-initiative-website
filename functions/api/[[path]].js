@@ -32,6 +32,12 @@ import {
   setFoundingMembershipState,
   setIncentiveParticipation,
 } from "../../lib/founding-memberships.js";
+import {
+  DISTINCTION_CATALOG,
+  distinctionPayload,
+  listLeadershipDistinctions,
+  listLeadershipProfiles,
+} from "../../lib/leadership-distinctions.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -78,6 +84,9 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/entitlements$/)) return requireAdmin(request, env, user => handleAdminMemberEntitlements(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/entitlements$/)) return requireAdmin(request, env, user => handleAdminGrantMemberCapability(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/members\/entitlements\/[^/]+\/revoke$/)) return requireAdmin(request, env, user => handleAdminRevokeMemberCapability(path, request, env, user));
+    if (request.method === "GET" && path === "/admin/leadership/distinctions") return requireAdmin(request, env, user => handleAdminLeadershipDistinctions(request, env, user));
+    if (request.method === "POST" && path === "/admin/leadership/distinctions") return requireAdmin(request, env, user => handleAdminAssignLeadershipDistinction(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/leadership\/distinctions\/[^/]+\/revoke$/)) return requireAdmin(request, env, user => handleAdminRevokeLeadershipDistinction(path, env, user));
     if (request.method === "GET" && path === "/admin/creator-incentive") return requireAdmin(request, env, user => handleAdminCreatorIncentive(request, env, user));
     if (request.method === "POST" && path === "/admin/creator-incentive/participation") return requireAdmin(request, env, user => handleAdminSetIncentiveParticipation(request, env, user));
     if (request.method === "GET" && path === "/me/entitlements") return requireMember(request, env, user => handleMyEntitlements(env, user));
@@ -137,6 +146,8 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/notifications\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkNotificationRead(path, env, user));
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
+    if (request.method === "GET" && path === "/leadership/profiles") return handleLeadershipProfiles(env);
+    if (request.method === "GET" && path.match(/^\/leadership\/profiles\/[^/]+$/)) return handleLeadershipProfile(path, env);
     if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
     if (request.method === "GET" && path === "/friends") return requireMember(request, env, user => handleListFriends(env, user));
     if (request.method === "POST" && path === "/friends/follow") return requireMember(request, env, user => handleFollowMember(request, env, user));
@@ -494,6 +505,7 @@ async function handleMe(request, env) {
       editorialReviewAccess,
       adminAccess: user.role === "owner" || user.role === "admin" || editorialReviewAccess,
       foundingMembership: await publicMembershipIdentity(env, user.id),
+      leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
     },
   }, 200, { "Cache-Control": "no-store" });
 }
@@ -1414,6 +1426,86 @@ async function handleAdminFoundingMembershipMembers(request, env) {
     role: row.role || "member",
     maskedEmail: maskAdminMemberEmail(row.correspondence),
   })) }, 200, { "Cache-Control": "no-store" });
+}
+
+// TPI-GOVERNANCE-004: Gold/Silver/Bronze distinctions are a separate,
+// owner/admin-assigned presentation layer. They never write role or entitlement data.
+async function handleAdminLeadershipDistinctions(request, env) {
+  const url = new URL(request.url);
+  const search = clean(url.searchParams.get("search")).slice(0, 120);
+  const like = `%${search}%`;
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT d.id, d.subject_type AS subjectType, d.subject_id AS subjectId,
+             d.distinction_code AS code, d.label, d.description, d.asset_path AS assetPath,
+             d.color, d.status, d.issued_at AS issuedAt, d.issued_by AS issuedBy,
+             c.username, c.display_name AS displayName, p.slug, p.display_name AS profileName
+      FROM leadership_distinctions d
+      LEFT JOIN contributors c ON d.subject_type = 'member' AND c.id = d.subject_id
+      LEFT JOIN leadership_profiles p ON d.subject_type = 'leadership_profile' AND p.id = d.subject_id
+      WHERE d.status = 'active'
+        AND (? = '' OR lower(COALESCE(c.username, p.slug, '')) LIKE lower(?) OR lower(COALESCE(c.display_name, p.display_name, '')) LIKE lower(?))
+      ORDER BY CASE d.code WHEN 'gold' THEN 0 WHEN 'silver' THEN 1 ELSE 2 END, d.issued_at ASC
+    `).bind(search, like, like).all();
+    return json({
+      catalog: Object.values(DISTINCTION_CATALOG).map(item => ({ code: item.code, label: item.label, color: item.color, assetPath: item.assetPath })),
+      distinctions: results || [],
+      profiles: await listLeadershipProfiles(env),
+    }, 200, { "Cache-Control": "no-store" });
+  } catch {
+    return json({ catalog: Object.values(DISTINCTION_CATALOG), distinctions: [], profiles: [], schemaPending: true }, 200, { "Cache-Control": "no-store" });
+  }
+}
+
+async function handleAdminAssignLeadershipDistinction(request, env, actingUser) {
+  const data = await readJson(request);
+  const username = normalizeAdminMemberUsername(data.username);
+  const distinction = distinctionPayload(data.code, data.description);
+  if (!username) return json({ error: "An existing member username is required." }, 400, { "Cache-Control": "no-store" });
+  if (!distinction) return json({ error: "Choose Gold, Silver, or Bronze." }, 400, { "Cache-Control": "no-store" });
+  const member = await findExistingMember(env, username);
+  if (!member) return json({ error: "An active existing TPI account is required." }, 404, { "Cache-Control": "no-store" });
+  try {
+    const existing = await env.TPI_DB.prepare(`
+      SELECT id FROM leadership_distinctions
+      WHERE subject_type = 'member' AND subject_id = ? AND distinction_code = ? AND status = 'active'
+      LIMIT 1
+    `).bind(member.id, distinction.code).first();
+    if (existing) return json({ error: "That member already has this active distinction.", code: "duplicate_distinction" }, 409, { "Cache-Control": "no-store" });
+    const id = crypto.randomUUID();
+    await env.TPI_DB.prepare(`
+      INSERT INTO leadership_distinctions
+        (id, subject_type, subject_id, distinction_code, label, description, asset_path, color, issued_by, notes)
+      VALUES (?, 'member', ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id, member.id, distinction.code, distinction.label, distinction.description,
+      distinction.assetPath, distinction.color, actingUser.id, clean(data.notes).slice(0, 2000)
+    ).run();
+    await writeAdminAuditLog(env, actingUser, "leadership.distinction_assigned", "member", member.username, {
+      distinction: distinction.code,
+      label: distinction.label,
+    });
+    return json({
+      distinction: { id, ...distinction, status: "active", issuedAt: new Date().toISOString() },
+      account: { username: member.username, displayName: member.display_name },
+    }, 201, { "Cache-Control": "no-store" });
+  } catch {
+    return json({ error: "The leadership distinction could not be assigned. No permission or account record was changed." }, 500, { "Cache-Control": "no-store" });
+  }
+}
+
+async function handleAdminRevokeLeadershipDistinction(path, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/leadership\/distinctions\/([^/]+)\/revoke$/)?.[1] || ""));
+  if (!id) return json({ error: "A distinction id is required." }, 400, { "Cache-Control": "no-store" });
+  const current = await env.TPI_DB.prepare(`
+    SELECT id, subject_type AS subjectType, subject_id AS subjectId, distinction_code AS code, status
+    FROM leadership_distinctions WHERE id = ? LIMIT 1
+  `).bind(id).first();
+  if (!current) return json({ error: "The distinction was not found." }, 404, { "Cache-Control": "no-store" });
+  if (current.status !== "active") return json({ error: "The distinction is already inactive." }, 409, { "Cache-Control": "no-store" });
+  await env.TPI_DB.prepare("UPDATE leadership_distinctions SET status = 'revoked', revoked_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'active'").bind(id).run();
+  await writeAdminAuditLog(env, actingUser, "leadership.distinction_revoked", current.subjectType, current.subjectId, { distinction: current.code });
+  return json({ ok: true, id, status: "revoked" }, 200, { "Cache-Control": "no-store" });
 }
 
 async function participationStateFor(env, contributorId) {
@@ -5332,8 +5424,22 @@ async function handlePublicContributorProfile(request, env) {
     // notes. A suspended or revoked membership reports its state rather than
     // presenting an active badge.
     foundingMembership: await publicMembershipIdentity(env, user.id),
+    leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
     articles: results,
   });
+}
+
+async function handleLeadershipProfiles(env) {
+  return json({ profiles: await listLeadershipProfiles(env) }, 200, { "Cache-Control": "public, max-age=60" });
+}
+
+async function handleLeadershipProfile(path, env) {
+  const slug = clean(decodeURIComponent(path.match(/^\/leadership\/profiles\/([^/]+)$/)?.[1] || ""));
+  if (!slug) return json({ error: "Leadership profile was not specified." }, 400);
+  const profiles = await listLeadershipProfiles(env);
+  const profile = profiles.find(item => item.slug.toLowerCase() === slug.toLowerCase());
+  if (!profile) return json({ error: "Leadership profile not found." }, 404);
+  return json({ profile }, 200, { "Cache-Control": "public, max-age=60" });
 }
 
 async function handleListPublicContributors(env) {

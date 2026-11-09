@@ -150,6 +150,19 @@
     }
   }
 
+  async function loadLeadershipDistinctions() {
+    const data = await fetchJson("/api/admin/leadership/distinctions");
+    const profileHost = get("[data-admin-leadership-profiles]");
+    if (profileHost) {
+      profileHost.innerHTML = (data.profiles || []).map(profile => `<div><strong>${esc(profile.displayName)}</strong><span>${esc(profile.roleTitle)}</span><small>${esc(profile.transparencyNote)}</small></div>`).join("") || '<div><strong>No leadership profiles are available</strong><span>Profiles will appear after the additive governance migration is applied.</span></div>';
+    }
+    const table = get("[data-admin-leadership-table]");
+    if (!table) return;
+    table.innerHTML = (data.distinctions || []).length
+      ? data.distinctions.map(row => `<tr><td><strong>${esc(row.displayName || row.profileName || row.username || row.slug || "Identity")}</strong><small>${esc(row.username || row.slug || row.subjectType)}</small></td><td><span class="admin-pill admin-pill-success">${esc(row.label || row.code)}</span></td><td>${esc(row.description || "—")}</td><td>${esc(row.issuedAt || "—")}</td><td>${row.subjectType === "member" ? `<button type="button" class="admin-center-refresh" data-admin-leadership-revoke="${esc(row.id)}">Revoke</button>` : "Owner-managed"}</td></tr>`).join("")
+      : '<tr><td colspan="5">No active member distinctions have been assigned.</td></tr>';
+  }
+
   async function loadAudit() {
     const search = get("[data-admin-audit-search]")?.value || "";
     const query = search ? `&q=${encodeURIComponent(search)}` : "";
@@ -159,7 +172,7 @@
   }
 
   async function load() {
-    await Promise.allSettled([loadOverview(), loadFounding(), loadFoundingMemberships(), loadCommunity(), loadCreators(), loadModeration(), loadAudit()]);
+    await Promise.allSettled([loadOverview(), loadFounding(), loadFoundingMemberships(), loadLeadershipDistinctions(), loadCommunity(), loadCreators(), loadModeration(), loadAudit()]);
   }
 
   root.addEventListener("click", (event) => {
@@ -189,6 +202,7 @@
   get("[data-admin-audit-apply]")?.addEventListener("click", () => loadAudit().catch(() => {}));
   get("[data-admin-founding-award-form]")?.addEventListener("submit", (event) => event.preventDefault());
   get("[data-admin-membership-refresh]")?.addEventListener("click", () => loadFoundingMemberships().catch(() => {}));
+  get("[data-admin-leadership-refresh]")?.addEventListener("click", () => loadLeadershipDistinctions().catch(() => {}));
   get("[data-admin-membership-inspect]")?.addEventListener("click", () => inspectMembershipCapabilities());
   get("[data-admin-membership-inspect-input]")?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") { event.preventDefault(); inspectMembershipCapabilities(); }
@@ -216,6 +230,47 @@
       await loadFoundingMemberships();
     } catch (error) {
       if (message) message.textContent = error.message;
+    }
+  });
+  get("[data-admin-leadership-assign-form]")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const message = get("[data-admin-leadership-message]");
+    if (message) message.textContent = "Assigning distinction…";
+    try {
+      const response = await fetch("/api/admin/leadership/distinctions", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          username: form.elements.username?.value,
+          code: form.elements.code?.value,
+          description: form.elements.description?.value,
+          notes: form.elements.notes?.value,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || `Request failed (${response.status})`);
+      if (message) message.textContent = `${result.distinction.label} assigned to ${result.account.displayName} (${result.account.username}). It is recognition only and does not change access.`;
+      form.reset();
+      await loadLeadershipDistinctions();
+    } catch (error) {
+      if (message) message.textContent = error.message;
+    }
+  });
+  root.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-admin-leadership-revoke]");
+    if (!button) return;
+    if (!window.confirm("Revoke this visual leadership distinction? This does not change account access.")) return;
+    button.disabled = true;
+    try {
+      const response = await fetch(`/api/admin/leadership/distinctions/${encodeURIComponent(button.dataset.adminLeadershipRevoke)}/revoke`, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || `Request failed (${response.status})`);
+      await loadLeadershipDistinctions();
+    } catch (error) {
+      button.disabled = false;
+      window.alert(error.message);
     }
   });
   const initial = location.hash.replace(/^#/, "");

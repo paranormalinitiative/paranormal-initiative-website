@@ -1,5 +1,28 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Leadership profiles and Gold/Silver/Bronze distinctions
+
+Status: **IMPLEMENTED — LOCAL VERIFIED; PRODUCTION RELEASE PENDING GUARDED
+DEPLOYMENT.** The preserved Society / Leadership artwork is now backed by an
+audited, authenticated owner/admin-gated distinction layer separate from Founding Memberships and
+account permissions. Profiles can display Gold, Silver, and Bronze Medallions;
+the Admin Center can assign or revoke them for existing accounts; and a
+transparent, non-login Sol AI collaborator profile is available at
+`leadership-profile.html?slug=sol` with its owner-designated Gold Medallion.
+
+Sol is represented as an AI system and advisory identity, not as a fabricated
+human account or a legal officer. The medallion is recognition only and never
+grants access. No production account, membership, entitlement, D1 row, or R2
+object was changed in this implementation pass. The owner Gold assignment for
+the verified member account remains an explicit Admin Center action after the
+release rather than an inferred identity match.
+
+Focused contract verification passed 15/15, local assignment/revocation
+integration passed 10/10, and release-safety source checks passed 27/27. Full
+guarded release and live Firefox acceptance remain pending.
+Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-GOVERNANCE-004-LEADERSHIP-DISTINCTIONS.md`.
+
 ## 2026-11-09 — Friends, bug reporting, and Messenger identity release
 
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** The authenticated member shell
