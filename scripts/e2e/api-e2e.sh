@@ -33,11 +33,29 @@ if [ "$ISOLATED" = "1" ]; then
   BASE="http://127.0.0.1:8789/api"
   WRANGLER_LOCAL="${WRANGLER_BIN:-wrangler}"
   for f in migrations/*.sql; do
-    "$WRANGLER_LOCAL" d1 execute TPI_DB --config "$ISOLATED_CONFIG" --local --persist-to "$ISOLATED_STATE" --file "$f" --yes >/dev/null 2>&1 \
-      || { echo "ISOLATED MIGRATION FAILED: $f"; exit 1; }
+    migration_passed=0
+    for attempt in 1 2 3 4 5; do
+      migration_output=$("$WRANGLER_LOCAL" d1 execute TPI_DB --config "$ISOLATED_CONFIG" --local --persist-to "$ISOLATED_STATE" --file "$f" --yes 2>&1) && { migration_passed=1; break; }
+      if printf '%s' "$migration_output" | rg -q "Could not read file|ECONNREFUSED|fetch failed|Connection refused" && [ "$attempt" -lt 5 ]; then
+        sleep 1
+        continue
+      fi
+      printf '%s\n' "$migration_output" >&2
+      break
+    done
+    [ "$migration_passed" -eq 1 ] || { echo "ISOLATED MIGRATION FAILED: $f"; exit 1; }
   done
-  "$WRANGLER_LOCAL" d1 execute TPI_DB --config "$ISOLATED_CONFIG" --local --persist-to "$ISOLATED_STATE" --file scripts/e2e/seed-local.sql --yes >/dev/null 2>&1 \
-    || { echo "ISOLATED SEED FAILED"; exit 1; }
+  seed_passed=0
+  for attempt in 1 2 3 4 5; do
+    seed_output=$("$WRANGLER_LOCAL" d1 execute TPI_DB --config "$ISOLATED_CONFIG" --local --persist-to "$ISOLATED_STATE" --file scripts/e2e/seed-local.sql --yes 2>&1) && { seed_passed=1; break; }
+    if printf '%s' "$seed_output" | rg -q "Could not read file|ECONNREFUSED|fetch failed|Connection refused" && [ "$attempt" -lt 5 ]; then
+      sleep 1
+      continue
+    fi
+    printf '%s\n' "$seed_output" >&2
+    break
+  done
+  [ "$seed_passed" -eq 1 ] || { echo "ISOLATED SEED FAILED"; exit 1; }
   echo "isolated mode: disposable Worker on :8789, state $ISOLATED_STATE"
 fi
 
