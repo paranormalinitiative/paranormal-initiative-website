@@ -266,7 +266,7 @@ Production release `rel-b75e17f7518f-c38dc3ead5aa` deployed website commit
 
 ## 2026-11-10 — Education Center organization cleanup
 
-Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION DEPLOYMENT PENDING.** The
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** The
 Education Center now has one clear Featured Research Shelves section titled
 “Selected lessons and guides.” The redundant Quick Start block, duplicate
 accordion shelves, More Resources block, and internal Nova implementation
@@ -279,7 +279,13 @@ Focused source verification passes 30/30. Disposable Firefox Developer Edition
 acceptance against the canonical local Worker passes 25/25, including the
 single-shelf structure, visible directory, desktop containment, mobile
 no-overflow behavior, all 18 direct routes, and the corrected lower-page
-layout. No database, member, contributor, or production content was changed.
+layout. The same isolated production Firefox acceptance passes 25/25 after
+release. No database, member, contributor, or production content was changed.
+
+Production release `rel-20b70b533121-78641d086c47` deployed website commit
+`20b70b5331213b97dd950bb46f0a67656c796b6a` as Worker version
+`5f6e6ad8-1d81-4444-b809-25fd183e626b`; the prior Worker version
+`eb3a2a70-3435-48b1-9100-c664f74eda19` remains the rollback target.
 
 ## 2026-11-09 — Community Feed Open post no-reload correction
 
