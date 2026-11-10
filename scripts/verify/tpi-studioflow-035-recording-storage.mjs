@@ -15,7 +15,21 @@ const firefoxBinary = process.env.TPI_FIREFOX_BINARY || "/Applications/Firefox D
 const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodriver";
 const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
 const credentials = JSON.parse(readFileSync(credentialsFile, "utf8"));
-const account = credentials.accounts?.test_admin;
+const productionTarget = base === "https://paranormalinitiative.com";
+const accountKey = process.env.TPI_035_ACCOUNT_KEY || (productionTarget ? "production_qa" : "test_admin");
+if (productionTarget && (
+  process.env.TPI_FIREFOX_PRODUCTION_QA !== "approved" ||
+  accountKey !== "production_qa" ||
+  !credentialsFile.endsWith(".local-dev/qa-studioflow-prod.json")
+)) {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: "Production destination verification requires the approved synthetic production_qa account, credential file, and explicit production QA approval." }));
+  process.exit(1);
+}
+const account = credentials.accounts?.[accountKey] || (accountKey === "production_qa" && credentials.username && credentials.password ? credentials : null);
+if (!account) {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: `The requested Firefox acceptance account is unavailable: ${accountKey}.` }));
+  process.exit(1);
+}
 const evidenceRoot = mkdtempSync(join(tmpdir(), "tpi-studioflow-035-"));
 const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });
@@ -218,22 +232,22 @@ try {
   check("Live interaction removed from the right rail", !labels.includes("Live interaction"), JSON.stringify(labels));
   check("Comments removed from the right rail", !labels.includes("Comments"), JSON.stringify(labels));
   check("Widgets removed from the right rail", !labels.includes("Widgets"), JSON.stringify(labels));
-  check("Notes preserved in the right rail", labels.includes("Notes"), JSON.stringify(labels));
-  const notesIndex = labels.indexOf("Notes");
+  check("Notes preserved under the Nova Edit label", labels.includes("Nova Edit"), JSON.stringify(labels));
+  const notesIndex = labels.indexOf("Nova Edit");
   const teleprompterIndex = labels.indexOf("Teleprompter");
-  check("Teleprompter sits directly beneath Notes", notesIndex >= 0 && teleprompterIndex === notesIndex + 1, JSON.stringify(labels));
+  check("Teleprompter sits directly beneath Nova Edit", notesIndex >= 0 && teleprompterIndex === notesIndex + 1, JSON.stringify(labels));
   check("Recording & Storage is visible in the right rail", labels.includes("Recording & Storage"), JSON.stringify(labels));
-  const expectedTabs = ["Banners", "Media assets", "Voice FX", "Style", "Notes", "Teleprompter", "People", "Private chat", "Recording", "Recording & Storage"];
+  const expectedTabs = ["Banners", "Media assets", "Voice FX", "Style", "Nova Edit", "Teleprompter", "People", "Private chat", "Recording", "Recording & Storage"];
   check("Other navigation items are unaffected and ordered", JSON.stringify(labels) === JSON.stringify(expectedTabs), JSON.stringify(labels));
 
   // ---- Teleprompter panel reuses the existing reader ----
   await openRail("Teleprompter");
   const teleprompterPanel = await panelText();
   check("Teleprompter panel lists saved scripts", teleprompterPanel.includes("TPI-035 sample script"), teleprompterPanel.slice(0, 200));
-  await click('.teleprompter-rail-panel [data-teleprompter-script-id="s1"]');
-  await waitFor("existing private teleprompter reader", async () => (await count("[data-private-teleprompter=\"true\"]")) === 1);
-  check("Teleprompter navigation opens the existing teleprompter reader", (await count("[data-private-teleprompter=\"true\"]")) === 1);
-  await click(".stage-teleprompter-close");
+  await click('.teleprompter-rail-panel .teleprompter-script-card button');
+  await waitFor("presenter teleprompter overlay", async () => (await count('[aria-label="Presenter teleprompter"]')) === 1);
+  check("Teleprompter navigation opens the presenter overlay", (await count('[aria-label="Presenter teleprompter"]')) === 1);
+  await clickByText(".stage-teleprompter-controls button", "Hide");
   await sleep(300);
 
   // ---- Recording & Storage panel organization ----
