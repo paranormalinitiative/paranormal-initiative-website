@@ -2,32 +2,27 @@
 
 ## 2026-11-09 — Owner-requested continuation audit
 
-The historical records below contain several prior implementation and release
-claims. The owner has reported current usability or completeness problems in
-Friends, Leadership/Board/Profile presentation, Education Center navigation,
-and related community workflows. Those areas are therefore reopened for a
-current live Firefox audit and must not be treated as accepted solely because
-an older record says COMPLETE.
+The historical records below contain prior implementation and release claims.
+The current audit reconciles those records with the present source tree and
+fresh disposable local verification. This table is the authoritative current
+queue; older rows below are historical evidence, not a substitute for the
+acceptance level shown here.
 
-Current queue and acceptance state:
-
-| Area | Current state | Required next proof |
+| Area | Current evidence | Remaining proof or action |
 | --- | --- | --- |
-| Messenger | Complete — deployed and live verified | Continue with the separate Community Feed follow-up |
-| Community Feed | Follow-up required | Collapsed long posts, working inline Open Post, destination links, refresh notice |
-| Friends | Owner-reported production UI/route problems | Live styling, member search, follow/unfollow, add/remove, no `file:///` navigation |
-| Leadership and Board | Historical release exists; owner requests current re-audit | Rank-safe roles, medallion assignment, Board badge, revoke/edit flows |
-| Profiles | Historical release exists; owner requests current re-audit | Larger clickable medallions, purpose details, titles/credentials, Profile Wall, admin editing |
-| Education Center | Historical subject-index release exists; owner reports confusing/missing content | Subject alignment, publication placement, Steve/Todd content visibility, feed links |
-| StudioFlow destinations | Verification outstanding | Supported connection behavior, safe test destination, no unsupported broadcast claim |
-| Nova Editorial Workspace | Completion audit outstanding | Documents/Slides ribbon, caret, previews, presenter, templates, images, fonts, deletion, persistence |
-| Nova Edit in StudioFlow | Scope defined; implementation/completion audit outstanding | Slim Nova-styled Documents/Slides experience with essential content-editor tools and custom fonts |
-| Bug reporting | Requested; implementation outstanding | Member form, Administration Center intake, error handling |
-| Sol profile | Leadership/profile identity is documented historically; current live presentation requires verification | Profile, Gold Medallion, public role/credentials, recognition detail, admin visibility |
+| Messenger | Implemented; source and local Firefox gates pass; prior production live verification recorded | Current production re-audit remains required for final completion |
+| Community Feed | Implemented; workstation/source gates pass; prior production release recorded | Current production re-audit remains required for final completion |
+| Friends and bug reporting | Implemented; workstation/source gates pass; prior production release recorded | Current production re-audit remains required for final completion |
+| Leadership, Board, profiles, Sol, and Education | Implemented; governance/profile/source gates pass; prior production releases recorded | Current production re-audit remains required for final completion |
+| Nova Editorial Workspace and Nova Edit | Implemented; current review 47/47, publish 60/60, revision 26/26, Slides 23/23, workstation 9/9, and StudioFlow Nova Edit 13/13 pass locally | Current production re-audit remains required for final completion |
+| Founding Membership | Implemented; Firefox/Chromium browser audit passes 48/48 and capability separation passes | Current production re-audit remains required for final completion |
+| StudioFlow destinations and recording storage | Local Firefox/source audit passes 33/33; production verifier is repaired but blocked before UI acceptance | Restore only the synthetic `qa-studioflow-prod` `creator_studio_lifetime` entitlement, then run guarded production acceptance |
 
-Every row requires separate source, local Firefox, production, and manual
-acceptance evidence before it is marked complete again. Destructive tests use
-disposable records only; production creator data remains protected.
+Current release-safety verification passes 28/28. The latest test-only repairs
+are pushed on `codex/tpi-development` as `d07e7905` and `f2799a96`; no owner
+data, production broadcasts, or production access-control records were
+changed during this audit. The remaining entitlement action is intentionally
+not performed without its exact production approval.
 
 ## 2026-11-09 — Messenger navigation home and readable conversation names
 
