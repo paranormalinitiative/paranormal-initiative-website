@@ -2,7 +2,7 @@
 
 ## 2026-11-09 — Profile honors, medallion details, Profile Wall, and admin editing
 
-Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION PENDING.** Public profiles
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Public profiles
 now show larger clickable Founding, Board, and Leadership recognition artwork.
 Selecting a recognition opens an enlarged detail view with its name, rank or
 membership number, and purpose. Profiles also include a read-only Profile Wall
@@ -12,10 +12,17 @@ affiliation, organization, website, profile image URL, and biography for an
 existing member through a protected owner/admin route. No schema change was
 required and recognition remains visual-only.
 
-Focused checks: Profile honors/wall Firefox 10/10, Leadership 18/18, Board
-20/20, subject index 24/24, community workstation 12/12, release safety 27/27.
-Unauthenticated profile update correctly returned 403. Production deployment
-is pending the guarded release and live Firefox acceptance.
+Focused checks: Profile honors/wall Firefox 10/10 locally and 10/10 against the
+live `Todd_Wayne` profile, Leadership 18/18, Board 20/20, subject index 24/24,
+community workstation 12/12, release safety 27/27. Unauthenticated profile
+update correctly returned 403. Full guarded release gates passed, anonymous
+production smoke passed 10/10, and live isolated Firefox acceptance passed
+65/65.
+
+Production release: source/website commit `bbf594669b08a631c03d594a300e819b6fd8ff84`,
+release `rel-bbf594669b08-b5f52b15955f`, Worker
+`f9bb5d31-4636-40d9-a3fd-474021559169` at 100% traffic. Rollback Worker:
+`8caaf9f4-bb79-4721-ae8b-676808e76b38`.
 
 Full record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-COMMUNITY-PROFILE-HONORS-WALL-AND-ADMIN-EDIT.md`.

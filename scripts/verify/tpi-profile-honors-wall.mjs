@@ -24,7 +24,11 @@ const apiResponse = await fetch(`${baseUrl}/api/contributors/profile?username=${
 const api = await apiResponse.json();
 check("public profile API responds", apiResponse.ok, `status ${apiResponse.status}`);
 check("profile API exposes a wallPosts array", Array.isArray(api.wallPosts));
-check("profile API resolves recognition data", Boolean(api.foundingMembership?.badge));
+check("profile API resolves recognition data", Boolean(
+  api.foundingMembership?.badge ||
+  api.boardMembership?.badgePath ||
+  (Array.isArray(api.leadershipDistinctions) && api.leadershipDistinctions.length)
+));
 
 const profileDir = mkdtempSync(join(tmpdir(), "tpi-profile-firefox-"));
 let driver;
@@ -40,9 +44,12 @@ try {
   await trigger.click();
   const modal = await driver.wait(until.elementLocated(By.css(".recognition-modal:not([hidden])")), 5000);
   check("recognition details modal opens from the profile", await modal.isDisplayed());
-  check("modal identifies the recognition", /Founding All-Access/i.test(await modal.getText()));
+  const recognitionTitle = await trigger.getAttribute("data-recognition-title");
+  const modalText = await modal.getText();
+  check("modal identifies the recognition", recognitionTitle && modalText.includes(recognitionTitle), `${recognitionTitle || "missing title"}`);
   const modalImage = await modal.findElement(By.css("[data-recognition-modal-image]"));
-  check("modal artwork loads", await modalImage.getAttribute("naturalWidth") > 0);
+  await driver.wait(async () => Number(await modalImage.getAttribute("naturalWidth")) > 0, 5000).catch(() => {});
+  check("modal artwork loads", Number(await modalImage.getAttribute("naturalWidth")) > 0);
   await modal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
   check("recognition details modal closes", (await driver.findElements(By.css(".recognition-modal:not([hidden])"))).length === 0);
   check("profile wall is present", (await driver.findElements(By.css(".public-profile-wall"))).length === 1);

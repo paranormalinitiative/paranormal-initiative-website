@@ -2,7 +2,7 @@
 
 Date: 2026-11-09
 
-Status: IMPLEMENTED — LOCAL VERIFIED / PRODUCTION PENDING
+Status: COMPLETE — DEPLOYED AND LIVE VERIFIED
 
 ## Scope
 
@@ -50,7 +50,9 @@ authorization and owner-profile protection remain server-side.
 - Governance subject index: 24/24 PASS.
 - Community workstation: 12/12 PASS.
 - Release safety: 27/27 PASS.
-- Profile honors/wall Firefox Developer Edition acceptance: 10/10 PASS.
+- Profile honors/wall Firefox Developer Edition acceptance: 10/10 PASS
+  locally and 10/10 PASS against the live production owner profile
+  `Todd_Wayne`.
 - Isolated Firefox profile used the disposable local synthetic profile
   `tpi_review_allaccess`; no production member or creator data was changed.
 - Recognition trigger rendered at 76×76 pixels, opened its modal, loaded the
@@ -80,10 +82,25 @@ authorization and owner-profile protection remain server-side.
 - Recognition assignment and revocation remain in the existing protected
   governance workflow; this change adds profile visibility and details, not a
   new assignment authority.
-- Production deployment and live Firefox acceptance are pending the guarded
-  release procedure.
+- Production deployment: PASS. Release `rel-bbf594669b08-b5f52b15955f` was
+  deployed to Worker version
+  `f9bb5d31-4636-40d9-a3fd-474021559169` at 100% traffic on
+  `2026-11-10T01:50:48.795Z`. Rollback target:
+  `8caaf9f4-bb79-4721-ae8b-676808e76b38`.
 
 ## Release record
 
-Source and website commits, release ID, Worker ID, asset hashes, and live
-acceptance results will be appended after the guarded production release.
+Source and website commit: `bbf594669b08a631c03d594a300e819b6fd8ff84`.
+The deployed entrypoint references StudioFlow JavaScript
+`index-BAUieVoD.js` (SHA-256
+`06315f104af7ddef7637d4f2001556d50a1770fc9b21e354ffaa60ab946bfb0b`) and
+CSS `index-V2mQ_DP8.css` (SHA-256
+`6e68faa590fb4a116d57b71bb768835e6b901c8ffdd903eee75267d4fad9899b`).
+The Admin Center preview uses `index-Dnr2ZTyt.js` (SHA-256
+`942513f0fedb54236377c4a71bd833e97c93bcfcebbab88648a76b66da9a4fb1`).
+The integrated release entrypoint SHA-256 is
+`98f050274c7855e0f74ee74d10951564715269a4557bb99d8ae959dae1dd49d2`.
+
+Live verification confirmed the public profile API, enlarged recognition
+trigger, modal title and artwork load, modal close behavior, and Profile Wall
+against production Firefox. Production data was not mutated.
