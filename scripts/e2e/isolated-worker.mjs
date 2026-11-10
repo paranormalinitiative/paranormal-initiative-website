@@ -48,7 +48,7 @@ function buildConfig() {
     .replace("port = 8787", `port = ${isolatedPort}`)
     .replace('directory = ".local-dev/assets"', `directory = "${testAssetsPath}"`)
     .replace('database_id = "00000000-0000-4000-8000-000000000007"', 'database_id = "00000000-0000-4000-8000-00000000e2e7"')
-    .replace('preview_database_id = "tpi-local-foundation"', 'preview_database_id = "tpi-isolated-e2e-foundation"')
+    .replace('preview_database_id = "tpi-local-foundation"', `preview_database_id = "tpi-isolated-e2e-foundation"\n migrations_dir = "${resolve(repoRoot, "migrations")}"`)
     .replace('database_name = "tpi-local-foundation"', 'database_name = "tpi-isolated-e2e-foundation"')
     .replace('bucket_name = "tpi-local-media"', 'bucket_name = "tpi-isolated-e2e-media"');
   for (const forbidden of ["theparanormalinitiative-dev", "tpi_contributor_portal_dev", "paranormalinitiative.com", "remote = true", "crons ="]) {

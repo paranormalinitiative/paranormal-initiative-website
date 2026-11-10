@@ -12,6 +12,8 @@ const packageSource = read("package.json");
 const studioflowStage = read("scripts/stage-studioflow-authoritative.mjs");
 const qaRunner = read("scripts/qa/run-qa.mjs");
 const firefoxAcceptance = read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs");
+const isolatedWorker = read("scripts/e2e/isolated-worker.mjs");
+const isolatedApiE2E = read("scripts/e2e/api-e2e.sh");
 
 const checks = [];
 function check(name, assertion) {
@@ -103,6 +105,11 @@ check("StudioFlow staging preserves maintained media bridges", () => {
 check("complete QA runs the StudioFlow request-budget guard", () => {
   assert.match(qaRunner, /StudioFlow production request-budget guard/);
   assert.match(qaRunner, /check:request-budget/);
+});
+check("isolated E2E applies migrations through one ordered disposable D1 operation", () => {
+  assert.match(isolatedWorker, /migrations_dir =/);
+  assert.match(isolatedApiE2E, /d1 migrations apply TPI_DB/);
+  assert.doesNotMatch(isolatedApiE2E, /migration_passed=/);
 });
 // TPI-OPS-005: certification reuse must never replace a safety property. These
 // assertions fail if the fast path ever stops verifying the exact certified
