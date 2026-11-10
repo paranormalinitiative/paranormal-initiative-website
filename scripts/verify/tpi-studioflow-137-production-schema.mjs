@@ -32,16 +32,37 @@ const present = new Set((parsed?.[0]?.results || []).map((row) => row.name));
 const missing = requirement.requiredTables.filter((name) => !present.has(name));
 const applied = requirement.requiredTables.filter((name) => present.has(name));
 
+const requiredColumns = {
+  leadership_distinctions: ["role_code"],
+  board_members: ["role_code", "domain_code", "medallion_code"],
+};
+const columnResults = [];
+for (const [table, columns] of Object.entries(requiredColumns)) {
+  if (!present.has(table)) {
+    columnResults.push(...columns.map((column) => ({ table, column, present: false })));
+    continue;
+  }
+  const rawColumns = execFileSync(wrangler, [
+    "d1", "execute", database, "--remote", "--json",
+    "--command", `SELECT name FROM pragma_table_info('${table}');`,
+  ], { cwd: repoRoot, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const names = new Set((JSON.parse(rawColumns)?.[0]?.results || []).map((row) => row.name));
+  columnResults.push(...columns.map((column) => ({ table, column, present: names.has(column) })));
+}
+const missingColumns = columnResults.filter((row) => !row.present);
+
 console.log(JSON.stringify({
-  status: missing.length === 0 ? "PASS" : "BLOCKED",
+  status: missing.length === 0 && missingColumns.length === 0 ? "PASS" : "BLOCKED",
   database,
   requiredTables: requirement.requiredTables,
   presentTables: applied,
   missingTables: missing,
-  pendingMigrations: missing.length === 0 ? [] : requirement.migrations,
-  reason: missing.length === 0
+  requiredColumns,
+  missingColumns,
+  pendingMigrations: missing.length === 0 && missingColumns.length === 0 ? [] : requirement.migrations,
+  reason: missing.length === 0 && missingColumns.length === 0
     ? "the production schema satisfies the approved source"
     : `${requirement.reason} Apply ${requirement.migrations.join(", ")} under an authorized migration release before deploying.`,
 }, null, 2));
 
-process.exit(missing.length === 0 ? 0 : 1);
+process.exit(missing.length === 0 && missingColumns.length === 0 ? 0 : 1);

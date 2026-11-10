@@ -10,6 +10,7 @@ function check(label, pass, detail = "") {
 }
 
 const migration = read("migrations/0066_leadership_profiles_and_distinctions.sql");
+const rankMigration = read("migrations/0068_governance_role_rank_metadata.sql");
 const api = read("functions/api/[[path]].js");
 const library = read("lib/leadership-distinctions.js");
 const admin = read("admin-center.js");
@@ -31,6 +32,9 @@ check("profile UI renders distinction artwork", profile.includes("renderLeadersh
 check("Admin Center exposes assignment and revoke controls", admin.includes("data-admin-leadership-assign-form") && admin.includes("data-admin-leadership-revoke"));
 check("distinction library is shared by API", library.includes("DISTINCTION_CATALOG") && library.includes("listLeadershipDistinctions"));
 check("leadership profile page exists", existsSync(resolve(root, "leadership-profile.html")));
+check("role metadata migration is additive", rankMigration.includes("ALTER TABLE leadership_distinctions ADD COLUMN role_code"));
+check("leadership roles own the medallion rank", library.includes("LEADERSHIP_ROLE_CATALOG") && library.includes("leadershipRolePayload") && library.includes('chief-executive-officer') && library.includes('medallionCode: "gold"'));
+check("leadership API derives rank from selected role", api.includes("leadershipRolePayload(data.roleCode)") && api.includes("role_code") && api.includes("Its medallion is assigned automatically"));
 
 const failed = checks.filter(item => !item.pass);
 console.log(`\nLeadership distinction contract: ${checks.length - failed.length}/${checks.length} PASS`);

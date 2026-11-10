@@ -31,14 +31,15 @@ const existing = await request("/api/admin/board-members", { headers });
 check("Board Member registry loads", existing.response.status === 200 && Array.isArray(existing.body?.boardMembers));
 if ((existing.body?.boardMembers || []).some(row => row.username === "local_member")) throw new Error("local_member already has an active Board Member appointment; refusing to overwrite fixture state");
 
-const assigned = await request("/api/admin/board-members", { method: "POST", headers, body: JSON.stringify({ username: "local_member", positionTitle: "Disposable Board Member", notes: "TPI-GOVERNANCE-005 local-only test" }) });
+const assigned = await request("/api/admin/board-members", { method: "POST", headers, body: JSON.stringify({ username: "local_member", roleCode: "board-member", domainCode: "research-investigation", notes: "TPI-GOVERNANCE-005 local-only test" }) });
 check("admin can appoint an existing member", assigned.response.status === 201 && assigned.body?.boardMember?.username === "local_member");
 const id = assigned.body?.boardMember?.id;
 check("appointment returns a stable id and badge", typeof id === "string" && id.length > 10 && assigned.body.boardMember.badgePath.endsWith("board-member-256.png"));
+check("appointment derives the Bronze medallion from its role", assigned.body?.boardMember?.medallion?.code === "bronze" && assigned.body?.boardMember?.roleCode === "board-member");
 
 const profile = await request("/api/contributors/profile?username=local_member");
 check("public profile exposes Board Member badge", profile.response.status === 200 && profile.body?.boardMembership?.status === "active");
-const duplicate = await request("/api/admin/board-members", { method: "POST", headers, body: JSON.stringify({ username: "local_member" }) });
+const duplicate = await request("/api/admin/board-members", { method: "POST", headers, body: JSON.stringify({ username: "local_member", roleCode: "board-member", domainCode: "research-investigation" }) });
 check("duplicate active appointment is refused", duplicate.response.status === 409);
 const revoked = await request(`/api/admin/board-members/${encodeURIComponent(id)}/revoke`, { method: "POST", headers: { Cookie: `tpi_session=${cookie}` } });
 check("admin can revoke the local test appointment", revoked.response.status === 200 && revoked.body?.status === "revoked");

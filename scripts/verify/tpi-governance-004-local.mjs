@@ -56,7 +56,7 @@ if (existingMemberRow) {
 const assigned = await request("/api/admin/leadership/distinctions", {
   method: "POST",
   headers: { Cookie: `tpi_session=${cookie}`, "Content-Type": "application/json" },
-  body: JSON.stringify({ username: "local_member", code: "gold", description: "Disposable local verification distinction", notes: "TPI-GOVERNANCE-004 local-only test" }),
+  body: JSON.stringify({ username: "local_member", roleCode: "founder-director", description: "Disposable local verification distinction", notes: "TPI-GOVERNANCE-004 local-only test" }),
 });
 check("admin can assign Gold to an existing member", assigned.response.status === 201 && assigned.body?.account?.username === "local_member");
 const distinctionId = assigned.body?.distinction?.id;
@@ -68,7 +68,7 @@ check("public profile exposes active distinction", profile.response.status === 2
 const duplicate = await request("/api/admin/leadership/distinctions", {
   method: "POST",
   headers: { Cookie: `tpi_session=${cookie}`, "Content-Type": "application/json" },
-  body: JSON.stringify({ username: "local_member", code: "gold" }),
+  body: JSON.stringify({ username: "local_member", roleCode: "founder-director" }),
 });
 check("duplicate active distinction is refused", duplicate.response.status === 409);
 

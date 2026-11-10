@@ -1,5 +1,29 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Rank-safe leadership, Board medallions, and Education subjects
+
+Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION RELEASE PENDING ADDITIVE SCHEMA.**
+Leadership assignment now chooses from a server-owned role catalog whose rank
+controls the medallion, so executive roles cannot be assigned Bronze. Board
+appointments now choose a governed Board role and paranormal umbrella domain;
+the Board Member badge remains visible alongside the derived Gold, Silver, or
+Bronze medallion. Both interfaces retain authenticated search, duplicate
+protection, audit history, and revoke controls.
+
+The Nova Editorial Workspace and public Education Center now share one complete
+18-destination subject catalog. A live contributor-publications index groups
+published articles by those destinations and preserves legacy reference shelves,
+including Water & Steam ITC. Existing article destinations were not changed.
+
+Focused checks: Leadership 18/18, Leadership local 10/10, Board 20/20, Board
+local 11/11, subject index 24/24, release safety 27/27, Admin Center build PASS.
+Local migration 0068 applied successfully. Production release remains pending
+the individually applied additive migrations 0067 and 0068, then the guarded
+preflight and isolated Firefox acceptance.
+
+Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-GOVERNANCE-006-LEADERSHIP-BOARD-EDUCATION.md`.
+
 ## 2026-11-09 — Board Member badge and appointment workflow
 
 Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION PENDING SCHEMA RELEASE.**

@@ -212,6 +212,15 @@
                 grid-template-columns: 1fr;
             }
         }
+        .tpi-contributor-publications { margin-top: 40px; }
+        .tpi-subject-index-intro { max-width: 760px; color: var(--text-secondary); }
+        .tpi-subject-index-grid { display: grid; gap: 16px; margin-top: 20px; }
+        .tpi-subject-index-group { padding: 22px; border: 1px solid var(--border-subtle); border-radius: 20px; background: var(--bg-card); }
+        .tpi-subject-index-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+        .tpi-subject-index-heading h3 { margin: 10px 0 6px; }
+        .tpi-subject-index-heading p { margin: 0; color: var(--text-secondary); }
+        .tpi-subject-empty { padding: 18px; border: 1px dashed var(--border-subtle); border-radius: 14px; color: var(--text-secondary); }
+        @media (max-width: 720px) { .tpi-subject-index-heading { display: block; } .tpi-subject-index-heading .dashboard-panel-cta { display: inline-block; margin-top: 12px; } }
     </style>
 </head>
 <body class="education-center-page">
@@ -651,8 +660,12 @@
 </div>
 </div>
 
+<div id="tpi-contributor-subject-index"></div>
+
 <div id="site-footer"></div>
 <script src="includes.js"></script>
+<script src="education-subjects.js"></script>
+<script src="education-center-subjects.js"></script>
 <script src="member-shell.js?v=55"></script>
 <script>
 // Accordion functionality

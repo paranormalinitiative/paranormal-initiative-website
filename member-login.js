@@ -1478,12 +1478,17 @@
   function renderBoardMembership(boardMembership) {
     if (!boardMembership || boardMembership.status !== "active" || !boardMembership.badgePath) return "";
     const srcset = boardMembership.badgePath2x ? ` srcset="${escapeHtml(boardMembership.badgePath)} 1x, ${escapeHtml(boardMembership.badgePath2x)} 2x"` : "";
+    const medallion = boardMembership.medallion && boardMembership.medallion.assetPath
+      ? `<img class="board-member-medallion-art" src="${escapeHtml(boardMembership.medallion.assetPath)}" width="44" height="44" alt="${escapeHtml(boardMembership.medallion.label || "Board rank medallion")}" loading="lazy" decoding="async">`
+      : "";
     return `
       <div class="board-member-badge-chip">
         <img class="board-member-badge-chip-art" src="${escapeHtml(boardMembership.badgePath)}"${srcset} width="52" height="52" alt="${escapeHtml(boardMembership.badgeAlt || "Board Member badge")}" loading="lazy" decoding="async">
+        ${medallion}
         <div class="founding-badge-chip-text">
           <strong>${escapeHtml(boardMembership.label || "Board Member")}</strong>
           <span>${escapeHtml(boardMembership.positionTitle || "Board Member")}</span>
+          ${boardMembership.medallion?.label ? `<small>${escapeHtml(boardMembership.medallion.label)}</small>` : ""}
         </div>
       </div>`;
   }

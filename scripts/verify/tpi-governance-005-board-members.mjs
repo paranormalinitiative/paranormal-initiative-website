@@ -17,6 +17,7 @@ function check(label, pass, detail = "") {
 }
 
 const migration = read("migrations/0067_board_members_and_badge.sql");
+const rankMigration = read("migrations/0068_governance_role_rank_metadata.sql");
 const api = read("functions/api/[[path]].js");
 const library = read("lib/board-members.js");
 const admin = read("admin-center-app/src/app.tsx");
@@ -36,12 +37,16 @@ check("member profiles receive Board Member data", api.includes("boardMembership
 check("Board Member library is server-resolved", library.includes("getBoardMembership") && library.includes("listBoardMembers"));
 check("Admin Center includes appointment form", admin.includes("Appoint a Board Member") && admin.includes("/admin/board-members"));
 check("Admin Center includes revoke control", admin.includes("/admin/board-members/${encodeURIComponent(row.id)}/revoke"));
-check("Admin Center keeps authority boundaries visible", admin.includes("does not grant account access or Founding Membership benefits"));
+check("Admin Center keeps authority boundaries visible", admin.includes("does not grant account access or Founding Membership benefits") || admin.includes("Free-text rank assignments are not permitted"));
 check("profile UI renders Board Member artwork", profile.includes("renderBoardMembership") && profile.includes("boardMembership.badgePath"));
 check("profile styling includes Board Member badge", css.includes(".board-member-badge-chip"));
 check("Board Member master is excluded from public package", /^assets\/board-members\/masters\/$/m.test(ignore));
 check("256px derivative is a real PNG", existsSync(badge256) && readFileSync(badge256).subarray(0, 8).equals(PNG_SIGNATURE));
 check("512px derivative is a real PNG", existsSync(badge512) && readFileSync(badge512).subarray(0, 8).equals(PNG_SIGNATURE));
+check("rank metadata migration is additive", rankMigration.includes("ALTER TABLE board_members ADD COLUMN role_code") && rankMigration.includes("ALTER TABLE board_members ADD COLUMN medallion_code"));
+check("board role catalog derives medallion rank", library.includes("BOARD_ROLE_CATALOG") && library.includes("boardRolePayload") && library.includes('medallionCode: "gold"'));
+check("board domains cover paranormal umbrella", library.includes("research-investigation") && library.includes("ethics-professional-conduct") && library.includes("community-outreach"));
+check("board API rejects free-text rank assignment", api.includes("Choose an approved Board role") && api.includes("boardRolePayload(data.roleCode, data.domainCode)"));
 
 const failed = checks.filter(item => !item.pass);
 console.log(`\nBoard Member contract: ${checks.length - failed.length}/${checks.length} PASS`);

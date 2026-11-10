@@ -25,7 +25,8 @@
       "0057_studioflow_note_trash_metadata.sql",
       "0065_member_social_and_bug_reports.sql",
       "0066_leadership_profiles_and_distinctions.sql",
-      "0067_board_members_and_badge.sql"
+      "0067_board_members_and_badge.sql",
+      "0068_governance_role_rank_metadata.sql"
     ],
     "requiredTables": [
       "studio_notes",

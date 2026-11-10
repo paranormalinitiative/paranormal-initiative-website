@@ -34,11 +34,13 @@ import {
 } from "../../lib/founding-memberships.js";
 import {
   DISTINCTION_CATALOG,
+  LEADERSHIP_ROLE_CATALOG,
   distinctionPayload,
+  leadershipRolePayload,
   listLeadershipDistinctions,
   listLeadershipProfiles,
 } from "../../lib/leadership-distinctions.js";
-import { BOARD_MEMBER_BADGE, getBoardMembership, listBoardMembers } from "../../lib/board-members.js";
+import { BOARD_DOMAIN_CATALOG, BOARD_MEMBER_BADGE, BOARD_ROLE_CATALOG, boardRolePayload, getBoardMembership, listBoardMembers } from "../../lib/board-members.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -1444,30 +1446,33 @@ async function handleAdminLeadershipDistinctions(request, env) {
       SELECT d.id, d.subject_type AS subjectType, d.subject_id AS subjectId,
              d.distinction_code AS code, d.label, d.description, d.asset_path AS assetPath,
              d.color, d.status, d.issued_at AS issuedAt, d.issued_by AS issuedBy,
+             d.role_code AS roleCode,
              c.username, c.display_name AS displayName, p.slug, p.display_name AS profileName
       FROM leadership_distinctions d
       LEFT JOIN contributors c ON d.subject_type = 'member' AND c.id = d.subject_id
       LEFT JOIN leadership_profiles p ON d.subject_type = 'leadership_profile' AND p.id = d.subject_id
       WHERE d.status = 'active'
         AND (? = '' OR lower(COALESCE(c.username, p.slug, '')) LIKE lower(?) OR lower(COALESCE(c.display_name, p.display_name, '')) LIKE lower(?))
-      ORDER BY CASE d.code WHEN 'gold' THEN 0 WHEN 'silver' THEN 1 ELSE 2 END, d.issued_at ASC
+      ORDER BY CASE d.distinction_code WHEN 'gold' THEN 0 WHEN 'silver' THEN 1 ELSE 2 END, d.issued_at ASC
     `).bind(search, like, like).all();
     return json({
       catalog: Object.values(DISTINCTION_CATALOG).map(item => ({ code: item.code, label: item.label, color: item.color, assetPath: item.assetPath })),
+      roles: Object.values(LEADERSHIP_ROLE_CATALOG).map(item => ({ ...item, medallion: DISTINCTION_CATALOG[item.medallionCode] })),
       distinctions: results || [],
       profiles: await listLeadershipProfiles(env),
     }, 200, { "Cache-Control": "no-store" });
   } catch {
-    return json({ catalog: Object.values(DISTINCTION_CATALOG), distinctions: [], profiles: [], schemaPending: true }, 200, { "Cache-Control": "no-store" });
+    return json({ catalog: Object.values(DISTINCTION_CATALOG), roles: Object.values(LEADERSHIP_ROLE_CATALOG), distinctions: [], profiles: [], schemaPending: true }, 200, { "Cache-Control": "no-store" });
   }
 }
 
 async function handleAdminAssignLeadershipDistinction(request, env, actingUser) {
   const data = await readJson(request);
   const username = normalizeAdminMemberUsername(data.username);
-  const distinction = distinctionPayload(data.code, data.description);
+  const role = leadershipRolePayload(data.roleCode);
+  const distinction = role ? distinctionPayload(role.medallion.code, data.description) : null;
   if (!username) return json({ error: "An existing member username is required." }, 400, { "Cache-Control": "no-store" });
-  if (!distinction) return json({ error: "Choose Gold, Silver, or Bronze." }, 400, { "Cache-Control": "no-store" });
+  if (!role || !distinction) return json({ error: "Choose an approved leadership role. Its medallion is assigned automatically by rank." }, 400, { "Cache-Control": "no-store" });
   const member = await findExistingMember(env, username);
   if (!member) return json({ error: "An active existing TPI account is required." }, 404, { "Cache-Control": "no-store" });
   try {
@@ -1480,11 +1485,11 @@ async function handleAdminAssignLeadershipDistinction(request, env, actingUser) 
     const id = crypto.randomUUID();
     await env.TPI_DB.prepare(`
       INSERT INTO leadership_distinctions
-        (id, subject_type, subject_id, distinction_code, label, description, asset_path, color, issued_by, notes)
-      VALUES (?, 'member', ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, subject_type, subject_id, distinction_code, label, description, asset_path, color, issued_by, notes, role_code)
+      VALUES (?, 'member', ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       id, member.id, distinction.code, distinction.label, distinction.description,
-      distinction.assetPath, distinction.color, actingUser.id, clean(data.notes).slice(0, 2000)
+      distinction.assetPath, distinction.color, actingUser.id, clean(data.notes).slice(0, 2000), role.code
     ).run();
     await writeAdminAuditLog(env, actingUser, "leadership.distinction_assigned", "member", member.username, {
       distinction: distinction.code,
@@ -1519,6 +1524,8 @@ async function handleAdminBoardMembers(request, env) {
   const search = clean(new URL(request.url).searchParams.get("search") || "").slice(0, 120);
   return json({
     badge: BOARD_MEMBER_BADGE,
+    roles: Object.values(BOARD_ROLE_CATALOG),
+    domains: Object.entries(BOARD_DOMAIN_CATALOG).map(([code, label]) => ({ code, label })),
     boardMembers: await listBoardMembers(env, search),
   }, 200, { "Cache-Control": "no-store" });
 }
@@ -1529,7 +1536,9 @@ async function handleAdminAssignBoardMember(request, env, actingUser) {
   if (!username) return json({ error: "An existing member username is required." }, 400, { "Cache-Control": "no-store" });
   const member = await findExistingMember(env, username);
   if (!member) return json({ error: "An active existing TPI account is required." }, 404, { "Cache-Control": "no-store" });
-  const positionTitle = clean(data.positionTitle || "Board Member").slice(0, 160) || "Board Member";
+  const boardRole = boardRolePayload(data.roleCode, data.domainCode);
+  if (!boardRole) return json({ error: "Choose an approved Board role and, where required, its paranormal domain." }, 400, { "Cache-Control": "no-store" });
+  const positionTitle = boardRole.positionTitle;
   try {
     const existing = await env.TPI_DB.prepare(`
       SELECT id FROM board_members
@@ -1540,11 +1549,12 @@ async function handleAdminAssignBoardMember(request, env, actingUser) {
     const id = crypto.randomUUID();
     await env.TPI_DB.prepare(`
       INSERT INTO board_members
-        (id, contributor_id, position_title, badge_path, badge_path_2x, appointed_by, notes)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+        (id, contributor_id, position_title, badge_path, badge_path_2x, appointed_by, notes, role_code, domain_code, medallion_code)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       id, member.id, positionTitle, BOARD_MEMBER_BADGE.assetPath,
-      BOARD_MEMBER_BADGE.assetPath2x, actingUser.id, clean(data.notes).slice(0, 2000)
+      BOARD_MEMBER_BADGE.assetPath2x, actingUser.id, clean(data.notes).slice(0, 2000),
+      boardRole.code, boardRole.domainCode, boardRole.medallion.code
     ).run();
     await writeAdminAuditLog(env, actingUser, "board.member_appointed", "member", member.username, {
       positionTitle,
@@ -1561,6 +1571,10 @@ async function handleAdminAssignBoardMember(request, env, actingUser) {
         badgePath: BOARD_MEMBER_BADGE.assetPath,
         badgePath2x: BOARD_MEMBER_BADGE.assetPath2x,
         badgeAlt: BOARD_MEMBER_BADGE.alt,
+        roleCode: boardRole.code,
+        domainCode: boardRole.domainCode,
+        domainLabel: boardRole.domainLabel,
+        medallion: boardRole.medallion,
         status: "active",
         appointedAt: new Date().toISOString(),
       },

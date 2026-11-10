@@ -49,9 +49,10 @@
 /* TPI-GOVERNANCE-005: Board Member appointment identity. */
 .board-member-badge-chip { display: inline-flex; align-items: center; gap: 12px; margin-top: 14px; padding: 10px 14px; border: 1px solid #d6a84f99; border-radius: var(--radius-sm); background: color-mix(in srgb,#d6a84f 8%,var(--bg-surface)); max-width: 100%; }
 .board-member-badge-chip-art { display: block; flex: none; width: 52px; height: 52px; border-radius: var(--radius-full); object-fit: cover; border: 2px solid #d6a84f; }
+.board-member-medallion-art { display: block; flex: none; width: 44px; height: 44px; border-radius: var(--radius-full); object-fit: cover; border: 2px solid #d6a84f; }
 .board-member-badge-chip .founding-badge-chip-text strong { color: var(--text-primary); }
 .board-member-badge-chip .founding-badge-chip-text span { color: #d6a84f; }
-@media(max-width:640px) { .board-member-badge-chip { width: 100%; } .board-member-badge-chip-art { width: 44px; height: 44px; } }
+@media(max-width:640px) { .board-member-badge-chip { width: 100%; } .board-member-badge-chip-art { width: 44px; height: 44px; } .board-member-medallion-art { width: 38px; height: 38px; } }
 
 /* TPI-GOVERNANCE-004: visible recognition is separate from access control. */
 .leadership-distinction-list { margin-top: 18px; }
