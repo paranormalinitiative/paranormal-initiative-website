@@ -30,6 +30,11 @@ passes 18/18; and the disposable Firefox member UI audit passes 8/8 across
 Community Feed, Friends search, bug reporting, Education Center, Sol, and a
 public profile. Friends search correctly returned no active match for the
 synthetic `qa` query; no follow/unfollow or bug report was submitted. The
+production Community Feed interaction then passed 3/3 for in-place Open Post,
+complete inline expansion, and no navigation reload. The synthetic local
+Firefox Friends interaction passed 7/7 for search, follow, following-list
+display, unfollow, and restoration of the initial state; it also confirmed no
+`file:///` navigation. No real or production member relationship was changed.
 guarded preflight certified the synchronized branch as release
 `rel-9ef3594abed1-23357aacd79c`; the guarded deployment then served Worker
 version `84b2fa25-3fb2-4654-94ad-b47d015ee8a3` and passed live smoke 10/10 and
