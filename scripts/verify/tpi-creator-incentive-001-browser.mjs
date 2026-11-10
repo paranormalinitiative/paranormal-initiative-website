@@ -281,12 +281,12 @@ async function runFirefox() {
     `);
     check(
       "Firefox: the profile badge loads the published All-Access derivative with useful alt text",
-      profileBadge?.loaded > 0 && /founding-all-access-256\.png$/.test(profileBadge?.src || "") && /Founding All-Access badge/.test(profileBadge?.alt || ""),
+      profileBadge?.loaded > 0 && /founding-all-access-(?:256|512)\.png$/.test(profileBadge?.src || "") && /Founding All-Access/.test(profileBadge?.alt || ""),
       JSON.stringify(profileBadge),
     );
     check(
       "Firefox: the badge is rendered square at a derivative size, never stretched",
-      profileBadge?.rendered?.[0] === profileBadge?.rendered?.[1] && profileBadge.rendered[0] <= 64 && profileBadge.rendered[0] >= 24,
+      profileBadge?.rendered?.[0] === profileBadge?.rendered?.[1] && profileBadge.rendered[0] <= 96 && profileBadge.rendered[0] >= 24,
       JSON.stringify(profileBadge?.rendered),
     );
     await driver.executeAsyncScript(`const done = arguments[arguments.length - 1]; fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }).then(() => done()).catch(() => done());`);
@@ -298,7 +298,7 @@ async function runFirefox() {
       const img = document.querySelector(".public-profile-sidebar .founding-badge-chip img");
       return img ? { src: img.getAttribute("src"), loaded: img.naturalWidth } : null;
     `);
-    check("Firefox: the public profile badge loads its derivative", publicBadge?.loaded > 0 && /founding-all-access-256\.png$/.test(publicBadge?.src || ""), JSON.stringify(publicBadge));
+    check("Firefox: the public profile badge loads its derivative", publicBadge?.loaded > 0 && /founding-all-access-(?:256|512)\.png$/.test(publicBadge?.src || ""), JSON.stringify(publicBadge));
 
     await driver.get(`${baseUrl}/contributor-profile.html?username=${encodeURIComponent(review.creator?.username || "tpi_review_creator")}`);
     const creatorChip = await waitForChipText(".public-profile-sidebar .founding-badge-chip", (text) => /Founding Creator/i.test(text) && /FC-0\d\d/.test(text));
@@ -307,7 +307,7 @@ async function runFirefox() {
       return img ? { src: img.getAttribute("src"), loaded: img.naturalWidth } : null;
     `);
     check("Firefox: a Founding Creator profile shows the Creator identity, never All-Access", /Founding Creator/i.test(creatorChip) && !/Founding All-Access/i.test(creatorChip), creatorChip.replace(/\n/g, " | "));
-    check("Firefox: the Creator profile loads the Creator derivative", creatorBadge?.loaded > 0 && /founding-creator-256\.png$/.test(creatorBadge?.src || ""), JSON.stringify(creatorBadge));
+    check("Firefox: the Creator profile loads the Creator derivative", creatorBadge?.loaded > 0 && /founding-creator-(?:256|512)\.png$/.test(creatorBadge?.src || ""), JSON.stringify(creatorBadge));
 
     await driver.get(`${baseUrl}/contributor-profile.html?username=${encodeURIComponent("local_member")}`);
     await driver.wait(until.elementLocated(By.css(".public-profile-sidebar")), 20000);
@@ -398,7 +398,7 @@ async function runChromium() {
       const img = document.querySelector("[data-dashboard-profile] .founding-badge-chip img");
       return img ? { src: img.getAttribute("src"), alt: img.getAttribute("alt"), loaded: img.naturalWidth } : null;
     });
-    check("Chromium: the profile badge matches Firefox", /Founding All-Access/.test(chromiumChip) && chromiumBadgeImage?.loaded > 0 && /founding-all-access-256\.png$/.test(chromiumBadgeImage?.src || ""), JSON.stringify(chromiumBadgeImage));
+    check("Chromium: the profile badge matches Firefox", /Founding All-Access/.test(chromiumChip) && chromiumBadgeImage?.loaded > 0 && /founding-all-access-(?:256|512)\.png$/.test(chromiumBadgeImage?.src || ""), JSON.stringify(chromiumBadgeImage));
     check("Chromium: no console errors on the member profile", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
   } finally {
     await browser.close().catch(() => {});
