@@ -16,13 +16,13 @@ acceptance level shown here.
 | Leadership, Board, profiles, Sol, and Education | Implemented; governance/profile/source gates pass; prior production releases recorded | Current production re-audit remains required for final completion |
 | Nova Editorial Workspace and Nova Edit | Implemented; current review 47/47, publish 60/60, revision 26/26, Slides 23/23, workstation 9/9, and StudioFlow Nova Edit 13/13 pass locally | Current production re-audit remains required for final completion |
 | Founding Membership | Implemented; Firefox/Chromium browser audit passes 48/48 and capability separation passes | Current production re-audit remains required for final completion |
-| StudioFlow destinations and recording storage | Local Firefox/source audit passes 33/33; production verifier is repaired but blocked before UI acceptance | Restore only the synthetic `qa-studioflow-prod` `creator_studio_lifetime` entitlement, then run guarded production acceptance |
+| StudioFlow destinations and recording storage | Local and production Firefox/source audit passes 33/33; external-folder and cloud destinations remain honestly gated | No remaining implementation blocker; retain disposable-account-only acceptance and do not claim unsupported broadcast destinations |
 
 Current release-safety verification passes 28/28. The latest test-only repairs
 are pushed on `codex/tpi-development` as `d07e7905` and `f2799a96`; no owner
-data, production broadcasts, or production access-control records were
-changed during this audit. The remaining entitlement action is intentionally
-not performed without its exact production approval.
+data, production broadcasts, or unrelated production access-control records
+were changed during this audit. The synthetic production QA account was
+already granted StudioFlow access externally before final acceptance.
 
 Current production read-only evidence added during this continuation: the
 anonymous boundary smoke passes 10/10; disposable Firefox Messenger acceptance
@@ -30,8 +30,11 @@ passes 18/18; and the disposable Firefox member UI audit passes 8/8 across
 Community Feed, Friends search, bug reporting, Education Center, Sol, and a
 public profile. Friends search correctly returned no active match for the
 synthetic `qa` query; no follow/unfollow or bug report was submitted. The
-guarded preflight also certified the synchronized branch as release
-`rel-4a8136cbb749-28d08eec6b42`; it did not upload or deploy a Worker.
+guarded preflight certified the synchronized branch as release
+`rel-9ef3594abed1-23357aacd79c`; the guarded deployment then served Worker
+version `84b2fa25-3fb2-4654-94ad-b47d015ee8a3` and passed live smoke 10/10 and
+live Firefox StudioFlow acceptance 65/65. The dedicated production
+recording/destination audit then passed 33/33.
 
 ## 2026-11-09 — Messenger navigation home and readable conversation names
 
