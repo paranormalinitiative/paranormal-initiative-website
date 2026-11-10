@@ -1,5 +1,5 @@
 // Education Center subject shelves. Every catalog destination is represented
-// by one compact shelf, with its subject resources and published work inside.
+// by one compact shelf, with only its assigned subject work inside.
 (function () {
   const subjects = window.TPI_EDUCATION_SUBJECTS || [];
   const host = document.getElementById("tpi-education-subject-directory");
@@ -45,44 +45,6 @@
     return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   }
 
-  function resourceFromAnchor(anchor) {
-    const href = anchor.getAttribute("href");
-    const title = anchor.querySelector("h3, h4")?.textContent.trim();
-    if (!href || !title) return null;
-    const resolved = new URL(href, `${window.location.origin}/education-center.html`).pathname;
-    const subtitle = anchor.querySelector("p")?.textContent.trim() || "";
-    const type = anchor.querySelector(".study-resource-card-copy > span, .category-badge, .lesson-number")?.textContent.trim() || "Education Center";
-    return { href: resolved, title, subtitle, contributionType: type };
-  }
-
-  async function loadStaticResources(subject) {
-    const resources = [];
-    try {
-      const response = await fetch(`/${subject.value}`, { credentials: "same-origin", cache: "no-store" });
-      if (response.ok) {
-        const html = await response.text();
-        const documentForSubject = new DOMParser().parseFromString(html, "text/html");
-        documentForSubject.querySelectorAll(".study-resource-card:not(.study-resource-card-placeholder), .series-post-card, .ghostology-lesson-card").forEach((anchor) => {
-          const resource = resourceFromAnchor(anchor);
-          if (resource) resources.push(resource);
-        });
-      }
-    } catch (error) {
-      // The subject overview remains available when a legacy source page is unavailable.
-    }
-
-    if (subject.value === "evp-itc-lessons.html" && !resources.some((resource) => resource.href.endsWith("/evp-itc-lesson-water-steam.html"))) {
-      resources.push({
-        href: "/evp-itc-lesson-water-steam",
-        title: "Water & Steam ITC",
-        subtitle: "Experimental visual ITC approaches using water, steam, light, and careful controls.",
-        contributionType: "Experiment note",
-      });
-    }
-
-    return resources;
-  }
-
   async function loadPublishedGroups() {
     const groups = new Map(subjects.map((subject) => [subject.value, []]));
     try {
@@ -106,7 +68,7 @@
     return groups;
   }
 
-  function subjectResources(subject, staticResources, publishedResources) {
+  function subjectResources(subject, publishedResources) {
     const resources = [{
       href: subjectHref(subject.value),
       title: `${subject.label} overview`,
@@ -115,7 +77,15 @@
       subjectOverview: true,
     }];
     const seenTitles = new Set([normalizedTitle(resources[0].title)]);
-    [...(staticResources || []), ...(publishedResources || [])].forEach((resource) => {
+    if (subject.value === "evp-itc-lessons.html") {
+      publishedResources = [...(publishedResources || []), {
+        href: "/evp-itc-lesson-water-steam",
+        title: "Water & Steam ITC",
+        subtitle: "Experimental visual ITC approaches using water, steam, light, and careful controls.",
+        contributionType: "Experiment note",
+      }];
+    }
+    (publishedResources || []).forEach((resource) => {
       const key = normalizedTitle(resource.title);
       if (!key || seenTitles.has(key)) return;
       seenTitles.add(key);
@@ -124,9 +94,9 @@
     return resources;
   }
 
-  function render(staticResourcesBySubject, publishedGroups) {
+  function render(publishedGroups) {
     const shelves = subjects.map((subject, index) => {
-      const resources = subjectResources(subject, staticResourcesBySubject.get(subject.value), publishedGroups.get(subject.value));
+      const resources = subjectResources(subject, publishedGroups.get(subject.value));
       const shelfId = `tpi-education-shelf-${index}`;
       const articleLabel = resources.length === 1 ? "article" : "articles";
       return `<article class="edu-accordion-item" data-subject="${escapeHtml(subject.value)}">
@@ -146,7 +116,7 @@
             ${resources.map((resource) => `<a class="edu-article-card" data-subject-overview="${resource.subjectOverview ? "true" : "false"}" href="${escapeHtml(resource.href)}">
               <h4>${escapeHtml(resource.title)}</h4>
               ${resource.subtitle ? `<p>${escapeHtml(resource.subtitle)}</p>` : ""}
-              <div class="edu-article-meta"><span class="edu-article-tag">${escapeHtml(resource.contributionType || "Education Center")}</span>${resource.authorDisplayName ? `<span>${escapeHtml(resource.authorDisplayName)}</span>` : ""}</div>
+              <div class="edu-article-meta"><span class="edu-article-tag">${escapeHtml(resource.contributionType || "Education Center")}</span><span class="edu-article-subject">${escapeHtml(subject.label)}</span>${resource.authorDisplayName ? `<span>${escapeHtml(resource.authorDisplayName)}</span>` : ""}</div>
             </a>`).join("")}
           </div>
         </div>
@@ -172,10 +142,8 @@
   }
 
   async function load() {
-    const staticResults = await Promise.all(subjects.map((subject) => loadStaticResources(subject)));
-    const staticResourcesBySubject = new Map(subjects.map((subject, index) => [subject.value, staticResults[index]]));
     const publishedGroups = await loadPublishedGroups();
-    render(staticResourcesBySubject, publishedGroups);
+    render(publishedGroups);
   }
 
   load();

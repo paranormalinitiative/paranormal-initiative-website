@@ -24,14 +24,15 @@ check("Education Center loads the live subject index", center.includes('id="tpi-
 check("Education Center exposes the complete subject shelves", center.includes('id="tpi-education-subject-directory"') && index.includes("edu-accordion-item") && index.includes("TPI_EDUCATION_SUBJECTS"));
 check("Education Center has one featured shelf directory", center.includes("Featured Research Shelves") && center.includes("Start with selected lessons and guides.") && !center.includes("Quick Start") && !center.includes("More Resources"));
 check("public Education Center copy omits workspace implementation details", !center.includes("Nova Editorial Workspace") && !index.includes("Editorial Workspace"));
+check("public subject wording omits legacy labels", !catalog.includes("Legacy") && !index.includes("Legacy") && !center.includes("Legacy"));
 check("all subject shelves stay inside the member content area", center.indexOf('id="tpi-education-subject-directory"') < center.lastIndexOf('id="site-footer"'));
 check("subject links use clean extensionless paths", index.includes("function subjectHref") && index.includes("replace(/\\.html$/, \"\")") && index.includes('const href = `/${path}`'));
 check("published article API is used without local-only data", index.includes("/api/articles?page=1&pageSize=100") && index.includes("status"));
 for (const destination of destinations) check(`subject is present: ${destination}`, catalog.includes(`"${destination}"`));
-check("legacy Water & Steam ITC reference is visible", index.includes("evp-itc-lesson-water-steam"));
+check("Water & Steam ITC subject resource is available", index.includes("evp-itc-lesson-water-steam"));
 check("all catalog subjects render a shelf", index.includes("subjects.map((subject, index) =>") && index.includes("edu-accordion-item"));
 check("subject shelves include direct subject guides", index.includes("subjectOverview: true") && index.includes("subjectHref(subject.value)"));
-check("subject resources are collected from the subject pages", index.includes("study-resource-card") && index.includes("series-post-card") && index.includes("ghostology-lesson-card"));
+check("published resources stay with their assigned subject", index.includes("groups.has(normalized)") && index.includes("groups.get(normalized).push"));
 check("subject articles link to their canonical destination", index.includes("articleHref") && index.includes("data-subject-overview"));
 const failed = checks.filter((item) => !item.pass);
 console.log(`\nTPI-GOVERNANCE-006 subject index: ${checks.length - failed.length}/${checks.length} PASS`);

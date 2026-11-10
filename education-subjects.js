@@ -16,10 +16,10 @@
     ["education-area-artificial-intelligence.html", "Artificial Intelligence", "AI-assisted research, transparency, limitations, and responsible use."],
     ["education-area-historical-cultural-research.html", "Historical & Cultural Research", "History, folklore, cultural context, and source-aware interpretation."],
     ["investigation-development-series.html", "Investigation Development Series", "Foundational and advanced investigation development lessons."],
-    ["ghostology-101.html", "Ghostology Reference", "Legacy reference lessons and foundational paranormal vocabulary."],
-    ["evp-itc-lessons.html", "EVP / ITC Research Notes", "Legacy EVP, ITC, water, steam, and reflective-surface research notes."],
-    ["field-articles.html", "Field Articles", "Legacy field articles and practical investigator reports."],
-    ["method-exercises.html", "Method Exercises", "Legacy methods, exercises, and guided practice."],
+    ["ghostology-101.html", "Ghostology Reference", "Foundational lessons and paranormal vocabulary."],
+    ["evp-itc-lessons.html", "EVP / ITC Research Notes", "EVP, ITC, water, steam, and reflective-surface research notes."],
+    ["field-articles.html", "Field Articles", "Field articles and practical investigator reports."],
+    ["method-exercises.html", "Method Exercises", "Methods, exercises, and guided practice."],
     ["tpi-videos.html", "TPI Videos", "Video-linked contributor work and demonstrations."],
   ].map(([value, label, description]) => ({ value, label, description }));
 
