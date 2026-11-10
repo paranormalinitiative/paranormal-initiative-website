@@ -287,6 +287,29 @@ Production release `rel-20b70b533121-78641d086c47` deployed website commit
 `5f6e6ad8-1d81-4444-b809-25fd183e626b`; the prior Worker version
 `eb3a2a70-3435-48b1-9100-c664f74eda19` remains the rollback target.
 
+## 2026-11-10 — Education Center compact shelf correction
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** The previous cleanup left the
+18-subject directory as large cards and retained only the older eight compact
+shelves. That structure has been replaced. The Education Center now presents
+all 18 catalog subjects as compact Featured Research Shelves. Each shelf
+contains a direct subject guide plus the available resources from that subject
+page and published contributor work, with duplicate titles removed. The shelf
+headers open and close their article lists, and Investigation Science keeps its
+direct clean route at `/education-area-investigation-science`.
+
+Focused source verification passes 32/32. Disposable Firefox Developer Edition
+acceptance passes 27/27 locally and 27/27 against production, including 18
+shelves, zero large directory cards, a non-empty article list for every shelf,
+interactive shelf opening, desktop containment, mobile no-overflow behavior,
+and all 18 destination routes. No database, member, contributor, or production
+content was changed.
+
+Production release `rel-968df23cd9e5-081d4b3b685b` deployed website commit
+`968df23cd9e58dac673dfdf11b116d851a61887b` as Worker version
+`dd129573-0ab5-4465-97ca-ce8ba1d83f8a`; the prior Worker version
+`5f6e6ad8-1d81-4444-b809-25fd183e626b` remains the rollback target.
+
 ## 2026-11-09 — Community Feed Open post no-reload correction
 
 Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact Community Feed
