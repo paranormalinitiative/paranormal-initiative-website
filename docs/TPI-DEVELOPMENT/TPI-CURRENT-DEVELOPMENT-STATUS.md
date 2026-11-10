@@ -1,5 +1,34 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Owner-requested continuation audit
+
+The historical records below contain several prior implementation and release
+claims. The owner has reported current usability or completeness problems in
+Friends, Leadership/Board/Profile presentation, Education Center navigation,
+and related community workflows. Those areas are therefore reopened for a
+current live Firefox audit and must not be treated as accepted solely because
+an older record says COMPLETE.
+
+Current queue and acceptance state:
+
+| Area | Current state | Required next proof |
+| --- | --- | --- |
+| Messenger | Local Firefox verified; production release pending | Guarded release, live desktop/mobile Firefox verification |
+| Community Feed | Follow-up required | Collapsed long posts, working inline Open Post, destination links, refresh notice |
+| Friends | Owner-reported production UI/route problems | Live styling, member search, follow/unfollow, add/remove, no `file:///` navigation |
+| Leadership and Board | Historical release exists; owner requests current re-audit | Rank-safe roles, medallion assignment, Board badge, revoke/edit flows |
+| Profiles | Historical release exists; owner requests current re-audit | Larger clickable medallions, purpose details, titles/credentials, Profile Wall, admin editing |
+| Education Center | Historical subject-index release exists; owner reports confusing/missing content | Subject alignment, publication placement, Steve/Todd content visibility, feed links |
+| StudioFlow destinations | Verification outstanding | Supported connection behavior, safe test destination, no unsupported broadcast claim |
+| Nova Editorial Workspace | Completion audit outstanding | Documents/Slides ribbon, caret, previews, presenter, templates, images, fonts, deletion, persistence |
+| Nova Edit in StudioFlow | Scope defined; implementation/completion audit outstanding | Slim Nova-styled Documents/Slides experience with essential content-editor tools and custom fonts |
+| Bug reporting | Requested; implementation outstanding | Member form, Administration Center intake, error handling |
+| Sol profile | Leadership/profile identity is documented historically; current live presentation requires verification | Profile, Gold Medallion, public role/credentials, recognition detail, admin visibility |
+
+Every row requires separate source, local Firefox, production, and manual
+acceptance evidence before it is marked complete again. Destructive tests use
+disposable records only; production creator data remains protected.
+
 ## 2026-11-09 — Messenger navigation home and readable conversation names
 
 Status: **IMPLEMENTED — FIREFOX VERIFIED LOCALLY; PRODUCTION RELEASE PENDING.**
