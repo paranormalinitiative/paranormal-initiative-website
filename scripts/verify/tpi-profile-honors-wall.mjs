@@ -52,6 +52,19 @@ try {
   check("modal artwork loads", Number(await modalImage.getAttribute("naturalWidth")) > 0);
   await modal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
   check("recognition details modal closes", (await driver.findElements(By.css(".recognition-modal:not([hidden])"))).length === 0);
+  const secondaryTriggers = await driver.findElements(By.css(".board-member-medallion-trigger, .leadership-distinction-trigger"));
+  if (secondaryTriggers.length) {
+    const secondary = secondaryTriggers[0];
+    const secondaryTitle = await secondary.getAttribute("data-recognition-title");
+    await secondary.click();
+    const secondaryModal = await driver.wait(until.elementLocated(By.css(".recognition-modal:not([hidden])")), 5000);
+    const secondaryText = await secondaryModal.getText();
+    check("secondary medallion recognition opens", secondaryTitle && secondaryText.includes(secondaryTitle), `${secondaryTitle || "missing title"}`);
+    const secondaryImage = await secondaryModal.findElement(By.css("[data-recognition-modal-image]"));
+    await driver.wait(async () => Number(await secondaryImage.getAttribute("naturalWidth")) > 0, 5000).catch(() => {});
+    check("secondary medallion artwork loads", Number(await secondaryImage.getAttribute("naturalWidth")) > 0);
+    await secondaryModal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
+  }
   check("profile wall is present", (await driver.findElements(By.css(".public-profile-wall"))).length === 1);
 } finally {
   if (driver) await driver.quit().catch(() => {});

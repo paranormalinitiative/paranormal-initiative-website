@@ -51,8 +51,9 @@ authorization and owner-profile protection remain server-side.
 - Community workstation: 12/12 PASS.
 - Release safety: 27/27 PASS.
 - Profile honors/wall Firefox Developer Edition acceptance: 10/10 PASS
-  locally and 10/10 PASS against the live production owner profile
-  `Todd_Wayne`.
+  locally and 12/12 PASS against the live production owner profile
+  `Todd_Wayne`, including separate Board badge and Gold Medallion modal
+  activation.
 - Isolated Firefox profile used the disposable local synthetic profile
   `tpi_review_allaccess`; no production member or creator data was changed.
 - Recognition trigger rendered at 76×76 pixels, opened its modal, loaded the

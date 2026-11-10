@@ -12,8 +12,9 @@ affiliation, organization, website, profile image URL, and biography for an
 existing member through a protected owner/admin route. No schema change was
 required and recognition remains visual-only.
 
-Focused checks: Profile honors/wall Firefox 10/10 locally and 10/10 against the
-live `Todd_Wayne` profile, Leadership 18/18, Board 20/20, subject index 24/24,
+Focused checks: Profile honors/wall Firefox 10/10 locally and 12/12 against the
+live `Todd_Wayne` profile, including separate Board badge and Gold Medallion
+activation, Leadership 18/18, Board 20/20, subject index 24/24,
 community workstation 12/12, release safety 27/27. Unauthenticated profile
 update correctly returned 403. Full guarded release gates passed, anonymous
 production smoke passed 10/10, and live isolated Firefox acceptance passed
