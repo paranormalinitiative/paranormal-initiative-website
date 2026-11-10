@@ -1473,6 +1473,21 @@
       </div>`;
   }
 
+  // TPI-GOVERNANCE-005: Board Member appointment artwork is a separate,
+  // server-resolved identity. It never grants access or changes account role.
+  function renderBoardMembership(boardMembership) {
+    if (!boardMembership || boardMembership.status !== "active" || !boardMembership.badgePath) return "";
+    const srcset = boardMembership.badgePath2x ? ` srcset="${escapeHtml(boardMembership.badgePath)} 1x, ${escapeHtml(boardMembership.badgePath2x)} 2x"` : "";
+    return `
+      <div class="board-member-badge-chip">
+        <img class="board-member-badge-chip-art" src="${escapeHtml(boardMembership.badgePath)}"${srcset} width="52" height="52" alt="${escapeHtml(boardMembership.badgeAlt || "Board Member badge")}" loading="lazy" decoding="async">
+        <div class="founding-badge-chip-text">
+          <strong>${escapeHtml(boardMembership.label || "Board Member")}</strong>
+          <span>${escapeHtml(boardMembership.positionTitle || "Board Member")}</span>
+        </div>
+      </div>`;
+  }
+
   // TPI-GOVERNANCE-004: leadership distinctions are server-resolved visual
   // recognition. Their markup never grants or implies account capability.
   function renderLeadershipDistinctions(distinctions) {
@@ -1531,6 +1546,7 @@
           <p class="public-profile-title">${escapeHtml(user.title || "Contributor")}</p>
           <p class="member-profile-role">${escapeHtml(getAccountAccessDetail(user.role))}</p>
           ${renderFoundingBadgeIdentity(user.foundingMembership)}
+          ${renderBoardMembership(user.boardMembership)}
           ${renderLeadershipDistinctions(user.leadershipDistinctions)}
         </div>
       </div>
@@ -1682,6 +1698,7 @@
             <h2>${escapeHtml(profileName)}</h2>
             ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : ""}
             ${renderFoundingBadgeIdentity(data.foundingMembership)}
+            ${renderBoardMembership(data.boardMembership)}
             ${renderLeadershipDistinctions(data.leadershipDistinctions)}
             ${renderContributionLevel(contributionLevel, "public-contribution-level")}
           </aside>

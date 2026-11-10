@@ -1,5 +1,30 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Board Member badge and appointment workflow
+
+Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION PENDING SCHEMA RELEASE.**
+The owner-provided Board Member badge is now a protected, auditable governance
+appointment separate from Founding Memberships, medallions, and account roles.
+Administration Center → Leadership & Honors can search existing registered
+members, appoint or revoke Board Member status, record a position title and
+administrative note, and show active appointments. Authenticated and public
+profiles receive the server-resolved Board Member badge when an active
+appointment exists.
+
+Focused contract verification passed 16/16, local integration passed 10/10,
+leadership regression passed 15/15, Admin Center preview checks passed 6/6,
+and release safety passed 27/27. The local-only additive migration
+`0067_board_members_and_badge.sql` was applied successfully. No production
+database, creator record, or storage object was changed.
+
+The guarded release is intentionally blocked until production D1 contains the
+new `board_members` table. The release baseline now requires migration 0067 and
+the read-only production schema gate will fail closed until that additive
+schema release is separately authorized and completed.
+
+Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-GOVERNANCE-005-BOARD-MEMBERS.md`.
+
 ## 2026-11-09 — Leadership profiles and Gold/Silver/Bronze distinctions
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The preserved Society /

@@ -37,6 +37,10 @@ assets/founding-memberships/masters/
 assets/founding-memberships/masters/**
 assets/society-leadership/masters/
 assets/society-leadership/masters/**
+# TPI-GOVERNANCE-005: the Board Member master is retained in Git; only the
+# optimized published derivatives are served to profile surfaces.
+assets/board-members/masters/
+assets/board-members/masters/**
 # TPI-GOVERNANCE-003B: operational-role (Moderator/Administrator) masters stay in
 # Git but are not published. No display surface or derivative exists yet; add
 # derivatives and a narrower rule when the operational insignia feature is built.

@@ -50,6 +50,8 @@
     "verify:release-safety": "node scripts/verify/tpi-release-safety.mjs",
     "verify:leadership-distinctions": "node scripts/verify/tpi-governance-004-leadership-distinctions.mjs",
     "verify:leadership-local": "node scripts/verify/tpi-governance-004-local.mjs",
+    "verify:board-members": "node scripts/verify/tpi-governance-005-board-members.mjs",
+    "verify:board-members-local": "node scripts/verify/tpi-governance-005-local.mjs",
     "verify:community-workstation": "node scripts/qa/community-workstation.mjs",
     "verify:release-staging": "node scripts/verify/tpi-ops-004-release-staging-guard.mjs",
     "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",

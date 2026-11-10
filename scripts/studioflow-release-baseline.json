@@ -18,13 +18,14 @@
     }
   },
   "productionSchemaRequirements": {
-    "reason": "The complete Notes workspace reads and writes studio_note_* tables. Deploying it before those tables exist serves an interface that cannot persist, so the guarded production release refuses to deploy until the schema is present.",
+    "reason": "The complete Notes workspace and protected governance workflows read and write their required D1 tables. Deploying them before those tables exist serves interfaces that cannot persist, so the guarded production release refuses to deploy until the schema is present.",
     "migrations": [
       "0055_studioflow_notes.sql",
       "0056_studioflow_note_automatic_titles.sql",
       "0057_studioflow_note_trash_metadata.sql",
       "0065_member_social_and_bug_reports.sql",
-      "0066_leadership_profiles_and_distinctions.sql"
+      "0066_leadership_profiles_and_distinctions.sql",
+      "0067_board_members_and_badge.sql"
     ],
     "requiredTables": [
       "studio_notes",
@@ -34,7 +35,8 @@
       "member_follows",
       "member_bug_reports",
       "leadership_profiles",
-      "leadership_distinctions"
+      "leadership_distinctions",
+      "board_members"
     ]
   }
 }

@@ -101,6 +101,7 @@ const migrations = [
   { file: "migrations/0057_studioflow_note_trash_metadata.sql", columns: ["deleted_at", "trash_collection_id"], table: "studio_notes" },
   { file: "migrations/0058_founding_membership_entitlements.sql", tables: ["founding_membership_classes", "founding_memberships", "founding_membership_history", "member_entitlements", "creator_incentive_participation"] },
   { file: "migrations/0065_member_social_and_bug_reports.sql", tables: ["member_follows", "member_bug_reports"] },
+  { file: "migrations/0067_board_members_and_badge.sql", tables: ["board_members"] },
 ];
 
 function missingParts(migration) {

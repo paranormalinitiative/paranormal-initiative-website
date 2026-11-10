@@ -38,6 +38,7 @@ import {
   listLeadershipDistinctions,
   listLeadershipProfiles,
 } from "../../lib/leadership-distinctions.js";
+import { BOARD_MEMBER_BADGE, getBoardMembership, listBoardMembers } from "../../lib/board-members.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -87,6 +88,9 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/leadership/distinctions") return requireAdmin(request, env, user => handleAdminLeadershipDistinctions(request, env, user));
     if (request.method === "POST" && path === "/admin/leadership/distinctions") return requireAdmin(request, env, user => handleAdminAssignLeadershipDistinction(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/leadership\/distinctions\/[^/]+\/revoke$/)) return requireAdmin(request, env, user => handleAdminRevokeLeadershipDistinction(path, env, user));
+    if (request.method === "GET" && path === "/admin/board-members") return requireAdmin(request, env, user => handleAdminBoardMembers(request, env, user));
+    if (request.method === "POST" && path === "/admin/board-members") return requireAdmin(request, env, user => handleAdminAssignBoardMember(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/board-members\/[^/]+\/revoke$/)) return requireAdmin(request, env, user => handleAdminRevokeBoardMember(path, env, user));
     if (request.method === "GET" && path === "/admin/creator-incentive") return requireAdmin(request, env, user => handleAdminCreatorIncentive(request, env, user));
     if (request.method === "POST" && path === "/admin/creator-incentive/participation") return requireAdmin(request, env, user => handleAdminSetIncentiveParticipation(request, env, user));
     if (request.method === "GET" && path === "/me/entitlements") return requireMember(request, env, user => handleMyEntitlements(env, user));
@@ -506,6 +510,7 @@ async function handleMe(request, env) {
       adminAccess: user.role === "owner" || user.role === "admin" || editorialReviewAccess,
       foundingMembership: await publicMembershipIdentity(env, user.id),
       leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
+      boardMembership: await getBoardMembership(env, user.id),
     },
   }, 200, { "Cache-Control": "no-store" });
 }
@@ -1505,6 +1510,77 @@ async function handleAdminRevokeLeadershipDistinction(path, env, actingUser) {
   if (current.status !== "active") return json({ error: "The distinction is already inactive." }, 409, { "Cache-Control": "no-store" });
   await env.TPI_DB.prepare("UPDATE leadership_distinctions SET status = 'revoked', revoked_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'active'").bind(id).run();
   await writeAdminAuditLog(env, actingUser, "leadership.distinction_revoked", current.subjectType, current.subjectId, { distinction: current.code });
+  return json({ ok: true, id, status: "revoked" }, 200, { "Cache-Control": "no-store" });
+}
+
+// TPI-GOVERNANCE-005: Board appointments are an audited governance record,
+// separate from Founding Memberships, medallions, and account permissions.
+async function handleAdminBoardMembers(request, env) {
+  const search = clean(new URL(request.url).searchParams.get("search") || "").slice(0, 120);
+  return json({
+    badge: BOARD_MEMBER_BADGE,
+    boardMembers: await listBoardMembers(env, search),
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminAssignBoardMember(request, env, actingUser) {
+  const data = await readJson(request);
+  const username = normalizeAdminMemberUsername(data.username);
+  if (!username) return json({ error: "An existing member username is required." }, 400, { "Cache-Control": "no-store" });
+  const member = await findExistingMember(env, username);
+  if (!member) return json({ error: "An active existing TPI account is required." }, 404, { "Cache-Control": "no-store" });
+  const positionTitle = clean(data.positionTitle || "Board Member").slice(0, 160) || "Board Member";
+  try {
+    const existing = await env.TPI_DB.prepare(`
+      SELECT id FROM board_members
+      WHERE contributor_id = ? AND status = 'active'
+      LIMIT 1
+    `).bind(member.id).first();
+    if (existing) return json({ error: "That member already has an active Board Member appointment.", code: "duplicate_board_member" }, 409, { "Cache-Control": "no-store" });
+    const id = crypto.randomUUID();
+    await env.TPI_DB.prepare(`
+      INSERT INTO board_members
+        (id, contributor_id, position_title, badge_path, badge_path_2x, appointed_by, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id, member.id, positionTitle, BOARD_MEMBER_BADGE.assetPath,
+      BOARD_MEMBER_BADGE.assetPath2x, actingUser.id, clean(data.notes).slice(0, 2000)
+    ).run();
+    await writeAdminAuditLog(env, actingUser, "board.member_appointed", "member", member.username, {
+      positionTitle,
+      badge: BOARD_MEMBER_BADGE.label,
+    });
+    return json({
+      boardMember: {
+        id,
+        contributorId: member.id,
+        username: member.username,
+        displayName: member.display_name,
+        positionTitle,
+        label: BOARD_MEMBER_BADGE.label,
+        badgePath: BOARD_MEMBER_BADGE.assetPath,
+        badgePath2x: BOARD_MEMBER_BADGE.assetPath2x,
+        badgeAlt: BOARD_MEMBER_BADGE.alt,
+        status: "active",
+        appointedAt: new Date().toISOString(),
+      },
+    }, 201, { "Cache-Control": "no-store" });
+  } catch {
+    return json({ error: "The Board Member appointment could not be saved. No permission or account record was changed." }, 500, { "Cache-Control": "no-store" });
+  }
+}
+
+async function handleAdminRevokeBoardMember(path, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/board-members\/([^/]+)\/revoke$/)?.[1] || ""));
+  if (!id) return json({ error: "A Board Member appointment id is required." }, 400, { "Cache-Control": "no-store" });
+  const current = await env.TPI_DB.prepare(`
+    SELECT id, contributor_id AS contributorId, position_title AS positionTitle, status
+    FROM board_members WHERE id = ? LIMIT 1
+  `).bind(id).first();
+  if (!current) return json({ error: "The Board Member appointment was not found." }, 404, { "Cache-Control": "no-store" });
+  if (current.status !== "active") return json({ error: "The Board Member appointment is already inactive." }, 409, { "Cache-Control": "no-store" });
+  await env.TPI_DB.prepare("UPDATE board_members SET status = 'revoked', revoked_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'active'").bind(id).run();
+  await writeAdminAuditLog(env, actingUser, "board.member_revoked", "member", current.contributorId, { positionTitle: current.positionTitle });
   return json({ ok: true, id, status: "revoked" }, 200, { "Cache-Control": "no-store" });
 }
 
@@ -5425,6 +5501,7 @@ async function handlePublicContributorProfile(request, env) {
     // presenting an active badge.
     foundingMembership: await publicMembershipIdentity(env, user.id),
     leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
+    boardMembership: await getBoardMembership(env, user.id),
     articles: results,
   });
 }
