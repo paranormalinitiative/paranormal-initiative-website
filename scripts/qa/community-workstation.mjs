@@ -11,6 +11,7 @@ function check(name, passed, detail = "") {
 const api = readFileSync(resolve(root, "functions/api/[[path]].js"), "utf8");
 const sidebar = readFileSync(resolve(root, "member-sidebar.html"), "utf8");
 const shell = readFileSync(resolve(root, "member-shell.js"), "utf8");
+const memberShellCss = readFileSync(resolve(root, "member-shell.css"), "utf8");
 const migration = readFileSync(resolve(root, "migrations/0065_member_social_and_bug_reports.sql"), "utf8");
 const friends = readFileSync(resolve(root, "friends.html"), "utf8");
 
@@ -22,6 +23,13 @@ check("Friends routes are authenticated", api.includes('path === "/friends"') &&
 check("Bug reports are authenticated", api.includes('path === "/bug-reports"') && api.includes('requireMember'));
 check("Bug reports enter the protected admin queue", api.includes("'bug' AS reportType") && api.includes("member_bug_reports") && api.includes("reportType === \"messenger\""));
 check("Messenger identities preserve a readable name and username", shell.includes("chatMemberName") && shell.includes("chatMemberUsername") && shell.includes("member-chat-author-username"));
+check("Chat navigation is the authenticated Messenger home", sidebar.includes('data-nav="chat"') && sidebar.includes('data-messenger-trigger') && sidebar.includes('aria-controls="member-floating-chat"'));
+check("Chat navigation opens and restores Messenger", shell.includes("setupMessengerNavigation") && shell.includes("window.TPIMessenger.show") && shell.includes("isOpen"));
+check("Mobile navigation exposes the Messenger home", shell.includes('class="mobile-nav-link" href="#messenger" data-nav="chat"') && shell.includes('data-messenger-trigger aria-controls="member-floating-chat"'));
+check("Hide returns Messenger to navigation state", shell.includes('chat.classList.add("is-hidden")') && shell.includes("syncMessengerNavigationState(!collapsed)"));
+check("Messenger frame persistence survives hide and restore", shell.includes("hidden: false") && shell.includes("frame.hidden || frame.collapsed") && shell.includes("storeChatFrame(chat)"));
+check("Messenger drag and resize hooks remain wired", shell.includes("setupFloatingChatDrag(chat)") && shell.includes("setupFloatingChatResize(chat)") && shell.includes("pointermove"));
+check("Messenger labels and previews wrap without clipping", memberShellCss.includes("overflow-wrap: anywhere") && memberShellCss.includes("white-space: normal") && memberShellCss.includes("member-chat-list-open .member-chat-presence"));
 check("Migration creates follow and bug-report storage", migration.includes("CREATE TABLE IF NOT EXISTS member_follows") && migration.includes("CREATE TABLE IF NOT EXISTS member_bug_reports"));
 check("Friends page uses shared member panel styling", friends.includes('class="member-panel social-panel"') && friends.includes('class="member-section-title"'));
 check("Friends controls use shared member-mode controls", friends.includes('class="member-input"') && friends.includes('class="member-btn member-btn-primary"') && friends.includes('class="member-btn member-btn-secondary member-btn-sm"'));

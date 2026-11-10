@@ -133,6 +133,13 @@ body.member-mode {
     box-shadow: var(--shadow-glow);
 }
 
+.member-nav-link.is-chat-open {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow: inset 3px 0 0 var(--accent), var(--shadow-glow);
+}
+
 .member-nav-link .nav-icon {
     width: 18px;
     text-align: center;
@@ -243,6 +250,10 @@ body.member-mode {
     border-radius: var(--radius-md);
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
     overflow: hidden;
+}
+
+.member-floating-chat.is-hidden {
+    display: none !important;
 }
 
 .member-floating-chat-header {
@@ -662,7 +673,7 @@ body.member-mode {
     position: relative;
     min-height: 0;
     display: grid;
-    grid-template-columns: clamp(118px, 30%, 190px) minmax(0, 1fr);
+    grid-template-columns: clamp(180px, 34%, 230px) minmax(0, 1fr);
     align-items: stretch;
     justify-items: stretch;
     overflow: hidden;
@@ -916,11 +927,13 @@ body.member-mode .member-floating-chat .member-chat-create {
 .member-chat-member-option strong,
 .member-chat-list-item strong,
 .member-chat-list-open strong {
+    min-width: 0;
     max-width: 100%;
-    overflow: hidden;
     color: #f4f8fb;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+    line-height: 1.25;
     font-size: 11px;
 }
 
@@ -928,6 +941,24 @@ body.member-mode .member-floating-chat .member-chat-create {
     min-width: 0;
     display: grid;
     gap: 2px;
+}
+
+.member-chat-person-copy small,
+.member-chat-list-open .member-chat-presence,
+.member-chat-member-option > span,
+.member-chat-identity-copy,
+.member-chat-message strong,
+.member-chat-message .member-chat-author-username {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+    line-height: 1.25;
+}
+
+.member-chat-list-open .member-chat-presence {
+    display: block;
 }
 
 .member-chat-presence,
@@ -1955,7 +1986,8 @@ body.member-mode .pn-tabs {
 }
 
 .mobile-nav-link:hover,
-.mobile-nav-link[aria-current="page"] {
+.mobile-nav-link[aria-current="page"],
+.mobile-nav-link.is-chat-open {
     color: var(--accent);
 }
 
