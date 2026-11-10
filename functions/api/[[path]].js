@@ -5540,15 +5540,6 @@ async function handlePublicContributorProfile(request, env) {
     WHERE created_by = ? AND status = 'published'
     ORDER BY created_at DESC
   `).bind(user.id).all();
-  const { results: wallPosts } = await env.TPI_DB.prepare(`
-    SELECT cp.id, cp.title, cp.body, cp.created_at AS createdAt,
-           cc.title AS categoryTitle
-    FROM community_posts cp
-    LEFT JOIN community_categories cc ON cc.id = cp.category_id
-    WHERE cp.author_id = ? AND cp.status = 'visible'
-    ORDER BY cp.created_at DESC
-    LIMIT 30
-  `).bind(user.id).all().catch(() => ({ results: [] }));
   return json({
     profile: publicUser(user),
     // Public-safe Founding identity only: no email, session, or administrative
@@ -5558,7 +5549,6 @@ async function handlePublicContributorProfile(request, env) {
     leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
     boardMembership: await getBoardMembership(env, user.id),
     articles: results,
-    wallPosts: (wallPosts || []).map(row => ({ ...row, body: String(row.body || "").slice(0, 6000) })),
   });
 }
 
@@ -10730,6 +10720,9 @@ function isProtectedOrgTitle(title) {
     "founder / director",
     "founder/director",
     "founder director",
+    "chief executive officer (ceo)",
+    "chief executive officer",
+    "ceo",
     "assistant director",
     "advisory board member"
   ].includes(normalized);

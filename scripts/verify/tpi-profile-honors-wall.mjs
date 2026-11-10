@@ -23,12 +23,13 @@ if (!existsSync(binary) || !existsSync(geckodriver)) {
 const apiResponse = await fetch(`${baseUrl}/api/contributors/profile?username=${encodeURIComponent(username)}`);
 const api = await apiResponse.json();
 check("public profile API responds", apiResponse.ok, `status ${apiResponse.status}`);
-check("profile API exposes a wallPosts array", Array.isArray(api.wallPosts));
+check("profile API keeps Community Feed posts out of profiles", !Object.prototype.hasOwnProperty.call(api, "wallPosts"));
 check("profile API resolves recognition data", Boolean(
   api.foundingMembership?.badge ||
   api.boardMembership?.badgePath ||
   (Array.isArray(api.leadershipDistinctions) && api.leadershipDistinctions.length)
 ));
+const honorsExpected = Boolean(api.boardMembership?.badgePath || (Array.isArray(api.leadershipDistinctions) && api.leadershipDistinctions.length));
 
 const profileDir = mkdtempSync(join(tmpdir(), "tpi-profile-firefox-"));
 let driver;
@@ -52,6 +53,16 @@ try {
   check("modal artwork loads", Number(await modalImage.getAttribute("naturalWidth")) > 0);
   await modal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
   check("recognition details modal closes", (await driver.findElements(By.css(".recognition-modal:not([hidden])"))).length === 0);
+  check("honors shelf matches the member's recognition records", (await driver.findElements(By.css(".profile-recognition-shelf"))).length === (honorsExpected ? 1 : 0));
+  check("recognition disclaimer is removed", !(await driver.findElement(By.css("body")).getText()).includes("Visual recognition only"));
+  check("profile wall is removed", (await driver.findElements(By.css(".public-profile-wall"))).length === 0);
+  const cards = await driver.findElements(By.css(".profile-recognition-card"));
+  if (honorsExpected && cards.length >= 2) {
+    const firstCardText = await cards[0].getText();
+    const secondCardText = await cards[1].getText();
+    check("honors shelf starts with the distinction", firstCardText.includes("Medallion"));
+    check("board member follows the distinction", secondCardText.includes("Board Member"));
+  }
   const secondaryTriggers = await driver.findElements(By.css(".board-member-medallion-trigger, .leadership-distinction-trigger"));
   if (secondaryTriggers.length) {
     const secondary = secondaryTriggers[0];
@@ -65,7 +76,6 @@ try {
     check("secondary medallion artwork loads", Number(await secondaryImage.getAttribute("naturalWidth")) > 0);
     await secondaryModal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
   }
-  check("profile wall is present", (await driver.findElements(By.css(".public-profile-wall"))).length === 1);
 } finally {
   if (driver) await driver.quit().catch(() => {});
   rmSync(profileDir, { recursive: true, force: true });

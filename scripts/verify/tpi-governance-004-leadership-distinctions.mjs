@@ -28,7 +28,7 @@ check("revocation is authenticated owner/admin-gated", api.includes("handleAdmin
 check("profile APIs expose server-resolved distinctions", api.includes("leadershipDistinctions: await listLeadershipDistinctions"));
 check("public AI leadership profile API exists", api.includes("/leadership/profiles") && api.includes("handleLeadershipProfile"));
 check("published web derivatives are allowed", !ignore.includes("assets/society-leadership/**") && ignore.includes("assets/society-leadership/masters/**"));
-check("profile UI renders distinction artwork", profile.includes("renderLeadershipDistinctions") && profile.includes("item.assetPath"));
+check("profile UI renders distinction artwork", profile.includes("renderRecognitionShelf") && profile.includes("item.assetPath"));
 check("Admin Center exposes assignment and revoke controls", admin.includes("data-admin-leadership-assign-form") && admin.includes("data-admin-leadership-revoke"));
 check("distinction library is shared by API", library.includes("DISTINCTION_CATALOG") && library.includes("listLeadershipDistinctions"));
 check("leadership profile page exists", existsSync(resolve(root, "leadership-profile.html")));

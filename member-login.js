@@ -225,6 +225,9 @@
       "founder / director",
       "founder/director",
       "founder director",
+      "chief executive officer (ceo)",
+      "chief executive officer",
+      "ceo",
       "assistant director",
       "advisory board member"
     ].includes(normalized);
@@ -233,15 +236,18 @@
   function getLeadershipContributionLevel(title, role) {
     const normalized = normalizeOrgTitle(title);
     const leadershipLevels = {
-      "founder / director": { label: "Director", note: "Founder / Director" },
-      "founder/director": { label: "Director", note: "Founder / Director" },
-      "founder director": { label: "Director", note: "Founder / Director" },
+      "founder / director": { label: "CEO", note: "CEO / Founder / Director" },
+      "founder/director": { label: "CEO", note: "CEO / Founder / Director" },
+      "founder director": { label: "CEO", note: "CEO / Founder / Director" },
+      "chief executive officer (ceo)": { label: "CEO", note: "Chief Executive Officer" },
+      "chief executive officer": { label: "CEO", note: "Chief Executive Officer" },
+      "ceo": { label: "CEO", note: "Chief Executive Officer" },
       "assistant director": { label: "Assistant Director", note: "Organizational leadership" },
       "advisory board member": { label: "Advisory Board Member", note: "Professional advisory role" }
     };
 
     if (leadershipLevels[normalized]) return leadershipLevels[normalized];
-    if (role === "owner") return { label: "Director", note: "Founder / Director" };
+    if (role === "owner") return { label: "CEO", note: "CEO / Founder / Director" };
     if (role === "admin") return { label: "Assistant Director", note: "Organizational leadership" };
     return null;
   }
@@ -301,6 +307,7 @@
 
   const publicTitleOptions = [
     "Founder / Director",
+    "Chief Executive Officer (CEO)",
     "Assistant Director",
     "Advisory Board Member",
     "Paranormal Researcher & Investigator",
@@ -1522,42 +1529,64 @@
       </div>`;
   }
 
-  // TPI-GOVERNANCE-005: Board Member appointment artwork is a separate,
-  // server-resolved identity. It never grants access or changes account role.
-  function renderBoardMembership(boardMembership) {
-    if (!boardMembership || boardMembership.status !== "active" || !boardMembership.badgePath) return "";
-    const srcset = boardMembership.badgePath2x ? ` srcset="${escapeHtml(boardMembership.badgePath)} 1x, ${escapeHtml(boardMembership.badgePath2x)} 2x"` : "";
-    const medallion = boardMembership.medallion && boardMembership.medallion.assetPath
-      ? recognitionTrigger(boardMembership.medallion.assetPath.replace("-256.png", "-512.png"), boardMembership.medallion.label || "Board rank medallion", boardMembership.positionTitle || "Board appointment", "The medallion rank is derived from the board role assigned by authorized TPI leadership.", "board-member-medallion-trigger")
-      : "";
-    return `
-      <div class="board-member-badge-chip">
-        ${recognitionTrigger(boardMembership.badgePath2x || boardMembership.badgePath, boardMembership.badgeAlt || "Board Member badge", boardMembership.positionTitle || "Board appointment", "This badge identifies a current TPI board appointment. Authority remains enforced by the server.", "board-member-badge-trigger")}
-        ${medallion}
-        <div class="founding-badge-chip-text">
-          <strong>${escapeHtml(boardMembership.label || "Board Member")}</strong>
-          <span>${escapeHtml(boardMembership.positionTitle || "Board Member")}</span>
-          ${boardMembership.medallion?.label ? `<small>${escapeHtml(boardMembership.medallion.label)}</small>` : ""}
-        </div>
+  function renderRecognitionCard(item) {
+    const artwork = `
+      <div class="profile-recognition-art${item.image2 ? " profile-recognition-art-dual" : ""}">
+        ${recognitionTrigger(item.image, item.title, item.detail, item.description, item.triggerClass || "")}
+        ${item.image2 ? recognitionTrigger(item.image2, item.secondaryTitle || item.title, item.detail, item.secondaryDescription || item.description, item.secondaryTriggerClass || "") : ""}
       </div>`;
+    return `
+      <article class="profile-recognition-card" style="--recognition-color:${escapeHtml(item.color || "#d6a84f")}" data-recognition-kind="${escapeHtml(item.kind || "honor")}">
+        ${artwork}
+        <div class="profile-recognition-copy">
+          <strong>${escapeHtml(item.title || "Recognition")}</strong>
+          <span>${escapeHtml(item.detail || "")}</span>
+          ${item.description ? `<small>${escapeHtml(item.description)}</small>` : ""}
+        </div>
+      </article>`;
   }
 
-  // TPI-GOVERNANCE-004: leadership distinctions are server-resolved visual
-  // recognition. Their markup never grants or implies account capability.
-  function renderLeadershipDistinctions(distinctions) {
-    const rows = Array.isArray(distinctions) ? distinctions.filter(item => item && item.status === "active" && item.assetPath) : [];
+  // TPI-GOVERNANCE-004/005: one centered, ordered recognition shelf. The
+  // server-resolved records are presentation only and never grant capability.
+  function renderRecognitionShelf(boardMembership, distinctions, profileTitle = "") {
+    const distinctionRows = Array.isArray(distinctions)
+      ? distinctions.filter(item => item && item.status === "active" && item.assetPath).map(item => ({
+        kind: "distinction",
+        code: item.code || "",
+        title: item.label || "Leadership distinction",
+        detail: item.roleLabel && !/legacy/i.test(item.roleLabel) && item.roleLabel !== "Leadership distinction"
+          ? item.roleLabel
+          : (getLeadershipContributionLevel(profileTitle, "")?.note || "Leadership distinction"),
+        description: item.description || "",
+        image: item.assetPath.replace("-256.png", "-512.png"),
+        color: item.color || "#d6a84f",
+        triggerClass: "leadership-distinction-trigger"
+      }))
+      : [];
+    const rows = [];
+    const gold = distinctionRows.find(item => item.code === "gold");
+    if (gold) rows.push(gold);
+    if (boardMembership?.status === "active" && boardMembership.badgePath) {
+      rows.push({
+        kind: "board",
+        title: boardMembership.label || "Board Member",
+        detail: boardMembership.positionTitle || "Board Member",
+        description: boardMembership.medallion?.label || "Board appointment",
+        image: boardMembership.badgePath2x || boardMembership.badgePath,
+        image2: boardMembership.medallion?.assetPath?.replace("-256.png", "-512.png") || "",
+        secondaryTitle: boardMembership.medallion?.label || "Board rank medallion",
+        secondaryDescription: boardMembership.positionTitle || "Board appointment",
+        color: boardMembership.color || "#d6a84f",
+        triggerClass: "board-member-badge-trigger",
+        secondaryTriggerClass: "board-member-medallion-trigger"
+      });
+    }
+    rows.push(...distinctionRows.filter(item => item !== gold));
     if (!rows.length) return "";
     return `
-      <section class="leadership-distinction-list" aria-label="Leadership honors">
+      <section class="profile-recognition-shelf" aria-label="Honors and distinctions">
         <p class="portal-kicker">Honors &amp; Distinctions</p>
-        <div class="leadership-distinction-grid">
-          ${rows.map(item => `
-            <div class="leadership-distinction-card" style="--distinction-color:${escapeHtml(item.color || "#d6a84f")}">
-              ${recognitionTrigger(item.assetPath.replace("-256.png", "-512.png"), item.label || "Leadership distinction", item.roleLabel || "Leadership distinction", item.description || "Recognition assigned by authorized TPI leadership.", "leadership-distinction-trigger")}
-              <div><strong>${escapeHtml(item.label || "Leadership distinction")}</strong><span>${escapeHtml(item.description || "Recognition assigned by TPI leadership.")}</span></div>
-            </div>`).join("")}
-        </div>
-        <small class="distinction-disclaimer">Visual recognition only. Access and authority remain server-side account records.</small>
+        <div class="profile-recognition-grid">${rows.map(renderRecognitionCard).join("")}</div>
       </section>`;
   }
 
@@ -1625,8 +1654,7 @@
           <p class="public-profile-title">${escapeHtml(user.title || "Contributor")}</p>
           <p class="member-profile-role">${escapeHtml(getAccountAccessDetail(user.role))}</p>
           ${renderFoundingBadgeIdentity(user.foundingMembership)}
-          ${renderBoardMembership(user.boardMembership)}
-          ${renderLeadershipDistinctions(user.leadershipDistinctions)}
+          ${renderRecognitionShelf(user.boardMembership, user.leadershipDistinctions, user.title)}
         </div>
       </div>
       <div class="member-profile-facts">
@@ -1764,7 +1792,6 @@
       const data = await response.json();
       const profile = data.profile;
       const articles = data.articles || [];
-      const wallPosts = data.wallPosts || [];
       const contributions = getProfileContributions(profile, articles.filter(article => article.status === "published" || !article.status));
       const publishedCount = contributions.length;
       const contributionLevel = getContributionLevel(publishedCount, profile.role, profile.title);
@@ -1778,8 +1805,7 @@
             <h2>${escapeHtml(profileName)}</h2>
             ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : ""}
             ${renderFoundingBadgeIdentity(data.foundingMembership)}
-            ${renderBoardMembership(data.boardMembership)}
-            ${renderLeadershipDistinctions(data.leadershipDistinctions)}
+            ${renderRecognitionShelf(data.boardMembership, data.leadershipDistinctions, profile.title)}
             ${renderContributionLevel(contributionLevel, "public-contribution-level")}
           </aside>
           <div class="public-profile-main">
@@ -1799,13 +1825,6 @@
             </section>
           </div>
         </article>
-        <section class="editor-access-card public-profile-wall" aria-labelledby="profile-wall-title">
-          <p class="portal-kicker">Profile Wall</p>
-          <h2 id="profile-wall-title">Community posts</h2>
-          <div class="public-profile-wall-list">
-            ${wallPosts.length ? wallPosts.map(post => `<article class="public-profile-wall-post"><div><strong>${escapeHtml(post.title || "Community post")}</strong><span>${escapeHtml(post.categoryTitle || "Community Feed")} · ${post.createdAt ? escapeHtml(new Date(post.createdAt).toLocaleDateString()) : ""}</span></div><p>${escapeHtml(post.body || "").replace(/\n/g, "<br>")}</p><a class="portal-button portal-button-secondary" href="/member-home?member=1#post-${encodeURIComponent(post.id)}">Open in Community</a></article>`).join("") : `<p class="access-note">No public Community Feed posts yet.</p>`}
-          </div>
-        </section>
         <section class="editor-access-card public-profile-work">
           <p class="portal-kicker">Contributions</p>
           <h2>Published Work</h2>

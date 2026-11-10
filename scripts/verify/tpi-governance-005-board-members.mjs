@@ -38,8 +38,8 @@ check("Board Member library is server-resolved", library.includes("getBoardMembe
 check("Admin Center includes appointment form", admin.includes("Appoint a Board Member") && admin.includes("/admin/board-members"));
 check("Admin Center includes revoke control", admin.includes("/admin/board-members/${encodeURIComponent(row.id)}/revoke"));
 check("Admin Center keeps authority boundaries visible", admin.includes("does not grant account access or Founding Membership benefits") || admin.includes("Free-text rank assignments are not permitted"));
-check("profile UI renders Board Member artwork", profile.includes("renderBoardMembership") && profile.includes("boardMembership.badgePath"));
-check("profile styling includes Board Member badge", css.includes(".board-member-badge-chip"));
+check("profile UI renders Board Member artwork", profile.includes("renderRecognitionShelf") && profile.includes("boardMembership.badgePath"));
+check("profile styling includes the centered recognition shelf", css.includes(".profile-recognition-card") && css.includes(".profile-recognition-art"));
 check("Board Member master is excluded from public package", /^assets\/board-members\/masters\/$/m.test(ignore));
 check("256px derivative is a real PNG", existsSync(badge256) && readFileSync(badge256).subarray(0, 8).equals(PNG_SIGNATURE));
 check("512px derivative is a real PNG", existsSync(badge512) && readFileSync(badge512).subarray(0, 8).equals(PNG_SIGNATURE));
