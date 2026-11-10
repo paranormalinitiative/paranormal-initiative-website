@@ -680,6 +680,50 @@
     }
   }
 
+  function renderAdminProfileEditor(member) {
+    if (!adminMemberDetail || !member?.username) return;
+    const section = document.createElement("section");
+    section.className = "admin-activity-section admin-profile-editor";
+    section.innerHTML = `
+      <h4>Edit Public Profile</h4>
+      <p class="access-note">Update the public identity shown on this member’s profile. Access roles and private contact data remain protected separately.</p>
+      <form data-admin-public-profile-form class="admin-profile-editor-form">
+        <label>Display name<input name="displayName" maxlength="120" required value="${escapeHtml(member.displayName || "")}"></label>
+        <label>Public title / credentials<input name="title" maxlength="160" value="${escapeHtml(member.title || "")}" placeholder="Founder / Director, Paranormal Researcher"></label>
+        <label>Affiliation<input name="affiliation" maxlength="240" value="${escapeHtml(member.affiliation || "")}"></label>
+        <label>Organization<input name="organization" maxlength="240" value="${escapeHtml(member.organization || "")}"></label>
+        <label>Website<input name="website" maxlength="500" value="${escapeHtml(member.website || "")}" placeholder="https://…"></label>
+        <label>Profile image URL<input name="photoUrl" maxlength="1000" value="${escapeHtml(member.photoUrl || "")}" placeholder="https://…"></label>
+        <label>Biography<textarea name="bio" maxlength="5000" rows="6">${escapeHtml(member.bio || "")}</textarea></label>
+        <button type="submit" class="portal-button portal-button-primary">Save public profile</button>
+        <p class="access-note" data-admin-profile-status role="status"></p>
+      </form>`;
+    adminMemberDetail.prepend(section);
+    const form = section.querySelector("[data-admin-public-profile-form]");
+    const statusEl = section.querySelector("[data-admin-profile-status]");
+    form?.addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = form.querySelector("button[type='submit']");
+      const data = Object.fromEntries(new FormData(form).entries());
+      if (button) button.disabled = true;
+      if (statusEl) statusEl.textContent = "Saving…";
+      try {
+        const response = await fetch(`/api/admin/members/${encodeURIComponent(member.username)}/profile`, {
+          method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || "Profile update failed.");
+        if (statusEl) statusEl.textContent = "Public profile saved.";
+        await selectAdminMember(member.username, { pushHash: false });
+      } catch (error) {
+        if (statusEl) statusEl.textContent = error.message || "Profile update failed.";
+        if (statusEl) statusEl.classList.add("access-error");
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  }
+
   function renderAdminActivity(data) {
     const member = data.member || {};
     const posts = data.posts || [];
@@ -847,6 +891,7 @@
         </div>
       </section>
     `;
+    renderAdminProfileEditor(member);
   }
 
   async function selectAdminMember(username, options = {}) {
@@ -1458,16 +1503,20 @@
   // TPI-CREATOR-INCENTIVE-001B: Founding identity chip. The label, number and
   // image all come from the server-resolved membership payload; the client only
   // displays them. No capability is derived from this markup.
+  function recognitionTrigger(image, title, detail, description, className = "") {
+    return `<button type="button" class="profile-recognition-trigger ${className}" data-recognition-trigger data-recognition-image="${escapeHtml(image || "")}" data-recognition-title="${escapeHtml(title || "Recognition")}" data-recognition-detail="${escapeHtml(detail || "")}" data-recognition-description="${escapeHtml(description || "")}" aria-label="View ${escapeHtml(title || "recognition")} details"><img src="${escapeHtml(image || "")}" alt="${escapeHtml(title || "Recognition")}" loading="lazy" decoding="async"></button>`;
+  }
+
   function renderFoundingBadgeIdentity(identity) {
     const badge = identity && identity.badge;
     if (!badge || !badge.asset || !badge.asset.png) return "";
     const primary = (identity.memberships || []).find(row => row.state === "active" && row.classCode === badge.classCode);
-    const srcset = badge.asset.png2x ? ` srcset="${escapeHtml(badge.asset.png)} 1x, ${escapeHtml(badge.asset.png2x)} 2x"` : "";
+    const label = badge.label || "Founding Member";
     return `
-      <div class="founding-badge-chip" data-founding-badge="${escapeHtml(badge.classCode || "")}">
-        <img class="founding-badge-chip-art" src="${escapeHtml(badge.asset.png)}"${srcset} width="48" height="48" alt="${escapeHtml(badge.alt || badge.label || "Founding Membership badge")}" loading="lazy" decoding="async">
+      <div class="founding-badge-chip" data-founding-badge="${escapeHtml(badge.classCode || "")}" title="View recognition details">
+        ${recognitionTrigger(badge.asset.png2x || badge.asset.png, label, primary?.membershipNumber || "Permanent founding membership", "Administrator-assigned recognition that identifies this member’s founding membership class.", "founding-badge-trigger")}
         <div class="founding-badge-chip-text">
-          <strong>${escapeHtml(badge.label || "Founding Member")}</strong>
+          <strong>${escapeHtml(label)}</strong>
           ${primary ? `<span>${escapeHtml(primary.membershipNumber || "")}</span>` : ""}
         </div>
       </div>`;
@@ -1479,11 +1528,11 @@
     if (!boardMembership || boardMembership.status !== "active" || !boardMembership.badgePath) return "";
     const srcset = boardMembership.badgePath2x ? ` srcset="${escapeHtml(boardMembership.badgePath)} 1x, ${escapeHtml(boardMembership.badgePath2x)} 2x"` : "";
     const medallion = boardMembership.medallion && boardMembership.medallion.assetPath
-      ? `<img class="board-member-medallion-art" src="${escapeHtml(boardMembership.medallion.assetPath)}" width="44" height="44" alt="${escapeHtml(boardMembership.medallion.label || "Board rank medallion")}" loading="lazy" decoding="async">`
+      ? recognitionTrigger(boardMembership.medallion.assetPath.replace("-256.png", "-512.png"), boardMembership.medallion.label || "Board rank medallion", boardMembership.positionTitle || "Board appointment", "The medallion rank is derived from the board role assigned by authorized TPI leadership.", "board-member-medallion-trigger")
       : "";
     return `
       <div class="board-member-badge-chip">
-        <img class="board-member-badge-chip-art" src="${escapeHtml(boardMembership.badgePath)}"${srcset} width="52" height="52" alt="${escapeHtml(boardMembership.badgeAlt || "Board Member badge")}" loading="lazy" decoding="async">
+        ${recognitionTrigger(boardMembership.badgePath2x || boardMembership.badgePath, boardMembership.badgeAlt || "Board Member badge", boardMembership.positionTitle || "Board appointment", "This badge identifies a current TPI board appointment. Authority remains enforced by the server.", "board-member-badge-trigger")}
         ${medallion}
         <div class="founding-badge-chip-text">
           <strong>${escapeHtml(boardMembership.label || "Board Member")}</strong>
@@ -1504,12 +1553,37 @@
         <div class="leadership-distinction-grid">
           ${rows.map(item => `
             <div class="leadership-distinction-card" style="--distinction-color:${escapeHtml(item.color || "#d6a84f")}">
-              <img src="${escapeHtml(item.assetPath)}" width="56" height="56" alt="${escapeHtml(item.label || "Leadership distinction")}" loading="lazy" decoding="async">
+              ${recognitionTrigger(item.assetPath.replace("-256.png", "-512.png"), item.label || "Leadership distinction", item.roleLabel || "Leadership distinction", item.description || "Recognition assigned by authorized TPI leadership.", "leadership-distinction-trigger")}
               <div><strong>${escapeHtml(item.label || "Leadership distinction")}</strong><span>${escapeHtml(item.description || "Recognition assigned by TPI leadership.")}</span></div>
             </div>`).join("")}
         </div>
         <small class="distinction-disclaimer">Visual recognition only. Access and authority remain server-side account records.</small>
       </section>`;
+  }
+
+  function initRecognitionModal() {
+    if (document.querySelector("[data-recognition-modal]")) return;
+    const modal = document.createElement("div");
+    modal.className = "recognition-modal";
+    modal.dataset.recognitionModal = "true";
+    modal.hidden = true;
+    modal.innerHTML = `<div class="recognition-modal-backdrop" data-recognition-close></div><div class="recognition-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="recognition-modal-title"><button type="button" class="recognition-modal-close" data-recognition-close aria-label="Close recognition details">×</button><img data-recognition-modal-image alt=""><p class="portal-kicker">Recognition details</p><h2 id="recognition-modal-title" data-recognition-modal-title></h2><p class="recognition-modal-detail" data-recognition-modal-detail></p><p data-recognition-modal-description></p></div>`;
+    document.body.appendChild(modal);
+    const close = () => { modal.hidden = true; document.body.classList.remove("recognition-modal-open"); };
+    document.addEventListener("click", event => {
+      const trigger = event.target.closest("[data-recognition-trigger]");
+      if (trigger) {
+        modal.querySelector("[data-recognition-modal-image]").src = trigger.dataset.recognitionImage || "";
+        modal.querySelector("[data-recognition-modal-image]").alt = trigger.dataset.recognitionTitle || "Recognition";
+        modal.querySelector("[data-recognition-modal-title]").textContent = trigger.dataset.recognitionTitle || "Recognition";
+        modal.querySelector("[data-recognition-modal-detail]").textContent = trigger.dataset.recognitionDetail || "";
+        modal.querySelector("[data-recognition-modal-description]").textContent = trigger.dataset.recognitionDescription || "";
+        modal.hidden = false;
+        document.body.classList.add("recognition-modal-open");
+        modal.querySelector("[data-recognition-close]")?.focus();
+      } else if (event.target.closest("[data-recognition-close]")) close();
+    });
+    document.addEventListener("keydown", event => { if (event.key === "Escape" && !modal.hidden) close(); });
   }
 
   function renderDashboardProfile(user) {
@@ -1690,6 +1764,7 @@
       const data = await response.json();
       const profile = data.profile;
       const articles = data.articles || [];
+      const wallPosts = data.wallPosts || [];
       const contributions = getProfileContributions(profile, articles.filter(article => article.status === "published" || !article.status));
       const publishedCount = contributions.length;
       const contributionLevel = getContributionLevel(publishedCount, profile.role, profile.title);
@@ -1724,6 +1799,13 @@
             </section>
           </div>
         </article>
+        <section class="editor-access-card public-profile-wall" aria-labelledby="profile-wall-title">
+          <p class="portal-kicker">Profile Wall</p>
+          <h2 id="profile-wall-title">Community posts</h2>
+          <div class="public-profile-wall-list">
+            ${wallPosts.length ? wallPosts.map(post => `<article class="public-profile-wall-post"><div><strong>${escapeHtml(post.title || "Community post")}</strong><span>${escapeHtml(post.categoryTitle || "Community Feed")} · ${post.createdAt ? escapeHtml(new Date(post.createdAt).toLocaleDateString()) : ""}</span></div><p>${escapeHtml(post.body || "").replace(/\n/g, "<br>")}</p><a class="portal-button portal-button-secondary" href="/member-home?member=1#post-${encodeURIComponent(post.id)}">Open in Community</a></article>`).join("") : `<p class="access-note">No public Community Feed posts yet.</p>`}
+          </div>
+        </section>
         <section class="editor-access-card public-profile-work">
           <p class="portal-kicker">Contributions</p>
           <h2>Published Work</h2>
@@ -2660,6 +2742,7 @@
   initAdminSettingsPanel();
   initMemberNotifications();
   initNotificationSettings();
+  initRecognitionModal();
   initPublicProfile();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();

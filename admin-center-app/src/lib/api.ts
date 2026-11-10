@@ -33,6 +33,11 @@ export type Member = {
   username: string;
   displayName: string;
   title?: string;
+  affiliation?: string;
+  organization?: string;
+  website?: string;
+  bio?: string;
+  photoUrl?: string;
   role: string;
   active: boolean;
   createdAt: string;
@@ -42,7 +47,7 @@ export type Member = {
 };
 
 export type MemberActivity = {
-  member: Member & { can_post?: number; can_comment?: number; can_message?: number };
+  member: Member & { can_post?: number; can_comment?: number; can_message?: number; correspondence?: string; contactName?: string; phone?: string };
   posts: Array<{ id: string; body: string; status: string; createdAt: string }>;
   comments: Array<{ id: string; body?: string; text?: string; status: string; createdAt: string }>;
   tpiVideos: Array<{ id: string; title: string; status: string; createdAt: string }>;

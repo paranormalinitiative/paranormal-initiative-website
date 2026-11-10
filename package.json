@@ -52,6 +52,7 @@
     "verify:leadership-local": "node scripts/verify/tpi-governance-004-local.mjs",
     "verify:board-members": "node scripts/verify/tpi-governance-005-board-members.mjs",
     "verify:board-members-local": "node scripts/verify/tpi-governance-005-local.mjs",
+  "verify:profile-honors-wall": "node scripts/verify/tpi-profile-honors-wall.mjs",
   "verify:governance-subject-index": "node scripts/verify/tpi-governance-006-subject-index.mjs",
     "verify:community-workstation": "node scripts/qa/community-workstation.mjs",
     "verify:release-staging": "node scripts/verify/tpi-ops-004-release-staging-guard.mjs",

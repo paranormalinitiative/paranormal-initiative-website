@@ -1,5 +1,25 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Profile honors, medallion details, Profile Wall, and admin editing
+
+Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION PENDING.** Public profiles
+now show larger clickable Founding, Board, and Leadership recognition artwork.
+Selecting a recognition opens an enlarged detail view with its name, rank or
+membership number, and purpose. Profiles also include a read-only Profile Wall
+of the member's visible Community Feed posts with a link back to each post.
+The Administration Center can edit public display name, title or credentials,
+affiliation, organization, website, profile image URL, and biography for an
+existing member through a protected owner/admin route. No schema change was
+required and recognition remains visual-only.
+
+Focused checks: Profile honors/wall Firefox 10/10, Leadership 18/18, Board
+20/20, subject index 24/24, community workstation 12/12, release safety 27/27.
+Unauthenticated profile update correctly returned 403. Production deployment
+is pending the guarded release and live Firefox acceptance.
+
+Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-COMMUNITY-PROFILE-HONORS-WALL-AND-ADMIN-EDIT.md`.
+
 ## 2026-11-09 — Rank-safe leadership, Board medallions, and Education subjects
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.**

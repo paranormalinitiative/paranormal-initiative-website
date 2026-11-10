@@ -39,17 +39,20 @@
 /* TPI-CREATOR-INCENTIVE-001B: Founding Membership identity chip (own profile and
    public contributor profile). The artwork is a published 256px derivative,
    clipped to a circle because the RGB PNG has a flattened background. */
-.founding-badge-chip { display: inline-flex; align-items: center; gap: 12px; margin-top: 14px; padding: 10px 14px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-surface); max-width: 100%; }
-.founding-badge-chip-art { display: block; flex: none; width: 48px; height: 48px; border-radius: var(--radius-full); object-fit: cover; }
+.founding-badge-chip { display: inline-flex; align-items: center; gap: 14px; margin-top: 14px; padding: 12px 16px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-surface); max-width: 100%; }
+.profile-recognition-trigger { display: inline-grid; place-items: center; flex: none; padding: 0; border: 0; border-radius: var(--radius-full); background: transparent; cursor: zoom-in; }
+.profile-recognition-trigger:focus-visible { outline: 3px solid var(--profile-highlight,var(--text-accent)); outline-offset: 4px; }
+.profile-recognition-trigger img { display: block; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: cover; }
+.founding-badge-chip-art { display: block; flex: none; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: cover; }
 .founding-badge-chip-text { display: grid; gap: 2px; min-width: 0; }
 .founding-badge-chip-text strong { color: var(--text-primary); font-size: 14px; font-weight: 700; line-height: 1.25; }
 .founding-badge-chip-text span { color: var(--text-secondary); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
 @media(max-width:640px) { .founding-badge-chip { width: 100%; } .founding-badge-chip-art { width: 40px; height: 40px; } }
 
 /* TPI-GOVERNANCE-005: Board Member appointment identity. */
-.board-member-badge-chip { display: inline-flex; align-items: center; gap: 12px; margin-top: 14px; padding: 10px 14px; border: 1px solid #d6a84f99; border-radius: var(--radius-sm); background: color-mix(in srgb,#d6a84f 8%,var(--bg-surface)); max-width: 100%; }
-.board-member-badge-chip-art { display: block; flex: none; width: 52px; height: 52px; border-radius: var(--radius-full); object-fit: cover; border: 2px solid #d6a84f; }
-.board-member-medallion-art { display: block; flex: none; width: 44px; height: 44px; border-radius: var(--radius-full); object-fit: cover; border: 2px solid #d6a84f; }
+.board-member-badge-chip { display: inline-flex; align-items: center; gap: 14px; margin-top: 14px; padding: 12px 16px; border: 1px solid #d6a84f99; border-radius: var(--radius-sm); background: color-mix(in srgb,#d6a84f 8%,var(--bg-surface)); max-width: 100%; }
+.board-member-badge-chip-art { display: block; flex: none; width: 84px; height: 84px; border-radius: var(--radius-full); object-fit: cover; border: 2px solid #d6a84f; }
+.board-member-medallion-art { display: block; flex: none; width: 72px; height: 72px; border-radius: var(--radius-full); object-fit: cover; border: 2px solid #d6a84f; }
 .board-member-badge-chip .founding-badge-chip-text strong { color: var(--text-primary); }
 .board-member-badge-chip .founding-badge-chip-text span { color: #d6a84f; }
 @media(max-width:640px) { .board-member-badge-chip { width: 100%; } .board-member-badge-chip-art { width: 44px; height: 44px; } .board-member-medallion-art { width: 38px; height: 38px; } }
@@ -57,9 +60,29 @@
 /* TPI-GOVERNANCE-004: visible recognition is separate from access control. */
 .leadership-distinction-list { margin-top: 18px; }
 .leadership-distinction-grid { display: grid; gap: 10px; }
-.leadership-distinction-card { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid color-mix(in srgb,var(--distinction-color) 55%,var(--border-default)); border-radius: var(--radius-sm); background: color-mix(in srgb,var(--distinction-color) 8%,var(--bg-surface)); }
-.leadership-distinction-card img { width: 56px; height: 56px; flex: none; border-radius: var(--radius-full); object-fit: cover; border: 2px solid var(--distinction-color); }
+.leadership-distinction-card { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border: 1px solid color-mix(in srgb,var(--distinction-color) 55%,var(--border-default)); border-radius: var(--radius-sm); background: color-mix(in srgb,var(--distinction-color) 8%,var(--bg-surface)); }
+.leadership-distinction-card img { width: 84px; height: 84px; flex: none; border-radius: var(--radius-full); object-fit: cover; border: 2px solid var(--distinction-color); }
 .leadership-distinction-card div { display: grid; gap: 3px; min-width: 0; }
 .leadership-distinction-card strong { color: var(--text-primary); font-size: 13px; line-height: 1.25; }
 .leadership-distinction-card span { color: var(--text-secondary); font-size: 12px; line-height: 1.4; }
 .distinction-disclaimer { display: block; margin-top: 9px; color: var(--text-secondary); font-size: 11px; line-height: 1.4; }
+
+.recognition-modal[hidden] { display: none; }
+.recognition-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; }
+.recognition-modal-backdrop { position: absolute; inset: 0; background: rgba(4, 5, 10, .82); backdrop-filter: blur(6px); }
+.recognition-modal-dialog { position: relative; z-index: 1; width: min(560px, 100%); padding: 30px; border: 1px solid #d6a84f99; border-radius: 18px; color: var(--text-primary); background: var(--bg-surface); box-shadow: 0 24px 90px rgba(0,0,0,.45); text-align: center; }
+.recognition-modal-dialog img { width: min(240px, 70vw); height: min(240px, 70vw); border-radius: var(--radius-full); object-fit: cover; border: 3px solid #d6a84f; box-shadow: 0 0 36px rgba(214,168,79,.3); }
+.recognition-modal-dialog h2 { margin: 8px 0; }
+.recognition-modal-detail { color: #d6a84f; font-weight: 700; }
+.recognition-modal-close { position: absolute; top: 10px; right: 14px; border: 0; background: transparent; color: var(--text-primary); font-size: 28px; cursor: pointer; }
+.recognition-modal-open { overflow: hidden; }
+.public-profile-wall { margin-top: 22px; }
+.public-profile-wall-list { display: grid; gap: 14px; }
+.public-profile-wall-post { padding: 18px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: color-mix(in srgb,var(--bg-surface) 80%,var(--bg-elevated)); }
+.public-profile-wall-post > div { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.public-profile-wall-post > div span { color: var(--text-secondary); font-size: 12px; }
+.public-profile-wall-post p { white-space: normal; line-height: 1.65; }
+.public-profile-wall-post .portal-button { display: inline-flex; margin-top: 6px; }
+.admin-profile-editor-form { display: grid; gap: 12px; }
+.admin-profile-editor-form label { display: grid; gap: 6px; color: var(--text-secondary); font-weight: 600; }
+.admin-profile-editor-form input, .admin-profile-editor-form textarea { width: 100%; box-sizing: border-box; }

@@ -105,6 +105,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(request, env, user));
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
     if (request.method === "GET" && path === "/admin/members") return requireAdmin(request, env, user => handleAdminListMembers(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/profile$/)) return requireAdmin(request, env, user => handleAdminUpdateMemberProfile(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/activity$/)) return requireAdmin(request, env, user => handleAdminMemberActivity(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/access$/)) return requireAdmin(request, env, user => handleAdminUpdateMemberAccess(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/notifications$/)) return requireAdmin(request, env, user => handleAdminSendMemberNotification(path, request, env, user));
@@ -731,6 +732,37 @@ async function handleAdminListMembers(request, env) {
     })),
     pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }
   });
+}
+
+async function handleAdminUpdateMemberProfile(path, request, env, actingUser) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/profile$/)?.[1] || ""));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const target = await getUserByUsername(env, username);
+  if (!target || !target.active) return json({ error: "Member was not found or is inactive." }, 404);
+  if (target.role === "owner" && actingUser.role !== "owner") {
+    return json({ error: "Only the owner can edit an owner profile." }, 403);
+  }
+  const data = await readJson(request);
+  const displayName = clean(data.displayName).slice(0, 120);
+  const title = clean(data.title).slice(0, 160);
+  const affiliation = clean(data.affiliation).slice(0, 240);
+  const organization = clean(data.organization).slice(0, 240);
+  const website = clean(data.website).slice(0, 500);
+  const bio = clean(data.bio).slice(0, 5000);
+  const photoUrl = clean(data.photoUrl).slice(0, 1000);
+  if (!displayName) return json({ error: "Display name is required." }, 400);
+  if (website && !/^https?:\/\//i.test(website)) return json({ error: "Website must start with http:// or https://." }, 400);
+
+  await env.TPI_DB.prepare(`
+    UPDATE contributors
+    SET display_name = ?, title = ?, affiliation = ?, organization = ?, website = ?, bio = ?, photo_url = ?
+    WHERE id = ?
+  `).bind(displayName, title, affiliation, organization, website, bio, photoUrl, target.id).run();
+
+  await writeAdminAuditLog(env, actingUser, "member.public_profile_updated", "member", username, {
+    fields: ["displayName", "title", "affiliation", "organization", "website", "bio", "photoUrl"]
+  });
+  return json({ member: publicUser(await getUserByUsername(env, username)) });
 }
 
 function adminDateRange(request) {
@@ -5508,6 +5540,15 @@ async function handlePublicContributorProfile(request, env) {
     WHERE created_by = ? AND status = 'published'
     ORDER BY created_at DESC
   `).bind(user.id).all();
+  const { results: wallPosts } = await env.TPI_DB.prepare(`
+    SELECT cp.id, cp.title, cp.body, cp.created_at AS createdAt,
+           cc.title AS categoryTitle
+    FROM community_posts cp
+    LEFT JOIN community_categories cc ON cc.id = cp.category_id
+    WHERE cp.author_id = ? AND cp.status = 'visible'
+    ORDER BY cp.created_at DESC
+    LIMIT 30
+  `).bind(user.id).all().catch(() => ({ results: [] }));
   return json({
     profile: publicUser(user),
     // Public-safe Founding identity only: no email, session, or administrative
@@ -5517,6 +5558,7 @@ async function handlePublicContributorProfile(request, env) {
     leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
     boardMembership: await getBoardMembership(env, user.id),
     articles: results,
+    wallPosts: (wallPosts || []).map(row => ({ ...row, body: String(row.body || "").slice(0, 6000) })),
   });
 }
 

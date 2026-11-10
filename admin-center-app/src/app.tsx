@@ -514,7 +514,45 @@ function MemberDetail({ selected, activity, loading, onConfirm, onActivityPageCh
   return <Card className="member-detail"><CardHeader><CardTitle>{selected.displayName || selected.username}</CardTitle><CardDescription>@{selected.username} · role {selected.role}</CardDescription></CardHeader><CardContent><div className="detail-stack"><div className="detail-actions"><Badge variant={selected.active ? "success" : "warning"}>{selected.active ? "Active" : "Inactive"}</Badge><Button size="sm" variant={selected.active ? "destructive" : "secondary"} onClick={() => onConfirm(selected.active ? "block" : "unblock")}>{selected.active ? "Deactivate" : "Reactivate"}</Button></div><div className="detail-tabs" role="tablist">{tabs.map((name) => <button key={name} role="tab" aria-selected={tab === name} className={tab === name ? "is-active" : ""} onClick={() => setTab(name)}>{name === "moderation" ? "Moderation History" : name === "account" ? "Account Management" : name}</button>)}</div>{tab === "overview" && <div className="detail-facts"><span><strong>Joined</strong>{new Date(activity.member.createdAt).toLocaleDateString()}</span><span><strong>Posts</strong>{activity.posts.length}</span><span><strong>Comments</strong>{activity.comments.length}</span><span><strong>Reactions</strong>{activity.reactionActivity.length}</span><span><strong>Videos</strong>{activity.tpiVideos.length}</span><span><strong>Reports</strong>{activity.reports.length}</span></div>}{tab === "profile" && <div className="detail-facts"><span><strong>Display name</strong>{activity.member.displayName || "—"}</span><span><strong>Title</strong>{activity.member.title || "—"}</span><span><strong>Role</strong>{activity.member.role}</span><span><strong>State</strong>{selected.active ? "Active" : "Inactive"}</span></div>}{tab === "posts" && <ActivityList rows={activity.posts.map((post) => ({ id: post.id, label: post.body, status: post.status, createdAt: post.createdAt, href: `/member-home?member=1#post-${encodeURIComponent(post.id)}` }))} empty="No Community Feed posts returned." />}{tab === "comments" && <ActivityList rows={activity.comments.map((comment) => ({ id: comment.id, label: comment.body || comment.text || "Comment", status: comment.status, createdAt: comment.createdAt }))} empty="No comments returned." />}{tab === "reactions" && <ActivityList rows={activity.reactionActivity.map((reaction) => ({ id: reaction.id, label: `${reaction.reaction} · ${reaction.label || reaction.targetId}`, status: reaction.targetType, createdAt: reaction.createdAt, href: reaction.contentHref }))} empty="No reactions returned." />}{tab === "videos" && <ActivityList rows={activity.tpiVideos.map((video) => ({ id: video.id, label: video.title, status: video.status, createdAt: video.createdAt, href: `/tpi-video.html?id=${encodeURIComponent(video.id)}` }))} empty="No TPI Videos returned." />}{tab === "reports" && <ReportList reports={activity.reports} />}{tab === "moderation" && <ModerationList rows={activity.moderationHistory} />}{tab === "account" && <MemberAccountManagement member={activity.member} onNotice={onNotice} />}<div className="activity-page-note"><span className="muted">Activity page {page} · 25 per request</span><div><Button size="sm" variant="outline" disabled={page <= 1 || loading} onClick={() => onActivityPageChange(page - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={!canNext || loading} onClick={() => onActivityPageChange(page + 1)}>Next</Button></div></div></div></CardContent></Card>;
 }
 
+function MemberProfileEditor({ member, onNotice }: { member: MemberActivity["member"]; onNotice: (value: string) => void }) {
+  const [form, setForm] = useState({
+    displayName: member.displayName || "",
+    title: member.title || "",
+    affiliation: member.affiliation || "",
+    organization: member.organization || "",
+    website: member.website || "",
+    bio: member.bio || "",
+    photoUrl: member.photoUrl || "",
+  });
+  const [saving, setSaving] = useState(false);
+  const save = async (event: FormEvent) => {
+    event.preventDefault();
+    setSaving(true);
+    try {
+      await adminFetch(`/admin/members/${encodeURIComponent(member.username)}/profile`, { method: "POST", body: JSON.stringify(form) });
+      onNotice(`Public profile updated for ${member.displayName || member.username}.`);
+    } catch (error) {
+      onNotice((error as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  return <form className="detail-stack admin-profile-editor" onSubmit={save}>
+    <div className="notice-panel"><Badge variant="outline">Public profile editor</Badge><p>Edit the member’s visible identity, credentials, affiliations, biography, and profile image. Access roles and private contact data remain on their protected controls.</p></div>
+    <div className="two-column"><label><span>Display name</span><Input value={form.displayName} maxLength={120} onChange={(event) => setForm({ ...form, displayName: event.target.value })} required /></label><label><span>Public title / credentials</span><Input value={form.title} maxLength={160} onChange={(event) => setForm({ ...form, title: event.target.value })} placeholder="Founder / Director, Paranormal Researcher" /></label></div>
+    <div className="two-column"><label><span>Affiliation</span><Input value={form.affiliation} maxLength={240} onChange={(event) => setForm({ ...form, affiliation: event.target.value })} /></label><label><span>Organization</span><Input value={form.organization} maxLength={240} onChange={(event) => setForm({ ...form, organization: event.target.value })} /></label></div>
+    <label><span>Website</span><Input value={form.website} maxLength={500} onChange={(event) => setForm({ ...form, website: event.target.value })} placeholder="https://…" /></label>
+    <label><span>Profile image URL</span><Input value={form.photoUrl} maxLength={1000} onChange={(event) => setForm({ ...form, photoUrl: event.target.value })} placeholder="https://…" /></label>
+    <label><span>Biography</span><textarea rows={6} maxLength={5000} value={form.bio} onChange={(event) => setForm({ ...form, bio: event.target.value })} /></label>
+    <div className="detail-actions"><Button type="submit" disabled={saving || !form.displayName.trim()}>{saving ? "Saving…" : "Save public profile"}</Button></div>
+  </form>;
+}
+
 function MemberAccountManagement({ member, onNotice }: { member: MemberActivity["member"]; onNotice: (value: string) => void }) {
+  return <div className="detail-stack"><MemberProfileEditor member={member} onNotice={onNotice} /><MemberAccountManagementLegacy member={member} onNotice={onNotice} /></div>;
+}
+
+function MemberAccountManagementLegacy({ member, onNotice }: { member: MemberActivity["member"]; onNotice: (value: string) => void }) {
   const [access, setAccess] = useState({ canPost: member.can_post !== 0, canComment: member.can_comment !== 0, canMessage: member.can_message !== 0 });
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("Account notice from TPI Administration");
