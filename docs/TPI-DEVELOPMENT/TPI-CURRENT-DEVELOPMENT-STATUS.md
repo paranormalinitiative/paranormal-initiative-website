@@ -1,5 +1,24 @@
 # TPI Current Development Status
 
+## 2026-11-10 — Education Center shelf-to-Contribute spacing
+
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The final TPI Videos
+subject shelf now has a deliberate 48px separation before the Contribute card.
+The spacing is scoped to the member Education Center layout so it is not
+collapsed by the shared member-shell resets.
+
+Verification: Education Center source checks 33/33; local Firefox Education
+Center acceptance 28/28; production Firefox Education Center acceptance 28/28,
+including the measured 48px gap, all 18 compact subject shelves, clean subject
+routes, and mobile overflow safety. The guarded release preflight passed 30/30,
+anonymous production smoke passed 10/10, and live isolated Firefox acceptance
+passed 65/65. No database, member, article, or Studio data was changed.
+
+Production release `rel-6b574ea53d16-75429a7fa16c` deployed source commit
+`6b574ea53d1698e31152e05aa67b1cac1bfdcefc` as Worker
+`c9e07261-d3a5-4411-a154-47ff49068756` at 100% traffic. Rollback Worker:
+`fb700070-b2b4-4c1b-a326-5f95553330bd`.
+
 ## 2026-11-09 — Owner-requested continuation audit
 
 The historical records below contain prior implementation and release claims.
