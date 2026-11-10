@@ -77,6 +77,7 @@ function start() {
     "--config", configPath,
     "--env-file", resolve(repoRoot, "scripts/local-dev.env"),
     "--local",
+    "--live-reload=false",
     "--persist-to", statePath,
     "--ip", "127.0.0.1",
     "--port", String(port),
