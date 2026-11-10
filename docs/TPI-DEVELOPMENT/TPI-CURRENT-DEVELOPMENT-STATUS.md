@@ -35,6 +35,9 @@ complete inline expansion, and no navigation reload. The synthetic local
 Firefox Friends interaction passed 7/7 for search, follow, following-list
 display, unfollow, and restoration of the initial state; it also confirmed no
 `file:///` navigation. No real or production member relationship was changed.
+The current production `Todd_Wayne` public profile API returns Founder /
+Director, Gold Medallion recognition, Board membership, and three Profile Wall
+posts; Sol’s public leadership profile was browser-verified separately.
 guarded preflight certified the synchronized branch as release
 `rel-9ef3594abed1-23357aacd79c`; the guarded deployment then served Worker
 version `84b2fa25-3fb2-4654-94ad-b47d015ee8a3` and passed live smoke 10/10 and
