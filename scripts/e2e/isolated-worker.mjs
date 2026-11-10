@@ -95,7 +95,7 @@ const command = process.argv[2] || "start";
 if (command === "start") start();
 else if (command === "clean") {
   assertIsolated();
-  rmSync(testRoot, { recursive: true, force: true });
+  rmSync(testRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   console.log(`removed ${testRoot}`);
 } else {
   console.error(`unknown command: ${command}`);
