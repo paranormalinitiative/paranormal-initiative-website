@@ -24,6 +24,15 @@ data, production broadcasts, or production access-control records were
 changed during this audit. The remaining entitlement action is intentionally
 not performed without its exact production approval.
 
+Current production read-only evidence added during this continuation: the
+anonymous boundary smoke passes 10/10; disposable Firefox Messenger acceptance
+passes 18/18; and the disposable Firefox member UI audit passes 8/8 across
+Community Feed, Friends search, bug reporting, Education Center, Sol, and a
+public profile. Friends search correctly returned no active match for the
+synthetic `qa` query; no follow/unfollow or bug report was submitted. The
+guarded preflight also certified the synchronized branch as release
+`rel-4a8136cbb749-28d08eec6b42`; it did not upload or deploy a Worker.
+
 ## 2026-11-09 — Messenger navigation home and readable conversation names
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.**
