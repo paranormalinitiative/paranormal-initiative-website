@@ -13,9 +13,13 @@ const repoRoot = resolve(import.meta.dirname, "../..");
 const base = (process.env.TPI_MESSENGER_BASE_URL || "http://127.0.0.1:8787").replace(/\/$/, "");
 const firefoxBinary = process.env.TPI_FIREFOX_BINARY || "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox";
 const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodriver";
-const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
+const productionAcceptance = process.env.TPI_FIREFOX_ALLOW_PRODUCTION === "1" && process.env.TPI_FIREFOX_PRODUCTION_QA === "approved";
+const accountKey = process.env.TPI_MESSENGER_ACCOUNT || (productionAcceptance ? "production_qa" : "local_member");
+const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || (productionAcceptance
+  ? resolve(repoRoot, ".local-dev/qa-studioflow-prod.json")
+  : resolve(repoRoot, ".local-dev/local-auth-credentials.json"));
 const credentials = existsSync(credentialsFile) ? JSON.parse(readFileSync(credentialsFile, "utf8")) : null;
-const account = credentials?.accounts?.local_member;
+const account = productionAcceptance ? credentials : credentials?.accounts?.[accountKey];
 const results = [];
 const check = (name, passed, detail = "") => {
   results.push({ name, passed: Boolean(passed), detail: passed ? "" : String(detail || "") });
@@ -24,8 +28,10 @@ const check = (name, passed, detail = "") => {
 const sleep = (ms) => new Promise((resolvePromise) => setTimeout(resolvePromise, ms));
 const safe = (error) => error instanceof Error ? error.message : String(error);
 
-if (!/^http:\/\/(127\.0\.0\.1|localhost):8787$/.test(base)) {
-  console.log(JSON.stringify({ suite: "TPI-MEMBER-MESSENGER", status: "BLOCKED", reason: "The focused Messenger test requires the approved loopback Worker origin." }));
+const approvedLocalOrigin = /^http:\/\/(127\.0\.0\.1|localhost):8787$/.test(base);
+const approvedProductionOrigin = base === "https://paranormalinitiative.com" && productionAcceptance && accountKey === "production_qa";
+if (!approvedLocalOrigin && !approvedProductionOrigin) {
+  console.log(JSON.stringify({ suite: "TPI-MEMBER-MESSENGER", status: "BLOCKED", reason: "The focused Messenger test requires the approved loopback origin or the guarded synthetic production acceptance settings." }));
   process.exit(1);
 }
 for (const file of [firefoxBinary, geckodriver, credentialsFile]) {
@@ -35,7 +41,7 @@ for (const file of [firefoxBinary, geckodriver, credentialsFile]) {
   }
 }
 if (!account?.username || !account?.password) {
-  console.log(JSON.stringify({ suite: "TPI-MEMBER-MESSENGER", status: "BLOCKED", reason: "The synthetic local_member account is unavailable." }));
+  console.log(JSON.stringify({ suite: "TPI-MEMBER-MESSENGER", status: "BLOCKED", reason: `The synthetic ${accountKey} account is unavailable.` }));
   process.exit(1);
 }
 

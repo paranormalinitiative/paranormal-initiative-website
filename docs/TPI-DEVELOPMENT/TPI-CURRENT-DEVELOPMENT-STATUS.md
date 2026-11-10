@@ -13,7 +13,7 @@ Current queue and acceptance state:
 
 | Area | Current state | Required next proof |
 | --- | --- | --- |
-| Messenger | Local Firefox verified; production release pending | Guarded release, live desktop/mobile Firefox verification |
+| Messenger | Complete — deployed and live verified | Continue with the separate Community Feed follow-up |
 | Community Feed | Follow-up required | Collapsed long posts, working inline Open Post, destination links, refresh notice |
 | Friends | Owner-reported production UI/route problems | Live styling, member search, follow/unfollow, add/remove, no `file:///` navigation |
 | Leadership and Board | Historical release exists; owner requests current re-audit | Rank-safe roles, medallion assignment, Board badge, revoke/edit flows |
@@ -31,7 +31,7 @@ disposable records only; production creator data remains protected.
 
 ## 2026-11-09 — Messenger navigation home and readable conversation names
 
-Status: **IMPLEMENTED — FIREFOX VERIFIED LOCALLY; PRODUCTION RELEASE PENDING.**
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.**
 The existing floating Messenger now has a durable Chat home in both desktop and
 mobile member navigation. Hide stores the movable/resizable frame and closes the
 panel; selecting Chat restores it at the saved position and size. Member names,
@@ -39,9 +39,20 @@ usernames, and conversation previews wrap instead of being clipped by the
 previous single-line ellipsis rules.
 
 Focused source checks pass 19/19. Isolated Firefox Developer Edition
-acceptance against the canonical local Worker passes 18/18, including desktop
-dragging, Hide/restore, refresh persistence, narrow viewport navigation, and
-composer input. No production data or owner browser storage was used.
+acceptance against the canonical local Worker passes 18/18, and the same
+focused acceptance against production passes 18/18 using a disposable profile
+and the synthetic production QA account. Both runs cover desktop dragging,
+Hide/restore, refresh persistence, narrow viewport navigation, wrap-safe
+labels/previews, and composer input. No owner browser storage or owner Studio
+was used.
+
+The guarded preflight passed 30/30 gates, including the repaired disposable
+D1/API path (294/294), local authentication lifecycle (38/38), and guarded
+Wrangler dry-run. Anonymous production smoke passed 10/10. Production release
+`rel-99bac3bb4a5f-66c24136e926` deployed website commit
+`99bac3bb4a5f8fdc19a615ff2e72b74150809c80` as Worker
+`ce3a569c-a29e-4868-af75-10b9614fe033` at 100% traffic, with rollback target
+`f9bb5d31-4636-40d9-a3fd-474021559169`.
 
 Full record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-MEMBER-MESSENGER-NAVIGATION.md`.

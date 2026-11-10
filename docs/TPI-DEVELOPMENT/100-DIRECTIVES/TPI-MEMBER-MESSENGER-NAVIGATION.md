@@ -1,7 +1,7 @@
 # TPI Member Messenger Navigation Repair
 
 Date: 2026-11-09
-Status: **IMPLEMENTED — FIREFOX VERIFIED LOCALLY; PRODUCTION RELEASE PENDING**
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED**
 
 ## Objective
 
@@ -63,8 +63,15 @@ conversation previews were shortened in JavaScript with `slice(0, 38)`.
 - `node --check member-shell.js`: **PASS**.
 - `git diff --check`: **PASS**.
 - Isolated Firefox Developer Edition acceptance against
-  `http://127.0.0.1:8787`: **17/17 PASS** using
+  `http://127.0.0.1:8787`: **18/18 PASS** using
   `scripts/verify/tpi-member-messenger.mjs` and a disposable profile/account.
+- Guarded disposable API E2E: **294/294 PASS** after changing isolated D1
+  setup to one ordered Wrangler migration operation.
+- `npm run verify:release-safety`: **28/28 PASS**.
+- `npm run release:preflight`: **CERTIFIED — 30/30 gates PASS**.
+- Live anonymous production smoke: **10/10 PASS**.
+- Isolated production Firefox Developer Edition acceptance:
+  **18/18 PASS** for Messenger using the synthetic production QA account.
 
 Firefox verified authentication, desktop and narrow viewport rendering, Chat
 navigation, real header dragging, stored position persistence, roster
@@ -74,10 +81,14 @@ content was used.
 
 ## Release state
 
-This record must be updated to **DEPLOYED AND LIVE VERIFIED** only after the
-changes are committed and pushed on `codex/tpi-development`, pass the
-maintained authentication lifecycle and release preflight, complete the
-guarded production release, and pass isolated Firefox live acceptance.
+Website commit `99bac3bb4a5f8fdc19a615ff2e72b74150809c80` is pushed on
+`codex/tpi-development` and deployed as release
+`rel-99bac3bb4a5f-66c24136e926`. Worker version
+`ce3a569c-a29e-4868-af75-10b9614fe033` is receiving 100% production traffic.
+The guarded rollback target is `f9bb5d31-4636-40d9-a3fd-474021559169`.
+The focused Messenger verifier now supports the same explicit synthetic
+production QA guard as the maintained release acceptance; it does not permit
+owner credentials or an arbitrary hosted origin.
 
 ## Broader continuation queue
 
