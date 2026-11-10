@@ -41,7 +41,7 @@ write_plist() {
     <key>TPI_DISABLE_OUTBOUND</key><string>1</string>
   </dict>
   <key>RunAtLoad</key><false/>
-  <key>KeepAlive</key><false/>
+  <key>KeepAlive</key><true/>
   <key>ProcessType</key><string>Interactive</string>
   <key>StandardOutPath</key><string>$LOG_DIR/isolated-worker.stdout.log</string>
   <key>StandardErrorPath</key><string>$LOG_DIR/isolated-worker.stderr.log</string>
