@@ -56,9 +56,9 @@ async function waitForDirectory() {
   const started = Date.now();
   let lastState = null;
   while (Date.now() - started < 20_000) {
-    lastState = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), shelves=document.querySelectorAll('.edu-accordion-item'), hostRect=host && host.getBoundingClientRect(), firstRect=shelves[0] && shelves[0].getBoundingClientRect();
-      return {host:!!host,loaded:host && host.dataset.loaded === 'true',count:shelves.length,member:document.body.classList.contains('member-mode'),visible:Boolean(hostRect && hostRect.width > 0 && hostRect.height > 0 && firstRect && firstRect.width > 0 && firstRect.height > 0)};`);
-    if (lastState.host && lastState.loaded && lastState.count === destinations.length && lastState.member && lastState.visible) return;
+    lastState = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), shelves=document.querySelectorAll('.edu-accordion-item'), hostRect=host && host.getBoundingClientRect(), firstRect=shelves[0] && shelves[0].getBoundingClientRect(), ghostology=document.querySelector('.member-sidebar [data-nav="ghostology"]');
+      return {host:!!host,loaded:host && host.dataset.loaded === 'true',count:shelves.length,member:document.body.classList.contains('member-mode'),ghostology:Boolean(ghostology),visible:Boolean(hostRect && hostRect.width > 0 && hostRect.height > 0 && firstRect && firstRect.width > 0 && firstRect.height > 0)};`);
+    if (lastState.host && lastState.loaded && lastState.count === destinations.length && lastState.member && lastState.ghostology && lastState.visible) return;
     await sleep(200);
   }
   throw new Error(`Education Center directory did not finish rendering: ${JSON.stringify({ url: await driver.getCurrentUrl(), state: lastState })}`);

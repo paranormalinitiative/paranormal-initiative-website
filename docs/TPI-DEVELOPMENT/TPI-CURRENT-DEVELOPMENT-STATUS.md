@@ -1,5 +1,25 @@
 # TPI Current Development Status
 
+## 2026-11-10 — Ghostology member navigation and naming
+
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The left member navigation
+now has a dedicated **Ghostology** link to `ghostology-101?member=1`. The
+Education Center subject shelf and Nova Editorial destination are also named
+**Ghostology** instead of Ghostology Reference. Ghostology hub, lesson, and
+academy-introduction pages keep the Ghostology navigation item active.
+
+Verification: Education Center source checks 36/36; local Firefox acceptance
+29/29; production Firefox acceptance 29/29, including the Ghostology link,
+all 18 shelves, clean routes, and mobile overflow safety. The guarded release
+preflight passed 30/30, anonymous production smoke passed 10/10, and live
+isolated Firefox acceptance passed 65/65. No database, member, article, or
+Studio data was changed.
+
+Production release `rel-aee6e1231c74-d74df1cf174c` deployed source commit
+`aee6e1231c740a16eb7f36a89e3bc28168ae7b29` as Worker
+`8a74a433-3078-4904-b332-cf2f639b3641` at 100% traffic. Rollback Worker:
+`c9e07261-d3a5-4411-a154-47ff49068756`.
+
 ## 2026-11-10 — Education Center shelf-to-Contribute spacing
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The final TPI Videos
