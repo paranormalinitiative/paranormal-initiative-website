@@ -114,11 +114,15 @@ real account identity and explicit entitlement record.
 
 ## 2026-11-10 — Friends workspace visual correction
 
-Status: **READY FOR GUARDED RELEASE.** Friends now uses the shared member-shell
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** Friends now uses the shared member-shell
 panel, input, button, section-heading, border, hover, and responsive patterns.
 The previous native-looking controls and duplicated inner heading were removed;
 search, follow, and unfollow behavior is unchanged. Focused community checks
-pass 12/12. No database or production data changes are required.
+pass 12/12. The guarded release passed 30/30 certification gates, live
+anonymous smoke passed 10/10, and isolated Firefox production acceptance passed
+65/65. Worker `8caaf9f4-bb79-4721-ae8b-676808e76b38` is active at 100% traffic;
+rollback is `6e552552-9458-4506-ab8f-48fd8e4b45fc`. No database or production
+member data changes were required.
 
 ## 2026-11-09 — Community Feed Open post no-reload correction
 

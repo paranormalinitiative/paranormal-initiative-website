@@ -1,7 +1,7 @@
 # Friends Workspace UI Correction
 
 Date: 2026-11-10
-Status: IMPLEMENTED — RELEASE VERIFICATION PENDING
+Status: COMPLETE — DEPLOYED AND VERIFIED
 
 ## Root cause
 
@@ -29,5 +29,17 @@ heading inside the panel below the shell-generated page heading.
 - `git diff --check`: PASS.
 - No migration, API, authentication, Messenger, or member data changes.
 
-The guarded release and live Firefox acceptance will be recorded here after
-the corrected page is deployed.
+## Production release
+
+- Application commit: `5a02baa42a5d0343d1e84c3854cfc2e067050fad`.
+- Certified release: `rel-5a02baa42a5d-8e7bafee3516`.
+- Worker: `8caaf9f4-bb79-4721-ae8b-676808e76b38` at 100% traffic.
+- Rollback Worker: `6e552552-9458-4506-ab8f-48fd8e4b45fc`.
+- Certification: 30/30 gates passed.
+- Live anonymous smoke: 10/10 passed.
+- Isolated Firefox Developer Edition production acceptance: 65/65 passed;
+  the owner Firefox profile was not accessed.
+
+The Friends-specific contract remains covered by the focused 12/12 checks. The
+production release uploaded the corrected `friends.html` asset and did not
+change database schema, API behavior, authentication, or member data.
