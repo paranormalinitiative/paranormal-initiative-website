@@ -310,6 +310,26 @@ Production release `rel-968df23cd9e5-081d4b3b685b` deployed website commit
 `dd129573-0ab5-4465-97ca-ce8ba1d83f8a`; the prior Worker version
 `5f6e6ad8-1d81-4444-b809-25fd183e626b` remains the rollback target.
 
+## 2026-11-10 — Education Center subject placement and wording correction
+
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** Subject shelves now use the
+catalog destination as the organizing rule, so published items remain in their
+assigned subject instead of being copied into unrelated topic shelves. Each
+subject keeps its own compact card with its direct subject guide and assigned
+published work. Visitor-facing subject descriptions no longer call any area
+“legacy.”
+
+Focused source verification passes 33/33. Disposable Firefox Developer Edition
+acceptance passes 27/27 locally and 27/27 against production, including 18
+subject shelves, non-empty shelf content, shelf interaction, desktop
+containment, mobile no-overflow behavior, and all 18 destination routes. No
+database, member, contributor, or production content was changed.
+
+Production release `rel-805e9c6de4a1-67d656f96bab` deployed website commit
+`805e9c6de4a1260dd4222c86490dedd511eec046` as Worker version
+`fb700070-b2b4-4c1b-a326-5f95553330bd`; the prior Worker version
+`dd129573-0ab5-4465-97ca-ce8ba1d83f8a` remains the rollback target.
+
 ## 2026-11-09 — Community Feed Open post no-reload correction
 
 Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact Community Feed
