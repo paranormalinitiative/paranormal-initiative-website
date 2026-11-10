@@ -12,7 +12,7 @@ acceptance level shown here.
 | --- | --- | --- |
 | Messenger | Implemented; source and local Firefox gates pass; prior production live verification recorded | Current production re-audit remains required for final completion |
 | Community Feed | Implemented; workstation/source gates pass; prior production release recorded | Current production re-audit remains required for final completion |
-| Friends and bug reporting | Implemented; workstation/source gates pass; Friends padding repair passes local Firefox layout 9/9 | Current production visual verification follows the guarded release |
+| Friends and bug reporting | Implemented; workstation/source gates pass; Friends padding repair passes local and production Firefox layout 9/9 | No remaining implementation blocker |
 | Leadership, Board, profiles, Sol, and Education | Implemented; governance/profile/source gates pass; prior production releases recorded | Current production re-audit remains required for final completion |
 | Nova Editorial Workspace and Nova Edit | Implemented; current review 47/47, publish 60/60, revision 26/26, Slides 23/23, workstation 9/9, and StudioFlow Nova Edit 13/13 pass locally | Current production re-audit remains required for final completion |
 | Founding Membership | Implemented; Firefox/Chromium browser audit passes 48/48 and capability separation passes | Current production re-audit remains required for final completion |
@@ -35,6 +35,9 @@ complete inline expansion, and no navigation reload. The synthetic local
 Firefox Friends interaction passed 7/7 for search, follow, following-list
 display, unfollow, and restoration of the initial state; it also confirmed no
 `file:///` navigation. No real or production member relationship was changed.
+The post-release production Friends layout acceptance passes 9/9 at desktop and
+mobile widths, including 24px/18px panel padding, inset controls, panel bounds,
+and horizontal-overflow safety.
 The current production `Todd_Wayne` public profile API returns Founder /
 Director, Gold Medallion recognition, Board membership, and three Profile Wall
 posts; Sol’s public leadership profile was browser-verified separately.
@@ -226,14 +229,17 @@ member data changes were required.
 
 ## 2026-11-10 — Friends panel padding repair
 
-Status: **LOCAL VERIFIED — PRODUCTION RELEASE PENDING.** The shared member-mode
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** The shared member-mode
 section reset was overriding Friends' panel padding, leaving the border flush
 against the search controls and section headings. Friends now restores 24px
 desktop padding and 18px mobile padding with the correct cascade. A dedicated
-Firefox Developer Edition regression check passes 9/9 for desktop and mobile
-padding, inset content, panel bounds, and horizontal-overflow safety. Search,
-follow, and unfollow behavior is unchanged. No database or member data changes
-were required.
+Firefox Developer Edition regression check passes 9/9 locally and 9/9 against
+production for desktop and mobile padding, inset content, panel bounds, and
+horizontal-overflow safety. Search, follow, and unfollow behavior is unchanged.
+The guarded release `rel-f7db083f23b2-fc3f459cdd14` deployed Worker
+`0e06c46e-cca8-4548-bfe3-272b59eafbe8` at 100% traffic with rollback
+`84b2fa25-3fb2-4654-94ad-b47d015ee8a3`. No database or member data changes were
+required.
 
 ## 2026-11-09 — Community Feed Open post no-reload correction
 

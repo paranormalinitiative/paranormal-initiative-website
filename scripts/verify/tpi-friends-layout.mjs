@@ -48,10 +48,11 @@ async function waitForPage() {
   const started = Date.now();
   let lastState = null;
   while (Date.now() - started < 20_000) {
-    const state = await driver.executeScript(`var panel=document.querySelector('.social-panel'), input=document.querySelector('.social-search .member-input');
-      return {panel:!!panel,input:!!input,bodyClass:document.body.className};`);
+    const state = await driver.executeScript(`var panel=document.querySelector('.social-panel'), input=document.querySelector('.social-search .member-input'), main=document.querySelector('.member-main') || document.querySelector('.member-shell');
+      var rect=panel ? panel.getBoundingClientRect() : null;
+      return {panel:!!panel,input:!!input,main:!!main,visible:Boolean(rect && rect.width > 0 && rect.height > 0),bodyClass:document.body.className};`);
     lastState = state;
-    if (state.panel && state.input && state.bodyClass.includes("member-mode")) return;
+    if (state.panel && state.input && state.main && state.visible && state.bodyClass.includes("member-mode")) return;
     await sleep(200);
   }
   throw new Error(`Friends workspace did not finish rendering: ${JSON.stringify({ url: await driver.getCurrentUrl(), state: lastState })}`);
@@ -61,7 +62,7 @@ async function inspectViewport(width, height, expectedPadding) {
   await driver.manage().window().setRect({ width, height });
   await driver.navigate().refresh();
   await waitForPage();
-  return driver.executeScript(`var panel=document.querySelector('.social-panel'), input=document.querySelector('.social-search .member-input'), title=document.querySelector('.member-section-title'), main=document.querySelector('.member-main'), style=getComputedStyle(panel), pr=panel.getBoundingClientRect(), ir=input.getBoundingClientRect(), tr=title.getBoundingClientRect(), mr=main.getBoundingClientRect();
+  return driver.executeScript(`var panel=document.querySelector('.social-panel'), input=document.querySelector('.social-search .member-input'), title=document.querySelector('.member-section-title'), main=document.querySelector('.member-main') || document.querySelector('.member-shell') || panel.parentElement, style=getComputedStyle(panel), pr=panel.getBoundingClientRect(), ir=input.getBoundingClientRect(), tr=title.getBoundingClientRect(), mr=main.getBoundingClientRect();
     return {paddingLeft:parseFloat(style.paddingLeft),paddingRight:parseFloat(style.paddingRight),panelLeft:pr.left,panelRight:pr.right,inputLeft:ir.left,titleLeft:tr.left,mainLeft:mr.left,mainRight:mr.right,scrollWidth:document.documentElement.scrollWidth,innerWidth:innerWidth};`, expectedPadding);
 }
 
