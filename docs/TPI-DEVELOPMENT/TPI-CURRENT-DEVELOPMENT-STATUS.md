@@ -12,7 +12,7 @@ acceptance level shown here.
 | --- | --- | --- |
 | Messenger | Implemented; source and local Firefox gates pass; prior production live verification recorded | Current production re-audit remains required for final completion |
 | Community Feed | Implemented; workstation/source gates pass; prior production release recorded | Current production re-audit remains required for final completion |
-| Friends and bug reporting | Implemented; workstation/source gates pass; prior production release recorded | Current production re-audit remains required for final completion |
+| Friends and bug reporting | Implemented; workstation/source gates pass; Friends padding repair passes local Firefox layout 9/9 | Current production visual verification follows the guarded release |
 | Leadership, Board, profiles, Sol, and Education | Implemented; governance/profile/source gates pass; prior production releases recorded | Current production re-audit remains required for final completion |
 | Nova Editorial Workspace and Nova Edit | Implemented; current review 47/47, publish 60/60, revision 26/26, Slides 23/23, workstation 9/9, and StudioFlow Nova Edit 13/13 pass locally | Current production re-audit remains required for final completion |
 | Founding Membership | Implemented; Firefox/Chromium browser audit passes 48/48 and capability separation passes | Current production re-audit remains required for final completion |
@@ -223,6 +223,17 @@ anonymous smoke passed 10/10, and isolated Firefox production acceptance passed
 65/65. Worker `8caaf9f4-bb79-4721-ae8b-676808e76b38` is active at 100% traffic;
 rollback is `6e552552-9458-4506-ab8f-48fd8e4b45fc`. No database or production
 member data changes were required.
+
+## 2026-11-10 — Friends panel padding repair
+
+Status: **LOCAL VERIFIED — PRODUCTION RELEASE PENDING.** The shared member-mode
+section reset was overriding Friends' panel padding, leaving the border flush
+against the search controls and section headings. Friends now restores 24px
+desktop padding and 18px mobile padding with the correct cascade. A dedicated
+Firefox Developer Edition regression check passes 9/9 for desktop and mobile
+padding, inset content, panel bounds, and horizontal-overflow safety. Search,
+follow, and unfollow behavior is unchanged. No database or member data changes
+were required.
 
 ## 2026-11-09 — Community Feed Open post no-reload correction
 

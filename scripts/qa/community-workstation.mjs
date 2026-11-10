@@ -33,6 +33,7 @@ check("Messenger labels and previews wrap without clipping", memberShellCss.incl
 check("Migration creates follow and bug-report storage", migration.includes("CREATE TABLE IF NOT EXISTS member_follows") && migration.includes("CREATE TABLE IF NOT EXISTS member_bug_reports"));
 check("Friends page uses shared member panel styling", friends.includes('class="member-panel social-panel"') && friends.includes('class="member-section-title"'));
 check("Friends controls use shared member-mode controls", friends.includes('class="member-input"') && friends.includes('class="member-btn member-btn-primary"') && friends.includes('class="member-btn member-btn-secondary member-btn-sm"'));
+check("Friends panel restores padding after the member section reset", friends.includes("body.member-mode .social-panel { padding: 24px; }") && friends.includes("body.member-mode .social-panel { padding: 18px; }"));
 check("Friends layout has a responsive mobile mode", friends.includes("@media (max-width: 640px)") && friends.includes("grid-template-columns: 1fr") && friends.includes("width: 100%"));
 
 const passed = checks.filter((item) => item.passed).length;

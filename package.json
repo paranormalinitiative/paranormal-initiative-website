@@ -55,6 +55,7 @@
   "verify:profile-honors-wall": "node scripts/verify/tpi-profile-honors-wall.mjs",
   "verify:governance-subject-index": "node scripts/verify/tpi-governance-006-subject-index.mjs",
     "verify:community-workstation": "node scripts/qa/community-workstation.mjs",
+    "verify:friends-layout": "node scripts/verify/tpi-friends-layout.mjs",
     "verify:member-messenger": "node scripts/verify/tpi-member-messenger.mjs",
     "verify:release-staging": "node scripts/verify/tpi-ops-004-release-staging-guard.mjs",
     "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",
