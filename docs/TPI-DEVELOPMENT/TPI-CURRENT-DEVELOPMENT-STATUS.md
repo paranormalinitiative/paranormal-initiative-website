@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## 2026-11-09 — Messenger navigation home and readable conversation names
+
+Status: **IMPLEMENTED — FIREFOX VERIFIED LOCALLY; PRODUCTION RELEASE PENDING.**
+The existing floating Messenger now has a durable Chat home in both desktop and
+mobile member navigation. Hide stores the movable/resizable frame and closes the
+panel; selecting Chat restores it at the saved position and size. Member names,
+usernames, and conversation previews wrap instead of being clipped by the
+previous single-line ellipsis rules.
+
+Focused source checks pass 19/19. Isolated Firefox Developer Edition
+acceptance against the canonical local Worker passes 18/18, including desktop
+dragging, Hide/restore, refresh persistence, narrow viewport navigation, and
+composer input. No production data or owner browser storage was used.
+
+Full record:
+`docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-MEMBER-MESSENGER-NAVIGATION.md`.
+
 ## 2026-11-09 — Profile honors, medallion details, Profile Wall, and admin editing
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Public profiles

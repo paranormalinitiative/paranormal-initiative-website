@@ -298,16 +298,31 @@
         window.TPIMessenger.show();
       }
     }
+    function syncMessengerNavigation() {
+      var open = Boolean(window.TPIMessenger && typeof window.TPIMessenger.isOpen === "function" && window.TPIMessenger.isOpen());
+      syncMessengerNavigationState(open);
+    }
     document.querySelectorAll('a[href="#messenger"], [data-nav="chat"]').forEach(function(link) {
       link.addEventListener("click", function(event) {
         event.preventDefault();
         openMessenger();
         window.history.replaceState({}, "", window.location.pathname + window.location.search + "#messenger");
+        syncMessengerNavigation();
       });
     });
+    window.addEventListener("tpi:messenger-state", syncMessengerNavigation);
+    syncMessengerNavigation();
     if (window.location.hash === "#messenger") openMessenger();
     window.addEventListener("hashchange", function() {
       if (window.location.hash === "#messenger") openMessenger();
+      syncMessengerNavigation();
+    });
+  }
+
+  function syncMessengerNavigationState(open) {
+    document.querySelectorAll('a[href="#messenger"], [data-nav="chat"]').forEach(function(link) {
+      link.setAttribute("aria-expanded", open ? "true" : "false");
+      link.classList.toggle("is-chat-open", open);
     });
   }
 
@@ -520,6 +535,8 @@
           '<span class="mobile-nav-icon">&#9679;</span>Home</a>' +
         '<a class="mobile-nav-link" href="tpi-videos.html?member=1" data-nav="tpi-videos">' +
           '<span class="mobile-nav-icon">&#9654;</span>Videos</a>' +
+        '<a class="mobile-nav-link" href="#messenger" data-nav="chat" data-messenger-trigger aria-controls="member-floating-chat" aria-expanded="false">' +
+          '<span class="mobile-nav-icon">&#9993;</span>Chat</a>' +
         '<a class="mobile-nav-link" href="/studio/" data-nav="studio" data-studio-only hidden aria-label="TPI Creator Studio">' +
           '<span class="mobile-nav-icon">&#9654;</span>TPI Creator Studio</a>' +
         '<a class="mobile-nav-link" href="member-home.html" data-nav="profile" data-nav-profile-mobile>' +
@@ -2833,7 +2850,7 @@
         stopPresenceHeartbeat();
         return;
       }
-      if (chat.classList.contains("is-collapsed")) {
+      if (chat.classList.contains("is-hidden")) {
         stopActiveSync();
         startListSync();
       } else {
@@ -2901,14 +2918,14 @@
     });
 
     function setMessengerCollapsed(collapsed) {
+      if (collapsed) storeChatFrame(chat);
       if (collapsed) {
-        storeChatFrame(chat);
-        chat.classList.add("is-collapsed");
-        mountWorkspaceCollapsedChat(chat);
-        if (!isWorkspaceCollapsedChatMounted(chat)) dockCollapsedChat(chat);
+        chat.classList.add("is-hidden");
+        if (window.location.hash === "#messenger") {
+          window.history.replaceState({}, "", window.location.pathname + window.location.search);
+        }
       } else {
-        unmountWorkspaceCollapsedChat(chat);
-        chat.classList.remove("is-collapsed");
+        chat.classList.remove("is-hidden", "is-collapsed");
         applyStoredChatFrame(chat, true);
       }
       syncChatMinimizeButton();
@@ -2916,18 +2933,15 @@
       closeIdentityMenu();
       closeOwnerMenu();
       setSyncForVisibility();
+      syncMessengerNavigationState(!collapsed);
+      window.dispatchEvent(new CustomEvent("tpi:messenger-state", { detail: { open: !collapsed } }));
     }
 
     minimizeButton.addEventListener("click", function () {
-      setMessengerCollapsed(!chat.classList.contains("is-collapsed"));
-    });
-
-    chat.addEventListener("click", function () {
-      if (chat.classList.contains("is-collapsed") && !isWorkspaceCollapsedChatMounted(chat)) dockCollapsedChat(chat);
+      setMessengerCollapsed(true);
     });
 
     window.addEventListener("resize", function () {
-      if (chat.classList.contains("is-collapsed") && !isWorkspaceCollapsedChatMounted(chat)) dockCollapsedChat(chat);
       closeIdentityMenu();
       closeOwnerMenu();
     });
@@ -3230,7 +3244,7 @@
           '<button class="member-chat-list-open" type="button" data-chat-open="' + escapeHtml(savedChat.id) + '">' +
             getConversationAvatarHtml(savedChat, user) +
             '<span class="member-chat-person-copy"><strong>' + escapeHtml(title) + '</strong>' +
-            '<span class="member-chat-presence">' + escapeHtml(preview.slice(0, 38)) + (time ? ' · ' + escapeHtml(time) : "") + '</span></span>' +
+            '<span class="member-chat-presence">' + escapeHtml(preview) + (time ? ' · ' + escapeHtml(time) : "") + '</span></span>' +
             unreadBadge +
           '</button>' +
         '</article>';
@@ -3291,7 +3305,7 @@
 
     function openConversationBuilder(mode, membersToPreselect) {
       if (!createEl) return;
-      if (chat.classList.contains("is-collapsed")) setMessengerCollapsed(false);
+      if (chat.classList.contains("is-hidden")) setMessengerCollapsed(false);
       conversationBuilderMode = mode === "chat" ? "chat" : (mode === "manage" ? "manage" : "room");
       selectedMembers.clear();
       (membersToPreselect || []).forEach(function(member) {
@@ -3392,8 +3406,9 @@
 
     function syncChatMinimizeButton() {
       if (!minimizeButton) return;
-      minimizeButton.textContent = chat.classList.contains("is-collapsed") ? "Show" : "Hide";
-      minimizeButton.setAttribute("aria-expanded", chat.classList.contains("is-collapsed") ? "false" : "true");
+      minimizeButton.textContent = "Hide";
+      minimizeButton.setAttribute("aria-expanded", chat.classList.contains("is-hidden") ? "false" : "true");
+      minimizeButton.setAttribute("aria-label", "Hide Messenger");
     }
 
     async function sendChatMessage(body, attachments) {
@@ -3471,6 +3486,7 @@
 
     window.TPIMessenger = {
       isReady: function() { return true; },
+      isOpen: function() { return !chat.classList.contains("is-hidden"); },
       show: function() {
         setMessengerCollapsed(false);
         if (ownerEl) ownerEl.focus();
@@ -3479,13 +3495,7 @@
         if (!conversationId) return;
         closeIdentityMenu();
         closeOwnerMenu();
-        if (chat.classList.contains("is-collapsed")) {
-          unmountWorkspaceCollapsedChat(chat);
-          chat.classList.remove("is-collapsed");
-          applyStoredChatFrame(chat, true);
-          syncChatMinimizeButton();
-          setSyncForVisibility();
-        }
+        if (chat.classList.contains("is-hidden")) setMessengerCollapsed(false);
         await refreshChatListFromRemote();
         var existing = chatList.find(function(c) { return c.id === conversationId; });
         if (existing) {
@@ -4809,14 +4819,11 @@
       chat.style.right = "24px";
       chat.style.bottom = "24px";
     }
-    var shouldCollapse = !forceOpen && (
-      Boolean(frame && frame.collapsed) ||
+    var shouldHide = !forceOpen && (
+      Boolean(frame && (frame.hidden || frame.collapsed)) ||
       (mobileViewport && !(frame && frame.mobileExpanded))
     );
-    if (shouldCollapse) {
-      chat.classList.add("is-collapsed");
-      dockCollapsedChat(chat);
-    }
+    chat.classList.toggle("is-hidden", shouldHide);
   }
 
   function isMobileChatViewport() {
@@ -4865,7 +4872,8 @@
     try {
       var existing = getStoredChatFrame() || {};
       var mobileViewport = isMobileChatViewport();
-      if (chat.classList.contains("is-collapsed")) {
+      if (chat.classList.contains("is-hidden")) {
+        existing.hidden = true;
         existing.collapsed = true;
         if (mobileViewport) existing.mobileExpanded = false;
         localStorage.setItem("tpiFloatingChatFrame", JSON.stringify(existing));
@@ -4877,6 +4885,7 @@
         top: Math.round(rect.top),
         width: Math.round(rect.width),
         height: Math.round(rect.height),
+        hidden: false,
         collapsed: false
       };
       if (mobileViewport) nextFrame.mobileExpanded = true;
