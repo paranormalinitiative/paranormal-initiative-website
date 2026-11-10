@@ -103,6 +103,9 @@ try {
     var hostRect=host.getBoundingClientRect(), firstRect=first.getBoundingClientRect();
     return {visible:hostRect.width > 0 && hostRect.height > 0, cardWidth:firstRect.width, scrollWidth:document.documentElement.scrollWidth, innerWidth:innerWidth};`);
   check("desktop subject shelves are visible and contained", desktopLayout.visible && desktopLayout.scrollWidth <= desktopLayout.innerWidth + 1, JSON.stringify(desktopLayout));
+  const bottomSpacing = await driver.executeScript(`var shelves=document.querySelectorAll('.edu-accordion-item'), last=shelves[shelves.length-1], contribute=document.querySelector('.education-contribute-section'), lastRect=last && last.getBoundingClientRect(), contributeRect=contribute && contribute.getBoundingClientRect();
+    return {gap:lastRect && contributeRect ? contributeRect.top - lastRect.bottom : -1,required:32};`);
+  check("space separates the final TPI Videos shelf from Contribute", bottomSpacing.gap >= bottomSpacing.required, JSON.stringify(bottomSpacing));
 
   await driver.manage().window().setRect({ width: 390, height: 844 });
   await driver.get(`${base}/education-center`);
