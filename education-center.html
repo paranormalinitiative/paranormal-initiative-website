@@ -74,6 +74,20 @@
             gap: 12px;
         }
 
+        .edu-accordion-title {
+            display: block;
+            font-weight: 700;
+        }
+
+        .edu-accordion-description {
+            display: block;
+            margin-top: 2px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.45;
+        }
+
         .edu-accordion-icon {
             width: 40px;
             height: 40px;
@@ -251,12 +265,10 @@
 <!-- COMPLETE SUBJECT DIRECTORY -->
 <section class="home-section" aria-labelledby="tpi-education-directory-title">
     <p class="portal-kicker">Featured Research Shelves</p>
-    <h2 id="tpi-education-directory-title">Selected lessons and guides.</h2>
-    <p class="tpi-education-directory-intro">Browse the Education Center by subject. Each shelf opens directly to its lessons, guides, and research materials.</p>
+    <h2 id="tpi-education-directory-title">Start with selected lessons and guides.</h2>
+    <p class="tpi-education-directory-intro">Browse the Education Center by subject. Open a shelf to see its lessons, guides, and research materials.</p>
     <div id="tpi-education-subject-directory"></div>
 </section>
-
-<div id="tpi-contributor-subject-index"></div>
 
 <!-- CONTRIBUTE -->
 <section class="home-section">
@@ -289,9 +301,17 @@ const searchInput = document.querySelector('[data-edu-search]');
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
-        document.querySelectorAll('.edu-article-card, .tpi-education-directory-card').forEach(card => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(query) ? '' : 'none';
+        document.querySelectorAll('.edu-accordion-item').forEach(item => {
+            const header = item.querySelector('.edu-accordion-header')?.textContent.toLowerCase() || '';
+            let visibleCards = 0;
+            item.querySelectorAll('.edu-article-card').forEach(card => {
+                const matches = !query || header.includes(query) || card.textContent.toLowerCase().includes(query);
+                card.style.display = matches ? '' : 'none';
+                if (matches) visibleCards += 1;
+            });
+            const matches = !query || header.includes(query) || visibleCards > 0;
+            item.style.display = matches ? '' : 'none';
+            if (query && visibleCards > 0) item.classList.add('is-open');
         });
     });
 }

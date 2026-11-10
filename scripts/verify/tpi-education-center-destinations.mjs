@@ -56,8 +56,8 @@ async function waitForDirectory() {
   const started = Date.now();
   let lastState = null;
   while (Date.now() - started < 20_000) {
-    lastState = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), cards=document.querySelectorAll('.tpi-education-directory-card'), hostRect=host && host.getBoundingClientRect(), firstRect=cards[0] && cards[0].getBoundingClientRect();
-      return {host:!!host,loaded:host && host.dataset.loaded === 'true',count:cards.length,member:document.body.classList.contains('member-mode'),visible:Boolean(hostRect && hostRect.width > 0 && hostRect.height > 0 && firstRect && firstRect.width > 0 && firstRect.height > 0)};`);
+    lastState = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), shelves=document.querySelectorAll('.edu-accordion-item'), hostRect=host && host.getBoundingClientRect(), firstRect=shelves[0] && shelves[0].getBoundingClientRect();
+      return {host:!!host,loaded:host && host.dataset.loaded === 'true',count:shelves.length,member:document.body.classList.contains('member-mode'),visible:Boolean(hostRect && hostRect.width > 0 && hostRect.height > 0 && firstRect && firstRect.width > 0 && firstRect.height > 0)};`);
     if (lastState.host && lastState.loaded && lastState.count === destinations.length && lastState.member && lastState.visible) return;
     await sleep(200);
   }
@@ -88,24 +88,27 @@ try {
   await driver.get(`${base}/education-center`);
   await waitForDirectory();
 
-  const directory = await driver.executeScript(`return Array.from(document.querySelectorAll('.tpi-education-directory-card')).map(function(card){return {href:new URL(card.getAttribute('href'),location.href).pathname,label:card.querySelector('h3')?.textContent.trim()||''};});`);
+  const directory = await driver.executeScript(`return Array.from(document.querySelectorAll('.edu-accordion-item')).map(function(item){var card=item.querySelector('.edu-article-card[data-subject-overview="true"]'); return {href:card ? new URL(card.getAttribute('href'),location.href).pathname : '',label:item.querySelector('.edu-accordion-title')?.textContent.trim()||'',articleCount:item.querySelectorAll('.edu-article-card').length};});`);
   const hrefs = directory.map((item) => item.href);
   const structure = await driver.executeScript(`var bodyText=document.body.textContent || '', directorySection=document.querySelector('#tpi-education-subject-directory')?.closest('section');
-    return {quickStart:/quick start/i.test(bodyText),moreResources:/more resources/i.test(bodyText),accordionItems:document.querySelectorAll('.edu-accordion-item').length,directorySectionCount:document.querySelectorAll('#tpi-education-subject-directory').length,directorySectionVisible:Boolean(directorySection && directorySection.getBoundingClientRect().width > 0)};`);
-  check("Education Center uses one featured shelf without duplicate sections", !structure.quickStart && !structure.moreResources && structure.accordionItems === 0 && structure.directorySectionCount === 1 && structure.directorySectionVisible, JSON.stringify(structure));
+    return {quickStart:/quick start/i.test(bodyText),moreResources:/more resources/i.test(bodyText),accordionItems:document.querySelectorAll('.edu-accordion-item').length,directoryCards:document.querySelectorAll('.tpi-education-directory-card').length,directorySectionCount:document.querySelectorAll('#tpi-education-subject-directory').length,directorySectionVisible:Boolean(directorySection && directorySection.getBoundingClientRect().width > 0)};`);
+  check("Education Center uses 18 compact shelves without duplicate sections", !structure.quickStart && !structure.moreResources && structure.accordionItems === destinations.length && structure.directoryCards === 0 && structure.directorySectionCount === 1 && structure.directorySectionVisible, JSON.stringify(structure));
   check("Education Center renders all 18 Nova subjects", directory.length === destinations.length, JSON.stringify({ count: directory.length }));
-  check("Education Center directory links match the Nova catalog", destinations.every((path) => hrefs.includes(path)), JSON.stringify({ missing: destinations.filter((path) => !hrefs.includes(path)) }));
+  check("Education Center shelves link to all catalog subjects", destinations.every((path) => hrefs.includes(path)), JSON.stringify({ missing: destinations.filter((path) => !hrefs.includes(path)) }));
+  check("every subject shelf contains an article list", directory.every((item) => item.articleCount > 0), JSON.stringify({ empty: directory.filter((item) => item.articleCount === 0).map((item) => item.label) }));
   check("Investigation Science opens at its clean route", directory.find((item) => item.label === "Investigation Science")?.href === "/education-area-investigation-science", JSON.stringify(directory.find((item) => item.label === "Investigation Science")));
-  const desktopLayout = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), first=document.querySelector('.tpi-education-directory-card');
+  const openedShelf = await driver.executeScript(`var item=document.querySelector('.edu-accordion-item'), button=item && item.querySelector('[data-accordion-toggle]'); if (button) button.click(); return {open:Boolean(item && item.classList.contains('is-open')),expanded:button?.getAttribute('aria-expanded'),cards:item?.querySelectorAll('.edu-article-card').length || 0};`);
+  check("subject shelves open to their article cards", openedShelf.open && openedShelf.expanded === "true" && openedShelf.cards > 0, JSON.stringify(openedShelf));
+  const desktopLayout = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), first=document.querySelector('.edu-accordion-item');
     var hostRect=host.getBoundingClientRect(), firstRect=first.getBoundingClientRect();
     return {visible:hostRect.width > 0 && hostRect.height > 0, cardWidth:firstRect.width, scrollWidth:document.documentElement.scrollWidth, innerWidth:innerWidth};`);
-  check("desktop subject directory is visible and contained", desktopLayout.visible && desktopLayout.scrollWidth <= desktopLayout.innerWidth + 1, JSON.stringify(desktopLayout));
+  check("desktop subject shelves are visible and contained", desktopLayout.visible && desktopLayout.scrollWidth <= desktopLayout.innerWidth + 1, JSON.stringify(desktopLayout));
 
   await driver.manage().window().setRect({ width: 390, height: 844 });
   await driver.get(`${base}/education-center`);
   await waitForDirectory();
-  const mobileLayout = await driver.executeScript("return {count:document.querySelectorAll('.tpi-education-directory-card').length,scrollWidth:document.documentElement.scrollWidth,innerWidth:innerWidth};");
-  check("mobile subject directory keeps all subjects without horizontal overflow", mobileLayout.count === destinations.length && mobileLayout.scrollWidth <= mobileLayout.innerWidth + 1, JSON.stringify(mobileLayout));
+  const mobileLayout = await driver.executeScript("return {count:document.querySelectorAll('.edu-accordion-item').length,scrollWidth:document.documentElement.scrollWidth,innerWidth:innerWidth};");
+  check("mobile subject shelves keep all subjects without horizontal overflow", mobileLayout.count === destinations.length && mobileLayout.scrollWidth <= mobileLayout.innerWidth + 1, JSON.stringify(mobileLayout));
 
   for (const path of destinations) {
     await openRoute(path);

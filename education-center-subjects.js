@@ -1,20 +1,34 @@
-// Education Center contributor index. The featured shelves above provide the
-// subject directory; this section adds the live published article layer only
-// for subject areas that currently have work to show.
+// Education Center subject shelves. Every catalog destination is represented
+// by one compact shelf, with its subject resources and published work inside.
 (function () {
   const subjects = window.TPI_EDUCATION_SUBJECTS || [];
-  const directoryHost = document.getElementById("tpi-education-subject-directory");
-  const host = document.getElementById("tpi-contributor-subject-index");
-  if (!subjects.length || (!directoryHost && !host)) return;
+  const host = document.getElementById("tpi-education-subject-directory");
+  if (!host || !subjects.length) return;
+
+  const subjectIcons = {
+    "education-area-investigation-science.html": "🔍",
+    "education-area-evidence-science-analysis.html": "📋",
+    "education-area-instrumentation-technology.html": "🧰",
+    "education-area-environmental-research.html": "🌡️",
+    "education-area-evp-itc-research.html": "🎙️",
+    "education-area-consciousness-human-experience.html": "🧠",
+    "education-area-ethics-professional-standards.html": "⚖️",
+    "education-area-reporting-documentation.html": "📝",
+    "education-area-education-community-development.html": "🤝",
+    "education-area-technology-development-ai.html": "💻",
+    "education-area-artificial-intelligence.html": "✨",
+    "education-area-historical-cultural-research.html": "📚",
+    "investigation-development-series.html": "🧭",
+    "ghostology-101.html": "👻",
+    "evp-itc-lessons.html": "📻",
+    "field-articles.html": "🗂️",
+    "method-exercises.html": "🧪",
+    "tpi-videos.html": "🎬",
+  };
 
   const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[char]));
-
-  function articleHref(article) {
-    const href = String(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`);
-    return window.preserveMemberMode ? window.preserveMemberMode(href) : href;
-  }
 
   function subjectHref(value) {
     const path = String(value || "").replace(/^\/+/, "").replace(/\.html$/, "");
@@ -22,55 +36,146 @@
     return window.preserveMemberMode ? window.preserveMemberMode(href) : href;
   }
 
-  function renderDirectory() {
-    if (!directoryHost) return;
-    directoryHost.innerHTML = `<div class="tpi-education-directory-grid">${subjects.map((subject) => `<a class="tpi-education-directory-card" data-subject="${escapeHtml(subject.value)}" href="${escapeHtml(subjectHref(subject.value))}"><span class="category-badge category-badge-education">Subject area</span><h3>${escapeHtml(subject.label)}</h3><p>${escapeHtml(subject.description)}</p><span class="dashboard-panel-cta">Open subject ›</span></a>`).join("")}</div>`;
-    directoryHost.dataset.loaded = "true";
+  function articleHref(article) {
+    const href = String(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`);
+    return window.preserveMemberMode ? window.preserveMemberMode(href) : href;
   }
 
-  function render(groups) {
-    const entries = subjects.map((subject) => {
-      const rows = groups.get(subject.value) || [];
-      const legacy = subject.value === "evp-itc-lessons.html"
-        ? `<a class="edu-article-card tpi-legacy-card" href="/evp-itc-lesson-water-steam"><h4>Water &amp; Steam ITC</h4><p>Legacy reference material for water, steam, and reflective-surface experimentation.</p><div class="edu-article-meta"><span class="edu-article-tag">Legacy reference</span></div></a>`
-        : "";
-      return { subject, rows, legacy };
-    }).filter(({ rows, legacy }) => rows.length || legacy);
-
-    host.innerHTML = `
-      <section class="home-section tpi-contributor-publications" aria-labelledby="tpi-contributor-publications-title">
-        <p class="portal-kicker">Contributor Publications</p>
-        <h2 id="tpi-contributor-publications-title">Published work by subject area.</h2>
-        <p class="tpi-subject-index-intro">Published research papers, field articles, notes, and media are organized below by subject area.</p>
-        <div class="tpi-subject-index-grid">
-          ${entries.length ? entries.map(({ subject, rows, legacy }) => `<article class="tpi-subject-index-group" data-subject="${escapeHtml(subject.value)}">
-              <div class="tpi-subject-index-heading"><div><span class="category-badge category-badge-education">Subject area</span><h3>${escapeHtml(subject.label)}</h3><p>${escapeHtml(subject.description)}</p></div><a class="dashboard-panel-cta" href="${escapeHtml(subjectHref(subject.value))}">Open subject ›</a></div>
-              <div class="edu-accordion-grid">${rows.length ? rows.map((article) => `<a class="edu-article-card tpi-published-card" href="${escapeHtml(articleHref(article))}"><h4>${escapeHtml(article.title)}</h4>${article.subtitle ? `<p>${escapeHtml(article.subtitle)}</p>` : ""}<div class="edu-article-meta"><span class="edu-article-tag">${escapeHtml(article.contributionType || "Published Article")}</span>${article.authorDisplayName ? `<span>${escapeHtml(article.authorDisplayName)}</span>` : ""}</div></a>`).join("") : legacy || `<div class="tpi-subject-empty">No published contributor work is available in this subject yet.</div>`}</div>
-            </article>`).join("") : `<div class="tpi-subject-empty">Published contributor work will appear here as it is approved.</div>`}
-        </div>
-      </section>`;
+  function normalizedTitle(value) {
+    return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   }
 
-  async function load() {
-    renderDirectory();
-    if (!host) return;
+  function resourceFromAnchor(anchor) {
+    const href = anchor.getAttribute("href");
+    const title = anchor.querySelector("h3, h4")?.textContent.trim();
+    if (!href || !title) return null;
+    const resolved = new URL(href, `${window.location.origin}/education-center.html`).pathname;
+    const subtitle = anchor.querySelector("p")?.textContent.trim() || "";
+    const type = anchor.querySelector(".study-resource-card-copy > span, .category-badge, .lesson-number")?.textContent.trim() || "Education Center";
+    return { href: resolved, title, subtitle, contributionType: type };
+  }
+
+  async function loadStaticResources(subject) {
+    const resources = [];
+    try {
+      const response = await fetch(`/${subject.value}`, { credentials: "same-origin", cache: "no-store" });
+      if (response.ok) {
+        const html = await response.text();
+        const documentForSubject = new DOMParser().parseFromString(html, "text/html");
+        documentForSubject.querySelectorAll(".study-resource-card:not(.study-resource-card-placeholder), .series-post-card, .ghostology-lesson-card").forEach((anchor) => {
+          const resource = resourceFromAnchor(anchor);
+          if (resource) resources.push(resource);
+        });
+      }
+    } catch (error) {
+      // The subject overview remains available when a legacy source page is unavailable.
+    }
+
+    if (subject.value === "evp-itc-lessons.html" && !resources.some((resource) => resource.href.endsWith("/evp-itc-lesson-water-steam.html"))) {
+      resources.push({
+        href: "/evp-itc-lesson-water-steam",
+        title: "Water & Steam ITC",
+        subtitle: "Experimental visual ITC approaches using water, steam, light, and careful controls.",
+        contributionType: "Experiment note",
+      });
+    }
+
+    return resources;
+  }
+
+  async function loadPublishedGroups() {
+    const groups = new Map(subjects.map((subject) => [subject.value, []]));
     try {
       const response = await fetch("/api/articles?page=1&pageSize=100", { credentials: "same-origin", cache: "no-store" });
       if (!response.ok) throw new Error(`Article index request failed (${response.status})`);
       const payload = await response.json();
-      const groups = new Map(subjects.map((subject) => [subject.value, []]));
       (payload.articles || []).forEach((article) => {
         const destination = String(article.destination || "");
         const normalized = destination.endsWith(".html") ? destination : `${destination}.html`;
-        if (!groups.has(normalized)) return;
-        groups.get(normalized).push(article);
+        if (groups.has(normalized)) groups.get(normalized).push({
+          href: articleHref(article),
+          title: article.title,
+          subtitle: article.subtitle || "",
+          contributionType: article.contributionType || "Published article",
+          authorDisplayName: article.authorDisplayName || "",
+        });
       });
-      render(groups);
-      host.dataset.loaded = "true";
     } catch (error) {
-      host.innerHTML = `<section class="home-section"><p class="portal-kicker">Contributor Publications</p><h2>Published work by subject area.</h2><p class="notice-panel">The public publication index is temporarily unavailable. Static research shelves remain available.</p></section>`;
-      host.dataset.error = error instanceof Error ? error.message : "unavailable";
+      host.dataset.apiError = error instanceof Error ? error.message : "unavailable";
     }
+    return groups;
+  }
+
+  function subjectResources(subject, staticResources, publishedResources) {
+    const resources = [{
+      href: subjectHref(subject.value),
+      title: `${subject.label} overview`,
+      subtitle: subject.description,
+      contributionType: "Subject guide",
+      subjectOverview: true,
+    }];
+    const seenTitles = new Set([normalizedTitle(resources[0].title)]);
+    [...(staticResources || []), ...(publishedResources || [])].forEach((resource) => {
+      const key = normalizedTitle(resource.title);
+      if (!key || seenTitles.has(key)) return;
+      seenTitles.add(key);
+      resources.push(resource);
+    });
+    return resources;
+  }
+
+  function render(staticResourcesBySubject, publishedGroups) {
+    const shelves = subjects.map((subject, index) => {
+      const resources = subjectResources(subject, staticResourcesBySubject.get(subject.value), publishedGroups.get(subject.value));
+      const shelfId = `tpi-education-shelf-${index}`;
+      const articleLabel = resources.length === 1 ? "article" : "articles";
+      return `<article class="edu-accordion-item" data-subject="${escapeHtml(subject.value)}">
+        <button type="button" class="edu-accordion-header" data-accordion-toggle aria-expanded="false" aria-controls="${shelfId}">
+          <span class="edu-accordion-header-left">
+            <span class="edu-accordion-icon" aria-hidden="true">${subjectIcons[subject.value] || "📖"}</span>
+            <span>
+              <span class="edu-accordion-title">${escapeHtml(subject.label)}</span>
+              <span class="edu-accordion-description">${escapeHtml(subject.description)}</span>
+            </span>
+          </span>
+          <span class="edu-accordion-count">${resources.length} ${articleLabel}</span>
+          <span class="edu-accordion-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="edu-accordion-content" id="${shelfId}" role="region" aria-label="${escapeHtml(subject.label)} articles">
+          <div class="edu-accordion-grid">
+            ${resources.map((resource) => `<a class="edu-article-card" data-subject-overview="${resource.subjectOverview ? "true" : "false"}" href="${escapeHtml(resource.href)}">
+              <h4>${escapeHtml(resource.title)}</h4>
+              ${resource.subtitle ? `<p>${escapeHtml(resource.subtitle)}</p>` : ""}
+              <div class="edu-article-meta"><span class="edu-article-tag">${escapeHtml(resource.contributionType || "Education Center")}</span>${resource.authorDisplayName ? `<span>${escapeHtml(resource.authorDisplayName)}</span>` : ""}</div>
+            </a>`).join("")}
+          </div>
+        </div>
+      </article>`;
+    }).join("");
+
+    host.innerHTML = `<div class="edu-accordion">${shelves}</div>`;
+    host.dataset.loaded = "true";
+    host.querySelectorAll("[data-accordion-toggle]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const item = button.closest(".edu-accordion-item");
+        const isOpen = item.classList.contains("is-open");
+        host.querySelectorAll(".edu-accordion-item").forEach((other) => {
+          other.classList.remove("is-open");
+          other.querySelector("[data-accordion-toggle]")?.setAttribute("aria-expanded", "false");
+        });
+        if (!isOpen) {
+          item.classList.add("is-open");
+          button.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+  }
+
+  async function load() {
+    const staticResults = await Promise.all(subjects.map((subject) => loadStaticResources(subject)));
+    const staticResourcesBySubject = new Map(subjects.map((subject, index) => [subject.value, staticResults[index]]));
+    const publishedGroups = await loadPublishedGroups();
+    render(staticResourcesBySubject, publishedGroups);
   }
 
   load();
