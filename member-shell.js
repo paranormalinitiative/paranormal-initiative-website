@@ -355,7 +355,8 @@
     var links = sidebar.querySelectorAll(".member-nav-link[data-nav]");
     links.forEach(function (link) {
       link.removeAttribute("aria-current");
-      if (link.dataset.nav === slug) {
+      var ghostologyPage = slug === "ghostology-101" || slug.indexOf("ghostology-101-lesson-") === 0 || slug === "investigation-development-ghostology-101-academy-introduction";
+      if (link.dataset.nav === slug || (link.dataset.nav === "ghostology" && ghostologyPage)) {
         link.setAttribute("aria-current", "page");
       }
     });
@@ -464,6 +465,7 @@
         about: "about.html",
         "our-apps": "our-apps.html",
         "education-center": "education-center.html",
+        ghostology: "ghostology-101?member=1",
         repository: "repository.html",
         "haunted-locations": "haunted-locations.html",
         "paranormal-teams": "teams/index.html",

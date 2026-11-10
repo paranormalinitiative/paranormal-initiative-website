@@ -9,6 +9,8 @@ const catalog = read("education-subjects.js");
 const index = read("education-center-subjects.js");
 const center = read("education-center.html");
 const editor = read("paper-editor.html");
+const sidebar = read("member-sidebar.html");
+const shell = read("member-shell.js");
 const checks = [];
 const check = (label, pass) => { checks.push({ label, pass: Boolean(pass) }); console.log(`${pass ? "PASS" : "FAIL"} ${label}`); };
 const destinations = [
@@ -25,6 +27,9 @@ check("Education Center exposes the complete subject shelves", center.includes('
 check("Education Center has one featured shelf directory", center.includes("Featured Research Shelves") && center.includes("Start with selected lessons and guides.") && !center.includes("Quick Start") && !center.includes("More Resources"));
 check("public Education Center copy omits workspace implementation details", !center.includes("Nova Editorial Workspace") && !index.includes("Editorial Workspace"));
 check("public subject wording omits legacy labels", !catalog.includes("Legacy") && !index.includes("Legacy") && !center.includes("Legacy"));
+check("Ghostology is the public subject label", catalog.includes('["ghostology-101.html", "Ghostology",') && !catalog.includes("Ghostology Reference") && !editor.includes("Ghostology Reference"));
+check("left navigation links directly to Ghostology", sidebar.includes('href="ghostology-101?member=1" data-nav="ghostology"') && sidebar.includes("> Ghostology"));
+check("Ghostology pages keep the Ghostology navigation item active", shell.includes('link.dataset.nav === "ghostology" && ghostologyPage') && shell.includes('slug.indexOf("ghostology-101-lesson-") === 0'));
 check("all subject shelves stay inside the member content area", center.indexOf('id="tpi-education-subject-directory"') < center.lastIndexOf('id="site-footer"'));
 check("subject links use clean extensionless paths", index.includes("function subjectHref") && index.includes("replace(/\\.html$/, \"\")") && index.includes('const href = `/${path}`'));
 check("published article API is used without local-only data", index.includes("/api/articles?page=1&pageSize=100") && index.includes("status"));

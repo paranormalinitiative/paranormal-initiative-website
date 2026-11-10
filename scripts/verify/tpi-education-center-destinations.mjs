@@ -87,6 +87,8 @@ try {
   check("Firefox authenticates the synthetic member", login?.status === 200 && Boolean(login?.user), JSON.stringify({ status: login?.status }));
   await driver.get(`${base}/education-center`);
   await waitForDirectory();
+  const ghostologyNav = await driver.executeScript(`var link=document.querySelector('[data-nav="ghostology"]'); return {exists:Boolean(link),label:link?.textContent.trim()||'',href:link ? new URL(link.getAttribute('href'),location.href).pathname + new URL(link.getAttribute('href'),location.href).search : ''};`);
+  check("left navigation exposes Ghostology", ghostologyNav.exists && ghostologyNav.label === "👻 Ghostology" && ghostologyNav.href === "/ghostology-101?member=1", JSON.stringify(ghostologyNav));
 
   const directory = await driver.executeScript(`return Array.from(document.querySelectorAll('.edu-accordion-item')).map(function(item){var card=item.querySelector('.edu-article-card[data-subject-overview="true"]'); return {href:card ? new URL(card.getAttribute('href'),location.href).pathname : '',label:item.querySelector('.edu-accordion-title')?.textContent.trim()||'',articleCount:item.querySelectorAll('.edu-article-card').length};});`);
   const hrefs = directory.map((item) => item.href);
