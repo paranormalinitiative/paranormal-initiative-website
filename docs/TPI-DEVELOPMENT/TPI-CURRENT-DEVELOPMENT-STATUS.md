@@ -112,6 +112,14 @@ Production release: commit `9a1ccc6a3b570fc8e2c3f9e84a7c479c84c63a75`, release
 The requested privileged Sol account remains intentionally uncreated pending a
 real account identity and explicit entitlement record.
 
+## 2026-11-10 — Friends workspace visual correction
+
+Status: **READY FOR GUARDED RELEASE.** Friends now uses the shared member-shell
+panel, input, button, section-heading, border, hover, and responsive patterns.
+The previous native-looking controls and duplicated inner heading were removed;
+search, follow, and unfollow behavior is unchanged. Focused community checks
+pass 12/12. No database or production data changes are required.
+
 ## 2026-11-09 — Community Feed Open post no-reload correction
 
 Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact Community Feed

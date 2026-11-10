@@ -8,38 +8,43 @@
   <link rel="stylesheet" href="style.css?v=89">
   <link rel="stylesheet" href="member-shell.css?v=62">
   <style>
-    .social-workspace { max-width: 980px; margin: 0 auto; }
-    .social-panel { background: #10141c; border: 1px solid #263646; border-radius: 20px; padding: 24px; }
-    .social-panel h1 { margin: 0 0 8px; color: #f4f8fb; }
-    .social-panel p { color: #9aa6b5; line-height: 1.55; }
-    .social-search { display: flex; gap: 10px; margin: 20px 0; }
-    .social-search input { flex: 1; min-width: 0; }
+    .social-workspace { max-width: 1050px; margin: 0 auto; }
+    .social-panel { padding: 24px; }
+    .social-intro { margin: 0 0 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .social-search { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin: 0 0 12px; }
+    .social-search .member-input { min-width: 0; }
     .social-list { display: grid; gap: 10px; }
-    .social-member { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px; border: 1px solid #263646; border-radius: 14px; background: #0d1219; }
-    .social-member-copy { min-width: 0; display: grid; gap: 3px; }
-    .social-member-copy strong { color: #f4f8fb; }
-    .social-member-copy span { color: #8d99a8; font-size: 0.86rem; overflow-wrap: anywhere; }
-    .social-member button { flex: 0 0 auto; }
-    .social-status { min-height: 1.4em; color: #a8d5b6; }
-    @media (max-width: 640px) { .social-panel { padding: 16px; } .social-search { flex-direction: column; } .social-member { align-items: flex-start; flex-direction: column; } }
+    .social-member { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--radius-md); transition: border-color var(--transition-base), background var(--transition-base); }
+    .social-member:hover { background: var(--bg-card-hover); border-color: var(--border-strong); }
+    .social-member-copy { min-width: 0; display: grid; gap: 4px; }
+    .social-member-copy strong { color: var(--text-primary); font-size: 14px; font-weight: 800; overflow-wrap: anywhere; }
+    .social-member-copy span { color: var(--text-tertiary); font-size: 12px; overflow-wrap: anywhere; }
+    .social-member .member-btn { flex: 0 0 auto; }
+    .social-status { min-height: 1.4em; margin: 0 0 18px; color: var(--text-accent); font-size: 13px; }
+    @media (max-width: 640px) {
+      .social-panel { padding: 18px; }
+      .social-search { grid-template-columns: 1fr; }
+      .social-search .member-btn { width: 100%; }
+      .social-member { align-items: stretch; flex-direction: column; }
+      .social-member .member-btn { width: 100%; }
+    }
   </style>
 </head>
 <body class="workspace-page">
   <div id="site-header"></div>
   <div data-member-content hidden>
     <div class="member-main-inner social-workspace">
-      <section class="social-panel" aria-labelledby="friends-title">
-        <p class="portal-kicker">Community</p>
-        <h1 id="friends-title">Friends</h1>
-        <p>Find TPI members, follow people whose work you want to keep up with, and manage your current following list. Following is reversible and does not expose private profile data.</p>
+      <section class="member-panel social-panel" aria-labelledby="friends-title">
+        <p class="portal-kicker">Community connections</p>
+        <p id="friends-title" class="social-intro">Find TPI members, follow people whose work you want to keep up with, and manage your current following list. Following is reversible and does not expose private profile data.</p>
         <form class="social-search" data-friends-search>
-          <input type="search" name="search" placeholder="Search username or display name" aria-label="Search members" autocomplete="off">
-          <button type="submit">Find members</button>
+          <input class="member-input" type="search" name="search" placeholder="Search username or display name" aria-label="Search members" autocomplete="off">
+          <button class="member-btn member-btn-primary" type="submit">Find members</button>
         </form>
         <p class="social-status" data-friends-status role="status" aria-live="polite"></p>
-        <h2>People you follow</h2>
+        <h2 class="member-section-title">People you follow</h2>
         <div class="social-list" data-friends-list><p>Loading your Friends list…</p></div>
-        <h2>Member search</h2>
+        <h2 class="member-section-title">Member search</h2>
         <div class="social-list" data-friends-results><p>Search for a member to get started.</p></div>
       </section>
     </div>
@@ -59,7 +64,7 @@
       function row(member, following) {
         var name = label(member);
         var username = member.username ? '@' + String(member.username).replace(/^@+/, '') : '';
-        return '<div class="social-member"><div class="social-member-copy"><strong>' + name + '</strong><span>' + esc(username) + (member.title ? ' · ' + esc(member.title) : '') + '</span></div><button type="button" data-social-action="' + (following ? 'unfollow' : 'follow') + '" data-social-target="' + esc(member.id || member.username) + '">' + (following ? 'Unfollow' : 'Follow') + '</button></div>';
+        return '<div class="social-member"><div class="social-member-copy"><strong>' + name + '</strong><span>' + esc(username) + (member.title ? ' · ' + esc(member.title) : '') + '</span></div><button class="member-btn member-btn-secondary member-btn-sm" type="button" data-social-action="' + (following ? 'unfollow' : 'follow') + '" data-social-target="' + esc(member.id || member.username) + '">' + (following ? 'Unfollow' : 'Follow') + '</button></div>';
       }
       async function api(path, options) { var response = await fetch('/api' + path, Object.assign({ credentials: 'same-origin', cache: 'no-store', headers: { 'Content-Type': 'application/json' } }, options || {})); var body = {}; try { body = await response.json(); } catch (e) {} if (!response.ok) throw new Error(body.error || 'The request could not be completed.'); return body; }
       async function loadFriends() { var body = await api('/friends'); list.innerHTML = body.friends && body.friends.length ? body.friends.map(function (member) { return row(member, true); }).join('') : '<p>You are not following any members yet.</p>'; }

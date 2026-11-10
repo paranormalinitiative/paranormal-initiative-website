@@ -3,6 +3,22 @@
 Date: 2026-11-09  
 Status: **COMPLETE — DEPLOYED AND VERIFIED**
 
+## Friends visual consistency correction — 2026-11-10
+
+The Friends page had drifted away from the shared member-shell design. Its
+page-local styles left the search field and action buttons as native browser
+controls, used a separate panel treatment, and repeated the Friends heading
+inside a page that already receives the shared member heading.
+
+The correction reuses the established `member-panel`, `member-input`,
+`member-btn`, `member-section-title`, and `member-meta` patterns. Member rows
+now use the active theme surface, border, typography, hover, focus, and mobile
+rules. Search and follow/unfollow controls remain unchanged functionally.
+
+Focused verification passed 12/12, including Friends route/authentication
+checks, shared-control styling, and the responsive mobile layout. The change
+is limited to `friends.html` and the existing community verification script.
+
 ## Scope
 
 This release completes the requested member-workstation additions without

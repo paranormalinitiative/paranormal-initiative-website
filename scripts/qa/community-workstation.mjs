@@ -12,6 +12,7 @@ const api = readFileSync(resolve(root, "functions/api/[[path]].js"), "utf8");
 const sidebar = readFileSync(resolve(root, "member-sidebar.html"), "utf8");
 const shell = readFileSync(resolve(root, "member-shell.js"), "utf8");
 const migration = readFileSync(resolve(root, "migrations/0065_member_social_and_bug_reports.sql"), "utf8");
+const friends = readFileSync(resolve(root, "friends.html"), "utf8");
 
 check("Friends page exists", existsSync(resolve(root, "friends.html")));
 check("Report a bug page exists", existsSync(resolve(root, "bug-report.html")));
@@ -22,6 +23,9 @@ check("Bug reports are authenticated", api.includes('path === "/bug-reports"') &
 check("Bug reports enter the protected admin queue", api.includes("'bug' AS reportType") && api.includes("member_bug_reports") && api.includes("reportType === \"messenger\""));
 check("Messenger identities preserve a readable name and username", shell.includes("chatMemberName") && shell.includes("chatMemberUsername") && shell.includes("member-chat-author-username"));
 check("Migration creates follow and bug-report storage", migration.includes("CREATE TABLE IF NOT EXISTS member_follows") && migration.includes("CREATE TABLE IF NOT EXISTS member_bug_reports"));
+check("Friends page uses shared member panel styling", friends.includes('class="member-panel social-panel"') && friends.includes('class="member-section-title"'));
+check("Friends controls use shared member-mode controls", friends.includes('class="member-input"') && friends.includes('class="member-btn member-btn-primary"') && friends.includes('class="member-btn member-btn-secondary member-btn-sm"'));
+check("Friends layout has a responsive mobile mode", friends.includes("@media (max-width: 640px)") && friends.includes("grid-template-columns: 1fr") && friends.includes("width: 100%"));
 
 const passed = checks.filter((item) => item.passed).length;
 console.log(JSON.stringify({ status: passed === checks.length ? "PASS" : "FAIL", passed, total: checks.length, results: checks }, null, 2));

@@ -10,9 +10,9 @@ Statuses are evidence-based and refer to the available repository records, not t
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** The member shell now provides
 Friends search/follow/unfollow, a protected **Report a bug** form routed to the
 Administration Center queue, and normalized Messenger names/usernames. Focused
-checks passed 9/9; the guarded release passed 30/30 certification gates, live
-production smoke passed 10/10, and isolated Firefox production acceptance
-passed 65/65. Record:
+checks passed 12/12 after the Friends visual consistency correction; the
+guarded release passed 30/30 certification gates, live production smoke passed
+10/10, and isolated Firefox production acceptance passed 65/65. Record:
 [TPI-COMMUNITY-WORKSTATION-FRIENDS-BUG-REPORTS.md](TPI-COMMUNITY-WORKSTATION-FRIENDS-BUG-REPORTS.md).
 
 ## Community Feed Open post — no-reload correction
