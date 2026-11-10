@@ -221,6 +221,13 @@
         .tpi-subject-index-heading p { margin: 0; color: var(--text-secondary); }
         .tpi-subject-empty { padding: 18px; border: 1px dashed var(--border-subtle); border-radius: 14px; color: var(--text-secondary); }
         @media (max-width: 720px) { .tpi-subject-index-heading { display: block; } .tpi-subject-index-heading .dashboard-panel-cta { display: inline-block; margin-top: 12px; } }
+        .tpi-education-directory-intro { max-width: 760px; color: var(--text-secondary); }
+        .tpi-education-directory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
+        .tpi-education-directory-card { display: grid; align-content: start; gap: 10px; min-height: 150px; padding: 20px; border: 1px solid var(--border-subtle); border-radius: 20px; background: var(--bg-card); color: inherit; text-decoration: none; transition: all var(--transition-base); }
+        .tpi-education-directory-card:hover { background: var(--bg-card-hover); border-color: var(--accent-border); transform: translateY(-2px); }
+        .tpi-education-directory-card h3 { margin: 0; color: var(--text-primary); font-size: 17px; }
+        .tpi-education-directory-card p { margin: 0; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+        .tpi-education-directory-card .dashboard-panel-cta { margin-top: auto; }
     </style>
 </head>
 <body class="education-center-page">
@@ -246,19 +253,19 @@
     <p class="portal-kicker">Quick Start</p>
     <h2>Begin here if you're new.</h2>
     <div class="home-focus-grid">
-        <a class="dashboard-panel dashboard-panel-link" href="investigation-development-series.html">
+        <a class="dashboard-panel dashboard-panel-link" href="/investigation-development-series">
             <span class="category-badge category-badge-investigation" style="margin-bottom: 12px;">Start Here</span>
             <h3>Investigation Development</h3>
             <p>62 field-focused articles covering everything from basic methodology to advanced techniques.</p>
             <span class="dashboard-panel-cta">Open Series ›</span>
         </a>
-        <a class="dashboard-panel dashboard-panel-link" href="ghostology-101.html">
+        <a class="dashboard-panel dashboard-panel-link" href="/ghostology-101">
             <span class="category-badge category-badge-education" style="margin-bottom: 12px;">Foundation</span>
             <h3>Ghostology 101</h3>
             <p>21 foundational lessons on paranormal investigation, terminology, and field practices.</p>
             <span class="dashboard-panel-cta">Open Reference ›</span>
         </a>
-        <a class="dashboard-panel dashboard-panel-link" href="evp-itc-lessons.html">
+        <a class="dashboard-panel dashboard-panel-link" href="/evp-itc-lessons">
             <span class="category-badge category-badge-evp" style="margin-bottom: 12px;">EVP / ITC</span>
             <h3>EVP & ITC Research</h3>
             <p>Audio experiments, contamination controls, source-material awareness, and review language.</p>
@@ -267,10 +274,18 @@
     </div>
 </section>
 
-<!-- RESEARCH TOPICS (Accordion) -->
+<!-- COMPLETE SUBJECT DIRECTORY -->
+<section class="home-section" aria-labelledby="tpi-education-directory-title">
+    <p class="portal-kicker">Education Subjects</p>
+    <h2 id="tpi-education-directory-title">Explore the complete research catalog.</h2>
+    <p class="tpi-education-directory-intro">These subjects match the destinations available in Nova Editorial Workspace. Open any subject to go directly to its Education Center page.</p>
+    <div id="tpi-education-subject-directory"></div>
+</section>
+
+<!-- FEATURED RESEARCH SHELVES (Accordion) -->
 <section class="home-section">
-    <p class="portal-kicker">Research Topics</p>
-    <h2>Browse by subject area.</h2>
+    <p class="portal-kicker">Featured Research Shelves</p>
+    <h2>Start with selected lessons and guides.</h2>
     <div class="edu-accordion">
 
         <!-- Investigation Science -->
@@ -288,7 +303,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-investigation-science.html">
+                    <a class="edu-article-card" href="/education-area-investigation-science">
                         <h4>Investigation Science Overview</h4>
                         <p>Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows.</p>
                         <div class="edu-article-meta">
@@ -334,7 +349,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-evidence-science-analysis.html">
+                    <a class="edu-article-card" href="/education-area-evidence-science-analysis">
                         <h4>Evidence Science Overview</h4>
                         <p>Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings.</p>
                         <div class="edu-article-meta">
@@ -376,7 +391,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-evp-itc-research.html">
+                    <a class="edu-article-card" href="/education-area-evp-itc-research">
                         <h4>EVP & ITC Research Overview</h4>
                         <p>EVP methodology, ITC experimentation, controls, source-material transparency, ACS, phonemes, and allophones.</p>
                         <div class="edu-article-meta">
@@ -431,7 +446,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-consciousness-human-experience.html">
+                    <a class="edu-article-card" href="/education-area-consciousness-human-experience">
                         <h4>Consciousness Overview</h4>
                         <p>NDE research, parapsychology, psi and psionics, consciousness studies, and witness-centered experiences.</p>
                         <div class="edu-article-meta">
@@ -469,7 +484,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-environmental-research.html">
+                    <a class="edu-article-card" href="/education-area-environmental-research">
                         <h4>Environmental Research Overview</h4>
                         <p>Baseline studies, weather, buildings, sound, atmospheric conditions, human factors, and correlation.</p>
                         <div class="edu-article-meta">
@@ -511,7 +526,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-ethics-professional-standards.html">
+                    <a class="edu-article-card" href="/education-area-ethics-professional-standards">
                         <h4>Ethics Overview</h4>
                         <p>Client care, witness respect, confidentiality, responsible disclosure, professional conduct, and accountability.</p>
                         <div class="edu-article-meta">
@@ -549,7 +564,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-historical-cultural-research.html">
+                    <a class="edu-article-card" href="/education-area-historical-cultural-research">
                         <h4>Historical Research Overview</h4>
                         <p>Haunted locations, local legends, folklore, public records, archival studies, and historical context.</p>
                         <div class="edu-article-meta">
@@ -591,7 +606,7 @@
             </button>
             <div class="edu-accordion-content">
                 <div class="edu-accordion-grid">
-                    <a class="edu-article-card" href="education-area-reporting-documentation.html">
+                    <a class="edu-article-card" href="/education-area-reporting-documentation">
                         <h4>Reporting Overview</h4>
                         <p>Case reports, careful language, research transparency, evidence presentation, logs, and file preservation.</p>
                         <div class="edu-article-meta">
@@ -627,12 +642,12 @@
             <h3>Honorary Member Collections</h3>
             <p>Professional profile and paper collections for major EVP, ITC, and psychical research figures.</p>
         </a>
-        <a class="dashboard-panel dashboard-panel-link" href="field-articles.html">
+        <a class="dashboard-panel dashboard-panel-link" href="/field-articles">
             <span class="category-badge category-badge-research" style="margin-bottom: 12px;">Articles</span>
             <h3>Field Articles</h3>
             <p>Readable field pieces on haunted locations, equipment, environmental factors, and folklore.</p>
         </a>
-        <a class="dashboard-panel dashboard-panel-link" href="method-exercises.html">
+        <a class="dashboard-panel dashboard-panel-link" href="/method-exercises">
             <span class="category-badge category-badge-education" style="margin-bottom: 12px;">Exercises</span>
             <h3>Method Exercises</h3>
             <p>Applied prompts for documentation, debunking, controlled observation, and review notes.</p>

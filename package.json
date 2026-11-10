@@ -54,6 +54,8 @@
     "verify:board-members-local": "node scripts/verify/tpi-governance-005-local.mjs",
   "verify:profile-honors-wall": "node scripts/verify/tpi-profile-honors-wall.mjs",
   "verify:governance-subject-index": "node scripts/verify/tpi-governance-006-subject-index.mjs",
+    "verify:education-destinations": "node scripts/verify/tpi-governance-006-subject-index.mjs",
+    "verify:education-destinations-browser": "node scripts/verify/tpi-education-center-destinations.mjs",
     "verify:community-workstation": "node scripts/qa/community-workstation.mjs",
     "verify:friends-layout": "node scripts/verify/tpi-friends-layout.mjs",
     "verify:member-messenger": "node scripts/verify/tpi-member-messenger.mjs",

@@ -21,6 +21,8 @@ const destinations = [
 check("shared subject catalog exists", existsSync(resolve(root, "education-subjects.js")) && catalog.includes("TPI_EDUCATION_SUBJECTS"));
 check("editor loads the shared catalog", editor.includes("education-subjects.js"));
 check("Education Center loads the live subject index", center.includes('id="tpi-contributor-subject-index"') && center.includes("education-center-subjects.js"));
+check("Education Center exposes the complete subject directory", center.includes('id="tpi-education-subject-directory"') && index.includes("tpi-education-directory-grid") && index.includes("TPI_EDUCATION_SUBJECTS"));
+check("subject links use clean extensionless paths", index.includes("function subjectHref") && index.includes("replace(/\\.html$/, \"\")") && index.includes('const href = `/${path}`'));
 check("published article API is used without local-only data", index.includes("/api/articles?page=1&pageSize=100") && index.includes("status"));
 for (const destination of destinations) check(`subject is present: ${destination}`, catalog.includes(`"${destination}"`));
 check("legacy Water & Steam ITC reference is visible", index.includes("evp-itc-lesson-water-steam.html"));

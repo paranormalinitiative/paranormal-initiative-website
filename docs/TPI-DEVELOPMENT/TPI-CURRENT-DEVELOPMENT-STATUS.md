@@ -241,6 +241,22 @@ The guarded release `rel-f7db083f23b2-fc3f459cdd14` deployed Worker
 `84b2fa25-3fb2-4654-94ad-b47d015ee8a3`. No database or member data changes were
 required.
 
+## 2026-11-10 — Education Center complete subject directory and clean routes
+
+Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION DEPLOYMENT PENDING.** The
+Education Center now presents one complete directory driven by the same 18
+destinations available in Nova Editorial Workspace: 12 main education areas
+and 6 legacy/reference shelves. Investigation Science and every other subject
+now use direct extensionless routes such as
+`/education-area-investigation-science`; existing featured lesson shelves and
+published contributor grouping remain intact.
+
+Focused source verification passes 26/26. Disposable Firefox Developer Edition
+acceptance against the canonical local Worker passes 24/24, including complete
+catalog rendering, desktop containment, mobile no-overflow behavior, the
+Investigation Science route, and all 18 clean destination routes. No database,
+member, contributor, or production content was changed.
+
 ## 2026-11-09 — Community Feed Open post no-reload correction
 
 Status: **COMPLETE — DEPLOYED AND LIVE-VERIFIED.** The compact Community Feed
