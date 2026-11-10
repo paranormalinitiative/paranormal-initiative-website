@@ -1,7 +1,7 @@
 # TPI-GOVERNANCE-006 — Leadership Rank Safety and Education Subject Index
 
 Date: 2026-11-09
-Status: IMPLEMENTED — LOCAL VERIFIED / PRODUCTION RELEASE IN PROGRESS
+Status: COMPLETE — DEPLOYED AND LIVE VERIFIED
 Scope: Leadership medallions, Board Member rank/domain appointments, Education Center subject organization
 
 ## Objective
@@ -45,17 +45,39 @@ Editorial Workspace and surface published contributor work under those subjects.
 - `npm run verify:release-safety`: 27/27 PASS
 - Local-only migration application: PASS; migration 0068 applied to the
   isolated `tpi-local-foundation` database.
-- Production schema check before migration: BLOCKED because `board_members`
-  was absent. No production database mutation occurred during local testing.
+- Production additive migrations: PASS; `0067_board_members_and_badge.sql`
+  and `0068_governance_role_rank_metadata.sql` were applied individually to
+  the production D1 database, in order. No existing creator records,
+  recordings, Notes, or shared storage objects were deleted or rewritten.
+- Production schema readiness after migration: PASS; all required tables and
+  role/medallion columns present, no pending migrations.
 
-## Production release gate
+## Production release
 
-The application commit must be pushed and the additive production schema must
-be applied individually in order: `0067_board_members_and_badge.sql`, then
-`0068_governance_role_rank_metadata.sql`. The maintained release preflight and
-Firefox Developer Edition acceptance must then pass before production traffic
-is changed. No existing creator records, recordings, Notes, or shared storage
-objects are part of this release.
+The application and documentation were pushed on `codex/tpi-development` with
+GitHub parity verified. The guarded release certified and deployed the exact
+candidate `rel-f1c2b2c02c88-c6acf327c5ce` from source commit
+`f1c2b2c02c8883eedd69f7abd4c689225530834b` and website release commit
+`f1c2b2c02c8883eedd69f7abd4c689225530834b`. The active production Worker is
+`6e552552-9458-4506-ab8f-48fd8e4b45fc` at 100% traffic; rollback target is
+`a8184f43-8d53-437b-9a8f-bc88cef485f8`.
+
+Release gates passed: certification 30/30, anonymous production smoke 10/10,
+and isolated Firefox Developer Edition production acceptance 65/65. The
+release candidate was reproducibly built with JavaScript
+`index-BAUieVoD.js` (SHA-256
+`06315f104af7ddef7637d4f2001556d50a1770fc9b21e354ffaa60ab946bfb0b`) and
+CSS `index-V2mQ_DP8.css` (SHA-256
+`6e68faa590fb4a116d57b71bb768835e6b901c8ffdd903eee75267d4fad9899b`).
+The integrated StudioFlow entrypoint hash was
+`98f050274c7855e0f74ee74d10951564715269a4557bb99d8ae959dae1dd49d2`.
+
+The live published article API contains Steve Glanz's paper “ITC Ethics:
+Curiosity Must Be Matched by Responsibility” under
+`education-area-ethics-professional-standards.html`, so the subject index can
+surface it under Ethics & Professional Standards. The deployed subject index
+also retains the complete 18-destination editor catalog and the legacy Water &
+Steam ITC reference shelf.
 
 ## Known limitation
 
@@ -63,3 +85,9 @@ The existing historical Board Member rows, if any, retain their appointment
 history. New appointments use the governed role/domain form. Assigning a Gold
 role to Todd or a Sol AI role to a human account remains an explicit protected
 Administration Center action; the release does not infer identities from names.
+
+Authenticated Administration Center assignment of a real owner/admin account
+was not executed by automation because no owner credential was used. The
+protected API and local authenticated workflow passed; live anonymous admin
+access remains correctly denied (403). This is an acceptance boundary, not a
+production deployment failure.

@@ -2,7 +2,7 @@
 
 ## 2026-11-09 — Rank-safe leadership, Board medallions, and Education subjects
 
-Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION RELEASE PENDING ADDITIVE SCHEMA.**
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.**
 Leadership assignment now chooses from a server-owned role catalog whose rank
 controls the medallion, so executive roles cannot be assigned Bronze. Board
 appointments now choose a governed Board role and paranormal umbrella domain;
@@ -17,9 +17,22 @@ including Water & Steam ITC. Existing article destinations were not changed.
 
 Focused checks: Leadership 18/18, Leadership local 10/10, Board 20/20, Board
 local 11/11, subject index 24/24, release safety 27/27, Admin Center build PASS.
-Local migration 0068 applied successfully. Production release remains pending
-the individually applied additive migrations 0067 and 0068, then the guarded
-preflight and isolated Firefox acceptance.
+Production migrations 0067 and 0068 applied in order; production schema
+readiness PASS. Guarded certification passed 30/30, anonymous production smoke
+passed 10/10, and isolated Firefox Developer Edition production acceptance
+passed 65/65.
+
+Production release: source/website commit
+`f1c2b2c02c8883eedd69f7abd4c689225530834b`, release
+`rel-f1c2b2c02c88-c6acf327c5ce`, Worker
+`6e552552-9458-4506-ab8f-48fd8e4b45fc` at 100% traffic. Rollback Worker:
+`a8184f43-8d53-437b-9a8f-bc88cef485f8`.
+
+The live article API confirms Steve Glanz's published Ethics paper is present
+under Ethics & Professional Standards. The Education Center now has a shared
+18-subject catalog and legacy Water & Steam ITC shelf. No owner/admin
+credential was used for live destructive or administrative assignment actions;
+anonymous admin access remains correctly denied.
 
 Full record:
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-GOVERNANCE-006-LEADERSHIP-BOARD-EDUCATION.md`.

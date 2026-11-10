@@ -1,7 +1,7 @@
 # TPI-GOVERNANCE-005 — Board Member Badge and Appointment Workflow
 
 Date: 2026-11-09
-Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION PENDING SCHEMA RELEASE**
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED**
 Source commit: `b695234b1148d7e3aa90043e4d1ea85ea8486465` on
 `codex/tpi-development` (pushed to GitHub).
 
@@ -52,13 +52,21 @@ Badge hashes:
 | `board-member-256.png` | `1eeb7097b5b3c013faf3f38f863b882d401f8178bc61db752e886c9f5ef6ff9e` |
 | `board-member-512.png` | `49b485212f50958f8b2fcf59347da7006cf0f546eb6222401a5f41b5b80d860c` |
 
-## Production boundary
+## Production release
 
-Production has not been modified by this change. The new workflow requires the
-additive `0067_board_members_and_badge.sql` table in production D1 before it can
-be safely enabled there. The maintained release process does not apply
-production D1 migrations automatically, and the runbook prohibits ad-hoc
-production migration execution. A separate authorized migration/release step
-is required before production deployment.
+The additive `0067_board_members_and_badge.sql` migration was applied to
+production D1 before the guarded release, followed by the rank metadata
+`0068_governance_role_rank_metadata.sql` migration. The production schema gate
+passed with `board_members` and all governed role/medallion columns present.
+The workflow shipped in release `rel-f1c2b2c02c88-c6acf327c5ce` on Worker
+`6e552552-9458-4506-ab8f-48fd8e4b45fc` at 100% traffic, with rollback
+`a8184f43-8d53-437b-9a8f-bc88cef485f8`. Certification passed 30/30, anonymous
+production smoke passed 10/10, and isolated Firefox production acceptance
+passed 65/65.
+
+Live protected assignment was not executed with owner credentials. Anonymous
+Admin Center access remains denied by design; the authenticated assignment
+workflow is covered by the local integration tests and the deployed protected
+routes.
 
 The existing live Leadership/medallion workflow remains unchanged.
