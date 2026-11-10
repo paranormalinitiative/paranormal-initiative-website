@@ -2,6 +2,8 @@
 
 Date: 2026-11-09
 Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION PENDING SCHEMA RELEASE**
+Source commit: `b695234b1148d7e3aa90043e4d1ea85ea8486465` on
+`codex/tpi-development` (pushed to GitHub).
 
 ## Objective
 
