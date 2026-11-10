@@ -22,10 +22,14 @@ check("shared subject catalog exists", existsSync(resolve(root, "education-subje
 check("editor loads the shared catalog", editor.includes("education-subjects.js"));
 check("Education Center loads the live subject index", center.includes('id="tpi-contributor-subject-index"') && center.includes("education-center-subjects.js"));
 check("Education Center exposes the complete subject directory", center.includes('id="tpi-education-subject-directory"') && index.includes("tpi-education-directory-grid") && index.includes("TPI_EDUCATION_SUBJECTS"));
+check("Education Center has one featured shelf directory", center.includes("Featured Research Shelves") && center.includes("Selected lessons and guides.") && !center.includes("Quick Start") && !center.includes("More Resources") && !center.includes("data-accordion-toggle"));
+check("public Education Center copy omits workspace implementation details", !center.includes("Nova Editorial Workspace") && !index.includes("Editorial Workspace"));
+check("contributor publications stay inside the member content area", center.indexOf('id="tpi-contributor-subject-index"') < center.lastIndexOf('id="site-footer"'));
 check("subject links use clean extensionless paths", index.includes("function subjectHref") && index.includes("replace(/\\.html$/, \"\")") && index.includes('const href = `/${path}`'));
 check("published article API is used without local-only data", index.includes("/api/articles?page=1&pageSize=100") && index.includes("status"));
 for (const destination of destinations) check(`subject is present: ${destination}`, catalog.includes(`"${destination}"`));
-check("legacy Water & Steam ITC reference is visible", index.includes("evp-itc-lesson-water-steam.html"));
+check("legacy Water & Steam ITC reference is visible", index.includes("evp-itc-lesson-water-steam"));
+check("empty publication subjects are omitted from the lower index", index.includes("filter(({ rows, legacy }) => rows.length || legacy)"));
 check("subject articles link to their canonical destination", index.includes("Open subject") && index.includes("articleHref"));
 const failed = checks.filter((item) => !item.pass);
 console.log(`\nTPI-GOVERNANCE-006 subject index: ${checks.length - failed.length}/${checks.length} PASS`);

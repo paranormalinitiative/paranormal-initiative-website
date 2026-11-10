@@ -248,8 +248,8 @@ Education Center now presents one complete directory driven by the same 18
 destinations available in Nova Editorial Workspace: 12 main education areas
 and 6 legacy/reference shelves. Investigation Science and every other subject
 now use direct extensionless routes such as
-`/education-area-investigation-science`; existing featured lesson shelves and
-published contributor grouping remain intact.
+`/education-area-investigation-science`; the contributor publication grouping
+remains available.
 
 Focused source verification passes 26/26. Disposable Firefox Developer Edition
 acceptance against the canonical local Worker passes 24/24 and against
@@ -263,6 +263,23 @@ Production release `rel-b75e17f7518f-c38dc3ead5aa` deployed website commit
 `b75e17f7518f45842dc518a1af3b4a9c68daef2b` as Worker
 `eb3a2a70-3435-48b1-9100-c664f74eda19` at 100% traffic. Rollback Worker:
 `0e06c46e-cca8-4548-bfe3-272b59eafbe8`.
+
+## 2026-11-10 — Education Center organization cleanup
+
+Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION DEPLOYMENT PENDING.** The
+Education Center now has one clear Featured Research Shelves section titled
+“Selected lessons and guides.” The redundant Quick Start block, duplicate
+accordion shelves, More Resources block, and internal Nova implementation
+wording were removed. The complete 18-card subject directory remains the
+direct path into the library, and contributor publications now sit inside the
+member content column with empty subject groups omitted. The search field now
+also searches the subject cards.
+
+Focused source verification passes 30/30. Disposable Firefox Developer Edition
+acceptance against the canonical local Worker passes 25/25, including the
+single-shelf structure, visible directory, desktop containment, mobile
+no-overflow behavior, all 18 direct routes, and the corrected lower-page
+layout. No database, member, contributor, or production content was changed.
 
 ## 2026-11-09 — Community Feed Open post no-reload correction
 

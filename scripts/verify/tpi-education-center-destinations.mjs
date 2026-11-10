@@ -90,6 +90,9 @@ try {
 
   const directory = await driver.executeScript(`return Array.from(document.querySelectorAll('.tpi-education-directory-card')).map(function(card){return {href:new URL(card.getAttribute('href'),location.href).pathname,label:card.querySelector('h3')?.textContent.trim()||''};});`);
   const hrefs = directory.map((item) => item.href);
+  const structure = await driver.executeScript(`var bodyText=document.body.textContent || '', directorySection=document.querySelector('#tpi-education-subject-directory')?.closest('section');
+    return {quickStart:/quick start/i.test(bodyText),moreResources:/more resources/i.test(bodyText),accordionItems:document.querySelectorAll('.edu-accordion-item').length,directorySectionCount:document.querySelectorAll('#tpi-education-subject-directory').length,directorySectionVisible:Boolean(directorySection && directorySection.getBoundingClientRect().width > 0)};`);
+  check("Education Center uses one featured shelf without duplicate sections", !structure.quickStart && !structure.moreResources && structure.accordionItems === 0 && structure.directorySectionCount === 1 && structure.directorySectionVisible, JSON.stringify(structure));
   check("Education Center renders all 18 Nova subjects", directory.length === destinations.length, JSON.stringify({ count: directory.length }));
   check("Education Center directory links match the Nova catalog", destinations.every((path) => hrefs.includes(path)), JSON.stringify({ missing: destinations.filter((path) => !hrefs.includes(path)) }));
   check("Investigation Science opens at its clean route", directory.find((item) => item.label === "Investigation Science")?.href === "/education-area-investigation-science", JSON.stringify(directory.find((item) => item.label === "Investigation Science")));

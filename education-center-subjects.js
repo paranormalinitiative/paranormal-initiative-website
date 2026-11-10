@@ -1,5 +1,6 @@
-// Education Center contributor index. Static legacy shelves remain intact;
-// this index adds the live published article layer to every editor subject.
+// Education Center contributor index. The featured shelves above provide the
+// subject directory; this section adds the live published article layer only
+// for subject areas that currently have work to show.
 (function () {
   const subjects = window.TPI_EDUCATION_SUBJECTS || [];
   const directoryHost = document.getElementById("tpi-education-subject-directory");
@@ -28,22 +29,24 @@
   }
 
   function render(groups) {
+    const entries = subjects.map((subject) => {
+      const rows = groups.get(subject.value) || [];
+      const legacy = subject.value === "evp-itc-lessons.html"
+        ? `<a class="edu-article-card tpi-legacy-card" href="/evp-itc-lesson-water-steam"><h4>Water &amp; Steam ITC</h4><p>Legacy reference material for water, steam, and reflective-surface experimentation.</p><div class="edu-article-meta"><span class="edu-article-tag">Legacy reference</span></div></a>`
+        : "";
+      return { subject, rows, legacy };
+    }).filter(({ rows, legacy }) => rows.length || legacy);
+
     host.innerHTML = `
       <section class="home-section tpi-contributor-publications" aria-labelledby="tpi-contributor-publications-title">
         <p class="portal-kicker">Contributor Publications</p>
         <h2 id="tpi-contributor-publications-title">Published work by subject area.</h2>
-        <p class="tpi-subject-index-intro">Published research papers, field articles, notes, and media are listed under the same subjects contributors choose in the Editorial Workspace.</p>
+        <p class="tpi-subject-index-intro">Published research papers, field articles, notes, and media are organized below by subject area.</p>
         <div class="tpi-subject-index-grid">
-          ${subjects.map((subject) => {
-            const rows = groups.get(subject.value) || [];
-            const legacy = subject.value === "evp-itc-lessons.html"
-              ? `<a class="edu-article-card tpi-legacy-card" href="evp-itc-lesson-water-steam.html"><h4>Water &amp; Steam ITC</h4><p>Legacy reference material for water, steam, and reflective-surface experimentation.</p><div class="edu-article-meta"><span class="edu-article-tag">Legacy reference</span></div></a>`
-              : "";
-            return `<article class="tpi-subject-index-group" data-subject="${escapeHtml(subject.value)}">
+          ${entries.length ? entries.map(({ subject, rows, legacy }) => `<article class="tpi-subject-index-group" data-subject="${escapeHtml(subject.value)}">
               <div class="tpi-subject-index-heading"><div><span class="category-badge category-badge-education">Subject area</span><h3>${escapeHtml(subject.label)}</h3><p>${escapeHtml(subject.description)}</p></div><a class="dashboard-panel-cta" href="${escapeHtml(subjectHref(subject.value))}">Open subject ›</a></div>
               <div class="edu-accordion-grid">${rows.length ? rows.map((article) => `<a class="edu-article-card tpi-published-card" href="${escapeHtml(articleHref(article))}"><h4>${escapeHtml(article.title)}</h4>${article.subtitle ? `<p>${escapeHtml(article.subtitle)}</p>` : ""}<div class="edu-article-meta"><span class="edu-article-tag">${escapeHtml(article.contributionType || "Published Article")}</span>${article.authorDisplayName ? `<span>${escapeHtml(article.authorDisplayName)}</span>` : ""}</div></a>`).join("") : legacy || `<div class="tpi-subject-empty">No published contributor work is available in this subject yet.</div>`}</div>
-            </article>`;
-          }).join("")}
+            </article>`).join("") : `<div class="tpi-subject-empty">Published contributor work will appear here as it is approved.</div>`}
         </div>
       </section>`;
   }
