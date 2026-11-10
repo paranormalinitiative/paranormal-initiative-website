@@ -13,7 +13,7 @@ acceptance level shown here.
 | Messenger | Implemented; source and local Firefox gates pass; prior production live verification recorded | Current production re-audit remains required for final completion |
 | Community Feed | Implemented; workstation/source gates pass; prior production release recorded | Current production re-audit remains required for final completion |
 | Friends and bug reporting | Implemented; workstation/source gates pass; Friends padding repair passes local and production Firefox layout 9/9 | No remaining implementation blocker |
-| Leadership, Board, profiles, Sol, and Education | Implemented; governance/profile/source gates pass; prior production releases recorded | Current production re-audit remains required for final completion |
+| Leadership, Board, profiles, Sol, and Education | Implemented; governance/profile/source gates pass; Education Center complete subject directory passes local and production Firefox acceptance | No remaining implementation blocker |
 | Nova Editorial Workspace and Nova Edit | Implemented; current review 47/47, publish 60/60, revision 26/26, Slides 23/23, workstation 9/9, and StudioFlow Nova Edit 13/13 pass locally | Current production re-audit remains required for final completion |
 | Founding Membership | Implemented; Firefox/Chromium browser audit passes 48/48 and capability separation passes | Current production re-audit remains required for final completion |
 | StudioFlow destinations and recording storage | Local and production Firefox/source audit passes 33/33; external-folder and cloud destinations remain honestly gated | No remaining implementation blocker; retain disposable-account-only acceptance and do not claim unsupported broadcast destinations |
@@ -243,7 +243,7 @@ required.
 
 ## 2026-11-10 — Education Center complete subject directory and clean routes
 
-Status: **IMPLEMENTED — LOCAL VERIFIED / PRODUCTION DEPLOYMENT PENDING.** The
+Status: **COMPLETE — DEPLOYED AND VERIFIED.** The
 Education Center now presents one complete directory driven by the same 18
 destinations available in Nova Editorial Workspace: 12 main education areas
 and 6 legacy/reference shelves. Investigation Science and every other subject
@@ -252,10 +252,17 @@ now use direct extensionless routes such as
 published contributor grouping remain intact.
 
 Focused source verification passes 26/26. Disposable Firefox Developer Edition
-acceptance against the canonical local Worker passes 24/24, including complete
-catalog rendering, desktop containment, mobile no-overflow behavior, the
-Investigation Science route, and all 18 clean destination routes. No database,
+acceptance against the canonical local Worker passes 24/24 and against
+production passes 24/24, including complete catalog rendering, desktop
+containment, mobile no-overflow behavior, the Investigation Science route, and
+all 18 clean destination routes. The live DOM was also checked after member
+shell initialization to confirm the cards are visibly rendered. No database,
 member, contributor, or production content was changed.
+
+Production release `rel-b75e17f7518f-c38dc3ead5aa` deployed website commit
+`b75e17f7518f45842dc518a1af3b4a9c68daef2b` as Worker
+`eb3a2a70-3435-48b1-9100-c664f74eda19` at 100% traffic. Rollback Worker:
+`0e06c46e-cca8-4548-bfe3-272b59eafbe8`.
 
 ## 2026-11-09 — Community Feed Open post no-reload correction
 

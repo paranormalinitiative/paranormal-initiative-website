@@ -56,12 +56,24 @@ async function waitForDirectory() {
   const started = Date.now();
   let lastState = null;
   while (Date.now() - started < 20_000) {
-    lastState = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), cards=document.querySelectorAll('.tpi-education-directory-card');
-      return {host:!!host,loaded:host && host.dataset.loaded === 'true',count:cards.length,member:document.body.classList.contains('member-mode')};`);
-    if (lastState.host && lastState.loaded && lastState.count === destinations.length && lastState.member) return;
+    lastState = await driver.executeScript(`var host=document.querySelector('#tpi-education-subject-directory'), cards=document.querySelectorAll('.tpi-education-directory-card'), hostRect=host && host.getBoundingClientRect(), firstRect=cards[0] && cards[0].getBoundingClientRect();
+      return {host:!!host,loaded:host && host.dataset.loaded === 'true',count:cards.length,member:document.body.classList.contains('member-mode'),visible:Boolean(hostRect && hostRect.width > 0 && hostRect.height > 0 && firstRect && firstRect.width > 0 && firstRect.height > 0)};`);
+    if (lastState.host && lastState.loaded && lastState.count === destinations.length && lastState.member && lastState.visible) return;
     await sleep(200);
   }
   throw new Error(`Education Center directory did not finish rendering: ${JSON.stringify({ url: await driver.getCurrentUrl(), state: lastState })}`);
+}
+
+async function openRoute(path) {
+  try {
+    await driver.get(`${base}${path}`);
+    return;
+  } catch (error) {
+    const current = new URL(await driver.getCurrentUrl());
+    const ready = await driver.executeScript("return document.readyState !== 'loading' && Boolean(document.body && document.body.textContent.trim());");
+    if (current.pathname === path && ready) return;
+    throw error;
+  }
 }
 
 try {
@@ -93,7 +105,7 @@ try {
   check("mobile subject directory keeps all subjects without horizontal overflow", mobileLayout.count === destinations.length && mobileLayout.scrollWidth <= mobileLayout.innerWidth + 1, JSON.stringify(mobileLayout));
 
   for (const path of destinations) {
-    await driver.get(`${base}${path}`);
+    await openRoute(path);
     const current = new URL(await driver.getCurrentUrl());
     const hasDocument = await driver.executeScript("return document.body && document.body.textContent.trim().length > 0;");
     check(`clean route loads: ${path}`, current.pathname === path && hasDocument, JSON.stringify({ path: current.pathname, hasDocument }));
