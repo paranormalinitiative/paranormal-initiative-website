@@ -94,7 +94,8 @@ try {
   await js("localStorage.removeItem('tpiFloatingChatFrame');");
   await driver.get(`${base}/member-home`);
   await waitFor("desktop Messenger", async () => (await state())?.hidden === false);
-  check("desktop Messenger opens in its floating frame", (await state())?.hidden === false);
+  const initialDesktop = await state();
+  check("desktop Messenger opens in a usable-width floating frame", initialDesktop?.hidden === false && initialDesktop.width >= 640, JSON.stringify(initialDesktop));
   check("Chat navigation reports the open Messenger", (await state())?.navExpanded === "true");
 
   const beforeDrag = await state();

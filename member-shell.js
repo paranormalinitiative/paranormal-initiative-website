@@ -4812,7 +4812,7 @@
         return;
       }
       if (!resizing || !start) return;
-      var width = Math.min(Math.max(420, start.width + (event.clientX - start.x)), 980);
+      var width = Math.min(Math.max(640, start.width + (event.clientX - start.x)), 980);
       var height = Math.min(Math.max(360, start.height + (event.clientY - start.y)), 780);
       chat.style.width = width + "px";
       chat.style.height = height + "px";
@@ -4831,7 +4831,7 @@
   function applyStoredChatFrame(chat, forceOpen) {
     var frame = getStoredChatFrame();
     var mobileViewport = isMobileChatViewport();
-    chat.style.width = frame && frame.width ? Math.max(420, frame.width) + "px" : "520px";
+    chat.style.width = frame && frame.width ? Math.max(640, frame.width) + "px" : "720px";
     chat.style.height = frame && frame.height ? Math.max(360, frame.height) + "px" : "520px";
     if (frame && frame.left && frame.top) {
       chat.style.left = frame.left + "px";
