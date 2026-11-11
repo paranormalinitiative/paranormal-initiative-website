@@ -74,8 +74,11 @@ const profilePage = await request(`/member-profile?username=${encodeURIComponent
 check("clean profile page is available", profilePage.response.status === 200);
 check("clean profile page serves the profile identity and shared feed shell", profilePage.text.includes("data-member-profile-view") && profilePage.text.includes("data-member-feed") && profilePage.text.includes("data-feed-tab"));
 check("profile shell includes banner, avatar edit, and profile options controls", profilePage.text.includes("data-member-profile-banner") && profilePage.text.includes("data-profile-avatar-edit") && profilePage.text.includes("data-profile-options-toggle"));
+check("profile shell places Honors & Distinctions in the right rail", profilePage.text.includes("data-rail-recognition") && profilePage.text.includes("Honors &amp; Distinctions") && profilePage.text.includes("data-recognition-trigger"));
+check("profile shell keeps recognition details out of the profile hero", !profilePage.text.includes("data-member-recognition-shelf"));
 const editorPage = await request("/member-profile.html", auth(member.token));
 check("profile editor remains a separate authenticated surface", editorPage.response.status === 200 && editorPage.text.includes("Update Profile") && editorPage.text.includes("data-profile-form") && editorPage.text.includes("profileBannerFile"));
+check("profile editor explains the recommended banner dimensions", editorPage.text.includes("1600 × 500 px") && editorPage.text.includes("3.2:1"));
 
 const profile = await request(`/api/members/profile?username=${encodeURIComponent(target)}`, auth(member.token));
 check("member profile returns the target and relationship", profile.response.status === 200 && profile.body?.profile?.username === target && profile.body?.relationship);

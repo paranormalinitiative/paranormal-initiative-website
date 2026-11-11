@@ -41,7 +41,7 @@
 .founding-badge-chip { display: inline-flex; align-items: center; gap: 14px; margin-top: 14px; padding: 12px 16px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-surface); max-width: 100%; }
 .profile-recognition-trigger { display: inline-grid; place-items: center; flex: none; padding: 0; border: 0; border-radius: var(--radius-full); background: transparent; cursor: zoom-in; }
 .profile-recognition-trigger:focus-visible { outline: 3px solid var(--profile-highlight,var(--text-accent)); outline-offset: 4px; }
-.profile-recognition-trigger img { display: block; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: cover; }
+.profile-recognition-trigger img { display: block; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: contain; background: transparent; }
 .founding-badge-chip-art { display: block; flex: none; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: cover; }
 .founding-badge-chip-text { display: grid; gap: 2px; min-width: 0; }
 .founding-badge-chip-text strong { color: var(--text-primary); font-size: 14px; font-weight: 700; line-height: 1.25; }
@@ -66,7 +66,7 @@
 .recognition-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; }
 .recognition-modal-backdrop { position: absolute; inset: 0; background: rgba(4, 5, 10, .82); backdrop-filter: blur(6px); }
 .recognition-modal-dialog { position: relative; z-index: 1; width: min(560px, 100%); padding: 30px; border: 1px solid #d6a84f99; border-radius: 18px; color: var(--text-primary); background: var(--bg-surface); box-shadow: 0 24px 90px rgba(0,0,0,.45); text-align: center; }
-.recognition-modal-dialog img { width: min(240px, 70vw); height: min(240px, 70vw); border-radius: var(--radius-full); object-fit: cover; border: 3px solid #d6a84f; box-shadow: 0 0 36px rgba(214,168,79,.3); }
+.recognition-modal-dialog img { width: min(240px, 70vw); height: min(240px, 70vw); border-radius: var(--radius-full); object-fit: contain; background: transparent; border: 0; box-shadow: 0 0 36px rgba(214,168,79,.3); }
 .recognition-modal-dialog h2 { margin: 8px 0; }
 .recognition-modal-detail { color: #d6a84f; font-weight: 700; }
 .recognition-modal-close { position: absolute; top: 10px; right: 14px; border: 0; background: transparent; color: var(--text-primary); font-size: 28px; cursor: pointer; }
@@ -75,4 +75,6 @@
 .admin-profile-editor-form label { display: grid; gap: 6px; color: var(--text-secondary); font-weight: 600; }
 .admin-profile-editor-form input, .admin-profile-editor-form textarea { width: 100%; box-sizing: border-box; }
 .profile-banner-editor { display: grid; gap: 12px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--profile-highlight) 18%, transparent); }
-.profile-banner-preview { min-height: 150px; border: 1px solid color-mix(in srgb, var(--profile-highlight) 36%, transparent); border-radius: 14px; background: #081019 center / cover no-repeat url('/assets/tpi-banner.png'); box-shadow: 0 12px 28px rgba(0,0,0,.22); }
+.profile-banner-preview { min-height: 180px; aspect-ratio: 16 / 5; border: 1px solid color-mix(in srgb, var(--profile-highlight) 36%, transparent); border-radius: 14px; background: #081019 center / cover no-repeat url('/assets/tpi-banner.png'); box-shadow: 0 12px 28px rgba(0,0,0,.22); }
+.profile-banner-dimensions { line-height: 1.5; }
+.profile-banner-dimensions strong { color: var(--text-primary); }

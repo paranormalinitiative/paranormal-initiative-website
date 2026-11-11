@@ -27,6 +27,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=89">
     <link rel="stylesheet" href="member-shell.css?v=62">
+    <link rel="stylesheet" href="profile-style.css?v=4">
     <style>
         /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
         /* Lift the shell's 1050px cap on this page only so the rail sits far
@@ -223,6 +224,87 @@
         }
 
         .rail-pulse-link:hover { color: #f4f8fb; border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+
+        /* Honors & Distinctions — a compact recognition wall beneath My Pulse.
+           The image files stay transparent so the medallion artwork is shown
+           cleanly, while the surrounding rail card keeps the site theme. */
+        .rail-recognition-intro {
+            margin: 0 0 12px;
+            color: #8aa0b6;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .rail-recognition-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .rail-recognition-item {
+            display: grid;
+            justify-items: center;
+            align-content: start;
+            gap: 6px;
+            min-width: 0;
+            padding: 8px 4px 9px;
+            color: #f4f8fb;
+            background: #0d1017;
+            border: 1px solid #263646;
+            border-radius: 14px;
+            font: inherit;
+            text-align: center;
+            cursor: zoom-in;
+            transition: border-color .15s, background .15s, transform .15s;
+        }
+
+        .rail-recognition-item:hover,
+        .rail-recognition-item:focus-visible {
+            border-color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 9%, #0d1017);
+            transform: translateY(-1px);
+        }
+
+        .rail-recognition-item:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .rail-recognition-item img {
+            display: block;
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            background: transparent;
+        }
+
+        .rail-recognition-title,
+        .rail-recognition-detail {
+            display: block;
+            width: 100%;
+            overflow-wrap: anywhere;
+        }
+
+        .rail-recognition-title {
+            color: #f4f8fb;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+
+        .rail-recognition-detail {
+            color: #d6a84f;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .rail-recognition-empty {
+            margin: 0;
+            color: #8aa0b6;
+            font-size: 12px;
+            line-height: 1.45;
+        }
 
         /* Upcoming Events */
         .rail-event {
@@ -674,7 +756,7 @@
 
         .member-profile-cover {
             position: relative;
-            height: 210px;
+            height: 280px;
             overflow: hidden;
             background:
                 radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 42%),
@@ -724,17 +806,17 @@
         .member-profile-hero {
             position: relative;
             display: grid;
-            grid-template-columns: 138px minmax(0, 1fr);
+            grid-template-columns: 154px minmax(0, 1fr);
             gap: 22px;
             align-items: start;
-            margin-top: -56px;
+            margin-top: -78px;
             padding: 0 24px 22px;
         }
 
         .member-profile-hero .member-profile-photo-wrap {
             position: relative;
-            width: 138px;
-            height: 138px;
+            width: 154px;
+            height: 154px;
             padding: 4px;
             border-radius: 50%;
             background: #090f14;
@@ -761,7 +843,7 @@
             justify-content: space-between;
             gap: 18px;
             flex-wrap: wrap;
-            padding-top: 58px;
+            padding-top: 80px;
         }
 
         .member-profile-options {
@@ -2405,16 +2487,16 @@
             .member-profile-hero {
                 grid-template-columns: 1fr;
                 gap: 14px;
-                margin-top: -42px;
+                margin-top: -50px;
                 padding: 0 16px 18px;
             }
 
             .member-profile-hero .member-profile-photo-wrap {
-                width: 108px;
-                height: 108px;
+                width: 118px;
+                height: 118px;
             }
 
-            .member-profile-cover { height: 170px; }
+            .member-profile-cover { height: 220px; }
 
             .member-profile-heading-row {
                 padding-top: 0;
@@ -2735,7 +2817,6 @@
                         <p class="member-profile-role" data-member-role></p>
                         <p class="member-profile-bio" data-member-bio></p>
                         <div class="member-profile-facts" data-member-facts></div>
-                        <div data-member-recognition-shelf></div>
                     </div>
                 </div>
                 <div class="member-profile-stats" data-member-profile-stats>
@@ -2959,6 +3040,14 @@
                     </div>
                 </section>
 
+                <!-- HONORS & DISTINCTIONS -->
+                <section class="rail-card" data-rail-recognition hidden>
+                    <div class="rail-card-head">
+                        <h4>Honors &amp; Distinctions</h4>
+                    </div>
+                    <div data-recognition-rail-body></div>
+                </section>
+
                 <!-- PARANEWS SPOTLIGHT -->
                 <section class="rail-card" data-rail-news>
                     <div class="rail-card-head">
@@ -3139,7 +3228,6 @@
     var profileRole = document.querySelector("[data-member-role]");
     var profileBio = document.querySelector("[data-member-bio]");
     var profileFacts = document.querySelector("[data-member-facts]");
-    var profileRecognitionShelf = document.querySelector("[data-member-recognition-shelf]");
     var profileEditLink = document.querySelector("[data-profile-edit]");
     var profileFollowButton = document.querySelector("[data-profile-follow]");
     var profileFriendButton = document.querySelector("[data-profile-friend]");
@@ -3315,6 +3403,7 @@
     async function loadRightRailContent() {
         beginRailFade();
         renderPulse();
+        renderRecognitionRail();
         loadRailEvents();
         loadRailMembers();
         loadProfileDiscovery();
@@ -3784,12 +3873,6 @@
             profileFacts.innerHTML = facts.join("");
         }
 
-        if (profileRecognitionShelf) {
-            profileRecognitionShelf.innerHTML = profileMode && profileRecognition
-                ? renderRecognitionShelf(profileRecognition.boardMembership, profileRecognition.leadershipDistinctions, profileUser.title)
-                : "";
-        }
-
         if (profileEditLink) {
             profileEditLink.hidden = !profileMode || profileUser.username !== activeUser.username;
         }
@@ -3896,7 +3979,7 @@
         return '<button type="button" class="profile-recognition-trigger" data-recognition-trigger data-recognition-image="' + escapeAttr(image || "") + '" data-recognition-title="' + escapeAttr(title || "Recognition") + '" data-recognition-detail="' + escapeAttr(detail || "") + '" data-recognition-description="' + escapeAttr(description || "") + '" aria-label="View ' + escapeAttr(title || "recognition") + ' details"><img src="' + escapeAttr(image || "") + '" alt="' + escapeAttr(title || "Recognition") + '" loading="lazy" decoding="async"></button>';
     }
 
-    function renderRecognitionShelf(boardMembership, distinctions, profileTitle) {
+    function getRecognitionItems(boardMembership, distinctions, profileTitle) {
         var rows = Array.isArray(distinctions)
             ? distinctions.filter(function(item) { return item && item.status === "active" && item.assetPath; }).map(function(item) {
                 return {
@@ -3920,16 +4003,38 @@
                 kind: "board",
                 title: boardMembership.label || "Board Member",
                 detail: boardMembership.positionTitle || "Board Member",
-                description: "",
+                description: boardMembership.notes || "Active TPI board service and governance distinction.",
                 image: cacheBustedRecognitionAsset(boardMembership.badgePath2x || boardMembership.badgePath),
                 color: boardMembership.color || "#d6a84f"
             });
         }
         rows.forEach(function(item) { if (item !== gold) ordered.push(item); });
+        return ordered;
+    }
+
+    function renderRecognitionShelf(boardMembership, distinctions, profileTitle) {
+        var ordered = getRecognitionItems(boardMembership, distinctions, profileTitle);
         if (!ordered.length) return "";
         return '<section class="profile-recognition-shelf" aria-label="Honors and distinctions"><p class="portal-kicker">Honors &amp; Distinctions</p><div class="profile-recognition-grid">' + ordered.map(function(item) {
             return '<article class="profile-recognition-card" style="--recognition-color:' + escapeAttr(item.color || "#d6a84f") + '" data-recognition-kind="' + escapeAttr(item.kind || "honor") + '"><div class="profile-recognition-art">' + recognitionTrigger(item.image, item.title, item.detail, item.description) + '</div><div class="profile-recognition-copy"><strong>' + escapeHtml(item.title || "Recognition") + '</strong><span>' + escapeHtml(item.detail || "") + '</span>' + (item.description ? '<small>' + escapeHtml(item.description) + '</small>' : '') + '</div></article>';
         }).join("") + '</div></section>';
+    }
+
+    function renderRecognitionRail() {
+        var section = document.querySelector("[data-rail-recognition]");
+        var body = document.querySelector("[data-recognition-rail-body]");
+        if (!section || !body) return;
+        var recognition = profileMode && profileRecognition ? profileRecognition : activeUser;
+        var ordered = getRecognitionItems(recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title);
+        if (!ordered.length) {
+            section.hidden = true;
+            body.innerHTML = "";
+            return;
+        }
+        section.hidden = false;
+        body.innerHTML = '<p class="rail-recognition-intro">Recognized leadership, service, and governance distinctions.</p><div class="rail-recognition-grid">' + ordered.map(function(item) {
+            return '<button type="button" class="rail-recognition-item" data-recognition-trigger data-recognition-image="' + escapeAttr(item.image || "") + '" data-recognition-title="' + escapeAttr(item.title || "Recognition") + '" data-recognition-detail="' + escapeAttr(item.detail || "") + '" data-recognition-description="' + escapeAttr(item.description || "") + '" aria-label="View ' + escapeAttr(item.title || "recognition") + ' details"><img src="' + escapeAttr(item.image || "") + '" alt="' + escapeAttr(item.title || "Recognition") + '" loading="lazy" decoding="async"><span class="rail-recognition-title">' + escapeHtml(item.title || "Recognition") + '</span><span class="rail-recognition-detail">' + escapeHtml(item.detail || "") + '</span></button>';
+        }).join("") + '</div>';
     }
 
     function initRecognitionModal() {
