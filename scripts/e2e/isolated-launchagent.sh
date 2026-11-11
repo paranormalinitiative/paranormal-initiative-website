@@ -59,6 +59,7 @@ case "${1:-status}" in
     launchctl bootstrap "$DOMAIN" "$PLIST" && echo "installed $LABEL (not started)" ;;
   start)
     [ -f "$PLIST" ] || write_plist
+    mkdir -p "$LOG_DIR"
     loaded || launchctl bootstrap "$DOMAIN" "$PLIST"
     launchctl kickstart "$TARGET" && echo "started $LABEL" ;;
   stop)

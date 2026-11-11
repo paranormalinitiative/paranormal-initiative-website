@@ -32,6 +32,15 @@ if [ "$ISOLATED" = "1" ]; then
     || { echo "ISOLATED GUARD: disposable Worker is not answering on 127.0.0.1:8789"; exit 1; }
   BASE="http://127.0.0.1:8789/api"
   WRANGLER_LOCAL="${WRANGLER_BIN:-wrangler}"
+  # The disposable Worker and Wrangler's local D1 migration process cannot
+  # safely hold the same SQLite database open at once. Pause only the
+  # disposable LaunchAgent while preparing its database, then bring it back
+  # before any API assertions. The owner's :8787 Worker and state are never
+  # involved in this path.
+  bash scripts/e2e/isolated-launchagent.sh stop >/dev/null 2>&1 || {
+    echo "ISOLATED MIGRATIONS FAILED: could not stop disposable Worker"
+    exit 1
+  }
   migration_output=$("$WRANGLER_LOCAL" d1 migrations apply TPI_DB --config "$ISOLATED_CONFIG" --local --persist-to "$ISOLATED_STATE" 2>&1) || {
     printf '%s\n' "$migration_output" >&2
     echo "ISOLATED MIGRATIONS FAILED"
@@ -48,6 +57,17 @@ if [ "$ISOLATED" = "1" ]; then
     break
   done
   [ "$seed_passed" -eq 1 ] || { echo "ISOLATED SEED FAILED"; exit 1; }
+  bash scripts/e2e/isolated-launchagent.sh start >/dev/null 2>&1 || {
+    echo "ISOLATED WORKER FAILED: could not restart disposable Worker"
+    exit 1
+  }
+  worker_ready=0
+  for attempt in 1 2 3 4 5 6 7 8 9 10; do
+    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 "http://127.0.0.1:8789/api/community/categories")
+    if [ "$code" = "200" ]; then worker_ready=1; break; fi
+    sleep 1
+  done
+  [ "$worker_ready" -eq 1 ] || { echo "ISOLATED WORKER FAILED: disposable Worker did not return after database preparation"; exit 1; }
   echo "isolated mode: disposable Worker on :8789, state $ISOLATED_STATE"
 fi
 
