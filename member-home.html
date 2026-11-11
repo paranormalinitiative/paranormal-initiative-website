@@ -1075,7 +1075,7 @@
             background: #0d1017;
         }
         .member-profile-honors .profile-recognition-shelf { margin-top: 0; }
-        .member-profile-honors .profile-recognition-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+        .member-profile-honors .profile-recognition-grid { grid-template-columns: repeat(auto-fill, minmax(112px, 144px)); justify-content: start; }
 
         body.member-profile-mode .member-home-layout {
             grid-template-columns: minmax(0, 1fr) 320px;
@@ -4218,8 +4218,8 @@
     function renderRecognitionShelf(foundingMembership, boardMembership, distinctions, profileTitle) {
         var ordered = getRecognitionItems(foundingMembership, boardMembership, distinctions, profileTitle);
         if (!ordered.length) return "";
-        return '<section class="profile-recognition-shelf" aria-label="Honors and distinctions"><p class="portal-kicker">Honors &amp; Distinctions</p><div class="profile-recognition-grid">' + ordered.map(function(item) {
-            return '<article class="profile-recognition-card" style="--recognition-color:' + escapeAttr(item.color || "#d6a84f") + '" data-recognition-kind="' + escapeAttr(item.kind || "honor") + '"><div class="profile-recognition-art">' + recognitionTrigger(item.image, item.title, item.detail, item.description) + '</div><div class="profile-recognition-copy"><strong>' + escapeHtml(item.title || "Recognition") + '</strong><span>' + escapeHtml(item.detail || "") + '</span>' + (item.description ? '<small>' + escapeHtml(item.description) + '</small>' : '') + '</div></article>';
+        return '<section class="profile-recognition-shelf" aria-label="Honors and distinctions"><p class="portal-kicker">Honors &amp; Distinctions</p><div class="rail-recognition-grid profile-recognition-grid">' + ordered.map(function(item) {
+            return '<button type="button" class="rail-recognition-item profile-recognition-item" data-recognition-trigger data-recognition-image="' + escapeAttr(item.image || "") + '" data-recognition-title="' + escapeAttr(item.title || "Recognition") + '" data-recognition-detail="' + escapeAttr(item.detail || "") + '" data-recognition-description="' + escapeAttr(item.description || "") + '" aria-label="View ' + escapeAttr(item.title || "recognition") + ' details"><img src="' + escapeAttr(item.image || "") + '" alt="' + escapeAttr(item.title || "Recognition") + '" loading="lazy" decoding="async"><span class="rail-recognition-title">' + escapeHtml(item.title || "Recognition") + '</span><span class="rail-recognition-detail">' + escapeHtml(item.detail || "") + '</span></button>';
         }).join("") + '</div></section>';
     }
 
