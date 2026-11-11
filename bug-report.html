@@ -5,8 +5,8 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Report a bug | The Paranormal Initiative</title>
-  <link rel="stylesheet" href="style.css?v=89">
-  <link rel="stylesheet" href="member-shell.css?v=62">
+  <link rel="stylesheet" href="style.css?v=92">
+  <link rel="stylesheet" href="member-shell.css?v=63">
   <style>
     .bug-workspace { max-width: 860px; margin: 0 auto; }
     .bug-panel { background: #10141c; border: 1px solid #263646; border-radius: 20px; padding: 24px; }
@@ -38,9 +38,9 @@
     </div>
   </div>
   <div id="site-footer"></div>
-  <script src="includes.js"></script>
-  <script src="api-client.js"></script>
-  <script src="member-shell.js?v=58"></script>
+  <script src="includes.js?v=18"></script>
+  <script src="api-client.js?v=18"></script>
+  <script src="member-shell.js?v=59"></script>
   <script>
     (function () { var form = document.querySelector('[data-bug-form]'); var status = document.querySelector('[data-bug-status]'); form.addEventListener('submit', async function (event) { event.preventDefault(); var button = form.querySelector('button'); button.disabled = true; status.textContent = 'Submitting…'; var data = Object.fromEntries(new FormData(form).entries()); data.pageUrl = window.location.href; try { var response = await fetch('/api/bug-reports', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); var body = {}; try { body = await response.json(); } catch (e) {} if (!response.ok) throw new Error(body.error || 'The bug report could not be submitted.'); form.reset(); status.textContent = 'Bug report submitted to the Administration Center.'; } catch (error) { status.textContent = error.message; } finally { button.disabled = false; } }); }());
   </script>

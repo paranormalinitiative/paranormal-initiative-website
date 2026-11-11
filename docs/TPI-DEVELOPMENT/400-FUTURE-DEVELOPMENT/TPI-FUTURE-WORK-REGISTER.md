@@ -1,6 +1,6 @@
 # TPI Future Work Register
 
-Effective: 2026-11-03
+Effective: 2026-11-11
 Status: **AUTHORITATIVE FUTURE-WORK INDEX — DOCUMENTATION ONLY. NOTHING HERE IS
 AUTHORIZED FOR IMPLEMENTATION BY BEING LISTED.**
 Authority: owner directive TPI-GOVERNANCE-003B2 (governance and community
@@ -16,6 +16,15 @@ An entry here is a commitment to remember the work, not permission to start it. 
 future system still requires its own owner directive. Nothing in this file assigns a
 role, grants a permission, defines a qualification, creates artwork, or changes
 production.
+
+**Status reconciliation (2026-11-11):** The owner-authorized profile honors wall,
+transparent Founding Membership display, and shared member profile work described in
+older governance/founding entries has since been implemented and deployed. These
+entries remain as policy and long-range requirements; their older implementation
+status text is historical and is superseded by the current snapshot in
+[`../../planning/TPI-DOCS-001_MASTER_STATUS.md`](../../planning/TPI-DOCS-001_MASTER_STATUS.md)
+and the linked November 11 completion records. This register remains the source for
+work that is genuinely future, unresolved, or owner-decision dependent.
 
 ---
 
@@ -98,7 +107,12 @@ Still intentionally deferred:
 - whether a separate Board Member medallion is needed;
 - other future leadership medallions;
 - community-feed author projection;
-- a future Honors Wall and broader succession policy.
+- broader governance succession policy.
+
+The profile Honors & Distinctions wall and compact clickable member recognition tiles
+are now implemented, deployed, and live verified. This completes the focused profile
+display work; it does not implement the separate community-feed projection, achievement
+system, education credentials, or the unresolved qualification and governance policies.
 
 The owner authorized the focused implementation in TPI-GOVERNANCE-004. The
 implemented layer is authenticated owner/admin-gated, audited, profile-visible,
@@ -318,13 +332,15 @@ answer beyond what the record states.
 
 ### TPI Honors & Distinctions
 
-Status: **FUTURE SYSTEM — NOT IMPLEMENTED.**
+Status: **PROFILE DISPLAY IMPLEMENTED; broader recognition management remains future.**
 
-Profile section **TPI Honors & Distinctions**, collection and display **Honors Wall**.
+The member profile and right rail now display the **Honors & Distinctions** wall with
+compact clickable recognition tiles. Shared rendering applies to member profiles.
 Future categories may include Founding Membership, leadership Medallions, Board
 distinctions, operational service, community achievements, educational credentials,
 longevity, service recognition, Creator milestones, Contributor milestones, and research
-distinctions.
+distinctions. Owner/admin assignment tools, a complete recognition lifecycle, and any
+new qualification policy remain future work.
 
 Service recognition never reactivates expired or revoked operational authority, and
 public display is never authorization.
@@ -351,7 +367,7 @@ staff or leadership authority.
 
 ### Profile presentation and Primary Distinction
 
-Status: **FUTURE REQUIREMENT — NOT IMPLEMENTED.**
+Status: **SHARED MEMBER PROFILE PRESENTATION IMPLEMENTED; Primary Distinction remains future.**
 
 An account may simultaneously hold membership status, subscription, Creator entitlement,
 Contributor entitlement, Founding identity, Moderator or Administrator service, a Board
@@ -359,8 +375,10 @@ office, a leadership distinction, achievements, and education credentials. Futur
 profile presentation must support all of them without turning the profile into
 uncontrolled badge clutter.
 
-**Primary Distinction** remains the future mechanism for selecting the most prominent
-visible distinction or medallion, while the full Honors Wall preserves the rest.
+The common member profile now presents member identity, posts, a profile-specific feed,
+and compact honors in a shared layout. **Primary Distinction** remains the future
+mechanism for selecting the most prominent visible distinction or medallion, while the
+full Honors Wall preserves the rest.
 
 ---
 

@@ -1,5 +1,10 @@
 # QA Test Inventory
 
+Last reviewed: 2026-11-11. This inventory preserves dated feature evidence and known
+gaps; it does not claim every listed suite was rerun on this date. Recent profile and
+badge release evidence is linked from
+[`TPI-DOCS-001_MASTER_STATUS.md`](../planning/TPI-DOCS-001_MASTER_STATUS.md).
+
 | Area | Existing or new entrypoint | Evidence class | Default status |
 |---|---|---|---|
 | TPI Worker and API syntax | `scripts/qa/run-qa.mjs` | local static check | PASS when runner completes |

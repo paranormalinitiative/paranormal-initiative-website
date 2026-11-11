@@ -1,5 +1,47 @@
 # TPI-DOCS-001 — Master Documentation Status
 
+## Current Project Snapshot — November 11, 2026
+
+This snapshot supersedes older “current,” “next,” and release-state statements below
+where later work has changed the status. Those older sections are retained as dated
+historical records.
+
+### Done and released
+
+- Recent member profile work is deployed: shared profile/feed layout and right rail,
+  saved-banner handling, founding identity display, and compact clickable honors tiles.
+- Transparent Founding All-Access, Contributor, and Creator badge artwork is deployed
+  across the shared profile recognition surfaces.
+- Messenger's desktop opening width has a separate completed release record.
+- Release-specific test and production evidence is recorded in the November 11
+  completion records under
+  [`docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/`](../TPI-DEVELOPMENT/300-COMPLETED-WORK/).
+
+### In progress
+
+- The site-wide consistency audit found mismatched cache versions for shared page,
+  member-shell, and profile assets. References are aligned locally and the repeatable
+  check passes; guarded release and live verification remain. See the
+  [website consistency audit](../audits/2026-11-11/TPI-WEBSITE-COMPLETENESS-AND-CONSISTENCY-AUDIT.md).
+- Education Center organization and profile presentation remain owner-led iterative
+  work. Recent deployment records prove code and release checks, not final owner visual
+  acceptance.
+- Messenger's logged-in multi-member workflow and feature acceptance still need a
+  joint session; the desktop-width repair alone does not close that work.
+
+### Still open
+
+- The complete Administration Center functional/visual acceptance audit and broader
+  multi-member social acceptance remain open in the roadmap/QA records.
+- Nova, Education Center publishing, governance, Community Standards, Help Center,
+  and device/provider acceptance remain tracked in the future-work and QA registers.
+- No project-wide claim of visual uniformity or complete route-by-route acceptance is
+  made by this snapshot.
+
+The 2026-11-11 audit excludes the five standalone reference books and all content under
+`haunted-location-directory/`; no book content was changed. It also made no production
+member, membership, profile, honor, or article data changes.
+
 ## TPI-GOVERNANCE-003B2 — Future-Work Reconciliation — November 3, 2026
 
 Status: **DOCUMENTATION COMPLETE. NO APPLICATION, DATABASE, ASSET, OR DEPLOYMENT

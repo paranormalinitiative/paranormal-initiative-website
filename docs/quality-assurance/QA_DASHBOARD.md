@@ -1,6 +1,20 @@
 # QA Dashboard
 
-Last updated: 2026-10-11
+## Current website release snapshot — 2026-11-11
+
+The most recent deployed application evidence is the November 11 member profile and
+transparent Founding Membership releases. Their focused suites, release gates, and
+production results are recorded in the corresponding completion records under
+`docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/`. A separate site consistency audit is
+aligning shared asset cache versions; it is not release-verified yet. See
+[`TPI-WEBSITE-COMPLETENESS-AND-CONSISTENCY-AUDIT.md`](../audits/2026-11-11/TPI-WEBSITE-COMPLETENESS-AND-CONSISTENCY-AUDIT.md).
+
+This dashboard's table below is the historical October 11 QA batch, not a live view of
+all current feature status. Do not use its dated release IDs or PASS counts as evidence
+for later source commits. Open provider/device, authenticated owner, full social, and
+administrative acceptance gaps remain tracked below and in the QA inventory.
+
+Historical batch last updated: 2026-10-11
 
 ## Current release-health snapshot
 

@@ -60,6 +60,7 @@
     "verify:friends-layout": "node scripts/verify/tpi-friends-layout.mjs",
     "verify:member-messenger": "node scripts/verify/tpi-member-messenger.mjs",
     "verify:member-profile-feed": "node scripts/verify/tpi-member-profile-feed.mjs",
+    "verify:shared-asset-cache-consistency": "node scripts/verify/tpi-shared-asset-cache-consistency.mjs",
     "verify:member-profile-feed-firefox": "node scripts/verify/tpi-member-profile-feed-firefox.mjs",
     "verify:release-staging": "node scripts/verify/tpi-ops-004-release-staging-guard.mjs",
     "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",

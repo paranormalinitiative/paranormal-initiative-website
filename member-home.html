@@ -25,9 +25,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=89">
-    <link rel="stylesheet" href="member-shell.css?v=62">
-    <link rel="stylesheet" href="profile-style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=92">
+    <link rel="stylesheet" href="member-shell.css?v=63">
+    <link rel="stylesheet" href="profile-style.css?v=6">
     <style>
         /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
         /* Lift the shell's 1050px cap on this page only so the rail sits far
@@ -2510,7 +2510,7 @@
             border-color: var(--accent);
         }
 
-        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=62) ===== */
+        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=63) ===== */
         @media (max-width: 700px) {
 
             /* Keep the authenticated greeting out of the site title on phones.
@@ -2872,7 +2872,7 @@
             <!-- COMMUNITY IDENTITY — front and center: members are the initiative.
                  (The old "Home | Hello, …" header row was removed — the floating
                  greeting chip top-right already covers it. The empty hidden
-                 .member-home-header marker below keeps member-shell.js from
+                 .member-home-header marker below keeps member-shell.js?v=59 from
                  auto-generating its own "Home | Hello" heading.) -->
             <div class="member-home-header" hidden aria-hidden="true"></div>
             <section class="member-profile-identity" id="profile-identity" data-member-profile-view hidden aria-labelledby="member-profile-name">
@@ -3289,9 +3289,9 @@
 
 <div id="site-footer"></div>
 
-<script src="api-client.js?v=17"></script>
-<script src="includes.js"></script>
-<script src="member-shell.js?v=56"></script>
+<script src="api-client.js?v=18"></script>
+<script src="includes.js?v=18"></script>
+<script src="member-shell.js?v=59"></script>
 <script>
 (function () {
     var FEED_LIMIT = 20;
