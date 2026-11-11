@@ -756,7 +756,7 @@
 
         .member-profile-cover {
             position: relative;
-            height: 280px;
+            height: 340px;
             overflow: hidden;
             background:
                 radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 42%),
@@ -806,17 +806,17 @@
         .member-profile-hero {
             position: relative;
             display: grid;
-            grid-template-columns: 154px minmax(0, 1fr);
+            grid-template-columns: 168px minmax(0, 1fr);
             gap: 22px;
             align-items: start;
-            margin-top: -78px;
-            padding: 0 24px 22px;
+            margin-top: -96px;
+            padding: 0 26px 24px;
         }
 
         .member-profile-hero .member-profile-photo-wrap {
             position: relative;
-            width: 154px;
-            height: 154px;
+            width: 168px;
+            height: 168px;
             padding: 4px;
             border-radius: 50%;
             background: #090f14;
@@ -843,7 +843,7 @@
             justify-content: space-between;
             gap: 18px;
             flex-wrap: wrap;
-            padding-top: 80px;
+            padding-top: 96px;
         }
 
         .member-profile-options {
@@ -2487,16 +2487,16 @@
             .member-profile-hero {
                 grid-template-columns: 1fr;
                 gap: 14px;
-                margin-top: -50px;
+                margin-top: -62px;
                 padding: 0 16px 18px;
             }
 
             .member-profile-hero .member-profile-photo-wrap {
-                width: 118px;
-                height: 118px;
+                width: 128px;
+                height: 128px;
             }
 
-            .member-profile-cover { height: 220px; }
+            .member-profile-cover { height: 260px; }
 
             .member-profile-heading-row {
                 padding-top: 0;
@@ -4026,6 +4026,12 @@
         if (!section || !body) return;
         var recognition = profileMode && profileRecognition ? profileRecognition : activeUser;
         var ordered = getRecognitionItems(recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title);
+        // The signed-in /me payload is authoritative for the owner's own
+        // profile. Keep the wall visible if the separate profile lookup is
+        // temporarily incomplete or returns a stale recognition projection.
+        if (!ordered.length && activeUser && recognition !== activeUser) {
+            ordered = getRecognitionItems(activeUser.boardMembership, activeUser.leadershipDistinctions, activeUser.title);
+        }
         if (!ordered.length) {
             section.hidden = true;
             body.innerHTML = "";
