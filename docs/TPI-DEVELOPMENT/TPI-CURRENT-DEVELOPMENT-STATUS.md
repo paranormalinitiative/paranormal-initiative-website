@@ -1,5 +1,34 @@
 # TPI Current Development Status
 
+## 2026-11-10 — Public profile recognition shelf and profile boundary
+
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Todd Wayne’s public profile
+now presents Honors & Distinctions as one centered, ordered shelf: the Gold
+Medallion first, Board Member second, and any later recognitions after them.
+Board artwork remains available as separate clickable medallions, and each
+recognition opens its accessible detail modal.
+
+The public “Visual recognition only...” note and Profile Wall have been
+removed from both the rendered profile and the public contributor-profile API.
+Community Feed posts remain in the feed; they are no longer mixed into public
+profiles. Generic recognition wording no longer exposes “Legacy recognition.”
+
+The contribution-level presentation now uses **CEO** with the context
+**CEO / Founder / Director**, and both the member and Administration Center
+profile editors offer **Chief Executive Officer (CEO)**. The stored public
+title was not silently changed in production; it remains editable through the
+protected profile editor.
+
+Verification: local synthetic profile acceptance 12/12; live Todd Wayne
+profile acceptance 16/16; Leadership 18/18; Board 20/20; Admin Center preview
+build passed. The guarded release preflight passed 30/30, anonymous production
+smoke passed 10/10, and live isolated Firefox acceptance passed 65/65.
+
+Production release `rel-6d41e66cdff5-37b854331f69` deployed source commit
+`6d41e66cdff58334b7cf804580a926dab8e1f62b` as Worker
+`3ab51f65-54ce-47ee-ae41-4c14c362f816` at 100% traffic. Rollback Worker:
+`8a74a433-3078-4904-b332-cf2f639b3641`.
+
 ## 2026-11-10 — Ghostology member navigation and naming
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The left member navigation
@@ -77,9 +106,9 @@ display, unfollow, and restoration of the initial state; it also confirmed no
 The post-release production Friends layout acceptance passes 9/9 at desktop and
 mobile widths, including 24px/18px panel padding, inset controls, panel bounds,
 and horizontal-overflow safety.
-The current production `Todd_Wayne` public profile API returns Founder /
-Director, Gold Medallion recognition, Board membership, and three Profile Wall
-posts; Sol’s public leadership profile was browser-verified separately.
+Historical production evidence captured the prior `Todd_Wayne` profile state;
+the 2026-11-10 release removed Profile Wall data from the public profile API.
+Sol’s public leadership profile was browser-verified separately.
 guarded preflight certified the synchronized branch as release
 `rel-9ef3594abed1-23357aacd79c`; the guarded deployment then served Worker
 version `84b2fa25-3fb2-4654-94ad-b47d015ee8a3` and passed live smoke 10/10 and

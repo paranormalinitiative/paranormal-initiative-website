@@ -36,7 +36,9 @@ let driver;
 try {
   const options = new firefox.Options().setBinary(binary).addArguments("-profile", profileDir).addArguments("-no-remote").addArguments("-headless");
   driver = await new Builder().forBrowser("firefox").setFirefoxOptions(options).setFirefoxService(new firefox.ServiceBuilder(geckodriver)).build();
-  await driver.get(`${baseUrl}/contributor-profile.html?username=${encodeURIComponent(username)}`);
+  // Use the canonical route. The legacy .html path redirects here, but Firefox
+  // can retain the pre-redirect visibility state for the recognition trigger.
+  await driver.get(`${baseUrl}/contributor-profile?username=${encodeURIComponent(username)}`);
   await driver.wait(until.elementLocated(By.css(".public-profile-card")), 20000);
   const trigger = await driver.wait(until.elementLocated(By.css(".public-profile-sidebar .profile-recognition-trigger")), 20000);
   check("recognition artwork renders as an accessible trigger", await trigger.isDisplayed());
