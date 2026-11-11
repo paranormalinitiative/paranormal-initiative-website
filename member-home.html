@@ -3460,8 +3460,7 @@
         if (viewingOwnProfile) {
             loadRightRail();
         } else {
-            var rail = document.querySelector("[data-home-rail]");
-            if (rail) rail.hidden = true;
+            loadRightRail();
         }
     }
 
@@ -4007,7 +4006,7 @@
         }
 
         if (profileBanner) {
-            var bannerUrl = String(profileUser.profileBannerUrl || "").trim();
+            var bannerUrl = memberProfileBannerUrl(profileUser);
             if (bannerUrl) {
                 profileBanner.src = bannerUrl;
                 profileBanner.alt = name + " profile banner";
@@ -4161,6 +4160,13 @@
         return title + " recognition." + capability + " The badge identifies membership; account access is controlled separately.";
     }
 
+    function memberProfileBannerUrl(user) {
+        var savedBanner = String(user && user.profileBannerUrl || "").trim();
+        if (savedBanner) return savedBanner;
+        var username = String(user && user.username || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+        return username === "todd_wayne" ? "/assets/tpi-banner.png" : "";
+    }
+
     function recognitionTrigger(image, title, detail, description) {
         return '<button type="button" class="profile-recognition-trigger" data-recognition-trigger data-recognition-image="' + escapeAttr(image || "") + '" data-recognition-title="' + escapeAttr(title || "Recognition") + '" data-recognition-detail="' + escapeAttr(detail || "") + '" data-recognition-description="' + escapeAttr(description || "") + '" aria-label="View ' + escapeAttr(title || "recognition") + ' details"><img src="' + escapeAttr(image || "") + '" alt="' + escapeAttr(title || "Recognition") + '" loading="lazy" decoding="async"></button>';
     }
@@ -4230,12 +4236,7 @@
         var section = document.querySelector("[data-rail-recognition]");
         var body = document.querySelector("[data-recognition-rail-body]");
         if (!section || !body) return;
-        if (profileMode) {
-            section.hidden = true;
-            body.innerHTML = "";
-            return;
-        }
-        var recognition = profileMode && profileRecognition ? profileRecognition : activeUser;
+        var recognition = profileMode ? (profileRecognition || profileUser || activeUser) : activeUser;
         var ordered = getRecognitionItems(recognition && recognition.foundingMembership, recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title);
         // The signed-in /me payload is authoritative for the owner's own
         // profile. Keep the wall visible if the separate profile lookup is
