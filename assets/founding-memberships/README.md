@@ -19,20 +19,22 @@ families must never be merged into one rank.
 | `FCT` | `FCT-001`–`FCT-050` | Founding Contributor | `masters/FoundingContributorBadgeMaster.png` | `web/founding-contributor-{512,256,128}.png`, `web/founding-contributor-{512,256}.webp` |
 | `FAA` | `FAA-001`–`FAA-050` | Founding All-Access | `masters/FoundingAllAcceessBadgeMaster.png` | `web/founding-all-access-{512,256,128}.png`, `web/founding-all-access-{512,256}.webp` |
 
-## Master artwork (preserved unchanged)
+## Master artwork
 
-Imported from the owner's Mac on 2026-11-03. The files are byte-identical copies;
-the spelling `FoundingAllAcceessBadgeMaster.png` (including `Acceess`) is the
-owner's original filename and is preserved deliberately. Do not rename, resize,
-re-encode, or overwrite the masters.
+The owner supplied updated transparent PNG masters on 2026-11-11. The existing
+master filenames remain stable, including the historical spelling
+`FoundingAllAcceessBadgeMaster.png`; the original non-transparent artwork was
+replaced with these approved transparent files. Keep these masters unmodified
+and regenerate the published derivatives from them.
 
 | File | Source | SHA-256 |
 |---|---|---|
-| `masters/FoundingCreatorBadgeMaster.png` | `/Users/toddknipple/Desktop/FoundingCreatorBadgeMaster.png` | `3b5556fd431efa48c824366f1f377244cfdefcb17e7bc62e06da0d8a54460dc3` |
-| `masters/FoundingContributorBadgeMaster.png` | `/Users/toddknipple/Desktop/FoundingContributorBadgeMaster.png` | `90c1e78dc013799e8581e4c6364b4316d410a1caf6bddfbb18013e5982cf5dea` |
-| `masters/FoundingAllAcceessBadgeMaster.png` | `/Users/toddknipple/Desktop/FoundingAllAcceessBadgeMaster.png` | `45a165d4e877314f73049e024af4b7d71efbaaf95bcfb03b6cf946d61d1fb4d8` |
+| `masters/FoundingCreatorBadgeMaster.png` | `/Users/toddknipple/Desktop/FoundingCreatorMaster.png` | `26da1b544aad253e59c8d8fab9f92d25e78b49d20420c65679f10cab4604537f` |
+| `masters/FoundingContributorBadgeMaster.png` | `/Users/toddknipple/Desktop/FoundingContributerMaster.png` | `28a587da4238fa82efca3516a6225d8ed55302b094ad403a4b72e15ffd933362` |
+| `masters/FoundingAllAcceessBadgeMaster.png` | `/Users/toddknipple/Desktop/FoundingAllAccessMaster.png` | `c9ccab770d6575ac402d122f1a0458eefaab552d7a77ea303fef19d5a483f72d` |
 
-All three masters are 1254×1254 8-bit PNG without an alpha channel. Verify with:
+All three masters are 1254×1254 RGBA PNGs with transparent backgrounds. Verify
+with:
 
 ```sh
 shasum -a 256 assets/founding-memberships/masters/*.png

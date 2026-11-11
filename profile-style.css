@@ -42,7 +42,7 @@
 .profile-recognition-trigger { display: inline-grid; place-items: center; flex: none; padding: 0; border: 0; border-radius: var(--radius-full); background: transparent; cursor: zoom-in; }
 .profile-recognition-trigger:focus-visible { outline: 3px solid var(--profile-highlight,var(--text-accent)); outline-offset: 4px; }
 .profile-recognition-trigger img { display: block; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: contain; background: transparent; }
-.founding-badge-chip-art { display: block; flex: none; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: cover; }
+.founding-badge-chip-art { display: block; flex: none; width: 76px; height: 76px; border-radius: var(--radius-full); object-fit: contain; background: transparent; }
 .founding-badge-chip-text { display: grid; gap: 2px; min-width: 0; }
 .founding-badge-chip-text strong { color: var(--text-primary); font-size: 14px; font-weight: 700; line-height: 1.25; }
 .founding-badge-chip-text span { color: var(--text-secondary); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }

@@ -3970,7 +3970,7 @@
         }
         if (profileMembership) profileMembership.hidden = !activeMembershipBadge || !activeMembershipBadge.asset || !activeMembershipBadge.asset.png;
         if (profileMembershipBadge && activeMembershipBadge && activeMembershipBadge.asset) {
-            profileMembershipBadge.src = activeMembershipBadge.asset.png;
+            profileMembershipBadge.src = cacheBustedRecognitionAsset(activeMembershipBadge.asset.png);
             profileMembershipBadge.alt = activeMembershipBadge.alt || activeMembershipBadge.label || "Membership badge";
         }
         if (profileMembershipLabel) profileMembershipLabel.textContent = activeMembershipBadge && activeMembershipBadge.label || "";
@@ -3978,7 +3978,7 @@
         if (profileMembership && activeMembershipBadge) {
             var membershipTitle = activeMembershipBadge.label || "Founding membership";
             profileMembership.setAttribute("aria-label", "View " + membershipTitle + " details");
-            profileMembership.dataset.recognitionImage = activeMembershipBadge.asset && (activeMembershipBadge.asset.png2x || activeMembershipBadge.asset.png) || "";
+            profileMembership.dataset.recognitionImage = cacheBustedRecognitionAsset(activeMembershipBadge.asset && (activeMembershipBadge.asset.png2x || activeMembershipBadge.asset.png) || "");
             profileMembership.dataset.recognitionTitle = membershipTitle;
             profileMembership.dataset.recognitionDetail = activeMembership && activeMembership.membershipNumber || "";
             profileMembership.dataset.recognitionDescription = foundingMembershipDescription(activeMembership);
@@ -4151,7 +4151,7 @@
     function cacheBustedRecognitionAsset(path) {
         var value = String(path || "").trim();
         if (!value) return "";
-        return value + (value.indexOf("?") >= 0 ? "&" : "?") + "tpi-recognition=20261110";
+        return value + (value.indexOf("?") >= 0 ? "&" : "?") + "tpi-recognition=20261111";
     }
 
     function foundingMembershipDescription(item) {
