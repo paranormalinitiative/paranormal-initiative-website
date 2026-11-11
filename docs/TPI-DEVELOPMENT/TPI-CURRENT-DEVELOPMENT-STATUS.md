@@ -1,5 +1,33 @@
 # TPI Current Development Status
 
+## 2026-11-11 — Education Center research-library orientation
+
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The Education Center now
+opens with an explanation of what the library is, why it exists, and how to
+use it. The copy describes the full research scope across paranormal and
+supernatural investigation, metaphysical traditions, witchcraft and folklore,
+consciousness and human experience, EVP/ITC, technology, ethics, and
+documentation.
+
+The narrow “Field papers, investigation guides, and EVP/ITC research” heading
+was replaced with a broader orientation. “Research Library & Field Papers” is
+now simply “Research Library.” “Featured Research Shelves” is now “Research
+Shelves,” and the directory tells visitors to browse the research library by
+subject. The existing search, 18 compact subject shelves, clean routes, and
+48px separation before Contribute remain intact. Images were not added in this
+pass; they remain a deliberate follow-up design pass after the information
+architecture is settled.
+
+Verification: Education Center source checks 37/37; local Firefox acceptance
+29/29; production Firefox acceptance 29/29. The guarded release preflight
+passed 30/30, anonymous production smoke passed 10/10, and live isolated
+Firefox acceptance passed 65/65.
+
+Production release `rel-af6c0d80197e-cc11313a7498` deployed source commit
+`af6c0d80197e9cae989f71532534260581d3ecdf` as Worker
+`5ee216f8-39a8-4dc9-9f19-652383c67c1b` at 100% traffic. Rollback Worker:
+`3ab51f65-54ce-47ee-ae41-4c14c362f816`.
+
 ## 2026-11-10 — Public profile recognition shelf and profile boundary
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Todd Wayne’s public profile
