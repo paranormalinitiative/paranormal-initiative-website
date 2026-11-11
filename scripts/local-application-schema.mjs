@@ -53,6 +53,7 @@ function columnExists(table, column) {
 
 const migrations = [
   { file: "migrations/0002_contributor_profiles.sql", columns: ["bio", "photo_url"] },
+  { file: "migrations/0070_member_profile_banner.sql", columns: ["profile_banner_url"] },
   { file: "migrations/0002_article_type.sql", columns: ["article_type"], table: "articles" },
   { file: "migrations/0009_member_chat_color.sql", columns: ["chat_color"] },
   { file: "migrations/0011_article_reactions.sql", tables: ["article_reactions"] },

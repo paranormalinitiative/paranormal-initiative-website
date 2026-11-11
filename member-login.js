@@ -1690,6 +1690,13 @@
       if (profileForm.postalCode) profileForm.postalCode.value = user.postalCode || "";
       if (profileForm.chatColor) profileForm.chatColor.value = normalizeChatColor(user.chatColor || "#a855f7");
       profileForm.photoUrl.value = user.photoUrl || "";
+      if (profileForm.profileBannerUrl) profileForm.profileBannerUrl.value = user.profileBannerUrl || "";
+      const bannerPreview = document.querySelector("[data-profile-banner-preview]");
+      if (bannerPreview) {
+        const bannerUrl = user.profileBannerUrl || "/assets/tpi-banner.png";
+        bannerPreview.style.backgroundImage = `url("${escapeHtml(bannerUrl)}")`;
+        bannerPreview.setAttribute("aria-label", "Profile banner preview");
+      }
       profileForm.bio.value = user.bio || "";
       profileForm.commentSignature.checked = user.commentSignatureEnabled !== false;
     }
@@ -2082,7 +2089,9 @@
 
     if (profileSubmitForm) {
       const uploadedPhoto = profileSubmitForm.querySelector("input[name='profilePhotoFile']")?.files?.[0];
+      const uploadedBanner = profileSubmitForm.querySelector("input[name='profileBannerFile']")?.files?.[0];
       let photoUrl = String(data.get("photoUrl") || "").trim();
+      let profileBannerUrl = String(data.get("profileBannerUrl") || "").trim();
       if (uploadedPhoto) {
         if (!window.TPIApi || !await cloudflareReady()) {
           setStatus("Profile photo upload needs the Cloudflare R2 media bucket. Save an image URL for now.", true);
@@ -2092,6 +2101,20 @@
           setStatus("Uploading profile photo...", false);
           const upload = await window.TPIApi.uploadProfilePhoto(uploadedPhoto);
           photoUrl = upload.url || photoUrl;
+        } catch (error) {
+          setStatus(error.message, true);
+          return;
+        }
+      }
+      if (uploadedBanner) {
+        if (!window.TPIApi || !await cloudflareReady()) {
+          setStatus("Profile banner upload needs the Cloudflare R2 media bucket. Save an image URL for now.", true);
+          return;
+        }
+        try {
+          setStatus("Uploading profile banner...", false);
+          const upload = await window.TPIApi.uploadProfileBanner(uploadedBanner);
+          profileBannerUrl = upload.url || profileBannerUrl;
         } catch (error) {
           setStatus(error.message, true);
           return;
@@ -2107,6 +2130,7 @@
         ...getContactPayload(data),
         chatColor: normalizeChatColor(String(data.get("chatColor") || "#a855f7")),
         photoUrl,
+        profileBannerUrl,
         bio: String(data.get("bio") || "").trim(),
         commentSignatureEnabled: data.get("commentSignature") === "on"
       };

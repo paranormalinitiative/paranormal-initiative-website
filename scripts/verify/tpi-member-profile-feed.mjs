@@ -51,11 +51,31 @@ const contributor = await login("local_contributor");
 const target = contributor.user.username;
 const targetId = contributor.user.id;
 
+const bannerSave = await request("/api/contributors/me/profile", auth(member.token, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    displayName: member.user.displayName,
+    title: member.user.title || "",
+    correspondence: member.user.correspondence,
+    affiliation: member.user.affiliation || "",
+    organization: member.user.organization || "",
+    website: member.user.website || "",
+    bio: member.user.bio || "",
+    photoUrl: member.user.photoUrl || "",
+    profileBannerUrl: "/assets/tpi-banner.png",
+    commentSignatureEnabled: member.user.commentSignatureEnabled !== false,
+    chatColor: member.user.chatColor || "#a855f7"
+  })
+}));
+check("profile banner can be saved through the member editor API", bannerSave.response.status === 200 && bannerSave.body?.user?.profileBannerUrl === "/assets/tpi-banner.png");
+
 const profilePage = await request(`/member-profile?username=${encodeURIComponent(target)}`, auth(member.token));
 check("clean profile page is available", profilePage.response.status === 200);
 check("clean profile page serves the profile identity and shared feed shell", profilePage.text.includes("data-member-profile-view") && profilePage.text.includes("data-member-feed") && profilePage.text.includes("data-feed-tab"));
+check("profile shell includes banner, avatar edit, and profile options controls", profilePage.text.includes("data-member-profile-banner") && profilePage.text.includes("data-profile-avatar-edit") && profilePage.text.includes("data-profile-options-toggle"));
 const editorPage = await request("/member-profile.html", auth(member.token));
-check("profile editor remains a separate authenticated surface", editorPage.response.status === 200 && editorPage.text.includes("Update Profile") && editorPage.text.includes("data-profile-form"));
+check("profile editor remains a separate authenticated surface", editorPage.response.status === 200 && editorPage.text.includes("Update Profile") && editorPage.text.includes("data-profile-form") && editorPage.text.includes("profileBannerFile"));
 
 const profile = await request(`/api/members/profile?username=${encodeURIComponent(target)}`, auth(member.token));
 check("member profile returns the target and relationship", profile.response.status === 200 && profile.body?.profile?.username === target && profile.body?.relationship);

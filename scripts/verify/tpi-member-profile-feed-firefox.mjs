@@ -57,6 +57,13 @@ try {
       fetch('/api/friends/request/cancel',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetUsername:targetUsername})})
     ]).then(function(){done(true);}).catch(function(){done(false);});`, target.username);
 
+  await driver.get(`${base}/member-profile`);
+  await waitFor("own profile mode", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden"));
+  const ownProfileState = await driver.executeScript("var banner=document.querySelector('[data-member-profile-banner]'), composer=document.querySelector('[data-member-composer]'), options=document.querySelector('[data-profile-options]'), setup=document.querySelector('[data-profile-setup]'), tab=document.querySelector('[data-feed-tab]'); return {banner:!!banner&&banner.getAttribute('src').includes('tpi-banner.png'),composer:!!composer&&!composer.hidden,options:!!options&&!options.hidden,setup:!!setup&&!setup.hidden,tab:tab&&tab.textContent.trim()};");
+  check("own profile uses the TPI banner and profile home layout", ownProfileState.banner && ownProfileState.options && ownProfileState.setup, JSON.stringify(ownProfileState));
+  check("own profile keeps the post composer", ownProfileState.composer, JSON.stringify(ownProfileState));
+  check("own profile labels the feed as Profile Feed", ownProfileState.tab === "Profile Feed", JSON.stringify(ownProfileState));
+
   await driver.get(`${base}/member-profile?username=${encodeURIComponent(target.username)}`);
   await waitFor("profile mode", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden"));
   await waitFor("Messenger shell", async () => driver.executeScript("return Boolean(document.querySelector('[data-member-floating-chat]'))"));

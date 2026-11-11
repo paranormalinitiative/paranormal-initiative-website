@@ -27,7 +27,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=89">
     <link rel="stylesheet" href="member-shell.css?v=62">
-    <link rel="stylesheet" href="profile-style.css?v=2">
+    <link rel="stylesheet" href="profile-style.css?v=3">
 </head>
 <body>
 <div id="site-header"></div>
@@ -95,6 +95,14 @@
                         <label><span>Or Use Image URL</span><input name="photoUrl" type="text" inputmode="url" placeholder="https://... or /api/media/..." spellcheck="true"></label>
                     </div>
                 </div>
+                <div class="profile-banner-editor">
+                    <div class="profile-banner-preview" data-profile-banner-preview></div>
+                    <div class="profile-photo-controls">
+                        <label><span>Profile Banner</span><input name="profileBannerFile" type="file" accept="image/*"></label>
+                        <label><span>Or Use Banner Image URL</span><input name="profileBannerUrl" type="text" inputmode="url" placeholder="https://... or /api/media/..." spellcheck="true"></label>
+                    </div>
+                    <p class="access-note">This banner appears across the top of your member profile. The TPI banner is used until you choose another image.</p>
+                </div>
                 <label><span>Biography</span><textarea name="bio" rows="12" placeholder="Write a professional contributor biography. This is the public biography people will see when they click your name." spellcheck="true"></textarea></label>
                 <label class="access-checkbox">
                     <input name="commentSignature" type="checkbox" checked>
@@ -122,7 +130,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=38"></script>
+<script src="member-login.js?v=39"></script>
 <script src="member-shell.js?v=55"></script>
 <script src="profile-style.js?v=1"></script>
 </body>

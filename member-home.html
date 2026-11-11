@@ -563,6 +563,11 @@
             height: 100px;
         }
 
+        .member-profile-photo-wrap > [data-member-photo] {
+            width: 100%;
+            height: 100%;
+        }
+
         .member-profile-photo-wrap img {
             width: 100%;
             height: 100%;
@@ -668,17 +673,58 @@
         }
 
         .member-profile-cover {
-            height: 150px;
+            position: relative;
+            height: 210px;
+            overflow: hidden;
             background:
                 radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 42%),
                 linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, #10141c), #090f14 72%);
             border-bottom: 1px solid color-mix(in srgb, var(--accent) 24%, #263646);
         }
 
+        .member-profile-cover img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .member-profile-cover::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(4, 7, 12, .02), rgba(4, 7, 12, .42));
+            pointer-events: none;
+        }
+
+        .member-profile-cover-edit,
+        .member-profile-avatar-edit {
+            position: absolute;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            color: #f4f8fb;
+            background: rgba(8, 12, 18, .84);
+            border: 1px solid color-mix(in srgb, var(--accent) 65%, #263646);
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 15px;
+            line-height: 1;
+            box-shadow: 0 6px 18px rgba(0,0,0,.28);
+        }
+
+        .member-profile-cover-edit { right: 18px; bottom: 16px; }
+        .member-profile-cover-edit:hover,
+        .member-profile-avatar-edit:hover { color: #fff; background: var(--accent); }
+
         .member-profile-hero {
             position: relative;
             display: grid;
-            grid-template-columns: 112px minmax(0, 1fr);
+            grid-template-columns: 138px minmax(0, 1fr);
             gap: 22px;
             align-items: start;
             margin-top: -56px;
@@ -686,8 +732,9 @@
         }
 
         .member-profile-hero .member-profile-photo-wrap {
-            width: 112px;
-            height: 112px;
+            position: relative;
+            width: 138px;
+            height: 138px;
             padding: 4px;
             border-radius: 50%;
             background: #090f14;
@@ -701,6 +748,13 @@
             border-width: 0;
         }
 
+        .member-profile-avatar-edit {
+            right: -3px;
+            bottom: 5px;
+            width: 32px;
+            height: 32px;
+        }
+
         .member-profile-heading-row {
             display: flex;
             align-items: flex-start;
@@ -709,6 +763,57 @@
             flex-wrap: wrap;
             padding-top: 58px;
         }
+
+        .member-profile-options {
+            position: relative;
+            flex: none;
+        }
+
+        .member-profile-options-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            color: #f4f8fb;
+            background: #10141c;
+            border: 1px solid #3b4d60;
+            border-radius: 12px;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .member-profile-options-toggle:hover,
+        .member-profile-options-toggle[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+
+        .member-profile-options-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            z-index: 20;
+            width: min(280px, calc(100vw - 48px));
+            padding: 8px;
+            background: #111722;
+            border: 1px solid #3b4d60;
+            border-radius: 16px;
+            box-shadow: 0 18px 48px rgba(0,0,0,.46);
+        }
+
+        .member-profile-options-panel[hidden] { display: none; }
+        .member-profile-options-label { margin: 6px 10px 8px; color: var(--accent); font-size: 10px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+        .member-profile-options-panel a {
+            display: grid;
+            gap: 2px;
+            padding: 10px 12px;
+            color: #f4f8fb;
+            border-radius: 11px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+        }
+        .member-profile-options-panel a span { color: #8aa0b6; font-size: 11px; font-weight: 600; }
+        .member-profile-options-panel a:hover { background: color-mix(in srgb, var(--accent) 14%, #111722); }
 
         .member-profile-username {
             margin: 4px 0 0;
@@ -779,9 +884,23 @@
             box-shadow: inset 0 -2px 0 var(--accent);
         }
 
+        .member-profile-setup {
+            margin: 0 18px 18px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, #10141c), #10141c 70%);
+            border: 1px solid color-mix(in srgb, var(--accent) 50%, #263646);
+            border-radius: 18px;
+        }
+
+        .member-profile-setup[hidden] { display: none; }
+        .member-profile-setup-kicker { margin: 0 0 6px; color: var(--accent); font-size: 10px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+        .member-profile-setup h2 { margin: 0; color: #f4f8fb; font-size: 18px; }
+        .member-profile-setup p { margin: 6px 0 14px; color: #aebdcc; font-size: 13px; line-height: 1.45; }
+        .member-profile-setup-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .member-profile-setup-actions a { text-decoration: none; }
+
         body.member-profile-mode .member-identity-block,
         body.member-profile-mode .member-discovery-bar,
-        body.member-profile-mode .member-composer,
         body.member-profile-mode #my-content-card {
             display: none;
         }
@@ -791,7 +910,14 @@
         }
 
         body.member-profile-mode .member-home-layout {
-            grid-template-columns: minmax(0, 1fr);
+            grid-template-columns: minmax(0, 1fr) 320px;
+        }
+
+        body.member-profile-mode .member-home-rail { display: flex; }
+
+        @media (max-width: 1020px) {
+            body.member-profile-mode .member-home-layout { grid-template-columns: 1fr; }
+            body.member-profile-mode .member-home-rail { position: static; }
         }
 
         body.member-profile-mode .member-feed-tabs {
@@ -2284,9 +2410,11 @@
             }
 
             .member-profile-hero .member-profile-photo-wrap {
-                width: 84px;
-                height: 84px;
+                width: 108px;
+                height: 108px;
             }
+
+            .member-profile-cover { height: 170px; }
 
             .member-profile-heading-row {
                 padding-top: 0;
@@ -2569,9 +2697,15 @@
                  auto-generating its own "Home | Hello" heading.) -->
             <div class="member-home-header" hidden aria-hidden="true"></div>
             <section class="member-profile-identity" id="profile-about" data-member-profile-view hidden aria-labelledby="member-profile-name">
-                <div class="member-profile-cover" aria-hidden="true"></div>
+                <div class="member-profile-cover">
+                    <img data-member-profile-banner src="/assets/tpi-banner.png" alt="">
+                    <a class="member-profile-cover-edit" data-profile-banner-edit hidden href="/member-profile.html#profile-editor" aria-label="Update profile banner" title="Update profile banner">✎</a>
+                </div>
                 <div class="member-profile-hero">
-                    <div class="member-profile-photo-wrap" data-member-photo></div>
+                    <div class="member-profile-photo-wrap">
+                        <div data-member-photo></div>
+                        <a class="member-profile-avatar-edit" data-profile-avatar-edit hidden href="/member-profile.html#profile-editor" aria-label="Update profile photo" title="Update profile photo">✎</a>
+                    </div>
                     <div class="member-profile-info">
                         <div class="member-profile-heading-row">
                             <div>
@@ -2584,6 +2718,18 @@
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-follow hidden>Follow</button>
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-friend hidden>Add Friend</button>
                                 <a class="member-btn member-btn-primary" data-profile-chat hidden href="#messenger">Chat</a>
+                                <div class="member-profile-options" data-profile-options hidden>
+                                    <button type="button" class="member-profile-options-toggle" data-profile-options-toggle aria-expanded="false" aria-haspopup="menu" aria-label="More profile options">•••</button>
+                                    <div class="member-profile-options-panel" data-profile-options-panel hidden role="menu">
+                                        <p class="member-profile-options-label">Profile options</p>
+                                        <a href="/member-profile.html#profile-editor" data-profile-option-edit role="menuitem">Edit profile<span>Update your avatar, banner, bio, and profile details</span></a>
+                                        <a href="#community-feed" role="menuitem">View posts<span>Go to this profile feed</span></a>
+                                        <a href="member-photos.html" role="menuitem">View photos<span>Open your photo library</span></a>
+                                        <a href="member-videos.html" role="menuitem">Open videos<span>View member videos</span></a>
+                                        <a href="/member-dashboard#personalization" role="menuitem">Personalization<span>Adjust profile presentation</span></a>
+                                        <a href="/member-home" role="menuitem">Back to community feed<span>Return to the shared feed</span></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <p class="member-profile-role" data-member-role></p>
@@ -2605,6 +2751,15 @@
                     <a href="member-photos.html">Photos</a>
                     <a href="events.html?member=1">Events</a>
                 </nav>
+            </section>
+            <section class="member-profile-setup" data-profile-setup hidden aria-labelledby="profile-setup-title">
+                <p class="member-profile-setup-kicker">Profile setup</p>
+                <h2 id="profile-setup-title">Make your profile feel like home.</h2>
+                <p>Add your banner, avatar, biography, and first post so members immediately know who they are meeting.</p>
+                <div class="member-profile-setup-actions">
+                    <a class="member-btn member-btn-primary" href="/member-profile.html#profile-editor">Update Profile</a>
+                    <a class="member-btn member-btn-secondary" href="#community-feed">View My Posts</a>
+                </div>
             </section>
             <div class="member-identity-block">
                 <h3 class="member-identity-title">You Are the Initiative</h3>
@@ -2971,6 +3126,13 @@
     var greetingEl = document.querySelector("[data-member-greeting]");
     var profileView = document.querySelector("[data-member-profile-view]");
     var profilePhoto = document.querySelector("[data-member-photo]");
+    var profileBanner = document.querySelector("[data-member-profile-banner]");
+    var profileBannerEdit = document.querySelector("[data-profile-banner-edit]");
+    var profileAvatarEdit = document.querySelector("[data-profile-avatar-edit]");
+    var profileOptions = document.querySelector("[data-profile-options]");
+    var profileOptionsToggle = document.querySelector("[data-profile-options-toggle]");
+    var profileOptionsPanel = document.querySelector("[data-profile-options-panel]");
+    var profileSetup = document.querySelector("[data-profile-setup]");
     var profileName = document.querySelector("[data-member-name]");
     var profileUsername = document.querySelector("[data-member-username]");
     var profileTitle = document.querySelector("[data-member-title]");
@@ -3073,6 +3235,8 @@
             }
         }
 
+        var isOwn = profileUser.username === activeUser.username;
+        viewingOwnProfile = isOwn;
         document.body.classList.toggle("member-profile-mode", profileMode);
         var feedTabLabel = document.querySelector("[data-feed-tab]");
         if (feedTabLabel) feedTabLabel.textContent = profileMode ? "Profile Feed" : "Community Feed";
@@ -3080,17 +3244,15 @@
         renderProfile();
         initRecognitionModal();
         setupProfileActions();
+        setupProfileOptions();
         setupProfileLinks();
         if (!profileMode) loadMyContent();
         currentUsername = activeUser.username;
 
-        var isOwn = profileUser.username === activeUser.username;
-        viewingOwnProfile = isOwn;
-
-        if (isOwn && !profileMode) {
+        if (isOwn) {
             renderComposerAvatar();
             setupComposer();
-            setupMemberDiscovery();
+            if (!profileMode) setupMemberDiscovery();
         } else {
             var composerEl = document.querySelector("[data-member-composer]");
             if (composerEl) composerEl.hidden = true;
@@ -3103,7 +3265,7 @@
         setupLoadMore();
         setupTabs();
         setupFeedRefresh();
-        if (!profileMode && viewingOwnProfile) {
+        if (viewingOwnProfile) {
             loadRightRail();
         } else {
             var rail = document.querySelector("[data-home-rail]");
@@ -3601,6 +3763,11 @@
         if (profileRole) profileRole.textContent = getRoleLabel(profileUser.role);
         if (profileBio) profileBio.textContent = profileUser.bio || "";
 
+        if (profileBanner) {
+            profileBanner.src = profileUser.profileBannerUrl || "/assets/tpi-banner.png";
+            profileBanner.alt = name + " profile banner";
+        }
+
         if (profilePhoto) {
             if (profileUser.photoUrl) {
                 profilePhoto.innerHTML = '<img src="' + escapeAttr(profileUser.photoUrl) + '" alt="' + escapeAttr(name) + '">';
@@ -3626,6 +3793,11 @@
         if (profileEditLink) {
             profileEditLink.hidden = !profileMode || profileUser.username !== activeUser.username;
         }
+        var ownProfile = profileMode && profileUser.username === activeUser.username;
+        if (profileBannerEdit) profileBannerEdit.hidden = !ownProfile;
+        if (profileAvatarEdit) profileAvatarEdit.hidden = !ownProfile;
+        if (profileOptions) profileOptions.hidden = !ownProfile;
+        if (profileSetup) profileSetup.hidden = !ownProfile;
 
         if (profileRelationship) {
             var setProfileStat = function(selector, value) {
@@ -3692,6 +3864,26 @@
                 if (chatLink && chatLink !== profileChatLink) chatLink.click();
             });
         }
+    }
+
+    function setupProfileOptions() {
+        if (!profileOptionsToggle || !profileOptionsPanel) return;
+        profileOptionsToggle.addEventListener("click", function() {
+            var open = profileOptionsPanel.hidden;
+            profileOptionsPanel.hidden = !open;
+            profileOptionsToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+        document.addEventListener("click", function(event) {
+            if (!profileOptions || profileOptions.hidden || profileOptions.contains(event.target)) return;
+            profileOptionsPanel.hidden = true;
+            profileOptionsToggle.setAttribute("aria-expanded", "false");
+        });
+        document.addEventListener("keydown", function(event) {
+            if (event.key !== "Escape" || profileOptionsPanel.hidden) return;
+            profileOptionsPanel.hidden = true;
+            profileOptionsToggle.setAttribute("aria-expanded", "false");
+            profileOptionsToggle.focus();
+        });
     }
 
     function cacheBustedRecognitionAsset(path) {

@@ -194,6 +194,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unrestrict$/)) return requireMember(request, env, user => handleUnrestrictMember(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/report$/)) return requireMember(request, env, user => handleReportConversation(path, request, env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
+    if (request.method === "POST" && path === "/uploads/profile-banner") return requireMember(request, env, user => handleProfileBannerUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/community-media") return requireMember(request, env, user => handleCommunityMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/messenger-media") return requireMember(request, env, user => handleMessengerMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
@@ -3407,6 +3408,7 @@ async function handleUpdateProfile(request, env, user) {
       website = ?,
       bio = ?,
       photo_url = ?,
+      profile_banner_url = ?,
       comment_signature_enabled = ?,
       chat_color = ?
     WHERE id = ?
@@ -3426,6 +3428,7 @@ async function handleUpdateProfile(request, env, user) {
     clean(data.website),
     clean(data.bio),
     clean(data.photoUrl || user.photo_url),
+    clean(data.profileBannerUrl || user.profile_banner_url),
     data.commentSignatureEnabled === false ? 0 : 1,
     normalizeChatColor(data.chatColor || user.chat_color),
     user.id
@@ -3447,7 +3450,7 @@ async function handleUpdateProfile(request, env, user) {
         organization = ?,
         website = ?,
         bio = ?,
-        photo_url = ?,
+      photo_url = ?,
         comment_signature_enabled = ?
       WHERE id = ?
     `).bind(
@@ -3526,6 +3529,24 @@ async function handleProfilePhotoUpload(request, env, user) {
   await recordMemberUpload(env, user, key, upload);
   const url = `/api/media/${key}`;
   await env.TPI_DB.prepare("UPDATE contributors SET photo_url = ? WHERE id = ?").bind(url, user.id).run();
+  const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
+  return json({ url, key, user: privateMemberUser(updated) });
+}
+
+async function handleProfileBannerUpload(request, env, user) {
+  if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
+  const upload = await readUploadFile(request);
+  if (!upload) return json({ error: "Choose a profile banner to upload." }, 400);
+  if (!upload.type.startsWith("image/")) return json({ error: "Profile banners must be image files." }, 400);
+
+  const key = makeMediaKey("profile-banners", user.username, upload.name, upload.type);
+  await env.TPI_MEDIA.put(key, upload.body, {
+    httpMetadata: { contentType: upload.type },
+    customMetadata: { contributorId: user.id, purpose: "profile-banner", originalName: upload.name }
+  });
+  await recordMemberUpload(env, user, key, upload);
+  const url = `/api/media/${key}`;
+  await env.TPI_DB.prepare("UPDATE contributors SET profile_banner_url = ? WHERE id = ?").bind(url, user.id).run();
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
   return json({ url, key, user: privateMemberUser(updated) });
 }
@@ -10915,6 +10936,7 @@ function publicUser(user) {
     website: user.website,
     bio: user.bio,
     photoUrl: user.photo_url,
+    profileBannerUrl: user.profile_banner_url || "",
     chatColor: user.chat_color || "#a855f7",
     commentSignatureEnabled: Boolean(user.comment_signature_enabled),
     active: user.active !== 0,

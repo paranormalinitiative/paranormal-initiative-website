@@ -92,6 +92,7 @@
     updateUsername: payload => request("/contributors/me/username", { method: "POST", body: payload }),
     changePassword: payload => request("/contributors/me/password", { method: "POST", body: payload }),
     uploadProfilePhoto: file => upload("/uploads/profile-photo", file),
+    uploadProfileBanner: file => upload("/uploads/profile-banner", file),
     uploadCommunityMedia: file => upload("/uploads/community-media", file),
     uploadMessengerMedia: file => upload("/uploads/messenger-media", file),
     uploadArticleMedia: file => upload("/uploads/article-media", file),
