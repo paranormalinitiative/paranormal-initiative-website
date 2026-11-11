@@ -686,14 +686,26 @@
         }
 
         .member-profile-title-line {
+            margin: 8px 0 0;
             color: var(--accent);
             font-size: 13px;
             font-weight: 600;
         }
 
         .member-profile-role {
-            color: #6d8296;
-            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            margin-top: 10px;
+            padding: 7px 10px;
+            color: #fff;
+            background: var(--accent);
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .06em;
+            line-height: 1;
+            text-transform: uppercase;
         }
 
         .member-profile-bio {
@@ -845,7 +857,7 @@
             justify-content: space-between;
             gap: 18px;
             flex-wrap: wrap;
-            padding-top: 96px;
+            padding-top: 108px;
         }
 
         .member-profile-options {
@@ -999,33 +1011,6 @@
             background: color-mix(in srgb, var(--accent) 18%, #10141c);
             box-shadow: inset 0 -2px 0 var(--accent);
         }
-
-        .member-profile-setup {
-            margin: 0 18px 18px;
-            padding: 18px 20px;
-            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, #10141c), #10141c 70%);
-            border: 1px solid color-mix(in srgb, var(--accent) 50%, #263646);
-            border-radius: 18px;
-        }
-
-        /* The member shell resets all section padding in member mode. Keep
-           this onboarding card's internal spacing and heading treatment. */
-        body.member-mode section.member-profile-setup {
-            padding: 18px 20px;
-        }
-
-        body.member-mode section.member-profile-setup h2 {
-            margin: 0;
-            padding: 0;
-            border-bottom: 0;
-        }
-
-        .member-profile-setup[hidden] { display: none; }
-        .member-profile-setup-kicker { margin: 0 0 6px; color: var(--accent); font-size: 10px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
-        .member-profile-setup h2 { margin: 0; color: #f4f8fb; font-size: 18px; }
-        .member-profile-setup p { margin: 6px 0 14px; color: #aebdcc; font-size: 13px; line-height: 1.45; }
-        .member-profile-setup-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-        .member-profile-setup-actions a { text-decoration: none; }
 
         body.member-profile-mode .member-identity-block,
         body.member-profile-mode .member-discovery-bar,
@@ -2847,10 +2832,11 @@
                     </div>
                     <div class="member-profile-info">
                         <div class="member-profile-heading-row">
-                            <div>
+                            <div class="member-profile-copy">
                                 <h1 class="member-profile-name" id="member-profile-name" data-member-name>Member</h1>
                                 <p class="member-profile-username" data-member-username></p>
                                 <p class="member-profile-title-line" data-member-title></p>
+                                <p class="member-profile-role" data-member-role></p>
                             </div>
                             <div class="member-profile-actions" data-member-profile-actions>
                                 <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html">Update Profile</a>
@@ -2870,7 +2856,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="member-profile-role" data-member-role></p>
                     </div>
                 </div>
                 <section class="member-profile-about" id="profile-about-details" data-profile-about hidden aria-labelledby="profile-about-title">
@@ -2892,15 +2877,6 @@
                     <a href="member-photos.html">Photos</a>
                     <a href="events.html?member=1">Events</a>
                 </nav>
-            </section>
-            <section class="member-profile-setup" data-profile-setup hidden aria-labelledby="profile-setup-title">
-                <p class="member-profile-setup-kicker">Profile setup</p>
-                <h2 id="profile-setup-title">Make your profile feel like home.</h2>
-                <p>Add your banner, avatar, biography, and first post so members immediately know who they are meeting.</p>
-                <div class="member-profile-setup-actions">
-                    <a class="member-btn member-btn-primary" href="/member-profile.html#profile-editor">Update Profile</a>
-                    <a class="member-btn member-btn-secondary" href="#community-feed">View My Posts</a>
-                </div>
             </section>
             <div class="member-identity-block">
                 <h3 class="member-identity-title">You Are the Initiative</h3>
@@ -3281,7 +3257,6 @@
     var profileOptions = document.querySelector("[data-profile-options]");
     var profileOptionsToggle = document.querySelector("[data-profile-options-toggle]");
     var profileOptionsPanel = document.querySelector("[data-profile-options-panel]");
-    var profileSetup = document.querySelector("[data-profile-setup]");
     var profileName = document.querySelector("[data-member-name]");
     var profileUsername = document.querySelector("[data-member-username]");
     var profileTitle = document.querySelector("[data-member-title]");
@@ -3963,7 +3938,6 @@
         if (profileBannerEdit) profileBannerEdit.hidden = !ownProfile;
         if (profileAvatarEdit) profileAvatarEdit.hidden = !ownProfile;
         if (profileOptions) profileOptions.hidden = !ownProfile;
-        if (profileSetup) profileSetup.hidden = !ownProfile;
         if (profileAboutToggle) {
             profileAboutToggle.hidden = !profileMode;
             profileAboutToggle.setAttribute("aria-expanded", "false");
