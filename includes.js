@@ -173,6 +173,50 @@
     host.innerHTML = await res.text();
   }
 
+  async function ensureRequestedMemberShell() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("member") !== "1") return;
+
+    if (!document.querySelector("link[data-tpi-member-shell-css]")) {
+      const stylesheet = document.createElement("link");
+      stylesheet.rel = "stylesheet";
+      stylesheet.href = "/member-shell.css?v=62";
+      stylesheet.dataset.tpiMemberShellCss = "1";
+      document.head.appendChild(stylesheet);
+    }
+
+    const existingScript = Array.from(document.scripts).find((script) => script.src.includes("/member-shell.js"));
+    if (existingScript) return;
+
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "/member-shell.js?v=56";
+      script.dataset.tpiMemberShellAuto = "1";
+      script.onload = resolve;
+      script.onerror = reject;
+      document.body.appendChild(script);
+    }).catch((error) => {
+      console.error("Failed to load the shared member shell:", error);
+    });
+  }
+
+  function preserveMemberLinksForShell() {
+    if (!window.preserveMemberMode || !document.body.classList.contains("member-mode")) return;
+    document.querySelectorAll("a[href]").forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+      try {
+        const target = new URL(href, window.location.href);
+        if (target.origin !== window.location.origin) return;
+        link.setAttribute("href", window.preserveMemberMode(href));
+      } catch (error) {
+        // Leave malformed or non-navigational links untouched.
+      }
+    });
+  }
+
+  window.addEventListener("tpi:member-shell-ready", preserveMemberLinksForShell);
+
   // Shared fragments live at the application root. Root-relative URLs keep
   // clean nested routes such as /published-article/ from requesting
   // /published-article/header.html and /published-article/footer.txt.
@@ -899,6 +943,7 @@
 
   installPublishedArticleCards();
   installComments();
+  await ensureRequestedMemberShell();
 
   // Auto-active nav link (for injected header pages)
   try {

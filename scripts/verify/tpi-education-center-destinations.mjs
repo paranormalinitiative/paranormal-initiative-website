@@ -6,7 +6,7 @@
 import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { Builder } from "selenium-webdriver";
+import { Builder, By } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 
 const root = resolve(import.meta.dirname, "../..");
@@ -85,6 +85,16 @@ try {
   await driver.get(`${base}/member-login.html`);
   const login = await loginOnOrigin();
   check("Firefox authenticates the synthetic member", login?.status === 200 && Boolean(login?.user), JSON.stringify({ status: login?.status }));
+  await driver.get(`${base}/ghostology-101?member=1`);
+  await driver.wait(async () => (await driver.findElements(By.css(".member-sidebar"))).length > 0, 20_000);
+  const ghostologyShell = await driver.executeScript(`return {
+    memberMode: document.body.classList.contains('member-mode'),
+    sidebar: Boolean(document.querySelector('.member-sidebar')),
+    main: Boolean(document.querySelector('.member-main')),
+    educationLabel: document.querySelector('.member-sidebar [data-nav="education-center"]')?.textContent.trim() || '',
+    theme: document.documentElement.getAttribute('data-theme') || ''
+  };`);
+  check("Ghostology uses the shared member shell and active theme", ghostologyShell.memberMode && ghostologyShell.sidebar && ghostologyShell.main && ghostologyShell.educationLabel.includes("Education Center") && Boolean(ghostologyShell.theme), JSON.stringify(ghostologyShell));
   await driver.get(`${base}/education-center`);
   await waitForDirectory();
   const ghostologyNav = await driver.executeScript(`var link=document.querySelector('[data-nav="ghostology"]'); return {exists:Boolean(link),label:link?.textContent.trim()||'',href:link ? new URL(link.getAttribute('href'),location.href).pathname + new URL(link.getAttribute('href'),location.href).search : ''};`);

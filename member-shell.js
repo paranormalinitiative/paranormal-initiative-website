@@ -191,7 +191,7 @@
   // ---- Shell Initialization ----
 
   async function initMemberShell() {
-    var contentEl = document.querySelector("[data-member-content]");
+    var contentEl = ensureMemberContent();
     if (!contentEl) return;
     var requiresAuth = INHERENT_MEMBER_PAGES.indexOf(getPageSlug()) !== -1;
 
@@ -290,6 +290,29 @@
 
     // Mark ready
     document.body.classList.add("member-ready");
+    window.dispatchEvent(new Event("tpi:member-shell-ready"));
+  }
+
+  function ensureMemberContent() {
+    var existing = document.querySelector("[data-member-content]");
+    if (existing) return existing;
+
+    var params = new URLSearchParams(window.location.search);
+    var requested = params.get(MEMBER_PARAM) === "1";
+    var persisted = false;
+    try { persisted = localStorage.getItem(STORAGE_KEY) === "1"; } catch (e) {}
+    if (!requested && !persisted) return null;
+
+    var wrapper = document.createElement("div");
+    wrapper.setAttribute("data-member-content", "");
+    var header = document.getElementById("site-header");
+    var footer = document.getElementById("site-footer");
+    var movable = Array.from(document.body.children).filter(function (node) {
+      return node !== header && node !== footer && node.tagName !== "SCRIPT";
+    });
+    if (footer) document.body.insertBefore(wrapper, footer); else document.body.appendChild(wrapper);
+    movable.forEach(function (node) { wrapper.appendChild(node); });
+    return wrapper;
   }
 
   function setupMessengerNavigation() {
