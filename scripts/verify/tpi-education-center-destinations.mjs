@@ -87,6 +87,7 @@ try {
   check("Firefox authenticates the synthetic member", login?.status === 200 && Boolean(login?.user), JSON.stringify({ status: login?.status }));
   await driver.get(`${base}/ghostology-101?member=1`);
   await driver.wait(async () => (await driver.findElements(By.css(".member-sidebar"))).length > 0, 20_000);
+  await driver.wait(async () => (await driver.findElements(By.css('.member-sidebar [data-nav="education-center"]'))).length > 0, 20_000);
   const ghostologyShell = await driver.executeScript(`return {
     memberMode: document.body.classList.contains('member-mode'),
     sidebar: Boolean(document.querySelector('.member-sidebar')),

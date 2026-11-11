@@ -1,5 +1,32 @@
 # TPI Current Development Status
 
+## 2026-11-11 — Shared member shell and theme consistency
+
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Ghostology and the other
+dual-mode education pages now load the same shared member sidebar, active theme,
+and member layout when opened with `?member=1`. The Ghostology navigation item
+continues to open `ghostology-101?member=1`, while the Education Center keeps
+its 18 compact subject shelves, article lists, clean subject routes, and final
+TPI Videos-to-Contribute spacing.
+
+The site audit covered 294 HTML assets: 211 shared public-shell pages, 35 full
+member-shell pages, and 29 legacy brand-header pages. The five standalone
+compendia and 24 Haunted Location state books were explicitly left untouched
+for this release, per scope. No other repository books were changed, and no
+member, article, Studio, or production data was changed.
+
+Verification: local focused Education/Ghostology acceptance 30/30; production
+focused Education/Ghostology acceptance 30/30; guarded release preflight
+30/30; anonymous production smoke 10/10; live isolated Firefox acceptance
+65/65. The first production focused run exposed only a timing race in the
+acceptance script, which was corrected to wait for the fetched sidebar link and
+then passed 30/30; no application change was required.
+
+Production release `rel-3f93f9728dad-b6670a9d5b6a` deployed source commit
+`3f93f9728dad9a7da20596257d99c28bb4a2013b` as Worker
+`ce3cfa23-229a-422d-82f1-20849ed2f4bf` at 100% traffic. Rollback Worker:
+`5ee216f8-39a8-4dc9-9f19-652383c67c1b`.
+
 ## 2026-11-11 — Education Center research-library orientation
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** The Education Center now
