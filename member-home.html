@@ -708,6 +708,34 @@
             text-transform: uppercase;
         }
 
+        .member-profile-role[hidden],
+        .member-profile-membership[hidden] { display: none; }
+
+        .member-profile-membership {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            width: fit-content;
+            margin-top: 10px;
+            padding: 6px 10px 6px 6px;
+            color: #f4f8fb;
+            background: #171522;
+            border: 1px solid color-mix(in srgb, #a78bfa 56%, #263646);
+            border-radius: 999px;
+        }
+
+        .member-profile-membership img {
+            display: block;
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .member-profile-membership-copy { display: grid; gap: 2px; }
+        .member-profile-membership-copy strong { font-size: 11px; line-height: 1.2; }
+        .member-profile-membership-copy small { color: #b3a8d2; font-size: 10px; }
+
         .member-profile-bio {
             color: #c3cfda;
             font-size: 14px;
@@ -785,6 +813,12 @@
             background: #090f14;
             object-position: center;
         }
+
+        .member-profile-cover img[hidden] { display: none; }
+        .member-profile-cover:not([data-has-banner="true"]) {
+            background: #090f14;
+        }
+        .member-profile-cover:not([data-has-banner="true"])::after { display: none; }
 
         .member-profile-cover::after {
             content: "";
@@ -2822,7 +2856,7 @@
             <div class="member-home-header" hidden aria-hidden="true"></div>
             <section class="member-profile-identity" id="profile-identity" data-member-profile-view hidden aria-labelledby="member-profile-name">
                 <div class="member-profile-cover">
-                    <img data-member-profile-banner src="/assets/tpi-banner.png" alt="">
+                    <img data-member-profile-banner hidden alt="">
                     <a class="member-profile-cover-edit" data-profile-banner-edit hidden href="/member-profile.html#profile-editor" aria-label="Update profile banner" title="Update profile banner">✎</a>
                 </div>
                 <div class="member-profile-hero">
@@ -2837,6 +2871,10 @@
                                 <p class="member-profile-username" data-member-username></p>
                                 <p class="member-profile-title-line" data-member-title></p>
                                 <p class="member-profile-role" data-member-role></p>
+                                <div class="member-profile-membership" data-member-membership hidden>
+                                    <img data-member-membership-badge alt="">
+                                    <span class="member-profile-membership-copy"><strong data-member-membership-label></strong><small data-member-membership-number></small></span>
+                                </div>
                             </div>
                             <div class="member-profile-actions" data-member-profile-actions>
                                 <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html">Update Profile</a>
@@ -3261,6 +3299,11 @@
     var profileUsername = document.querySelector("[data-member-username]");
     var profileTitle = document.querySelector("[data-member-title]");
     var profileRole = document.querySelector("[data-member-role]");
+    var profileMembership = document.querySelector("[data-member-membership]");
+    var profileMembershipBadge = document.querySelector("[data-member-membership-badge]");
+    var profileMembershipLabel = document.querySelector("[data-member-membership-label]");
+    var profileMembershipNumber = document.querySelector("[data-member-membership-number]");
+    var profileCover = document.querySelector(".member-profile-cover");
     var profileBio = document.querySelector("[data-member-bio]");
     var profileFacts = document.querySelector("[data-member-facts]");
     var profileAbout = document.querySelector("[data-profile-about]");
@@ -3353,6 +3396,7 @@
             try {
                 var memberProfileData = await window.TPIApi.memberProfile(profileUser.username);
                 if (memberProfileData.profile) profileUser = Object.assign({}, profileUser, memberProfileData.profile);
+                profileUser.foundingMembership = memberProfileData.foundingMembership || null;
                 profileRelationship = memberProfileData.relationship || {};
                 profileRecognition = memberProfileData;
             } catch (e) {
@@ -3890,7 +3934,21 @@
         if (profileName) profileName.textContent = name;
         if (profileUsername) profileUsername.textContent = profileUser.username ? "@" + profileUser.username : "";
         if (profileTitle) profileTitle.textContent = profileUser.title || "";
-        if (profileRole) profileRole.textContent = getRoleLabel(profileUser.role);
+        var activeMembershipBadge = profileUser.foundingMembership && profileUser.foundingMembership.badge;
+        var activeMembership = activeMembershipBadge && (profileUser.foundingMembership.memberships || []).find(function(item) {
+            return item.classCode === activeMembershipBadge.classCode && item.state === "active";
+        });
+        if (profileRole) {
+            profileRole.textContent = getRoleLabel(profileUser.role);
+            profileRole.hidden = Boolean(activeMembershipBadge);
+        }
+        if (profileMembership) profileMembership.hidden = !activeMembershipBadge || !activeMembershipBadge.asset || !activeMembershipBadge.asset.png;
+        if (profileMembershipBadge && activeMembershipBadge && activeMembershipBadge.asset) {
+            profileMembershipBadge.src = activeMembershipBadge.asset.png;
+            profileMembershipBadge.alt = activeMembershipBadge.alt || activeMembershipBadge.label || "Membership badge";
+        }
+        if (profileMembershipLabel) profileMembershipLabel.textContent = activeMembershipBadge && activeMembershipBadge.label || "";
+        if (profileMembershipNumber) profileMembershipNumber.textContent = activeMembership && activeMembership.membershipNumber || "";
         var aboutName = document.querySelector("[data-about-name]");
         var aboutTitle = document.querySelector("[data-about-title]");
         if (aboutName) aboutName.textContent = name;
@@ -3911,8 +3969,17 @@
         }
 
         if (profileBanner) {
-            profileBanner.src = profileUser.profileBannerUrl || "/assets/tpi-banner.png";
-            profileBanner.alt = name + " profile banner";
+            var bannerUrl = String(profileUser.profileBannerUrl || "").trim();
+            if (bannerUrl) {
+                profileBanner.src = bannerUrl;
+                profileBanner.alt = name + " profile banner";
+                profileBanner.hidden = false;
+            } else {
+                profileBanner.removeAttribute("src");
+                profileBanner.alt = "";
+                profileBanner.hidden = true;
+            }
+            if (profileCover) profileCover.setAttribute("data-has-banner", bannerUrl ? "true" : "false");
         }
 
         if (profilePhoto) {

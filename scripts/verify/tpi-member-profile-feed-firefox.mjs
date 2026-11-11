@@ -89,6 +89,8 @@ try {
   check("profile mode renders the identity section", profileState.identity && profileState.profileMode, JSON.stringify(profileState));
   check("profile mode labels the shared feed as Profile Feed", profileState.tab === "Profile Feed", JSON.stringify(profileState));
   check("profile mode keeps the page within the viewport", profileState.scrollWidth <= profileState.innerWidth + 1, JSON.stringify(profileState));
+  const blankBannerState = await driver.executeScript("var banner=document.querySelector('[data-member-profile-banner]'), cover=document.querySelector('.member-profile-cover'); return {hidden:banner&&banner.hidden,src:banner&&banner.getAttribute('src'),hasBanner:cover&&cover.getAttribute('data-has-banner')};");
+  check("profiles without a chosen banner show an empty banner area", blankBannerState.hidden && !blankBannerState.src && blankBannerState.hasBanner === "false", JSON.stringify(blankBannerState));
 
   const followButton = await driver.findElement(By.css("[data-profile-follow]"));
   check("profile exposes Follow", await followButton.isDisplayed());
@@ -109,6 +111,13 @@ try {
   const friendPendingState = await driver.executeScript("var button=document.querySelector('[data-profile-friend]'); return {text:button&&button.textContent.trim(),disabled:button&&button.disabled};");
   check("Add Friend changes to Request Sent", friendPendingState.text === "Request Sent", JSON.stringify(friendPendingState));
   await driver.executeAsyncScript(`var done=arguments[arguments.length-1]; fetch('/api/friends/request/cancel',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetUsername:arguments[0]})}).then(function(r){done(r.status);}).catch(function(){done(0);});`, target.username);
+
+  const allAccessUsername = "tpi_review_allaccess";
+  await driver.get(`${base}/member-home?username=${encodeURIComponent(allAccessUsername)}`);
+  await waitFor("Founding All-Access profile", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden && !document.querySelector('[data-member-membership]').hidden"));
+  const membershipState = await driver.executeScript("var badge=document.querySelector('[data-member-membership]'), image=document.querySelector('[data-member-membership-badge]'), role=document.querySelector('[data-member-role]'), label=document.querySelector('[data-member-membership-label]'), number=document.querySelector('[data-member-membership-number]'); return {visible:!!badge&&!badge.hidden,label:label&&label.textContent.trim(),number:number&&number.textContent.trim(),alt:image&&image.alt,loaded:image&&image.naturalWidth>0,roleHidden:role&&role.hidden};");
+  check("Founding All-Access renders one badge with its number", membershipState.visible && membershipState.label === "Founding All-Access" && /^FAA-\d{3}$/.test(membershipState.number), JSON.stringify(membershipState));
+  check("All-Access badge artwork loads and replaces the legacy Member Access label", membershipState.loaded && membershipState.alt === "Founding All-Access badge" && membershipState.roleHidden, JSON.stringify(membershipState));
 
   await driver.get(`${base}/member-home`);
   await waitFor("community home", async () => driver.executeScript("return !document.body.classList.contains('member-profile-mode') && document.querySelector('[data-feed-tab]')?.textContent.trim()==='Community Feed'"));

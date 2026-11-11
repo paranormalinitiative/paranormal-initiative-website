@@ -74,6 +74,8 @@ const profilePage = await request(`/member-profile?username=${encodeURIComponent
 check("clean profile page is available", profilePage.response.status === 200);
 check("clean profile page serves the profile identity and shared feed shell", profilePage.text.includes("data-member-profile-view") && profilePage.text.includes("data-member-feed") && profilePage.text.includes("data-feed-tab"));
 check("profile shell includes banner, avatar edit, and profile options controls", profilePage.text.includes("data-member-profile-banner") && profilePage.text.includes("data-profile-avatar-edit") && profilePage.text.includes("data-profile-options-toggle"));
+check("profile banner has no shared TPI image fallback", /<img data-member-profile-banner hidden alt="">/.test(profilePage.text) && !/data-member-profile-banner src=/.test(profilePage.text) && profilePage.text.includes('profileBanner.removeAttribute("src")'));
+check("profile renders the server-resolved Founding Membership badge when present", profilePage.text.includes("data-member-membership-badge") && profilePage.text.includes("profileUser.foundingMembership = memberProfileData.foundingMembership || null") && profilePage.text.includes("profileRole.hidden = Boolean(activeMembershipBadge)"));
 check("profile shell places Honors & Distinctions in the right rail", profilePage.text.includes("data-rail-recognition") && profilePage.text.includes("Honors &amp; Distinctions") && profilePage.text.includes("data-recognition-trigger"));
 check("profile shell keeps recognition details out of the profile hero", !profilePage.text.includes("data-member-recognition-shelf"));
 check("profile shell uses the larger full-banner aspect ratio and lower avatar overlap", profilePage.text.includes("aspect-ratio: 1942 / 700") && profilePage.text.includes("margin-top: -96px") && profilePage.text.includes("object-fit: contain"));
@@ -85,6 +87,7 @@ check("profile editor explains the recommended banner dimensions", editorPage.te
 const profile = await request(`/api/members/profile?username=${encodeURIComponent(target)}`, auth(member.token));
 check("member profile returns the target and relationship", profile.response.status === 200 && profile.body?.profile?.username === target && profile.body?.relationship);
 check("profile view is recorded without exposing private fields", profile.body?.profile?.correspondence === undefined && profile.body?.profile?.passwordHash === undefined);
+check("member profile includes public Founding Membership identity", Object.prototype.hasOwnProperty.call(profile.body || {}, "foundingMembership"));
 
 const feed = await request(`/api/feed/user?username=${encodeURIComponent(target)}&limit=20&scope=community`, auth(member.token));
 check("profile feed uses the user feed projection", feed.response.status === 200 && Array.isArray(feed.body?.items));
