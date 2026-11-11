@@ -26,7 +26,8 @@
       "0065_member_social_and_bug_reports.sql",
       "0066_leadership_profiles_and_distinctions.sql",
       "0067_board_members_and_badge.sql",
-      "0068_governance_role_rank_metadata.sql"
+      "0068_governance_role_rank_metadata.sql",
+      "0069_member_social_graph_and_profile_views.sql"
     ],
     "requiredTables": [
       "studio_notes",
@@ -37,7 +38,9 @@
       "member_bug_reports",
       "leadership_profiles",
       "leadership_distinctions",
-      "board_members"
+      "board_members",
+      "member_friend_requests",
+      "member_profile_views"
     ]
   }
 }

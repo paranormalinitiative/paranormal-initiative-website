@@ -660,6 +660,148 @@
             border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
+        .member-profile-identity {
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+            background: #131318;
+        }
+
+        .member-profile-cover {
+            height: 150px;
+            background:
+                radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 42%),
+                linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, #10141c), #090f14 72%);
+            border-bottom: 1px solid color-mix(in srgb, var(--accent) 24%, #263646);
+        }
+
+        .member-profile-hero {
+            position: relative;
+            display: grid;
+            grid-template-columns: 112px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+            margin-top: -56px;
+            padding: 0 24px 22px;
+        }
+
+        .member-profile-hero .member-profile-photo-wrap {
+            width: 112px;
+            height: 112px;
+            padding: 4px;
+            border-radius: 50%;
+            background: #090f14;
+            box-shadow: 0 0 0 2px var(--accent), 0 0 22px color-mix(in srgb, var(--accent) 25%, transparent);
+        }
+
+        .member-profile-hero .member-profile-photo-wrap img,
+        .member-profile-hero .member-profile-photo-wrap .profile-photo-empty {
+            width: 100%;
+            height: 100%;
+            border-width: 0;
+        }
+
+        .member-profile-heading-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            padding-top: 58px;
+        }
+
+        .member-profile-username {
+            margin: 4px 0 0;
+            color: #8aa0b6;
+            font-size: 13px;
+        }
+
+        .member-profile-actions {
+            margin-top: 0;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .member-profile-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1px;
+            margin: 0 18px 18px;
+            padding: 12px 8px;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 16px;
+        }
+
+        .member-profile-stats span {
+            display: grid;
+            justify-items: center;
+            gap: 5px;
+            color: #8aa0b6;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .member-profile-stats strong {
+            color: #f4f8fb;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .member-profile-tabs {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 6px;
+            margin: 0 18px 18px;
+            padding: 6px;
+            background: #10141c;
+            border: 1px solid #263646;
+            border-radius: 16px;
+        }
+
+        .member-profile-tabs a {
+            display: grid;
+            place-items: center;
+            min-height: 42px;
+            color: #8aa0b6;
+            border-radius: 11px;
+            font-size: 12px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .member-profile-tabs a:hover,
+        .member-profile-tabs a.active {
+            color: #f4f8fb;
+            background: color-mix(in srgb, var(--accent) 18%, #10141c);
+            box-shadow: inset 0 -2px 0 var(--accent);
+        }
+
+        body.member-profile-mode .member-identity-block,
+        body.member-profile-mode .member-discovery-bar,
+        body.member-profile-mode .member-composer,
+        body.member-profile-mode #my-content-card {
+            display: none;
+        }
+
+        body.member-profile-mode .member-profile-identity {
+            display: block;
+        }
+
+        body.member-profile-mode .member-home-layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        body.member-profile-mode .member-feed-tabs {
+            margin-top: 0;
+        }
+
+        body.member-profile-mode .member-feed-tabs .member-feed-tab {
+            color: var(--accent);
+        }
+
         /* ===== IDENTITY BLOCK ===== */
         /* Identity statement in its own pill-box card so it reads as part
            of the page's card family (per Todd) — soft light highlight like
@@ -2134,6 +2276,45 @@
                 justify-content: center;
             }
 
+            .member-profile-hero {
+                grid-template-columns: 1fr;
+                gap: 14px;
+                margin-top: -42px;
+                padding: 0 16px 18px;
+            }
+
+            .member-profile-hero .member-profile-photo-wrap {
+                width: 84px;
+                height: 84px;
+            }
+
+            .member-profile-heading-row {
+                padding-top: 0;
+            }
+
+            .member-profile-actions {
+                justify-content: flex-start;
+            }
+
+            .member-profile-stats,
+            .member-profile-tabs {
+                margin-left: 12px;
+                margin-right: 12px;
+            }
+
+            .member-profile-stats span {
+                font-size: 9px;
+            }
+
+            .member-profile-stats strong {
+                font-size: 17px;
+            }
+
+            .member-profile-tabs {
+                overflow-x: auto;
+                grid-template-columns: repeat(5, minmax(82px, 1fr));
+            }
+
             .composer-top {
                 grid-template-columns: 1fr;
             }
@@ -2387,6 +2568,42 @@
                  .member-home-header marker below keeps member-shell.js from
                  auto-generating its own "Home | Hello" heading.) -->
             <div class="member-home-header" hidden aria-hidden="true"></div>
+            <section class="member-profile-identity" data-member-profile-view hidden aria-labelledby="member-profile-name">
+                <div class="member-profile-cover" aria-hidden="true"></div>
+                <div class="member-profile-hero">
+                    <div class="member-profile-photo-wrap" data-member-photo></div>
+                    <div class="member-profile-info">
+                        <div class="member-profile-heading-row">
+                            <div>
+                                <h1 class="member-profile-name" id="member-profile-name" data-member-name>Member</h1>
+                                <p class="member-profile-username" data-member-username></p>
+                                <p class="member-profile-title-line" data-member-title></p>
+                            </div>
+                            <div class="member-profile-actions" data-member-profile-actions>
+                                <button type="button" class="member-btn member-btn-secondary" data-profile-follow hidden>Follow</button>
+                                <button type="button" class="member-btn member-btn-secondary" data-profile-friend hidden>Add Friend</button>
+                                <a class="member-btn member-btn-primary" data-profile-chat hidden href="#messenger">Chat</a>
+                            </div>
+                        </div>
+                        <p class="member-profile-role" data-member-role></p>
+                        <p class="member-profile-bio" data-member-bio></p>
+                        <div class="member-profile-facts" data-member-facts></div>
+                    </div>
+                </div>
+                <div class="member-profile-stats" data-member-profile-stats>
+                    <span><strong data-profile-followers>0</strong> Followers</span>
+                    <span><strong data-profile-following>0</strong> Following</span>
+                    <span><strong data-profile-posts>0</strong> Posts</span>
+                    <span><strong data-profile-reels>0</strong> Reels</span>
+                </div>
+                <nav class="member-profile-tabs" aria-label="Profile sections">
+                    <a class="active" href="#community-feed">Posts</a>
+                    <a href="member-profile.html">About</a>
+                    <a href="member-videos.html">Reels</a>
+                    <a href="member-photos.html">Photos</a>
+                    <a href="events.html?member=1">Events</a>
+                </nav>
+            </section>
             <div class="member-identity-block">
                 <h3 class="member-identity-title">You Are the Initiative</h3>
                 <p class="member-identity-subtitle">Share your research, experiences, questions, ideas, and discoveries with the community.</p>
@@ -2693,6 +2910,26 @@
                     </div>
                 </section>
 
+                <!-- PEOPLE DISCOVERY -->
+                <section class="rail-card" data-rail-discover>
+                    <div class="rail-card-head">
+                        <h4>People to Discover</h4>
+                    </div>
+                    <div data-discover-members-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- RECENTLY VIEWED PROFILES -->
+                <section class="rail-card" data-rail-recent>
+                    <div class="rail-card-head">
+                        <h4>Recently Viewed</h4>
+                    </div>
+                    <div data-recent-members-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
                 <!-- ACTIVE DISCUSSIONS -->
                 <section class="rail-card" data-rail-discussions>
                     <div class="rail-card-head">
@@ -2719,6 +2956,8 @@
     var feedOffset = 0;
     var activeUser = null;
     var profileUser = null;
+    var profileRelationship = null;
+    var profileMode = false;
     var currentTab = "activity";
     var viewingOwnProfile = true;
     var feedRefreshTimer = null;
@@ -2727,12 +2966,17 @@
     var FEED_REFRESH_MS = 5 * 60 * 1000;
 
     var greetingEl = document.querySelector("[data-member-greeting]");
+    var profileView = document.querySelector("[data-member-profile-view]");
     var profilePhoto = document.querySelector("[data-member-photo]");
     var profileName = document.querySelector("[data-member-name]");
+    var profileUsername = document.querySelector("[data-member-username]");
     var profileTitle = document.querySelector("[data-member-title]");
     var profileRole = document.querySelector("[data-member-role]");
     var profileBio = document.querySelector("[data-member-bio]");
     var profileFacts = document.querySelector("[data-member-facts]");
+    var profileFollowButton = document.querySelector("[data-profile-follow]");
+    var profileFriendButton = document.querySelector("[data-profile-friend]");
+    var profileChatLink = document.querySelector("[data-profile-chat]");
     var composerBody = document.querySelector("[data-composer-body]");
     var composerPostBtn = document.querySelector("[data-composer-post]");
     var composerStatus = document.querySelector("[data-composer-status]");
@@ -2794,6 +3038,7 @@
         }
 
         var requestedUsername = new URLSearchParams(window.location.search).get("username");
+        profileMode = Boolean(requestedUsername);
         var isOwnProfile = !requestedUsername || requestedUsername === activeUser.username;
 
         if (isOwnProfile) {
@@ -2810,16 +3055,30 @@
             }
         }
 
+        if (profileMode && window.TPIApi.memberProfile) {
+            try {
+                var memberProfileData = await window.TPIApi.memberProfile(profileUser.username);
+                if (memberProfileData.profile) profileUser = Object.assign({}, profileUser, memberProfileData.profile);
+                profileRelationship = memberProfileData.relationship || {};
+            } catch (e) {
+                profileRelationship = {};
+            }
+        }
+
+        document.body.classList.toggle("member-profile-mode", profileMode);
+        var feedTabLabel = document.querySelector("[data-feed-tab]");
+        if (feedTabLabel) feedTabLabel.textContent = profileMode ? "Profile Feed" : "Community Feed";
         renderGreeting();
         renderProfile();
+        setupProfileActions();
         setupProfileLinks();
-        loadMyContent();
+        if (!profileMode) loadMyContent();
         currentUsername = activeUser.username;
 
         var isOwn = profileUser.username === activeUser.username;
         viewingOwnProfile = isOwn;
 
-        if (isOwn) {
+        if (isOwn && !profileMode) {
             renderComposerAvatar();
             setupComposer();
             setupMemberDiscovery();
@@ -2835,7 +3094,7 @@
         setupLoadMore();
         setupTabs();
         setupFeedRefresh();
-        if (viewingOwnProfile) {
+        if (!profileMode && viewingOwnProfile) {
             loadRightRail();
         } else {
             var rail = document.querySelector("[data-home-rail]");
@@ -2887,6 +3146,7 @@
         renderPulse();
         loadRailEvents();
         loadRailMembers();
+        loadProfileDiscovery();
         loadRailDiscussions();
         loadRailNews();
         loadRailVideo();
@@ -2926,9 +3186,9 @@
         if (!profileUser || currentTab !== "activity") return;
         feedRefreshCheckInFlight = true;
         try {
-            var latestData = viewingOwnProfile
-                ? await window.TPIApi.communityFeed(1, 0, "community")
-                : await window.TPIApi.userFeed(profileUser.username, 1, 0, "community");
+            var latestData = profileMode
+                ? await window.TPIApi.userFeed(profileUser.username, 1, 0, "community")
+                : await window.TPIApi.communityFeed(1, 0, "community");
             var latest = (latestData.items || []).find(function(item) { return item.type === "community_post"; });
             var visibleLatest = feedContainer.querySelector("[data-feed-type='community'][data-post-id]");
             if (latest && visibleLatest && latest.postId !== visibleLatest.getAttribute("data-post-id")) {
@@ -3237,6 +3497,46 @@
         });
     }
 
+    function renderProfileRailMembers(body, members, emptyCopy) {
+        if (!body) return;
+        if (!members.length) {
+            body.innerHTML = '<p class="rail-empty">' + escapeHtml(emptyCopy) + '</p>';
+            return;
+        }
+        body.innerHTML = members.map(function(member) {
+            var initial = (member.displayName || member.username || "M").charAt(0).toUpperCase();
+            var avatar = member.photoUrl
+                ? '<img class="rail-member-avatar" src="' + escapeAttr(member.photoUrl) + '" alt="' + escapeAttr(member.displayName || member.username) + '">'
+                : '<div class="rail-member-initial" style="border-color:' + escapeAttr(member.chatColor || "var(--accent)") + ';background:' + escapeAttr(member.chatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
+            return '<a class="rail-member" href="/member-home?username=' + encodeURIComponent(member.username || "") + '">' +
+                avatar +
+                '<div style="min-width:0;">' +
+                    '<p class="rail-member-name">' + escapeHtml(member.displayName || member.username || "Member") + '</p>' +
+                    '<p class="rail-member-sub">' + escapeHtml(member.title || (member.following ? "Following" : "View profile")) + '</p>' +
+                '</div>' +
+            '</a>';
+        }).join("");
+    }
+
+    function loadProfileDiscovery() {
+        var discoverBody = document.querySelector("[data-discover-members-body]");
+        var recentBody = document.querySelector("[data-recent-members-body]");
+        if (window.TPIApi.discoverMembers) {
+            window.TPIApi.discoverMembers().then(function(data) {
+                renderProfileRailMembers(discoverBody, data.members || [], "No new member profiles to show yet.");
+            }).catch(function() {
+                if (discoverBody) discoverBody.innerHTML = '<p class="rail-empty">People to discover are unavailable right now.</p>';
+            });
+        }
+        if (window.TPIApi.recentlyViewedMembers) {
+            window.TPIApi.recentlyViewedMembers().then(function(data) {
+                renderProfileRailMembers(recentBody, data.members || [], "Profiles you visit will appear here.");
+            }).catch(function() {
+                if (recentBody) recentBody.innerHTML = '<p class="rail-empty">Recently viewed profiles are unavailable right now.</p>';
+            });
+        }
+    }
+
     function loadRailDiscussions() {
         var body = document.querySelector("[data-discussions-body]");
         if (!body) return;
@@ -3284,7 +3584,10 @@
         var name = profileUser.displayName || profileUser.username || "Member";
         document.title = name + " | The Paranormal Initiative";
 
+        if (profileView) profileView.hidden = !profileMode;
+
         if (profileName) profileName.textContent = name;
+        if (profileUsername) profileUsername.textContent = profileUser.username ? "@" + profileUser.username : "";
         if (profileTitle) profileTitle.textContent = profileUser.title || "";
         if (profileRole) profileRole.textContent = getRoleLabel(profileUser.role);
         if (profileBio) profileBio.textContent = profileUser.bio || "";
@@ -3303,6 +3606,72 @@
             if (profileUser.organization) facts.push('<span>Organization: <strong>' + escapeHtml(profileUser.organization) + '</strong></span>');
             if (profileUser.website) facts.push('<span>Website: <strong><a href="' + escapeAttr(profileUser.website) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(profileUser.website) + '</a></strong></span>');
             profileFacts.innerHTML = facts.join("");
+        }
+
+        if (profileRelationship) {
+            var setProfileStat = function(selector, value) {
+                var element = document.querySelector(selector);
+                if (element) element.textContent = String(value || 0);
+            };
+            setProfileStat("[data-profile-followers]", profileRelationship.followers);
+            setProfileStat("[data-profile-following]", profileRelationship.followingCount);
+            setProfileStat("[data-profile-posts]", profileRelationship.posts);
+            setProfileStat("[data-profile-reels]", profileRelationship.reels);
+        }
+    }
+
+    function setupProfileActions() {
+        if (!profileMode || !profileUser || profileUser.username === activeUser.username) return;
+        if (profileFollowButton) {
+            profileFollowButton.hidden = false;
+            profileFollowButton.textContent = profileRelationship && profileRelationship.following ? "Following" : "Follow";
+            profileFollowButton.classList.toggle("active", Boolean(profileRelationship && profileRelationship.following));
+            profileFollowButton.addEventListener("click", async function() {
+                profileFollowButton.disabled = true;
+                try {
+                    var following = Boolean(profileRelationship && profileRelationship.following);
+                    await window.TPIApi[following ? "unfollowMember" : "followMember"](profileUser.id || profileUser.username);
+                    profileRelationship.following = !following;
+                    profileFollowButton.textContent = profileRelationship.following ? "Following" : "Follow";
+                    profileFollowButton.classList.toggle("active", profileRelationship.following);
+                    renderProfile();
+                } catch (e) {
+                    window.alert(e.message || "The follow state could not be updated.");
+                } finally {
+                    profileFollowButton.disabled = false;
+                }
+            });
+        }
+        if (profileFriendButton) {
+            profileFriendButton.hidden = false;
+            var friendStatus = profileRelationship && profileRelationship.friendStatus || "none";
+            profileFriendButton.textContent = friendStatus === "friends" ? "Friends" : friendStatus === "pending_sent" ? "Request Sent" : friendStatus === "pending_received" ? "Accept Friend" : "Add Friend";
+            profileFriendButton.disabled = friendStatus === "friends" || friendStatus === "pending_sent";
+            profileFriendButton.addEventListener("click", async function() {
+                profileFriendButton.disabled = true;
+                try {
+                    var currentStatus = profileRelationship.friendStatus || "none";
+                    if (currentStatus === "pending_received") {
+                        await window.TPIApi.acceptFriendRequest(profileUser.id || profileUser.username);
+                        profileRelationship.friendStatus = "friends";
+                    } else {
+                        await window.TPIApi.sendFriendRequest(profileUser.id || profileUser.username);
+                        profileRelationship.friendStatus = "pending_sent";
+                    }
+                    profileFriendButton.textContent = profileRelationship.friendStatus === "friends" ? "Friends" : "Request Sent";
+                } catch (e) {
+                    window.alert(e.message || "The friend request could not be updated.");
+                    profileFriendButton.disabled = false;
+                }
+            });
+        }
+        if (profileChatLink) {
+            profileChatLink.hidden = false;
+            profileChatLink.href = "#messenger";
+            profileChatLink.addEventListener("click", function() {
+                var chatLink = document.querySelector('[data-nav="chat"], [href*="#messenger"]');
+                if (chatLink && chatLink !== profileChatLink) chatLink.click();
+            });
         }
     }
 
@@ -3342,8 +3711,11 @@
     }
 
     function setupProfileLinks() {
-        // Profile links and logout are handled by member-shell.js?v=55
-        // This function is kept for any future page-specific profile link logic
+        if (!activeUser || !activeUser.username) return;
+        var ownProfileHref = "member-home.html?username=" + encodeURIComponent(activeUser.username);
+        document.querySelectorAll('.rail-pulse-link, .member-discovery-nav a[href="member-profile.html"]').forEach(function(link) {
+            link.href = ownProfileHref;
+        });
     }
 
     function setupComposer() {
@@ -3729,21 +4101,23 @@
         var requestedPostId = getRequestedPostId();
 
         try {
-            if (viewingOwnProfile) {
-                var ownFeedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community", requestedPostId);
-                var ownItems = ownFeedData.items || [];
-                renderFeed(ownItems, false);
-                feedOffset = ownItems.length;
-                loadMoreWrap.hidden = ownItems.length < FEED_LIMIT;
-            } else {
+            if (profileMode) {
                 var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset, "community", requestedPostId);
                 var items = feedData.items || [];
                 renderFeed(items, false);
                 feedOffset = items.length;
                 loadMoreWrap.hidden = items.length < FEED_LIMIT;
+            } else {
+                var ownFeedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community", requestedPostId);
+                var ownItems = ownFeedData.items || [];
+                renderFeed(ownItems, false);
+                feedOffset = ownItems.length;
+                loadMoreWrap.hidden = ownItems.length < FEED_LIMIT;
             }
         } catch (e) {
-            feedContainer.innerHTML = '<div class="member-empty"><h3>No posts yet.</h3><p>When this member shares something, it will appear here.</p></div>';
+            feedContainer.innerHTML = profileMode
+                ? '<div class="member-empty"><h3>No posts yet.</h3><p>When this member shares something, it will appear here.</p></div>'
+                : '<div class="member-empty"><h3>No posts yet.</h3><p>Be the first — share something with the community above.</p></div>';
             loadMoreWrap.hidden = true;
         }
     }
@@ -3765,9 +4139,9 @@
             loadMoreBtn.disabled = true;
             loadMoreBtn.textContent = "Loading...";
             try {
-                var feedData = viewingOwnProfile
-                    ? await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community")
-                    : await window.TPIApi.userFeed(profileUser.username, FEED_LIMIT, feedOffset, "community");
+                var feedData = profileMode
+                    ? await window.TPIApi.userFeed(profileUser.username, FEED_LIMIT, feedOffset, "community")
+                    : await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community");
                 var items = feedData.items || [];
                 renderFeed(items, true);
                 feedOffset += items.length;
@@ -3780,7 +4154,7 @@
 
     function renderFeed(items, append) {
         if (!items.length && !append) {
-            var emptyCopy = viewingOwnProfile
+            var emptyCopy = !profileMode
                 ? '<div class="member-empty"><h3>No posts yet.</h3><p>Be the first — share something with the community above.</p></div>'
                 : '<div class="member-empty"><h3>No posts yet.</h3><p>When this member shares something, it will appear here.</p></div>';
             feedContainer.innerHTML = emptyCopy;
@@ -3838,7 +4212,7 @@
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
         }
-        var profileContext = !viewingOwnProfile && profileUser && profileUser.username ? "&username=" + encodeURIComponent(profileUser.username) : "";
+        var profileContext = profileMode && profileUser && profileUser.username ? "&username=" + encodeURIComponent(profileUser.username) : "";
         var postPath = "/member-home?member=1" + profileContext + "&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "");
         var postUrl = window.preserveMemberMode ? window.preserveMemberMode(postPath) : postPath;
         var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";

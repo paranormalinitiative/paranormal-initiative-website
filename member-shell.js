@@ -439,7 +439,9 @@
       });
       return;
     }
-    var href = "member-profile.html";
+    var href = user && user.username
+      ? "member-home.html?username=" + encodeURIComponent(user.username)
+      : "member-home.html";
     var profileLink = document.querySelector('[data-nav-profile]');
     if (profileLink) profileLink.href = href;
     var profileLinkMobile = document.querySelector('[data-nav-profile-mobile]');

@@ -156,9 +156,16 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/leadership/profiles") return handleLeadershipProfiles(env);
     if (request.method === "GET" && path.match(/^\/leadership\/profiles\/[^/]+$/)) return handleLeadershipProfile(path, env);
     if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
+    if (request.method === "GET" && path === "/members/profile") return requireMember(request, env, user => handleMemberProfile(request, env, user));
+    if (request.method === "GET" && path === "/members/discover") return requireMember(request, env, user => handleDiscoverMembers(env, user));
+    if (request.method === "GET" && path === "/members/recently-viewed") return requireMember(request, env, user => handleRecentlyViewedMembers(env, user));
     if (request.method === "GET" && path === "/friends") return requireMember(request, env, user => handleListFriends(env, user));
     if (request.method === "POST" && path === "/friends/follow") return requireMember(request, env, user => handleFollowMember(request, env, user));
     if (request.method === "POST" && path === "/friends/unfollow") return requireMember(request, env, user => handleUnfollowMember(request, env, user));
+    if (request.method === "POST" && path === "/friends/request") return requireMember(request, env, user => handleFriendRequest(request, env, user));
+    if (request.method === "POST" && path === "/friends/request/accept") return requireMember(request, env, user => handleFriendRequestDecision(request, env, user, "accepted"));
+    if (request.method === "POST" && path === "/friends/request/decline") return requireMember(request, env, user => handleFriendRequestDecision(request, env, user, "declined"));
+    if (request.method === "POST" && path === "/friends/request/cancel") return requireMember(request, env, user => handleFriendRequestDecision(request, env, user, "cancelled"));
     if (request.method === "POST" && path === "/bug-reports") return requireMember(request, env, user => handleCreateBugReport(request, env, user));
     if (request.method === "POST" && path === "/messenger/presence") return requireMember(request, env, user => handlePresenceHeartbeat(request, env, user));
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
@@ -9403,6 +9410,88 @@ function directoryMember(user) {
   };
 }
 
+async function getMemberRelationship(env, viewer, target) {
+  const counts = await env.TPI_DB.prepare(`
+    SELECT
+      (SELECT COUNT(*) FROM member_follows WHERE following_id = ?) AS followers,
+      (SELECT COUNT(*) FROM member_follows WHERE follower_id = ?) AS following,
+      (SELECT COUNT(*) FROM community_posts WHERE author_id = ? AND status = 'visible') AS posts
+  `).bind(target.id, target.id, target.id).first();
+  const follow = await env.TPI_DB.prepare(`
+    SELECT 1 FROM member_follows WHERE follower_id = ? AND following_id = ? LIMIT 1
+  `).bind(viewer.id, target.id).first();
+  const request = await env.TPI_DB.prepare(`
+    SELECT id, requester_id, recipient_id, status
+    FROM member_friend_requests
+    WHERE (requester_id = ? AND recipient_id = ?) OR (requester_id = ? AND recipient_id = ?)
+    ORDER BY updated_at DESC
+    LIMIT 1
+  `).bind(viewer.id, target.id, target.id, viewer.id).first();
+  let friendStatus = "none";
+  if (request?.status === "accepted") friendStatus = "friends";
+  else if (request?.status === "pending") friendStatus = request.requester_id === viewer.id ? "pending_sent" : "pending_received";
+  return {
+    following: Boolean(follow),
+    friendStatus,
+    friendRequestId: request?.id || null,
+    followers: Number(counts?.followers || 0),
+    followingCount: Number(counts?.following || 0),
+    posts: Number(counts?.posts || 0),
+    reels: 0
+  };
+}
+
+async function handleMemberProfile(request, env, user) {
+  const username = clean(new URL(request.url).searchParams.get("username"));
+  const target = await getUserByUsername(env, username);
+  if (!target || !target.active) return json({ error: "Member profile not found." }, 404);
+  if (target.id !== user.id) {
+    await env.TPI_DB.prepare(`
+      INSERT INTO member_profile_views (viewer_id, viewed_id, first_viewed_at, last_viewed_at)
+      VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      ON CONFLICT(viewer_id, viewed_id) DO UPDATE SET last_viewed_at = CURRENT_TIMESTAMP
+    `).bind(user.id, target.id).run();
+  }
+  return json({
+    profile: { id: target.id, ...publicUser(target) },
+    relationship: await getMemberRelationship(env, user, target)
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleDiscoverMembers(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.username, c.display_name, c.title, c.role, c.photo_url, c.chat_color,
+           c.can_message, c.active,
+           EXISTS (SELECT 1 FROM member_follows mf WHERE mf.follower_id = ? AND mf.following_id = c.id) AS following,
+           mp.last_seen_at, mp.status
+    FROM contributors c
+    LEFT JOIN member_presence mp ON mp.contributor_id = c.id
+    WHERE c.active = 1 AND c.id != ?
+      AND (length(trim(COALESCE(c.bio, ''))) > 0 OR c.photo_url IS NOT NULL OR c.title IS NOT NULL)
+    ORDER BY (c.photo_url IS NOT NULL) DESC, (length(trim(COALESCE(c.bio, ''))) > 0) DESC,
+             c.created_at DESC, c.display_name COLLATE NOCASE
+    LIMIT 8
+  `).bind(user.id, user.id).all();
+  return json({ members: (results || []).map(directoryMember) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleRecentlyViewedMembers(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.username, c.display_name, c.title, c.role, c.photo_url, c.chat_color,
+           c.can_message, c.active,
+           v.last_viewed_at AS viewedAt,
+           EXISTS (SELECT 1 FROM member_follows mf WHERE mf.follower_id = ? AND mf.following_id = c.id) AS following,
+           mp.last_seen_at, mp.status
+    FROM member_profile_views v
+    JOIN contributors c ON c.id = v.viewed_id
+    LEFT JOIN member_presence mp ON mp.contributor_id = c.id
+    WHERE v.viewer_id = ? AND c.active = 1
+    ORDER BY v.last_viewed_at DESC
+    LIMIT 8
+  `).bind(user.id, user.id).all();
+  return json({ members: (results || []).map(member => ({ ...directoryMember(member), viewedAt: member.viewedAt })) }, 200, { "Cache-Control": "no-store" });
+}
+
 async function handleMemberDirectory(request, env, user) {
   const url = new URL(request.url);
   const search = clean(url.searchParams.get("search")).slice(0, 80).toLowerCase();
@@ -9485,6 +9574,64 @@ async function handleUnfollowMember(request, env, user) {
   if (!target) return json({ error: "That active member could not be found." }, 404);
   await env.TPI_DB.prepare("DELETE FROM member_follows WHERE follower_id = ? AND following_id = ?").bind(user.id, target.id).run();
   return json({ ok: true, following: false, member: target }, 200, { "Cache-Control": "no-store" });
+}
+
+async function resolveFriendTarget(request, env, user) {
+  const data = await readJson(request);
+  const target = await resolveActiveMember(env, data.targetId || data.targetUsername || data.username);
+  if (!target) return { error: json({ error: "That active member could not be found." }, 404) };
+  if (target.id === user.id) return { error: json({ error: "You cannot connect your own account." }, 400) };
+  return { target };
+}
+
+async function handleFriendRequest(request, env, user) {
+  const resolved = await resolveFriendTarget(request, env, user);
+  if (resolved.error) return resolved.error;
+  const target = resolved.target;
+  const existing = await env.TPI_DB.prepare(`
+    SELECT id, requester_id, recipient_id, status
+    FROM member_friend_requests
+    WHERE (requester_id = ? AND recipient_id = ?) OR (requester_id = ? AND recipient_id = ?)
+    ORDER BY updated_at DESC LIMIT 1
+  `).bind(user.id, target.id, target.id, user.id).first();
+  if (existing?.status === "accepted") return json({ ok: true, friendStatus: "friends" });
+  if (existing?.status === "pending") return json({ ok: true, friendStatus: existing.requester_id === user.id ? "pending_sent" : "pending_received" });
+  const requestId = existing?.id || crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_friend_requests (id, requester_id, recipient_id, status, created_at, updated_at)
+    VALUES (?, ?, ?, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ON CONFLICT(requester_id, recipient_id) DO UPDATE SET status = 'pending', updated_at = CURRENT_TIMESTAMP
+  `).bind(requestId, user.id, target.id).run();
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
+    VALUES (?, ?, ?, ?, ?, 'profile_request', ?)
+  `).bind(
+    crypto.randomUUID(), target.id,
+    "New friend request",
+    `${user.display_name || user.username} sent you a friend request.`,
+    `/member-home?username=${encodeURIComponent(user.username)}`,
+    user.id
+  ).run().catch(() => {});
+  return json({ ok: true, friendStatus: "pending_sent" }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleFriendRequestDecision(request, env, user, decision) {
+  const resolved = await resolveFriendTarget(request, env, user);
+  if (resolved.error) return resolved.error;
+  const target = resolved.target;
+  const direction = decision === "accepted" || decision === "declined"
+    ? "requester_id = ? AND recipient_id = ?"
+    : "requester_id = ? AND recipient_id = ?";
+  const binds = decision === "accepted" || decision === "declined"
+    ? [target.id, user.id]
+    : [user.id, target.id];
+  const existing = await env.TPI_DB.prepare(`
+    SELECT id FROM member_friend_requests WHERE ${direction} AND status = 'pending' LIMIT 1
+  `).bind(...binds).first();
+  if (!existing) return json({ error: "No pending friend request was found." }, 404);
+  await env.TPI_DB.prepare("UPDATE member_friend_requests SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+    .bind(decision, existing.id).run();
+  return json({ ok: true, friendStatus: decision === "accepted" ? "friends" : "none" }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleCreateBugReport(request, env, user) {
