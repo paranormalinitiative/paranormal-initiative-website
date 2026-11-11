@@ -756,7 +756,8 @@
 
         .member-profile-cover {
             position: relative;
-            height: 340px;
+            height: auto;
+            aspect-ratio: 1942 / 700;
             overflow: hidden;
             background:
                 radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 42%),
@@ -768,7 +769,8 @@
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background: #090f14;
             object-position: center;
         }
 
@@ -2496,7 +2498,10 @@
                 height: 128px;
             }
 
-            .member-profile-cover { height: 260px; }
+            .member-profile-cover {
+                height: auto;
+                aspect-ratio: 1942 / 700;
+            }
 
             .member-profile-heading-row {
                 padding-top: 0;
@@ -3641,6 +3646,9 @@
         var body = document.querySelector("[data-pulse-body]");
         if (!body || !activeUser) return;
         var initial = (activeUser.displayName || activeUser.username || "M").trim().charAt(0).toUpperCase() || "M";
+        var profileHref = activeUser.username
+            ? "/member-home?username=" + encodeURIComponent(activeUser.username)
+            : "/member-profile";
         var avatar = activeUser.photoUrl
             ? '<img class="rail-pulse-avatar" src="' + escapeAttr(activeUser.photoUrl) + '" alt="' + escapeAttr(activeUser.displayName || "You") + '">'
             : '<div class="rail-pulse-avatar-initial" style="background:' + escapeAttr(activeUser.chatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
@@ -3660,7 +3668,7 @@
                 '<div class="rail-pulse-stat"><strong id="pulse-uploads">–</strong><span>Uploads</span></div>' +
                 '<div class="rail-pulse-stat"><strong id="pulse-streams">–</strong><span>Live Streams</span></div>' +
             '</div>' +
-            '<a class="rail-pulse-link" href="/member-profile">View Profile</a>';
+            '<a class="rail-pulse-link" href="' + escapeAttr(profileHref) + '">View Profile</a>';
         // Stats come from /me/pulse — a truthful count of this member's
         // real activity (likes given, topics started, comments written,
         // media uploaded). Layout per Todd: Likes | Following, Posts |
@@ -4103,7 +4111,10 @@
 
     function setupProfileLinks() {
         if (!activeUser || !activeUser.username) return;
-        document.querySelectorAll('.rail-pulse-link, .member-discovery-nav a[href="member-profile.html"]').forEach(function(link) {
+        document.querySelectorAll('.rail-pulse-link').forEach(function(link) {
+            link.href = "/member-home?username=" + encodeURIComponent(activeUser.username);
+        });
+        document.querySelectorAll('.member-discovery-nav a[href="member-profile.html"]').forEach(function(link) {
             link.href = "/member-profile";
         });
     }
