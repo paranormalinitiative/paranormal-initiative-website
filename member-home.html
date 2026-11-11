@@ -905,8 +905,40 @@
             font-size: 13px;
         }
 
+        .member-profile-about {
+            margin: 0 26px 22px 216px;
+            padding: 20px 22px;
+            background: #0d1017;
+            border: 1px solid #263646;
+            border-radius: 18px;
+        }
+
+        body.member-mode section.member-profile-about { padding: 20px 22px; }
+        .member-profile-about[hidden] { display: none; }
+        .member-profile-about h2 {
+            margin: 0 0 14px;
+            padding: 0 0 10px;
+            color: #f4f8fb;
+            font-size: 19px;
+            border-bottom: 1px solid #263646;
+        }
+        .member-profile-about-title {
+            margin: 0 0 14px;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.5;
+        }
+        .member-profile-bio { display: grid; gap: 12px; }
+        .member-profile-bio p {
+            margin: 0;
+            color: #c3cfda;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
         .member-profile-actions {
-            margin-top: 0;
+            margin-top: 12px;
             align-items: center;
             flex-wrap: wrap;
             justify-content: flex-end;
@@ -2494,6 +2526,14 @@
                 justify-content: center;
             }
 
+            .member-profile-about {
+                margin: 0 12px 18px;
+                padding: 18px 16px;
+                text-align: left;
+            }
+
+            body.member-mode section.member-profile-about { padding: 18px 16px; }
+
             .member-profile-actions {
                 justify-content: center;
             }
@@ -2795,7 +2835,7 @@
                  .member-home-header marker below keeps member-shell.js from
                  auto-generating its own "Home | Hello" heading.) -->
             <div class="member-home-header" hidden aria-hidden="true"></div>
-            <section class="member-profile-identity" id="profile-about" data-member-profile-view hidden aria-labelledby="member-profile-name">
+            <section class="member-profile-identity" id="profile-identity" data-member-profile-view hidden aria-labelledby="member-profile-name">
                 <div class="member-profile-cover">
                     <img data-member-profile-banner src="/assets/tpi-banner.png" alt="">
                     <a class="member-profile-cover-edit" data-profile-banner-edit hidden href="/member-profile.html#profile-editor" aria-label="Update profile banner" title="Update profile banner">✎</a>
@@ -2821,7 +2861,6 @@
                                     <button type="button" class="member-profile-options-toggle" data-profile-options-toggle aria-expanded="false" aria-haspopup="menu" aria-label="More profile options">•••</button>
                                     <div class="member-profile-options-panel" data-profile-options-panel hidden role="menu">
                                         <p class="member-profile-options-label">Profile options</p>
-                                        <a href="/member-profile.html#profile-editor" data-profile-option-edit role="menuitem">Edit profile<span>Update your avatar, banner, bio, and profile details</span></a>
                                         <a href="#community-feed" role="menuitem">View posts<span>Go to this profile feed</span></a>
                                         <a href="member-photos.html" role="menuitem">View photos<span>Open your photo library</span></a>
                                         <a href="member-videos.html" role="menuitem">Open videos<span>View member videos</span></a>
@@ -2832,10 +2871,14 @@
                             </div>
                         </div>
                         <p class="member-profile-role" data-member-role></p>
-                        <p class="member-profile-bio" data-member-bio></p>
-                        <div class="member-profile-facts" data-member-facts></div>
                     </div>
                 </div>
+                <section class="member-profile-about" id="profile-about-details" data-profile-about hidden aria-labelledby="profile-about-title">
+                    <h2 id="profile-about-title">About <span data-about-name></span></h2>
+                    <p class="member-profile-about-title" data-about-title></p>
+                    <div class="member-profile-bio" data-member-bio></div>
+                    <div class="member-profile-facts" data-member-facts></div>
+                </section>
                 <div class="member-profile-stats" data-member-profile-stats>
                     <span><strong data-profile-followers>0</strong> Followers</span>
                     <span><strong data-profile-following>0</strong> Following</span>
@@ -2844,7 +2887,7 @@
                 </div>
                 <nav class="member-profile-tabs" aria-label="Profile sections">
                     <a class="active" href="#community-feed">Posts</a>
-                    <a href="#profile-about">About</a>
+                    <a href="#profile-about-details" data-profile-about-toggle aria-expanded="false" aria-controls="profile-about-details">About</a>
                     <a href="member-videos.html">Reels</a>
                     <a href="member-photos.html">Photos</a>
                     <a href="events.html?member=1">Events</a>
@@ -3245,6 +3288,8 @@
     var profileRole = document.querySelector("[data-member-role]");
     var profileBio = document.querySelector("[data-member-bio]");
     var profileFacts = document.querySelector("[data-member-facts]");
+    var profileAbout = document.querySelector("[data-profile-about]");
+    var profileAboutToggle = document.querySelector("[data-profile-about-toggle]");
     var profileEditLink = document.querySelector("[data-profile-edit]");
     var profileFollowButton = document.querySelector("[data-profile-follow]");
     var profileFriendButton = document.querySelector("[data-profile-friend]");
@@ -3350,6 +3395,7 @@
         initRecognitionModal();
         setupProfileActions();
         setupProfileOptions();
+        setupProfileAbout();
         setupProfileLinks();
         if (!profileMode) loadMyContent();
         currentUsername = activeUser.username;
@@ -3870,7 +3916,24 @@
         if (profileUsername) profileUsername.textContent = profileUser.username ? "@" + profileUser.username : "";
         if (profileTitle) profileTitle.textContent = profileUser.title || "";
         if (profileRole) profileRole.textContent = getRoleLabel(profileUser.role);
-        if (profileBio) profileBio.textContent = profileUser.bio || "";
+        var aboutName = document.querySelector("[data-about-name]");
+        var aboutTitle = document.querySelector("[data-about-title]");
+        if (aboutName) aboutName.textContent = name;
+        if (aboutTitle) aboutTitle.textContent = profileUser.title || "";
+        if (profileBio) {
+            var bio = String(profileUser.bio || "").trim();
+            var paragraphs = bio.split(/\n\s*\n/).map(function(part) { return part.trim(); }).filter(Boolean);
+            if (paragraphs.length < 2 && bio) {
+                paragraphs = bio.split(/(?<=[.!?])\s+(?=[A-Z])/).reduce(function(groups, sentence, index) {
+                    if (!groups.length || index % 2 === 0) groups.push(sentence);
+                    else groups[groups.length - 1] += " " + sentence;
+                    return groups;
+                }, []);
+            }
+            profileBio.innerHTML = paragraphs.map(function(paragraph) {
+                return '<p>' + escapeHtml(paragraph) + '</p>';
+            }).join("");
+        }
 
         if (profileBanner) {
             profileBanner.src = profileUser.profileBannerUrl || "/assets/tpi-banner.png";
@@ -3901,6 +3964,11 @@
         if (profileAvatarEdit) profileAvatarEdit.hidden = !ownProfile;
         if (profileOptions) profileOptions.hidden = !ownProfile;
         if (profileSetup) profileSetup.hidden = !ownProfile;
+        if (profileAboutToggle) {
+            profileAboutToggle.hidden = !profileMode;
+            profileAboutToggle.setAttribute("aria-expanded", "false");
+        }
+        if (profileAbout) profileAbout.hidden = true;
 
         if (profileRelationship) {
             var setProfileStat = function(selector, value) {
@@ -3986,6 +4054,18 @@
             profileOptionsPanel.hidden = true;
             profileOptionsToggle.setAttribute("aria-expanded", "false");
             profileOptionsToggle.focus();
+        });
+    }
+
+    function setupProfileAbout() {
+        if (!profileAboutToggle || !profileAbout) return;
+        profileAboutToggle.addEventListener("click", function(event) {
+            event.preventDefault();
+            var willOpen = profileAbout.hidden;
+            profileAbout.hidden = !willOpen;
+            profileAboutToggle.setAttribute("aria-expanded", String(willOpen));
+            profileAboutToggle.classList.toggle("active", willOpen);
+            if (willOpen) profileAbout.scrollIntoView({ block: "nearest", behavior: "smooth" });
         });
     }
 
