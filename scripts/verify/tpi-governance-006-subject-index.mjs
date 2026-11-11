@@ -24,7 +24,8 @@ check("shared subject catalog exists", existsSync(resolve(root, "education-subje
 check("editor loads the shared catalog", editor.includes("education-subjects.js"));
 check("Education Center loads the live subject index", center.includes('id="tpi-education-subject-directory"') && center.includes("education-center-subjects.js"));
 check("Education Center exposes the complete subject shelves", center.includes('id="tpi-education-subject-directory"') && index.includes("edu-accordion-item") && index.includes("TPI_EDUCATION_SUBJECTS"));
-check("Education Center has one featured shelf directory", center.includes("Featured Research Shelves") && center.includes("Start with selected lessons and guides.") && !center.includes("Quick Start") && !center.includes("More Resources"));
+check("Education Center has one research shelf directory", center.includes("Research Shelves") && center.includes("Browse the research library by subject.") && center.includes("Open a shelf to explore") && !center.includes("Featured Research Shelves") && !center.includes("Quick Start") && !center.includes("More Resources"));
+check("Education Center explains its full research scope", center.includes("metaphysical traditions") && center.includes("witchcraft and folklore") && center.includes("consciousness and human experience") && center.includes("EVP and ITC"));
 check("public Education Center copy omits workspace implementation details", !center.includes("Nova Editorial Workspace") && !index.includes("Editorial Workspace"));
 check("public subject wording omits legacy labels", !catalog.includes("Legacy") && !index.includes("Legacy") && !center.includes("Legacy"));
 check("Ghostology is the public subject label", catalog.includes('["ghostology-101.html", "Ghostology",') && !catalog.includes("Ghostology Reference") && !editor.includes("Ghostology Reference"));
