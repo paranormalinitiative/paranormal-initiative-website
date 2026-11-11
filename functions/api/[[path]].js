@@ -9454,7 +9454,10 @@ async function handleMemberProfile(request, env, user) {
   }
   return json({
     profile: { id: target.id, ...publicUser(target) },
-    relationship: await getMemberRelationship(env, user, target)
+    relationship: await getMemberRelationship(env, user, target),
+    foundingMembership: await publicMembershipIdentity(env, target.id),
+    leadershipDistinctions: await listLeadershipDistinctions(env, "member", target.id),
+    boardMembership: await getBoardMembership(env, target.id)
   }, 200, { "Cache-Control": "no-store" });
 }
 

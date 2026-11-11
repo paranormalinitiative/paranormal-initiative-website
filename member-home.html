@@ -2568,7 +2568,7 @@
                  .member-home-header marker below keeps member-shell.js from
                  auto-generating its own "Home | Hello" heading.) -->
             <div class="member-home-header" hidden aria-hidden="true"></div>
-            <section class="member-profile-identity" data-member-profile-view hidden aria-labelledby="member-profile-name">
+            <section class="member-profile-identity" id="profile-about" data-member-profile-view hidden aria-labelledby="member-profile-name">
                 <div class="member-profile-cover" aria-hidden="true"></div>
                 <div class="member-profile-hero">
                     <div class="member-profile-photo-wrap" data-member-photo></div>
@@ -2580,6 +2580,7 @@
                                 <p class="member-profile-title-line" data-member-title></p>
                             </div>
                             <div class="member-profile-actions" data-member-profile-actions>
+                                <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html">Update Profile</a>
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-follow hidden>Follow</button>
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-friend hidden>Add Friend</button>
                                 <a class="member-btn member-btn-primary" data-profile-chat hidden href="#messenger">Chat</a>
@@ -2588,6 +2589,7 @@
                         <p class="member-profile-role" data-member-role></p>
                         <p class="member-profile-bio" data-member-bio></p>
                         <div class="member-profile-facts" data-member-facts></div>
+                        <div data-member-recognition-shelf></div>
                     </div>
                 </div>
                 <div class="member-profile-stats" data-member-profile-stats>
@@ -2598,7 +2600,7 @@
                 </div>
                 <nav class="member-profile-tabs" aria-label="Profile sections">
                     <a class="active" href="#community-feed">Posts</a>
-                    <a href="member-profile.html">About</a>
+                    <a href="#profile-about">About</a>
                     <a href="member-videos.html">Reels</a>
                     <a href="member-photos.html">Photos</a>
                     <a href="events.html?member=1">Events</a>
@@ -2618,7 +2620,7 @@
                 </form>
                 <nav class="member-discovery-nav" aria-label="Member shortcuts">
                     <a href="#community-feed">Feed</a>
-                    <a href="member-profile.html">Profile</a>
+                    <a href="/member-profile">Profile</a>
                     <a href="member-photos.html">Photos</a>
                     <a href="member-videos.html">Videos</a>
                     <button type="button" disabled title="Friends area is not available yet">Friends</button>
@@ -2957,6 +2959,7 @@
     var activeUser = null;
     var profileUser = null;
     var profileRelationship = null;
+    var profileRecognition = null;
     var profileMode = false;
     var currentTab = "activity";
     var viewingOwnProfile = true;
@@ -2974,6 +2977,8 @@
     var profileRole = document.querySelector("[data-member-role]");
     var profileBio = document.querySelector("[data-member-bio]");
     var profileFacts = document.querySelector("[data-member-facts]");
+    var profileRecognitionShelf = document.querySelector("[data-member-recognition-shelf]");
+    var profileEditLink = document.querySelector("[data-profile-edit]");
     var profileFollowButton = document.querySelector("[data-profile-follow]");
     var profileFriendButton = document.querySelector("[data-profile-friend]");
     var profileChatLink = document.querySelector("[data-profile-chat]");
@@ -3037,7 +3042,9 @@
             return;
         }
 
-        var requestedUsername = new URLSearchParams(window.location.search).get("username");
+        var params = new URLSearchParams(window.location.search);
+        var isCleanProfileRoute = /^\/member-profile(?:\.html)?\/?$/.test(window.location.pathname);
+        var requestedUsername = params.get("username") || (isCleanProfileRoute ? activeUser.username : "");
         profileMode = Boolean(requestedUsername);
         var isOwnProfile = !requestedUsername || requestedUsername === activeUser.username;
 
@@ -3060,6 +3067,7 @@
                 var memberProfileData = await window.TPIApi.memberProfile(profileUser.username);
                 if (memberProfileData.profile) profileUser = Object.assign({}, profileUser, memberProfileData.profile);
                 profileRelationship = memberProfileData.relationship || {};
+                profileRecognition = memberProfileData;
             } catch (e) {
                 profileRelationship = {};
             }
@@ -3070,6 +3078,7 @@
         if (feedTabLabel) feedTabLabel.textContent = profileMode ? "Profile Feed" : "Community Feed";
         renderGreeting();
         renderProfile();
+        initRecognitionModal();
         setupProfileActions();
         setupProfileLinks();
         if (!profileMode) loadMyContent();
@@ -3400,7 +3409,7 @@
                 '<div class="rail-pulse-stat"><strong id="pulse-uploads">–</strong><span>Uploads</span></div>' +
                 '<div class="rail-pulse-stat"><strong id="pulse-streams">–</strong><span>Live Streams</span></div>' +
             '</div>' +
-            '<a class="rail-pulse-link" href="member-profile.html">View Profile</a>';
+            '<a class="rail-pulse-link" href="/member-profile">View Profile</a>';
         // Stats come from /me/pulse — a truthful count of this member's
         // real activity (likes given, topics started, comments written,
         // media uploaded). Layout per Todd: Likes | Following, Posts |
@@ -3484,7 +3493,7 @@
                     ? '<img class="rail-member-avatar" src="' + escapeAttr(m.authorPhotoUrl) + '" alt="' + escapeAttr(m.authorName) + '">'
                     : '<div class="rail-member-initial" style="border-color:' + escapeAttr(m.authorChatColor || "var(--accent)") + ';background:' + escapeAttr(m.authorChatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
                 var sub = m.type === "article" ? "Published content" : (m.categoryTitle || "Community post");
-                return '<a class="rail-member" href="/member-home?username=' + encodeURIComponent(m.authorUsername) + '">' +
+                return '<a class="rail-member" href="/member-profile?username=' + encodeURIComponent(m.authorUsername) + '">' +
                     avatar +
                     '<div style="min-width:0;">' +
                         '<p class="rail-member-name">' + escapeHtml(m.authorName || "Member") + '</p>' +
@@ -3508,7 +3517,7 @@
             var avatar = member.photoUrl
                 ? '<img class="rail-member-avatar" src="' + escapeAttr(member.photoUrl) + '" alt="' + escapeAttr(member.displayName || member.username) + '">'
                 : '<div class="rail-member-initial" style="border-color:' + escapeAttr(member.chatColor || "var(--accent)") + ';background:' + escapeAttr(member.chatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
-            return '<a class="rail-member" href="/member-home?username=' + encodeURIComponent(member.username || "") + '">' +
+            return '<a class="rail-member" href="/member-profile?username=' + encodeURIComponent(member.username || "") + '">' +
                 avatar +
                 '<div style="min-width:0;">' +
                     '<p class="rail-member-name">' + escapeHtml(member.displayName || member.username || "Member") + '</p>' +
@@ -3608,6 +3617,16 @@
             profileFacts.innerHTML = facts.join("");
         }
 
+        if (profileRecognitionShelf) {
+            profileRecognitionShelf.innerHTML = profileMode && profileRecognition
+                ? renderRecognitionShelf(profileRecognition.boardMembership, profileRecognition.leadershipDistinctions, profileUser.title)
+                : "";
+        }
+
+        if (profileEditLink) {
+            profileEditLink.hidden = !profileMode || profileUser.username !== activeUser.username;
+        }
+
         if (profileRelationship) {
             var setProfileStat = function(selector, value) {
                 var element = document.querySelector(selector);
@@ -3675,6 +3694,75 @@
         }
     }
 
+    function cacheBustedRecognitionAsset(path) {
+        var value = String(path || "").trim();
+        if (!value) return "";
+        return value + (value.indexOf("?") >= 0 ? "&" : "?") + "tpi-recognition=20261110";
+    }
+
+    function recognitionTrigger(image, title, detail, description) {
+        return '<button type="button" class="profile-recognition-trigger" data-recognition-trigger data-recognition-image="' + escapeAttr(image || "") + '" data-recognition-title="' + escapeAttr(title || "Recognition") + '" data-recognition-detail="' + escapeAttr(detail || "") + '" data-recognition-description="' + escapeAttr(description || "") + '" aria-label="View ' + escapeAttr(title || "recognition") + ' details"><img src="' + escapeAttr(image || "") + '" alt="' + escapeAttr(title || "Recognition") + '" loading="lazy" decoding="async"></button>';
+    }
+
+    function renderRecognitionShelf(boardMembership, distinctions, profileTitle) {
+        var rows = Array.isArray(distinctions)
+            ? distinctions.filter(function(item) { return item && item.status === "active" && item.assetPath; }).map(function(item) {
+                return {
+                    kind: "distinction",
+                    code: item.code || "",
+                    title: item.label || "Leadership distinction",
+                    detail: item.roleLabel && !/legacy/i.test(item.roleLabel) && item.roleLabel !== "Leadership distinction"
+                        ? item.roleLabel
+                        : (profileTitle || "Leadership distinction"),
+                    description: item.description || "",
+                    image: cacheBustedRecognitionAsset(String(item.assetPath).replace("-256.png", "-512.png")),
+                    color: item.color || "#d6a84f"
+                };
+            })
+            : [];
+        var ordered = [];
+        var gold = rows.find(function(item) { return item.code === "gold"; });
+        if (gold) ordered.push(gold);
+        if (boardMembership && boardMembership.status === "active" && boardMembership.badgePath) {
+            ordered.push({
+                kind: "board",
+                title: boardMembership.label || "Board Member",
+                detail: boardMembership.positionTitle || "Board Member",
+                description: "",
+                image: cacheBustedRecognitionAsset(boardMembership.badgePath2x || boardMembership.badgePath),
+                color: boardMembership.color || "#d6a84f"
+            });
+        }
+        rows.forEach(function(item) { if (item !== gold) ordered.push(item); });
+        if (!ordered.length) return "";
+        return '<section class="profile-recognition-shelf" aria-label="Honors and distinctions"><p class="portal-kicker">Honors &amp; Distinctions</p><div class="profile-recognition-grid">' + ordered.map(function(item) {
+            return '<article class="profile-recognition-card" style="--recognition-color:' + escapeAttr(item.color || "#d6a84f") + '" data-recognition-kind="' + escapeAttr(item.kind || "honor") + '"><div class="profile-recognition-art">' + recognitionTrigger(item.image, item.title, item.detail, item.description) + '</div><div class="profile-recognition-copy"><strong>' + escapeHtml(item.title || "Recognition") + '</strong><span>' + escapeHtml(item.detail || "") + '</span>' + (item.description ? '<small>' + escapeHtml(item.description) + '</small>' : '') + '</div></article>';
+        }).join("") + '</div></section>';
+    }
+
+    function initRecognitionModal() {
+        if (document.querySelector("[data-recognition-modal]")) return;
+        var modal = document.createElement("div");
+        modal.className = "recognition-modal";
+        modal.dataset.recognitionModal = "true";
+        modal.hidden = true;
+        modal.innerHTML = '<div class="recognition-modal-backdrop" data-recognition-close></div><div class="recognition-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="member-recognition-modal-title"><button type="button" class="recognition-modal-close" data-recognition-close aria-label="Close recognition details">×</button><img data-recognition-modal-image alt=""><p class="portal-kicker">Recognition details</p><h2 id="member-recognition-modal-title" data-recognition-modal-title></h2><p class="recognition-modal-detail" data-recognition-modal-detail></p><p data-recognition-modal-description></p></div>';
+        document.body.appendChild(modal);
+        var close = function() { modal.hidden = true; document.body.classList.remove("recognition-modal-open"); };
+        document.addEventListener("click", function(event) {
+            var trigger = event.target.closest("[data-recognition-trigger]");
+            if (trigger) {
+                modal.querySelector("[data-recognition-modal-image]").src = trigger.dataset.recognitionImage || "";
+                modal.querySelector("[data-recognition-modal-image]").alt = trigger.dataset.recognitionTitle || "Recognition";
+                modal.querySelector("[data-recognition-modal-title]").textContent = trigger.dataset.recognitionTitle || "Recognition";
+                modal.querySelector("[data-recognition-modal-detail]").textContent = trigger.dataset.recognitionDetail || "";
+                modal.querySelector("[data-recognition-modal-description]").textContent = trigger.dataset.recognitionDescription || "";
+                modal.hidden = false;
+                document.body.classList.add("recognition-modal-open");
+            } else if (event.target.closest("[data-recognition-close]")) close();
+        });
+    }
+
     async function loadMyContent() {
         var card = document.getElementById("my-content-card");
         if (!card || !hasContributorAccess(activeUser) || !window.TPIApi || !window.TPIApi.contributorArticles) return;
@@ -3712,9 +3800,8 @@
 
     function setupProfileLinks() {
         if (!activeUser || !activeUser.username) return;
-        var ownProfileHref = "member-home.html?username=" + encodeURIComponent(activeUser.username);
         document.querySelectorAll('.rail-pulse-link, .member-discovery-nav a[href="member-profile.html"]').forEach(function(link) {
-            link.href = ownProfileHref;
+            link.href = "/member-profile";
         });
     }
 
@@ -4215,7 +4302,7 @@
         var profileContext = profileMode && profileUser && profileUser.username ? "&username=" + encodeURIComponent(profileUser.username) : "";
         var postPath = "/member-home?member=1" + profileContext + "&post=" + encodeURIComponent(item.postId || "") + "#post-" + encodeURIComponent(item.postId || "");
         var postUrl = window.preserveMemberMode ? window.preserveMemberMode(postPath) : postPath;
-        var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";
+        var profileUrl = item.authorUsername ? "/member-profile?username=" + encodeURIComponent(item.authorUsername) : "#";
         var isOpenPost = getRequestedPostId() === String(item.postId || "");
         var bodyHtml = renderFeedBody(item.body || "", isOpenPost ? 0 : 400);
 
@@ -4808,7 +4895,7 @@
     }
 
     function renderArticleCard(item) {
-        var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";
+        var profileUrl = item.authorUsername ? "/member-profile?username=" + encodeURIComponent(item.authorUsername) : "#";
         var rawArticleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
         var articleUrl = window.preserveMemberMode ? window.preserveMemberMode(rawArticleUrl) : rawArticleUrl;
         var typeBadge = item.contributionType || item.articleType || "Article";

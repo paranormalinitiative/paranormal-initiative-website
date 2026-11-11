@@ -57,7 +57,7 @@ try {
       fetch('/api/friends/request/cancel',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetUsername:targetUsername})})
     ]).then(function(){done(true);}).catch(function(){done(false);});`, target.username);
 
-  await driver.get(`${base}/member-home?username=${encodeURIComponent(target.username)}`);
+  await driver.get(`${base}/member-profile?username=${encodeURIComponent(target.username)}`);
   await waitFor("profile mode", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden"));
   await waitFor("Messenger shell", async () => driver.executeScript("return Boolean(document.querySelector('[data-member-floating-chat]'))"));
   await driver.executeScript("var minimize=document.querySelector('[data-chat-minimize]'); if (minimize) minimize.click();");

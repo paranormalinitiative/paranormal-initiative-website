@@ -51,9 +51,11 @@ const contributor = await login("local_contributor");
 const target = contributor.user.username;
 const targetId = contributor.user.id;
 
-const profilePage = await request(`/member-home?username=${encodeURIComponent(target)}`, auth(member.token));
-check("profile page is available", profilePage.response.status === 200);
-check("profile page contains the profile identity and shared feed shell", profilePage.text.includes("data-member-profile-view") && profilePage.text.includes("data-member-feed") && profilePage.text.includes("data-feed-tab"));
+const profilePage = await request(`/member-profile?username=${encodeURIComponent(target)}`, auth(member.token));
+check("clean profile page is available", profilePage.response.status === 200);
+check("clean profile page serves the profile identity and shared feed shell", profilePage.text.includes("data-member-profile-view") && profilePage.text.includes("data-member-feed") && profilePage.text.includes("data-feed-tab"));
+const editorPage = await request("/member-profile.html", auth(member.token));
+check("profile editor remains a separate authenticated surface", editorPage.response.status === 200 && editorPage.text.includes("Update Profile") && editorPage.text.includes("data-profile-form"));
 
 const profile = await request(`/api/members/profile?username=${encodeURIComponent(target)}`, auth(member.token));
 check("member profile returns the target and relationship", profile.response.status === 200 && profile.body?.profile?.username === target && profile.body?.relationship);

@@ -1622,7 +1622,7 @@
     updateDashboardToolVisibility(user);
     if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
     if (dashboardRole) dashboardRole.textContent = [user.title, getAccountAccessLabel(user.role)].filter(Boolean).join(" - ");
-    if (publicProfileLink) publicProfileLink.href = `contributor-profile.html?username=${encodeURIComponent(user.username)}`;
+    if (publicProfileLink) publicProfileLink.href = `/member-profile?username=${encodeURIComponent(user.username)}`;
     if (accountIdentity) {
       const email = user.correspondence || "";
       accountIdentity.innerHTML = `

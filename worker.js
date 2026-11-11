@@ -295,6 +295,16 @@ export default {
       return Response.redirect(new URL("/member-home?member=1", url.origin).toString(), 302);
     }
 
+    // The clean member-profile route is the signed-in member's home profile:
+    // identity, recognitions, and that member's own community feed. The old
+    // .html bookmark remains the profile editor until the dedicated edit
+    // surface is opened from Settings.
+    if (url.pathname === "/member-profile" || url.pathname === "/member-profile/") {
+      const profileUrl = new URL(request.url);
+      profileUrl.pathname = "/member-home.html";
+      return serveAssets(new Request(profileUrl, request), env);
+    }
+
     // The public root remains available to signed-out visitors, while the
     // authoritative server session determines the destination for members.
     // This prevents the homepage from briefly rendering public content before
