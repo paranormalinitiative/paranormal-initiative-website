@@ -24,28 +24,21 @@ Founding Membership.
 They remain visual recognition only; server-side account records continue to
 decide permissions and access.
 
-## Master artwork (preserved unchanged)
+## Master artwork
 
-Imported from the owner's Mac on 2026-11-03. Files are byte-identical copies with
-the owner's original filenames, including the spaces.
+Updated from the owner's transparent artwork on 2026-11-10. The masters are
+1254×1254 RGBA PNGs with transparent backgrounds and are used to regenerate the
+published derivatives.
 
 | File | Source | Dimensions | SHA-256 |
 |---|---|---|---|
-| `masters/Gold Badge.png` | `/Users/toddknipple/Desktop/Gold Badge.png` | 992×1061 | `d80316b2c527e3d5fe65bc4c667adc689e5c70189c06808d42c3304808d5403f` |
-| `masters/Silver Badge.png` | `/Users/toddknipple/Desktop/Silver Badge.png` | 992×1061 | `0ef87714d6348b56db48e4fcb847ae4ebfe7223645bd7f8d6647f8d3d7f03f8d` |
-| `masters/Bronze Badge.png` | `/Users/toddknipple/Desktop/Bronze Badge.png` | 992×1061 | `af0e03cbbe5c1d04912775d97fa46c287b9d9f441a43fafca22fdb3613ba4fe8` |
+| `masters/Gold Badge.png` | `/Users/toddknipple/Desktop/GoldTransparent.png` | 1254×1254 RGBA | `da1b64832aa4110250376ad29a3a9f461a90825f50e8f2027917f830a2c4bd14` |
+| `masters/Silver Badge.png` | `/Users/toddknipple/Desktop/SilverTransparent.png` | 1254×1254 RGBA | `aa7726f1e3fd6e82790281fc60e1f685c9273eb58d30ed85013f4c6bf7fa0012` |
+| `masters/Bronze Badge.png` | `/Users/toddknipple/Desktop/BronzeTransparent.png` | 1254×1254 RGBA | `683dbcae5351474c46a5dfdbf49a50960cda05d116ccd9d114f30e21a9158763` |
 
-Two properties of the supplied originals are preserved deliberately and are
-**not** corrected in the masters:
-
-1. The `.png` files actually contain JPEG data (JFIF), not PNG. They display
-   correctly because browsers decode by content, but the extension is
-   inaccurate. The masters are not re-encoded.
-2. The artwork has a flattened transparency checkerboard baked into the pixels
-   (a JPEG has no alpha channel). Any production surface therefore shows a light
-   checkerboard behind the medallion. Producing a transparent-background or
-   circular-mask variant is a visual-identity decision for the owner, not an
-   automatic edit; do not matte, recolor, or crop the masters.
+The supplied transparent artwork is preserved without a baked checkerboard or
+colored image backing. Profile surfaces render the medallions directly on the
+page background.
 
 ## Web derivatives
 

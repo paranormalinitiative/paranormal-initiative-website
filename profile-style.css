@@ -37,8 +37,7 @@
 @media(max-width:1050px) { .tpi-settings .profile-style-options { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 
 /* TPI-CREATOR-INCENTIVE-001B: Founding Membership identity chip (own profile and
-   public contributor profile). The artwork is a published 256px derivative,
-   clipped to a circle because the RGB PNG has a flattened background. */
+   public contributor profile). */
 .founding-badge-chip { display: inline-flex; align-items: center; gap: 14px; margin-top: 14px; padding: 12px 16px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-surface); max-width: 100%; }
 .profile-recognition-trigger { display: inline-grid; place-items: center; flex: none; padding: 0; border: 0; border-radius: var(--radius-full); background: transparent; cursor: zoom-in; }
 .profile-recognition-trigger:focus-visible { outline: 3px solid var(--profile-highlight,var(--text-accent)); outline-offset: 4px; }
@@ -54,15 +53,14 @@
 .profile-recognition-shelf > .portal-kicker { margin-bottom: 10px; }
 .profile-recognition-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
 .profile-recognition-card { display: grid; justify-items: center; gap: 9px; min-width: 0; padding: 14px 10px; border: 1px solid color-mix(in srgb,var(--recognition-color) 55%,var(--border-default)); border-radius: var(--radius-sm); background: color-mix(in srgb,var(--recognition-color) 8%,var(--bg-surface)); text-align: center; }
-.profile-recognition-art { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 78px; }
-.profile-recognition-art .profile-recognition-trigger { width: 78px; height: 78px; }
-.profile-recognition-art-dual .profile-recognition-trigger { width: 60px; height: 60px; }
-.profile-recognition-art .profile-recognition-trigger img { width: 100%; height: 100%; border: 2px solid var(--recognition-color); }
+.profile-recognition-art { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 148px; width: 100%; }
+.profile-recognition-art .profile-recognition-trigger { width: min(148px, 100%); height: auto; aspect-ratio: 1; padding: 0; border: 0; border-radius: 0; background: transparent !important; }
+.profile-recognition-art .profile-recognition-trigger img { display: block; width: 100%; height: 100%; border: 0; border-radius: 0; background: transparent; object-fit: contain; }
 .profile-recognition-copy { display: grid; gap: 3px; justify-items: center; min-width: 0; }
 .profile-recognition-copy strong { color: var(--text-primary); font-size: 13px; line-height: 1.25; }
 .profile-recognition-copy span { color: var(--recognition-color); font-size: 11px; font-weight: 800; line-height: 1.3; }
 .profile-recognition-copy small { color: var(--text-secondary); font-size: 11px; line-height: 1.35; }
-@media(max-width:640px) { .profile-recognition-grid { grid-template-columns: 1fr; } }
+@media(max-width:640px) { .profile-recognition-grid { grid-template-columns: 1fr; } .profile-recognition-art { min-height: 132px; } .profile-recognition-art .profile-recognition-trigger { width: 132px; } }
 
 .recognition-modal[hidden] { display: none; }
 .recognition-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; }

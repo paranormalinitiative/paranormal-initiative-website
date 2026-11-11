@@ -41,8 +41,8 @@ try {
   await driver.get(`${baseUrl}/contributor-profile?username=${encodeURIComponent(username)}`);
   await driver.wait(until.elementLocated(By.css(".public-profile-card")), 20000);
   const trigger = await driver.wait(until.elementLocated(By.css(".public-profile-sidebar .profile-recognition-trigger")), 20000);
-  check("recognition artwork renders as an accessible trigger", await trigger.isDisplayed());
   const geometry = await trigger.getRect();
+  check("recognition artwork renders as an accessible trigger", geometry.width > 0 && geometry.height > 0);
   check("recognition artwork has a usable rendered size", geometry.width >= 60 && geometry.height >= 60, `${Math.round(geometry.width)}x${Math.round(geometry.height)}`);
   await trigger.click();
   const modal = await driver.wait(until.elementLocated(By.css(".recognition-modal:not([hidden])")), 5000);
@@ -65,19 +65,19 @@ try {
     check("honors shelf starts with the distinction", firstCardText.includes("Medallion"));
     check("board member follows the distinction", secondCardText.includes("Board Member"));
   }
-  const secondaryTriggers = await driver.findElements(By.css(".board-member-medallion-trigger, .leadership-distinction-trigger"));
-  if (secondaryTriggers.length) {
-    const secondary = secondaryTriggers[0];
-    const secondaryTitle = await secondary.getAttribute("data-recognition-title");
-    await secondary.click();
-    const secondaryModal = await driver.wait(until.elementLocated(By.css(".recognition-modal:not([hidden])")), 5000);
-    const secondaryText = await secondaryModal.getText();
-    check("secondary medallion recognition opens", secondaryTitle && secondaryText.includes(secondaryTitle), `${secondaryTitle || "missing title"}`);
-    const secondaryImage = await secondaryModal.findElement(By.css("[data-recognition-modal-image]"));
-    await driver.wait(async () => Number(await secondaryImage.getAttribute("naturalWidth")) > 0, 5000).catch(() => {});
-    check("secondary medallion artwork loads", Number(await secondaryImage.getAttribute("naturalWidth")) > 0);
-    await secondaryModal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
+  const boardTriggers = await driver.findElements(By.css(".board-member-badge-trigger"));
+  if (boardTriggers.length) {
+    check("board member uses one standalone badge", boardTriggers.length === 1, `${boardTriggers.length} badge images`);
+    const boardImage = await boardTriggers[0].findElement(By.css("img"));
+    await driver.wait(async () => Number(await boardImage.getAttribute("naturalWidth")) > 0, 5000).catch(() => {});
+    check("board member badge artwork loads", Number(await boardImage.getAttribute("naturalWidth")) > 0);
+    check("recognition artwork has no colored backing", await driver.executeScript(() => {
+      const image = document.querySelector(".board-member-badge-trigger img");
+      const trigger = image?.closest(".profile-recognition-trigger");
+      return Boolean(image && trigger && getComputedStyle(trigger).backgroundColor === "rgba(0, 0, 0, 0)" && getComputedStyle(image).backgroundColor === "rgba(0, 0, 0, 0)");
+    }));
   }
+  check("board member does not render a second medallion", (await driver.findElements(By.css(".board-member-medallion-trigger"))).length === 0);
 } finally {
   if (driver) await driver.quit().catch(() => {});
   rmSync(profileDir, { recursive: true, force: true });

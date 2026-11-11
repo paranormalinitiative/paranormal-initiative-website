@@ -1546,6 +1546,12 @@
       </article>`;
   }
 
+  function cacheBustedRecognitionAsset(path) {
+    const value = String(path || "").trim();
+    if (!value) return "";
+    return `${value}${value.includes("?") ? "&" : "?"}tpi-recognition=20261110`;
+  }
+
   // TPI-GOVERNANCE-004/005: one centered, ordered recognition shelf. The
   // server-resolved records are presentation only and never grant capability.
   function renderRecognitionShelf(boardMembership, distinctions, profileTitle = "") {
@@ -1558,7 +1564,7 @@
           ? item.roleLabel
           : (getLeadershipContributionLevel(profileTitle, "")?.note || "Leadership distinction"),
         description: item.description || "",
-        image: item.assetPath.replace("-256.png", "-512.png"),
+        image: cacheBustedRecognitionAsset(item.assetPath.replace("-256.png", "-512.png")),
         color: item.color || "#d6a84f",
         triggerClass: "leadership-distinction-trigger"
       }))
@@ -1571,14 +1577,10 @@
         kind: "board",
         title: boardMembership.label || "Board Member",
         detail: boardMembership.positionTitle || "Board Member",
-        description: boardMembership.medallion?.label || "Board appointment",
-        image: boardMembership.badgePath2x || boardMembership.badgePath,
-        image2: boardMembership.medallion?.assetPath?.replace("-256.png", "-512.png") || "",
-        secondaryTitle: boardMembership.medallion?.label || "Board rank medallion",
-        secondaryDescription: boardMembership.positionTitle || "Board appointment",
+        description: "",
+        image: cacheBustedRecognitionAsset(boardMembership.badgePath2x || boardMembership.badgePath),
         color: boardMembership.color || "#d6a84f",
-        triggerClass: "board-member-badge-trigger",
-        secondaryTriggerClass: "board-member-medallion-trigger"
+        triggerClass: "board-member-badge-trigger"
       });
     }
     rows.push(...distinctionRows.filter(item => item !== gold));
