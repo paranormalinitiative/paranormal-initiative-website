@@ -64,6 +64,16 @@ try {
     const secondCardText = await cards[1].getText();
     check("honors shelf starts with the distinction", firstCardText.includes("Medallion"));
     check("board member follows the distinction", secondCardText.includes("Board Member"));
+    check("recognition medallions share the same artwork row", await driver.executeScript(() => {
+      const rows = [...document.querySelectorAll(".profile-recognition-card .profile-recognition-art")];
+      return rows.length >= 2 && rows.every(row => Math.abs(row.getBoundingClientRect().height - rows[0].getBoundingClientRect().height) < 1);
+    }));
+    check("recognition medallions share the same vertical position", await driver.executeScript(() => {
+      const triggers = [...document.querySelectorAll(".profile-recognition-card .profile-recognition-trigger")];
+      if (triggers.length < 2) return false;
+      const firstTop = triggers[0].getBoundingClientRect().top;
+      return triggers.every(trigger => Math.abs(trigger.getBoundingClientRect().top - firstTop) < 1);
+    }));
   }
   const boardTriggers = await driver.findElements(By.css(".board-member-badge-trigger"));
   if (boardTriggers.length) {
