@@ -27,7 +27,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=89">
     <link rel="stylesheet" href="member-shell.css?v=62">
-    <link rel="stylesheet" href="profile-style.css?v=4">
+    <link rel="stylesheet" href="profile-style.css?v=5">
     <style>
         /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
         /* Lift the shell's 1050px cap on this page only so the rail sits far
@@ -722,6 +722,16 @@
             background: #171522;
             border: 1px solid color-mix(in srgb, #a78bfa 56%, #263646);
             border-radius: 999px;
+            font: inherit;
+            text-align: left;
+            cursor: zoom-in;
+        }
+
+        .member-profile-membership:hover,
+        .member-profile-membership:focus-visible {
+            border-color: #a78bfa;
+            outline: 2px solid color-mix(in srgb, #a78bfa 48%, transparent);
+            outline-offset: 2px;
         }
 
         .member-profile-membership img {
@@ -1055,6 +1065,17 @@
         body.member-profile-mode .member-profile-identity {
             display: block;
         }
+
+        .member-profile-honors[hidden] { display: none; }
+        .member-profile-honors {
+            margin: 0 18px 18px;
+            padding: 16px;
+            border: 1px solid #263646;
+            border-radius: 18px;
+            background: #0d1017;
+        }
+        .member-profile-honors .profile-recognition-shelf { margin-top: 0; }
+        .member-profile-honors .profile-recognition-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
 
         body.member-profile-mode .member-home-layout {
             grid-template-columns: minmax(0, 1fr) 320px;
@@ -2871,10 +2892,10 @@
                                 <p class="member-profile-username" data-member-username></p>
                                 <p class="member-profile-title-line" data-member-title></p>
                                 <p class="member-profile-role" data-member-role></p>
-                                <div class="member-profile-membership" data-member-membership hidden>
+                                <button type="button" class="member-profile-membership" data-member-membership data-recognition-trigger hidden aria-label="View membership details">
                                     <img data-member-membership-badge alt="">
                                     <span class="member-profile-membership-copy"><strong data-member-membership-label></strong><small data-member-membership-number></small></span>
-                                </div>
+                                </button>
                             </div>
                             <div class="member-profile-actions" data-member-profile-actions>
                                 <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html">Update Profile</a>
@@ -2915,6 +2936,7 @@
                     <a href="member-photos.html">Photos</a>
                     <a href="events.html?member=1">Events</a>
                 </nav>
+                <div class="member-profile-honors" data-member-profile-honors hidden></div>
             </section>
             <div class="member-identity-block">
                 <h3 class="member-identity-title">You Are the Initiative</h3>
@@ -3933,7 +3955,12 @@
 
         if (profileName) profileName.textContent = name;
         if (profileUsername) profileUsername.textContent = profileUser.username ? "@" + profileUser.username : "";
-        if (profileTitle) profileTitle.textContent = profileUser.title || "";
+        var publicTitle = String(profileUser.title || "").trim();
+        var showPublicTitle = Boolean(publicTitle && !/^(member|contributor)$/i.test(publicTitle));
+        if (profileTitle) {
+            profileTitle.textContent = showPublicTitle ? publicTitle : "";
+            profileTitle.hidden = !showPublicTitle;
+        }
         var activeMembershipBadge = profileUser.foundingMembership && profileUser.foundingMembership.badge;
         var activeMembership = activeMembershipBadge && (profileUser.foundingMembership.memberships || []).find(function(item) {
             return item.classCode === activeMembershipBadge.classCode && item.state === "active";
@@ -3949,10 +3976,21 @@
         }
         if (profileMembershipLabel) profileMembershipLabel.textContent = activeMembershipBadge && activeMembershipBadge.label || "";
         if (profileMembershipNumber) profileMembershipNumber.textContent = activeMembership && activeMembership.membershipNumber || "";
+        if (profileMembership && activeMembershipBadge) {
+            var membershipTitle = activeMembershipBadge.label || "Founding membership";
+            profileMembership.setAttribute("aria-label", "View " + membershipTitle + " details");
+            profileMembership.dataset.recognitionImage = activeMembershipBadge.asset && (activeMembershipBadge.asset.png2x || activeMembershipBadge.asset.png) || "";
+            profileMembership.dataset.recognitionTitle = membershipTitle;
+            profileMembership.dataset.recognitionDetail = activeMembership && activeMembership.membershipNumber || "";
+            profileMembership.dataset.recognitionDescription = foundingMembershipDescription(activeMembership);
+        }
         var aboutName = document.querySelector("[data-about-name]");
         var aboutTitle = document.querySelector("[data-about-title]");
         if (aboutName) aboutName.textContent = name;
-        if (aboutTitle) aboutTitle.textContent = profileUser.title || "";
+        if (aboutTitle) {
+            aboutTitle.textContent = showPublicTitle ? publicTitle : "";
+            aboutTitle.hidden = !showPublicTitle;
+        }
         if (profileBio) {
             var bio = String(profileUser.bio || "").trim();
             var paragraphs = bio.split(/\n\s*\n/).map(function(part) { return part.trim(); }).filter(Boolean);
@@ -4021,6 +4059,7 @@
             setProfileStat("[data-profile-posts]", profileRelationship.posts);
             setProfileStat("[data-profile-reels]", profileRelationship.reels);
         }
+        renderProfileHonors();
     }
 
     function setupProfileActions() {
@@ -4116,11 +4155,17 @@
         return value + (value.indexOf("?") >= 0 ? "&" : "?") + "tpi-recognition=20261110";
     }
 
+    function foundingMembershipDescription(item) {
+        var title = item && item.displayName || item && item.badge && item.badge.label || "Founding membership";
+        var capability = item && item.primaryCapability ? " Membership class: " + item.primaryCapability + "." : "";
+        return title + " recognition." + capability + " The badge identifies membership; account access is controlled separately.";
+    }
+
     function recognitionTrigger(image, title, detail, description) {
         return '<button type="button" class="profile-recognition-trigger" data-recognition-trigger data-recognition-image="' + escapeAttr(image || "") + '" data-recognition-title="' + escapeAttr(title || "Recognition") + '" data-recognition-detail="' + escapeAttr(detail || "") + '" data-recognition-description="' + escapeAttr(description || "") + '" aria-label="View ' + escapeAttr(title || "recognition") + ' details"><img src="' + escapeAttr(image || "") + '" alt="' + escapeAttr(title || "Recognition") + '" loading="lazy" decoding="async"></button>';
     }
 
-    function getRecognitionItems(boardMembership, distinctions, profileTitle) {
+    function getRecognitionItems(foundingMembership, boardMembership, distinctions, profileTitle) {
         var rows = Array.isArray(distinctions)
             ? distinctions.filter(function(item) { return item && item.status === "active" && item.assetPath; }).map(function(item) {
                 return {
@@ -4149,29 +4194,54 @@
                 color: boardMembership.color || "#d6a84f"
             });
         }
+        var memberships = foundingMembership && Array.isArray(foundingMembership.memberships) ? foundingMembership.memberships : [];
+        memberships.filter(function(item) { return item && item.state === "active" && item.badge && item.badge.asset; }).forEach(function(item) {
+            ordered.push({
+                kind: "founding-membership",
+                title: item.displayName || item.badge.label || "Founding Membership",
+                detail: item.membershipNumber || "",
+                description: foundingMembershipDescription(item),
+                image: cacheBustedRecognitionAsset(item.badge.asset.png2x || item.badge.asset.png),
+                color: item.badge.color === "purple" ? "#a78bfa" : (item.badge.color === "blue" ? "#55b9e9" : "#d6a84f")
+            });
+        });
         rows.forEach(function(item) { if (item !== gold) ordered.push(item); });
         return ordered;
     }
 
-    function renderRecognitionShelf(boardMembership, distinctions, profileTitle) {
-        var ordered = getRecognitionItems(boardMembership, distinctions, profileTitle);
+    function renderRecognitionShelf(foundingMembership, boardMembership, distinctions, profileTitle) {
+        var ordered = getRecognitionItems(foundingMembership, boardMembership, distinctions, profileTitle);
         if (!ordered.length) return "";
         return '<section class="profile-recognition-shelf" aria-label="Honors and distinctions"><p class="portal-kicker">Honors &amp; Distinctions</p><div class="profile-recognition-grid">' + ordered.map(function(item) {
             return '<article class="profile-recognition-card" style="--recognition-color:' + escapeAttr(item.color || "#d6a84f") + '" data-recognition-kind="' + escapeAttr(item.kind || "honor") + '"><div class="profile-recognition-art">' + recognitionTrigger(item.image, item.title, item.detail, item.description) + '</div><div class="profile-recognition-copy"><strong>' + escapeHtml(item.title || "Recognition") + '</strong><span>' + escapeHtml(item.detail || "") + '</span>' + (item.description ? '<small>' + escapeHtml(item.description) + '</small>' : '') + '</div></article>';
         }).join("") + '</div></section>';
     }
 
+    function renderProfileHonors() {
+        var container = document.querySelector("[data-member-profile-honors]");
+        if (!container) return;
+        var recognition = profileRecognition || profileUser || {};
+        var markup = renderRecognitionShelf(recognition.foundingMembership, recognition.boardMembership, recognition.leadershipDistinctions, profileUser && profileUser.title);
+        container.innerHTML = markup;
+        container.hidden = !markup;
+    }
+
     function renderRecognitionRail() {
         var section = document.querySelector("[data-rail-recognition]");
         var body = document.querySelector("[data-recognition-rail-body]");
         if (!section || !body) return;
+        if (profileMode) {
+            section.hidden = true;
+            body.innerHTML = "";
+            return;
+        }
         var recognition = profileMode && profileRecognition ? profileRecognition : activeUser;
-        var ordered = getRecognitionItems(recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title);
+        var ordered = getRecognitionItems(recognition && recognition.foundingMembership, recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title);
         // The signed-in /me payload is authoritative for the owner's own
         // profile. Keep the wall visible if the separate profile lookup is
         // temporarily incomplete or returns a stale recognition projection.
         if (!ordered.length && activeUser && recognition !== activeUser) {
-            ordered = getRecognitionItems(activeUser.boardMembership, activeUser.leadershipDistinctions, activeUser.title);
+            ordered = getRecognitionItems(activeUser.foundingMembership, activeUser.boardMembership, activeUser.leadershipDistinctions, activeUser.title);
         }
         if (!ordered.length) {
             section.hidden = true;

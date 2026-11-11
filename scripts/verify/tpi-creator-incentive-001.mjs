@@ -350,6 +350,8 @@ const contributorIssue = await assignFoundingMembership(fakeEnv, { member: contr
 check("Founding Contributor issuance is FCT-001", contributorIssue.membership.membershipNumber === "FCT-001");
 const allAccessIssue = await assignFoundingMembership(fakeEnv, { member: allAccessA, classCode: "FAA", actor: { username: "owner", role: "owner" } });
 check("Founding All-Access issuance is FAA-001", allAccessIssue.membership.membershipNumber === "FAA-001");
+const allAccessIdentity = await publicMembershipIdentity(fakeEnv, "acct-allaccess");
+check("public membership identity includes the All-Access badge on its active membership row", allAccessIdentity.memberships.some((row) => row.state === "active" && row.membershipNumber === "FAA-001" && row.badge?.classCode === "FAA" && row.badge.asset.png.endsWith("founding-all-access-256.png")));
 check(
   "All-Access issuance writes both capability rows (union, not a third set)",
   sqlJson("SELECT capability FROM member_entitlements WHERE contributor_id='acct-allaccess' ORDER BY capability;").map((row) => row.capability).join(",") === "contributor,creator",

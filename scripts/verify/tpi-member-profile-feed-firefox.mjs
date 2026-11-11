@@ -4,7 +4,7 @@
 import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { Builder, By } from "selenium-webdriver";
+import { Builder, By, until } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 
 const root = resolve(import.meta.dirname, "../..");
@@ -115,9 +115,25 @@ try {
   const allAccessUsername = "tpi_review_allaccess";
   await driver.get(`${base}/member-home?username=${encodeURIComponent(allAccessUsername)}`);
   await waitFor("Founding All-Access profile", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden && !document.querySelector('[data-member-membership]').hidden"));
+  await driver.wait(async () => Number(await driver.findElement(By.css("[data-member-membership-badge]")).getAttribute("naturalWidth")) > 0, 8000);
   const membershipState = await driver.executeScript("var badge=document.querySelector('[data-member-membership]'), image=document.querySelector('[data-member-membership-badge]'), role=document.querySelector('[data-member-role]'), label=document.querySelector('[data-member-membership-label]'), number=document.querySelector('[data-member-membership-number]'); return {visible:!!badge&&!badge.hidden,label:label&&label.textContent.trim(),number:number&&number.textContent.trim(),alt:image&&image.alt,loaded:image&&image.naturalWidth>0,roleHidden:role&&role.hidden};");
   check("Founding All-Access renders one badge with its number", membershipState.visible && membershipState.label === "Founding All-Access" && /^FAA-\d{3}$/.test(membershipState.number), JSON.stringify(membershipState));
   check("All-Access badge artwork loads and replaces the legacy Member Access label", membershipState.loaded && membershipState.alt === "Founding All-Access badge" && membershipState.roleHidden, JSON.stringify(membershipState));
+  const honorsState = await driver.executeScript("var profile=document.querySelector('[data-member-profile-view]'), tabs=profile&&profile.querySelector('.member-profile-tabs'), wall=profile&&profile.querySelector('[data-member-profile-honors]'), cards=wall&&wall.querySelectorAll('.profile-recognition-card'); return {visible:!!wall&&!wall.hidden,afterTabs:!!(tabs&&wall&&tabs.compareDocumentPosition(wall)&Node.DOCUMENT_POSITION_FOLLOWING),cards:cards?cards.length:0,cardTitle:cards&&cards[0]&&cards[0].querySelector('.profile-recognition-copy strong')?.textContent.trim(),cardNumber:cards&&cards[0]&&cards[0].querySelector('.profile-recognition-copy span')?.textContent.trim()};");
+  check("member profile shows a single matching honors card below its profile tabs", honorsState.visible && honorsState.afterTabs && honorsState.cards === 1 && honorsState.cardTitle === "Founding All-Access" && honorsState.cardNumber === "FAA-001", JSON.stringify(honorsState));
+  const memberBadge = await driver.findElement(By.css("[data-member-membership]"));
+  await memberBadge.click();
+  const membershipModal = await driver.wait(until.elementLocated(By.css(".recognition-modal:not([hidden])")), 5000);
+  const membershipModalText = await membershipModal.getText();
+  check("the membership badge explains its dual Creator + Contributor class", membershipModalText.includes("Founding All-Access") && membershipModalText.includes("FAA-001") && membershipModalText.includes("Creator + Contributor") && !membershipModalText.includes("Founding Founding"), membershipModalText);
+  await membershipModal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
+  const wallBadge = await driver.findElement(By.css("[data-member-profile-honors] [data-recognition-trigger]"));
+  await wallBadge.click();
+  const wallModal = await driver.wait(until.elementLocated(By.css(".recognition-modal:not([hidden])")), 5000);
+  check("the honors wall medallion opens the same details", (await wallModal.getText()).includes("Founding All-Access") && (await wallModal.getText()).includes("FAA-001"));
+  await wallModal.findElement(By.css(".recognition-modal-close[data-recognition-close]")).click();
+  const profileTitleState = await driver.executeScript("var title=document.querySelector('[data-member-title]'); return {text:title&&title.textContent.trim(),hidden:title&&title.hidden};");
+  check("generic Member text does not remain as a misleading profile title", profileTitleState.text !== "Member" || profileTitleState.hidden, JSON.stringify(profileTitleState));
 
   await driver.get(`${base}/member-home`);
   await waitFor("community home", async () => driver.executeScript("return !document.body.classList.contains('member-profile-mode') && document.querySelector('[data-feed-tab]')?.textContent.trim()==='Community Feed'"));
