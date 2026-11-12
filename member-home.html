@@ -708,43 +708,7 @@
             text-transform: uppercase;
         }
 
-        .member-profile-role[hidden],
-        .member-profile-membership[hidden] { display: none; }
-
-        .member-profile-membership {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            width: fit-content;
-            margin-top: 10px;
-            padding: 6px 10px 6px 6px;
-            color: #f4f8fb;
-            background: #171522;
-            border: 1px solid color-mix(in srgb, #a78bfa 56%, #263646);
-            border-radius: 999px;
-            font: inherit;
-            text-align: left;
-            cursor: zoom-in;
-        }
-
-        .member-profile-membership:hover,
-        .member-profile-membership:focus-visible {
-            border-color: #a78bfa;
-            outline: 2px solid color-mix(in srgb, #a78bfa 48%, transparent);
-            outline-offset: 2px;
-        }
-
-        .member-profile-membership img {
-            display: block;
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-            border-radius: 50%;
-        }
-
-        .member-profile-membership-copy { display: grid; gap: 2px; }
-        .member-profile-membership-copy strong { font-size: 11px; line-height: 1.2; }
-        .member-profile-membership-copy small { color: #b3a8d2; font-size: 10px; }
+        .member-profile-role[hidden] { display: none; }
 
         .member-profile-bio {
             color: #c3cfda;
@@ -2892,10 +2856,6 @@
                                 <p class="member-profile-username" data-member-username></p>
                                 <p class="member-profile-title-line" data-member-title></p>
                                 <p class="member-profile-role" data-member-role></p>
-                                <button type="button" class="member-profile-membership" data-member-membership data-recognition-trigger hidden aria-label="View membership details">
-                                    <img data-member-membership-badge alt="">
-                                    <span class="member-profile-membership-copy"><strong data-member-membership-label></strong><small data-member-membership-number></small></span>
-                                </button>
                             </div>
                             <div class="member-profile-actions" data-member-profile-actions>
                                 <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html">Update Profile</a>
@@ -3321,10 +3281,6 @@
     var profileUsername = document.querySelector("[data-member-username]");
     var profileTitle = document.querySelector("[data-member-title]");
     var profileRole = document.querySelector("[data-member-role]");
-    var profileMembership = document.querySelector("[data-member-membership]");
-    var profileMembershipBadge = document.querySelector("[data-member-membership-badge]");
-    var profileMembershipLabel = document.querySelector("[data-member-membership-label]");
-    var profileMembershipNumber = document.querySelector("[data-member-membership-number]");
     var profileCover = document.querySelector(".member-profile-cover");
     var profileBio = document.querySelector("[data-member-bio]");
     var profileFacts = document.querySelector("[data-member-facts]");
@@ -3960,28 +3916,9 @@
             profileTitle.textContent = showPublicTitle ? publicTitle : "";
             profileTitle.hidden = !showPublicTitle;
         }
-        var activeMembershipBadge = profileUser.foundingMembership && profileUser.foundingMembership.badge;
-        var activeMembership = activeMembershipBadge && (profileUser.foundingMembership.memberships || []).find(function(item) {
-            return item.classCode === activeMembershipBadge.classCode && item.state === "active";
-        });
         if (profileRole) {
             profileRole.textContent = getRoleLabel(profileUser.role);
-            profileRole.hidden = Boolean(activeMembershipBadge);
-        }
-        if (profileMembership) profileMembership.hidden = !activeMembershipBadge || !activeMembershipBadge.asset || !activeMembershipBadge.asset.png;
-        if (profileMembershipBadge && activeMembershipBadge && activeMembershipBadge.asset) {
-            profileMembershipBadge.src = cacheBustedRecognitionAsset(activeMembershipBadge.asset.png);
-            profileMembershipBadge.alt = activeMembershipBadge.alt || activeMembershipBadge.label || "Membership badge";
-        }
-        if (profileMembershipLabel) profileMembershipLabel.textContent = activeMembershipBadge && activeMembershipBadge.label || "";
-        if (profileMembershipNumber) profileMembershipNumber.textContent = activeMembership && activeMembership.membershipNumber || "";
-        if (profileMembership && activeMembershipBadge) {
-            var membershipTitle = activeMembershipBadge.label || "Founding membership";
-            profileMembership.setAttribute("aria-label", "View " + membershipTitle + " details");
-            profileMembership.dataset.recognitionImage = cacheBustedRecognitionAsset(activeMembershipBadge.asset && (activeMembershipBadge.asset.png2x || activeMembershipBadge.asset.png) || "");
-            profileMembership.dataset.recognitionTitle = membershipTitle;
-            profileMembership.dataset.recognitionDetail = activeMembership && activeMembership.membershipNumber || "";
-            profileMembership.dataset.recognitionDescription = foundingMembershipDescription(activeMembership);
+            profileRole.hidden = !profileRole.textContent;
         }
         var aboutName = document.querySelector("[data-about-name]");
         var aboutTitle = document.querySelector("[data-about-title]");
