@@ -7,6 +7,7 @@ badge release evidence is linked from
 
 | Area | Existing or new entrypoint | Evidence class | Default status |
 |---|---|---|---|
+| Shared page asset cache consistency | `npm run verify:shared-asset-cache-consistency` | tracked HTML asset version contract | PASS: 237 in-scope files; deployed 2026-11-11 |
 | TPI Worker and API syntax | `scripts/qa/run-qa.mjs` | local static check | PASS when runner completes |
 | TPI social and video API | `scripts/e2e/api-e2e.sh` | local D1, synthetic multi-user integration | PASS: 181/0 on 2026-10-11; includes TPI-VIDEOS-003 discovery, follows, share, threaded comments, and 002 security/publishing |
 | Social multi-member interaction audit | isolated synthetic Member A/B/C/D sessions plus local D1/API/browser checks | cross-account functional/security evidence | QUEUED after TPI-STUDIOFLOW-019 |

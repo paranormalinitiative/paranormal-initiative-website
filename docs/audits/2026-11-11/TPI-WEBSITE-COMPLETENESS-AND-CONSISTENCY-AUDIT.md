@@ -1,7 +1,7 @@
 # TPI Website Completeness and Consistency Audit
 
 Date: 2026-11-11  
-Status: **AUDIT COMPLETE; SHARED-ASSET CACHE CONSISTENCY REPAIR IN PROGRESS**  
+Status: **AUDIT COMPLETE; SHARED-ASSET CACHE CONSISTENCY REPAIR DEPLOYED AND VERIFIED**
 Scope: canonical website repository, current source and release records. This is a
 repository-wide static/documentation audit plus focused verification of the shared
 member shell and profile assets. It is not a manual visual acceptance of every route.
@@ -47,11 +47,11 @@ That could leave otherwise identical member routes rendering old navigation or p
 styles until cache expiry. The source contains one shared shell implementation, so these
 version differences were not intentional page variants.
 
-**Repair started:** all in-scope HTML references were aligned to one current version per
+**Repair completed:** all in-scope HTML references were aligned to one current version per
 shared asset, and the automatic loader was updated to those same shell versions. A
 repeatable verifier now checks the in-scope references. At this audit checkpoint it
 passes for 237 HTML files. The five standalone books and Haunted Locations directory
-remain excluded.
+remain excluded. The guarded production release completed successfully.
 
 The aligned cache keys are `style.css?v=92`, `member-shell.css?v=63`,
 `member-shell.js?v=59`, `profile-style.css?v=6`, `profile-style.js?v=2`,
@@ -77,7 +77,8 @@ them with links to the newer evidence.
 ## In progress
 
 - **Shared-asset consistency repair:** version references and regression check are
-  implemented locally; guarded release and live verification remain.
+  deployed; production assets and page shells returned successfully, and the guarded
+  release completed all live gates.
 - **Education Center organization and visual direction:** owner-led iterative work is
   continuing. The requested broad paranormal/metaphysical scope, subject shelves, and
   imagery direction should remain visible in the current task queue; the owner said the
@@ -108,11 +109,25 @@ it does not prove that every page's design is visually identical or that every
 interactive feature works. This audit did not visit all 237 routes manually. Existing
 profile and release test results remain attached to their respective source commits.
 
-Before this user-facing repair is complete, run the repository's required local auth
-lifecycle and guarded release preflight, deploy the certified candidate through the
-approved workflow, and verify the deployed result in an isolated Firefox profile.
-Record that evidence below and in the master status snapshot.
+The user-facing consistency repair passed the repository's required local auth
+lifecycle and guarded preflight, deployed the certified candidate, passed production
+smoke and isolated Firefox acceptance, and was confirmed at 100% Worker traffic. This
+does not substitute for a future route-by-route visual audit.
 
 ## Repair release evidence
 
-Pending at audit authoring time.
+- Source commit: `a4a349647356e689ffd3cc37c484d5f592e78c6f`
+- Release: `rel-a4a349647356-83905623f687`
+- Worker version: `83cd8130-f963-487e-add8-9cc31a77c7e0` (100% traffic)
+- Rollback version: `eb0a4037-3ac6-4927-a6cc-9f21c8dd1160`
+- Guarded preflight: 30 gates passed; production schema ready, no migrations pending.
+- Production anonymous smoke: 10/10 passed.
+- Production isolated Firefox Developer Edition: 65/65 passed.
+- Live read-only requests: all six directly checked shared asset URLs returned 200; member-home and
+  Education Center page shells returned 200.
+- Focused local verification: member profile 32/32; Friends layout 9/9; Messenger
+  18/18; Education Center destinations 30/30; leadership distinction contract 18/18;
+  cache consistency check passed across 237 in-scope HTML files.
+- Local auth lifecycle: 38 checks passed before and after restart/build; isolated
+  Firefox acceptance 65/65. Release preflight's full feature gates also passed.
+- No production member, membership, profile, honor, article, or Studio data was changed.

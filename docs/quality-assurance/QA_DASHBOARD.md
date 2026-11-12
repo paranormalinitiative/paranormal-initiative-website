@@ -6,7 +6,9 @@ The most recent deployed application evidence is the November 11 member profile 
 transparent Founding Membership releases. Their focused suites, release gates, and
 production results are recorded in the corresponding completion records under
 `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/`. A separate site consistency audit is
-aligning shared asset cache versions; it is not release-verified yet. See
+complete: shared asset versions are aligned across 237 in-scope HTML pages, its
+regression check passes, and its guarded production release completed with 30/30
+preflight gates, 10/10 anonymous smoke checks, and 65/65 isolated Firefox checks. See
 [`TPI-WEBSITE-COMPLETENESS-AND-CONSISTENCY-AUDIT.md`](../audits/2026-11-11/TPI-WEBSITE-COMPLETENESS-AND-CONSISTENCY-AUDIT.md).
 
 This dashboard's table below is the historical October 11 QA batch, not a live view of

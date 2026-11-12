@@ -13,15 +13,19 @@ historical records.
 - Transparent Founding All-Access, Contributor, and Creator badge artwork is deployed
   across the shared profile recognition surfaces.
 - Messenger's desktop opening width has a separate completed release record.
+- Shared cache versions for the common page, member-shell, and profile assets are now
+  aligned and deployed across 237 in-scope HTML files; production asset and route checks
+  passed. See the
+  [cache consistency completion record](../TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-11-TPI-SHARED-ASSET-CACHE-CONSISTENCY.md).
 - Release-specific test and production evidence is recorded in the November 11
   completion records under
   [`docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/`](../TPI-DEVELOPMENT/300-COMPLETED-WORK/).
 
 ### In progress
 
-- The site-wide consistency audit found mismatched cache versions for shared page,
-  member-shell, and profile assets. References are aligned locally and the repeatable
-  check passes; guarded release and live verification remain. See the
+- The site-wide audit and shared-asset cache repair are complete. Route-by-route visual
+  acceptance across the entire site remains open; the audit explains the limits and
+  follow-up work in the
   [website consistency audit](../audits/2026-11-11/TPI-WEBSITE-COMPLETENESS-AND-CONSISTENCY-AUDIT.md).
 - Education Center organization and profile presentation remain owner-led iterative
   work. Recent deployment records prove code and release checks, not final owner visual
