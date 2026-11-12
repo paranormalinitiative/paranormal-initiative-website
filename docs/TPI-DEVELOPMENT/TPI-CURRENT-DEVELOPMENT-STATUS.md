@@ -1,5 +1,28 @@
 # TPI Current Development Status
 
+## 2026-11-12 — Founding Membership header pill removal
+
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Founding Membership
+chips no longer appear below member names in the shared profile header. This
+applies consistently to the signed-in member's own profile and profiles opened
+from People to Discover. Founding badges, membership numbers, descriptions,
+and clickable detail views remain in the Honors & Distinctions wall and right
+rail.
+
+Verification: local member-profile API checks 31/31 and isolated Firefox
+profile acceptance 31/31. Release preflight certified the exact pushed source
+commit and passed its 30 release gates, authentication lifecycle 38/38,
+read-only production smoke 10/10, full isolated Firefox release acceptance
+65/65, and StudioFlow release regressions. The deployed production
+`member-home.html` was fetched read-only: the header membership marker is
+absent while the Honors renderer remains present.
+
+Production release `rel-a5a815e8b9a3-a2f404f5c50c` deployed source commit
+`a5a815e8b9a3e30fa9b4df6043bfe3614420e5c4` as Worker
+`f65602de-f2ff-4af4-85e4-bef08490f6ee` at 100% traffic. Rollback Worker:
+`83cd8130-f963-487e-add8-9cc31a77c7e0`. Completion record:
+`300-COMPLETED-WORK/2026-11-12-MEMBER-PROFILE-HONORS-HEADER-CLEANUP.md`.
+
 ## 2026-11-11 — Shared member shell and theme consistency
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Ghostology and the other
