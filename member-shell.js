@@ -462,7 +462,9 @@
         && role !== "owner" && role !== "admin";
     });
     var canUseContentEditor = canUseAdminPanel || role === "contributor";
-    var canUseCreatorStudio = Boolean(user && user.creatorStudioAccess);
+    // Match the authoritative Worker gate: owner and admin accounts have
+    // Studio access even when an older session payload omits this flag.
+    var canUseCreatorStudio = role === "owner" || role === "admin" || Boolean(user && user.creatorStudioAccess);
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
       element.hidden = !canUseAdminPanel;
     });

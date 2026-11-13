@@ -14,7 +14,11 @@ assert.match(shell, /href="\/studio\/" data-nav="studio"[\s\S]*?aria-label="TPI 
 assert.match(shell, /mobile-nav-icon[^<]*<\/span>TPI Creator Studio<\/a>/);
 assert.match(sidebar, /data-nav="studio" data-studio-only hidden/);
 assert.match(sidebar, /data-coming-soon/);
+assert.match(shell, /var canUseCreatorStudio = role === "owner" \|\| role === "admin" \|\| Boolean\(user && user\.creatorStudioAccess\)/);
+assert.match(sidebar, /href="\/member-home\?member=1" data-nav="home"/);
 assert.equal((sidebar.match(/href="\/studio\/"/g) || []).length, 1);
 assert.equal((shell.match(/href="\/studio\/"/g) || []).length, 1);
+const login = readFileSync(resolve(root, "member-login.html"), "utf8");
+assert.match(login, /href="\/member-home\?member=1">Open Member Dashboard<\/a>/);
 
 console.log("PASS TPI-VIDEOS-005-A navigation branding: desktop and mobile labels point to /studio/.");
