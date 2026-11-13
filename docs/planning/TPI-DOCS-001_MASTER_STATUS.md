@@ -6,6 +6,17 @@ This snapshot supersedes older “current,” “next,” and release-state stat
 where later work has changed the status. Those older sections are retained as dated
 historical records.
 
+### Latest member Home update — November 13, 2026
+
+Member Home source now places each signed-in member's own profile summary and
+Honors & Distinctions above the shared Community Feed, with search between the
+profile and feed. The public home retains the TPI banner. “View Profile” and the
+profile Posts tab open the member-specific posts page. The visible “My Pulse”
+heading was removed from the right rail. The Influencer medallion is retained as
+a non-published source master only. This work is not yet deployed; local
+acceptance and the guarded release remain pending. See the current development
+status and [implementation record](../TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-13-MEMBER-HOME-PROFILE-AND-INFLUENCER-ASSET.md).
+
 ### Done and released
 
 - Recent member profile work is deployed: shared profile/feed layout and right rail,

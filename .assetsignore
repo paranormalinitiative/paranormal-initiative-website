@@ -46,6 +46,11 @@ assets/board-members/masters/**
 # derivatives and a narrower rule when the operational insignia feature is built.
 assets/operational-roles/masters/
 assets/operational-roles/masters/**
+# TPI recognition roadmap: retain owner-supplied Influencer artwork as a source
+# master until the Influencer identity surface and optimized web derivatives
+# are implemented.
+assets/influencers/masters/
+assets/influencers/masters/**
 # TPI community membership recognition: preserve the source master; publish only
 # optimized web derivatives to Honors & Distinctions profile surfaces.
 assets/community-membership/masters/

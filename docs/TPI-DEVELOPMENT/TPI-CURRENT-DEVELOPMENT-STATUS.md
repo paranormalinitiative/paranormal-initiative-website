@@ -6213,6 +6213,19 @@ archive/trash/restore controls are deferred.
 **Production has not received migrations 0059/0060 or the 004R5 application
 changes.**
 
+## Member Home profile and shared feed (2026-11-13)
+
+Status: **IMPLEMENTED IN SOURCE; LOCAL ACCEPTANCE IN PROGRESS; NOT DEPLOYED.**
+Signed-in Home presents the member's personal profile header, social counts,
+profile tabs, and Honors & Distinctions above the shared Community Feed and
+member search. The public home retains the Paranormal Initiative banner. The
+profile Posts tab and the right-rail View Profile control open the
+member-specific posts feed. The right-rail activity card no longer displays the
+“My Pulse” heading. Owner-supplied Influencer medallion artwork is preserved as
+a non-published source master for future work; it grants no account access and
+is not currently displayed. Details are in
+[the Member Home implementation record](300-COMPLETED-WORK/2026-11-13-MEMBER-HOME-PROFILE-AND-INFLUENCER-ASSET.md).
+
 ## Education Center moderation removal (2026-11-13)
 
 - Owners and Admins can remove an Education Center article from public view via

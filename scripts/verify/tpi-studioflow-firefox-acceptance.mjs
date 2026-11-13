@@ -365,8 +365,23 @@ try {
   await waitFor("browser-local save", async () => (await text(".tpi-studio-status")).includes("PROJECT SAVED LOCALLY"));
   check("browser-local save is confirmed before switching", true);
 
-  const backupResult = await asyncJs("var done=arguments[arguments.length-1]; window.__tpiStudioBackup.portableBackupNow().then(function(result){done({ok:true,fileName:result.fileName,mediaCount:result.manifest.media.length,sourceKind:result.manifest.studio.sourceKind});}).catch(function(error){done({ok:false,error:error&&error.message});});");
-  check("Firefox complete portable backup completes", backupResult?.ok === true, backupResult?.error || JSON.stringify(backupResult));
+  // Backup & Recovery is mounted by the backup bridge inside the Settings
+  // dialog's Recording & Storage panel. The similarly named right-rail
+  // workspace panel only exposes recording preferences and has no download UI.
+  await js("var button = Array.from(document.querySelectorAll('.production-bar button')).find(function (b) { return b.querySelector('svg.lucide-settings'); }); if (!button) throw new Error('Settings button not found'); button.click();");
+  await waitFor("Settings dialog", async () => count('.settings-dialog'));
+  await clickButton("Recording & Storage");
+  await waitFor("backup settings panel", async () => count('.settings-dialog .settings-panel'));
+  await waitFor("complete backup download control", async () => count('[data-tpi-backup-download]'));
+  await js("window.__tpiPortableBackupAcceptance = null; window.addEventListener('tpi:portable-backup-prepared', function(event){ var detail=event.detail||{}; window.__tpiPortableBackupAcceptance={ok:true,fileName:detail.fileName,mediaCount:detail.mediaCount,studioId:detail.studioId}; }, {once:true});");
+  const backupButton = await driver.findElement(By.css('[data-tpi-backup-download]'));
+  await driver.executeScript("arguments[0].scrollIntoView({block:'center'});", backupButton);
+  // Use a real WebDriver click: the download is produced after asynchronous
+  // media collection, so calling portableBackupNow() from executeAsyncScript
+  // loses Firefox's user-activation permission and silently blocks the file.
+  await backupButton.click();
+  const backupResult = await waitFor("portable backup preparation", async () => js("return window.__tpiPortableBackupAcceptance;"));
+  check("Firefox complete portable backup completes", backupResult?.ok === true, JSON.stringify(backupResult));
   const backupPath = await waitForDownload();
   const archive = verifyArchive(backupPath);
   check("Firefox writes an actual verified backup file", Boolean(backupPath) && archive.manifest.media.length >= 4, `media=${archive.manifest.media.length}`);

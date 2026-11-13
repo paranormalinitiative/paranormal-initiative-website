@@ -201,7 +201,7 @@ all 234 pages. Protected books and production data were not changed.
 ### Member right-rail order — 2026-11-12
 
 The member right rail is now ordered consistently for the signed-in member and
-viewed profiles: My Pulse, Honors & Distinctions, Active People, People to
+viewed profiles: member activity summary (with its “My Pulse” heading hidden), Honors & Distinctions, Active People, People to
 Discover, Recently Viewed Members, ParaNews Spotlight, Featured Content,
 Upcoming Events, and Active Discussions. The redundant standalone Featured
 Video panel was removed; video remains represented in Featured Content. Local

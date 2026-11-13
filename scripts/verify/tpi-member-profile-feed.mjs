@@ -54,7 +54,12 @@ const targetId = contributor.user.id;
 const publicHome = await request("/");
 check("public home displays the shared full-width site banner", publicHome.response.status === 200 && publicHome.text.includes('class="main-website-banner"') && publicHome.text.includes('src="assets/main-website-banner.png"'));
 const memberHome = await request("/member-home.html", auth(member.token));
-check("member home displays the same banner and hides it on profile views", memberHome.response.status === 200 && memberHome.text.includes('class="member-home-brand-banner"') && memberHome.text.includes('src="assets/main-website-banner.png"') && memberHome.text.includes("body.member-profile-mode .member-home-brand-banner { display: none; }"));
+check("member home uses the signed-in profile above the shared community feed", memberHome.response.status === 200 && memberHome.text.includes('data-member-profile-view aria-labelledby="member-profile-name"') && memberHome.text.includes('data-member-feed') && memberHome.text.includes('data-feed-tab') && memberHome.text.includes('data-profile-posts-link'));
+check("member home does not show the public brand banner", !memberHome.text.includes("member-home-brand-banner") && !memberHome.text.includes('src="assets/main-website-banner.png"'));
+check("member home keeps the public home page's brand banner", publicHome.text.includes('class="main-website-banner"') && publicHome.text.includes('src="assets/main-website-banner.png"'));
+check("the member Home community feed stays shared while View Profile uses an individual feed", memberHome.text.includes('if (profileMode) {\n                var feedData = await window.TPIApi.userFeed') && memberHome.text.includes('window.TPIApi.communityFeed(FEED_LIMIT'));
+check("the signed-in Home profile loads its stats and recognition from member profile data", memberHome.text.includes('window.TPIApi.memberProfile && (profileMode || profileUser.username === activeUser.username)') && memberHome.text.includes('profileRecognition = memberProfileData'));
+check("the My Pulse card has no visible heading", !memberHome.text.includes('<h4>My Pulse</h4>') && memberHome.text.includes('aria-label="Member activity summary"'));
 
 const bannerSave = await request("/api/contributors/me/profile", auth(member.token, {
   method: "POST",

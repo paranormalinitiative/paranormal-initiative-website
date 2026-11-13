@@ -7,7 +7,7 @@ Status: **DEPLOYED AND LIVE VERIFIED — 2026-11-12**
 
 The shared member right rail now places these panels in order:
 
-1. My Pulse
+1. Member activity summary (the “My Pulse” heading is hidden)
 2. Honors & Distinctions
 3. Active People
 4. People to Discover
