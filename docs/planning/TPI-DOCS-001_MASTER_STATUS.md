@@ -1,6 +1,6 @@
 # TPI-DOCS-001 — Master Documentation Status
 
-## Current Project Snapshot — November 11, 2026
+## Current Project Snapshot — November 12, 2026
 
 This snapshot supersedes older “current,” “next,” and release-state statements below
 where later work has changed the status. Those older sections are retained as dated
@@ -17,6 +17,11 @@ historical records.
   aligned and deployed across 237 in-scope HTML files; production asset and route checks
   passed. See the
   [cache consistency completion record](../TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-11-TPI-SHARED-ASSET-CACHE-CONSISTENCY.md).
+- A representative responsive/theme review checked 17 page families across six themes,
+  four applicable access roles, and desktop/phone sizes. Three responsive layout defects
+  were fixed locally and the final 204-check browser sweep passed. The guarded release
+  and full visual review of all 234 pages remain open; see the
+  [review record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md).
 - Release-specific test and production evidence is recorded in the November 11
   completion records under
   [`docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/`](../TPI-DEVELOPMENT/300-COMPLETED-WORK/).

@@ -108,6 +108,14 @@ and coming-soon access gates also follow the saved theme.
 - All six themes were exercised on those representative routes and in the
   authorized Nova workspace. This was not a page-by-page visual pass across
   all 234 in-scope pages.
+- A follow-up responsive visual sample checked 17 representative routes in
+  their applicable anonymous/member/contributor/administrator sessions, at
+  desktop and phone sizes, across all six themes (204 combinations). It found
+  and repaired narrow-screen overflow in the profile editor, Settings, and
+  member home. The final local sweep passed with zero layout overflow, theme
+  mismatch, blank route, broken local image, browser error, or title/greeting
+  overlap. Details and runner are in
+  [the responsive visual sample review](TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md).
 - The older OPS-015/OPS-016 records are historical snapshots of a 284-route
   inventory. Their historical results should not be read as the current
   tracked-file count or as a fresh site-wide browser certification.
@@ -125,15 +133,15 @@ palettes passed 6/6, site theme source checks passed 5/5, and navigation
 checks passed 13/13. The official local Worker is
 available at `127.0.0.1:8787`.
 
-A visual consistency review remains open; the 234-page pass verifies expected
-response, rendering, and focused interactions, but does not compare every
-page's spacing, responsive layout, theme color rendering, images, and shared
-navigation at desktop and mobile sizes. Continue with representative page
-families and responsive/theme checks, then fix confirmed exceptions in shared
-components first. Keep all Haunted Location books and other Repository books
-excluded. The [browser runner](../../../scripts/e2e/tpi-ops-017-browser-routes.mjs)
-and route report make reruns reproducible without asking the owner to review
-234 pages individually.
+A full visual consistency review remains open; the 234-page pass and the
+representative responsive sample do not compare every page's spacing, layout,
+theme color rendering, images, and navigation at every desktop/mobile size.
+Continue with representative page families and responsive/theme checks, then
+fix confirmed exceptions in shared components first. Keep all Haunted Location
+books and other Repository books excluded. The
+[browser runner](../../../scripts/e2e/tpi-ops-017-browser-routes.mjs) and route
+report make route reruns reproducible without asking the owner to review 234
+pages individually.
 
 ### Production release
 

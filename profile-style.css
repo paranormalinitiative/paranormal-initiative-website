@@ -75,7 +75,8 @@
 .admin-profile-editor-form { display: grid; gap: 12px; }
 .admin-profile-editor-form label { display: grid; gap: 6px; color: var(--text-secondary); font-weight: 600; }
 .admin-profile-editor-form input, .admin-profile-editor-form textarea { width: 100%; box-sizing: border-box; }
-.profile-banner-editor { display: grid; gap: 12px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--profile-highlight) 18%, transparent); }
-.profile-banner-preview { min-height: 180px; aspect-ratio: 16 / 5; border: 1px solid color-mix(in srgb, var(--profile-highlight) 36%, transparent); border-radius: 14px; background: #081019 center / cover no-repeat url('/assets/tpi-banner.png'); box-shadow: 0 12px 28px rgba(0,0,0,.22); }
+.profile-banner-editor { display: grid; gap: 12px; min-width: 0; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--profile-highlight) 18%, transparent); }
+.profile-banner-preview { width: 100%; max-width: 100%; min-height: 180px; aspect-ratio: 16 / 5; box-sizing: border-box; border: 1px solid color-mix(in srgb, var(--profile-highlight) 36%, transparent); border-radius: 14px; background: #081019 center / cover no-repeat url('/assets/tpi-banner.png'); box-shadow: 0 12px 28px rgba(0,0,0,.22); }
+@media(max-width:900px) { .profile-banner-preview { min-height: 0; } }
 .profile-banner-dimensions { line-height: 1.5; }
 .profile-banner-dimensions strong { color: var(--text-primary); }

@@ -3574,8 +3574,10 @@ footer {
 
 .member-dashboard-shell {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 22px;
     max-width: 1180px;
+    min-width: 0;
 }
 
 .member-dashboard-header {
@@ -3583,6 +3585,7 @@ footer {
     align-items: flex-end;
     justify-content: space-between;
     gap: 18px;
+    min-width: 0;
     padding-bottom: 18px;
     border-bottom: 1px solid var(--border-default);
 }
@@ -3604,10 +3607,14 @@ footer {
     grid-template-columns: minmax(0, 1fr);
     gap: 18px;
     align-items: start;
+    min-width: 0;
 }
 
 .member-profile-card {
     width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    grid-template-columns: minmax(0, 1fr);
 }
 
 .account-settings-card {
@@ -4611,6 +4618,7 @@ body.feed-app-page .member-explore-item-shell {
 .member-profile-form label {
     display: grid;
     gap: 7px;
+    min-width: 0;
 }
 
 .member-profile-form label:has(textarea),
@@ -4624,6 +4632,9 @@ body.feed-app-page .member-explore-item-shell {
 .member-profile-form input,
 .member-profile-form textarea {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 10px 12px;
     color: var(--text-primary);
     background: var(--bg-primary);
@@ -5606,7 +5617,26 @@ body.feed-app-page .member-explore-item-shell {
     .dashboard-profile-summary-strip,
     .account-settings-grid,
     .account-password-form {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .member-dashboard-shell,
+    .member-dashboard-header,
+    .member-dashboard-grid,
+    .member-profile-card,
+    .member-profile-form,
+    .member-profile-form > *,
+    .member-profile-form label,
+    .profile-photo-editor,
+    .profile-banner-editor,
+    .profile-photo-controls {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .profile-photo-controls > label {
+        min-width: 0;
+        max-width: 100%;
     }
 }
 
@@ -8082,6 +8112,7 @@ body.feed-app-page .member-explore-item-shell {
     .command-header p {
         font-size: 13px;
     }
+
 }
 
 @media (max-width: 480px) {

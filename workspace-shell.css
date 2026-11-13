@@ -304,6 +304,10 @@ body.workspace-settings-page .editor-access-card {
 }
 
 @media (max-width: 900px) {
+    body.workspace-settings-page .settings-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     body.workspace-page .workspace-header {
         align-items: flex-start;
         grid-template-columns: minmax(0, 1fr) auto;
