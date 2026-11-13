@@ -2,8 +2,8 @@
 
 ## 2026-11-13 — Nova publishing workflow audit
 
-Status: **LOCAL WORKFLOW VERIFIED; PRODUCTION PUBLISHER AUTHORITY BLOCKED BY
-THE PRODUCTION ENTITLEMENT CONSTRAINT.** The Nova article workflow was checked
+Status: **LOCAL WORKFLOW VERIFIED; PRODUCTION SCHEMA MIGRATION APPLIED;
+OWNER-GATED GRANT PATH IMPLEMENTED LOCALLY; RELEASE PENDING.** The Nova article workflow was checked
 from editing and autosave through submission, withdrawal/resubmission, review,
 changes requested, approval, approved-version publication, and published
 revision. R6B–R6F route, state, permission and snapshot suites passed locally.
@@ -25,18 +25,26 @@ parity 11/11; workstation 9/9; workflow R6B 47/47, R6C 23/23, R6D 47/47,
 R6E 60/60 and R6F 26/26; Education destinations 37/37. Content Editor,
 standalone Nova and Administration Center builds passed.
 
+The owner explicitly approved migration `0062_editorial_capabilities.sql` on
+2026-11-13. It was applied by itself to production; no blanket migration run
+was used. A pre-migration export of `member_entitlements` is preserved at
+`.local-dev/production-backups/member-entitlements-pre-0062-20261113.sql`
+(SHA-256 `bce85597fd77a23c9e6dbd82723fd5df7b83019ce11fcbbc3f6fdf33bc9918c4`,
+file mode 0600). Re-export comparison confirms all six rows exactly match the
+pre-migration data. The new CHECK accepts both editorial capabilities, both
+indexes are present, and `PRAGMA foreign_key_check` returned no violations.
+Production `d1_migrations` remains at its existing two rows; it is stale, so
+this targeted repair did not falsely record skipped migration history.
+
 Read-only production schema inspection found the editorial submission/event
 tables and append-only triggers present, including the `revision_started`
-event. However, production `member_entitlements.capability` still permits only
-`creator` and `contributor`; it cannot store `editorial_review` or
-`editorial_publish`. The live table currently has six active membership grants
-(five contributor and one creator) and no editorial grants. Therefore the
-review and publishing queues cannot be granted to staff yet. Migration
-`0062_editorial_capabilities.sql` widens this CHECK by rebuilding the table and
-copying existing rows. Because that production change includes a table drop,
-it is held for the required separate owner approval. Once approved, capture and
-compare a pre-change export and row-level preservation checks, apply the
-focused migration, then run the guarded release and live acceptance. See
+event. The live entitlement ledger still has six active membership grants
+(five contributor and one creator) and no editorial grants. An owner-only
+reviewer/publisher grant and revoke control is implemented in the source
+Administration Center, with confirmation, audit logging, and a server-side
+owner check; it has not yet been released to production. Its focused verifier
+passes 165/165 and the Administration Center build passes. Complete the guarded
+release and live acceptance before using it. See
 [`2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md`](300-COMPLETED-WORK/2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md).
 
 ## 2026-11-12 — Site-wide shell and theme audit

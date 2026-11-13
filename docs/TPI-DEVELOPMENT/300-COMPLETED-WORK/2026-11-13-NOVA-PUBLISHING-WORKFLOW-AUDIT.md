@@ -5,11 +5,14 @@
 The Nova publishing workflow implementation is present in the current production
 code and its editorial submission/event tables are present in production. Local
 workflow behavior is covered by passing automated checks. Production review and
-publication are **not operational yet**: the production entitlement table does
-not accept the reviewer and publisher capabilities needed to grant those roles.
+publication are **not operational yet**: although the schema accepts the
+reviewer and publisher capabilities, no grants exist. The owner-only grant
+interface is implemented locally and still needs its guarded release before it
+can be used in production.
 
-No production article was created or edited. No production database schema or
-rows were changed during this audit.
+No production article was created or edited. The owner-approved entitlement
+schema migration is documented below; all existing entitlement rows were
+preserved exactly.
 
 ## Scope checked
 
@@ -55,23 +58,39 @@ Content Editor, standalone Nova, and Administration Center builds succeeded.
 The Administration Center build reports its existing large-chunk warning; it
 does not fail the build.
 
-## Production findings
+## Production findings and approved schema repair
 
 Read-only inspection found the editorial submission and event tables, their
-append-only triggers, and the `revision_started` event in production. The
-production `member_entitlements.capability` CHECK still permits only
-`creator` and `contributor`; it rejects `editorial_review` and
-`editorial_publish`. Without those grants, staff cannot receive the reviewer
-and publisher authority required by the workflow. The production ledger has
-six active membership grants and no editorial grants.
+append-only triggers, and the `revision_started` event in production. Before
+the approved migration, production's `member_entitlements.capability` CHECK
+accepted only `creator` and `contributor`. The owner explicitly approved
+migration `0062_editorial_capabilities.sql` on 2026-11-13. That migration alone
+was applied directly; the stale production migration ledger was not replayed or
+rewritten.
 
-Migration `0062_editorial_capabilities.sql` changes the CHECK by creating a
-replacement entitlement table, copying existing rows, and dropping the old
-table. It is not applied. The repository's agent authority requires separate
-owner approval for destructive production data operations and migrations with
-irreversible effects. Before that migration can be run, prepare a pre-change
-export and explicit row-preservation comparison, then apply the migration and
-verify the resulting grants and workflow in production.
+Before applying it, Wrangler exported the complete `member_entitlements` table
+to `.local-dev/production-backups/member-entitlements-pre-0062-20261113.sql`
+with file mode 0600. SHA-256:
+`bce85597fd77a23c9e6dbd82723fd5df7b83019ce11fcbbc3f6fdf33bc9918c4`.
+The post-migration scoped export has the same six INSERT rows and the same
+canonical data SHA-256 as the pre-migration export. Production checks confirm
+both editorial capability strings in the table constraint, both expected
+indexes, and no foreign-key violations. All six existing entitlement rows
+remain unchanged. No editorial grants were added.
+
+The production `d1_migrations` table still has only its two pre-existing rows.
+It is known to be stale against the physical schema; no claim is made that
+migrations before 0062 were applied in order. The focused file was applied
+because its exact prerequisite schema was verified, rather than using a
+blanket `wrangler d1 migrations apply`.
+
+The source now includes an owner-only Nova editorial grant and revocation
+control in Administration Center → Creators → Founding Memberships →
+Capability inspection. It requires an active inspected account, asks for
+confirmation, records the administrative action, and keeps editorial grants
+independent from account role and membership. The server rejects admin-only
+grant or revoke attempts. Local verifier coverage and the Administration
+Center production build pass; the code is not yet released to production.
 
 ## Files changed for this audit
 
@@ -87,9 +106,8 @@ verify the resulting grants and workflow in production.
 
 ## Next action
 
-Obtain the owner's explicit approval for the production entitlement-table
-rebuild in migration `0062_editorial_capabilities.sql`. After approval, take
-and compare the pre-change export, execute the migration through the guarded
-production procedure, then create a controlled editorial test article and
-verify submission through publication and revision without leaving test content
-in the public catalog.
+Complete the guarded production release and live acceptance of the owner-only
+grant and revoke controls. Then assign capabilities to explicitly selected
+accounts and run a controlled author → review → publication acceptance without
+leaving test content in the public catalog. The schema migration is complete;
+no further schema change is needed for these two capabilities.

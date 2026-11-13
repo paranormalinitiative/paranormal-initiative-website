@@ -493,11 +493,12 @@ TPI-NOVA-004R6B has implemented its server-side foundation (capabilities, additi
 schema, transition engine). TPI-NOVA-004R6C2 has implemented Contributor submission, withdrawal,
 locking and resubmission, and TPI-NOVA-004R6C3 has accepted it. R6B–R6F code
 and the editorial submission/event schema are present in the current production
-release; the workflow is not production-operational because production's
-`member_entitlements.capability` CHECK still permits only `creator` and
-`contributor`, so reviewer and publisher grants cannot be stored. See the
-2026-11-13 Nova publishing workflow audit for live schema evidence and the
-required approval gate.
+release. Owner-approved migration 0062 has widened the production
+`member_entitlements.capability` CHECK, preserving all six existing rows. No
+editorial grants exist yet. An owner-only, auditable reviewer/publisher grant
+and revoke control is implemented in the Administration Center source, with
+local build and verifier passing; it still needs the guarded production release
+and live acceptance. See the 2026-11-13 Nova publishing workflow audit.
 TPI-NOVA-004R6D has implemented the Editorial Review Queue, reviewer actions (Start Review,
 Request Changes, Approve), Contributor-visible feedback and exact pinned-version review inside
 the existing Administration Center.
@@ -507,8 +508,11 @@ atomic Publish Approved Version action that server-renders the approved Nova ver
 the public Education Center snapshot. Enrolled articles can no longer be published through the
 direct Contributor or Admin routes; legacy articles keep their existing behavior and TPI Video
 keeps its specialized publish path. The production code and workflow tables are
-deployed, but publication remains blocked until `editorial_review` and
-`editorial_publish` can be stored in the production entitlement ledger.
+deployed. Migration 0062 now permits `editorial_review` and
+`editorial_publish` in the production entitlement ledger. The owner-only grant
+and revoke controls are implemented in source, but publication remains blocked
+until that change is released and the owner assigns these capabilities to
+named accounts.
 
 TPI-NOVA-004R6F has implemented the published-revision lifecycle — an owner-scoped Start New
 Revision that guards `approved → draft`, records a `revision_started` event and leaves the
@@ -516,9 +520,9 @@ published snapshot live while the new round is edited, reviewed and republished 
 article id and URL — and has contained legacy direct publishing: new normal Education Center
 content is created workflow-native and refused server-side if it asks to be published, while
 existing `legacy` records stay grandfathered with their current compatibility.
-The production event schema includes `revision_started`; production
-reviewer/publisher grants remain blocked by the `member_entitlements` CHECK
-noted above.
+The production event schema includes `revision_started`. Migration 0062 has
+been applied; the new owner-gated reviewer/publisher grant path still needs
+production release before capabilities can be assigned.
 
 Remaining open Nova work:
 
