@@ -24,11 +24,12 @@ historical records.
   live smoke 10/10, and isolated Firefox acceptance 65/65. Full visual review of all
   234 pages remains open; see the
   [review record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md).
-- The member right rail is being reordered consistently across own and viewed-member
+- The member right rail is ordered consistently across own and viewed-member
   profiles: Honors, Active People, discovery, recently viewed members, ParaNews,
   Featured Content, Events, and Discussions. The separate Featured Video rail panel
-  was removed because video already appears in Featured Content. Local browser checks
-  passed; production release is pending. See the
+  was removed because video already appears in Featured Content. Guarded production
+  release `rel-ea16819d85fc-f99594709ad1` is live at 100% traffic; preflight passed,
+  live smoke passed 10/10, and isolated Firefox acceptance passed 65/65. See the
   [rail order record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-MEMBER-RIGHT-RAIL-ORDER.md).
 - Release-specific test and production evidence is recorded in the November 11
   completion records under
@@ -43,6 +44,9 @@ historical records.
 - Education Center organization and profile presentation remain owner-led iterative
   work. Recent deployment records prove code and release checks, not final owner visual
   acceptance.
+- Site-wide visual consistency review remains ongoing; the representative responsive
+  sample is complete, while full visual review across all 234 in-scope pages remains
+  open.
 - Messenger's logged-in multi-member workflow and feature acceptance still need a
   joint session; the desktop-width repair alone does not close that work.
 

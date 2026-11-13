@@ -56,11 +56,13 @@ This is representative coverage, not visual certification of all 234 pages.
 Continue auditing page families as source review and owner reports identify
 them. The runnable check, scope, results, and limitations are in
 [the visual sample review](200-AUDITS/TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md).
-Production release `rel-da185da5ae93-5ab88ae30d0e` deployed commit
-`da185da5ae939b75d74670944135e8084e01172d` as Worker
-`c48da23b-d832-49ed-97fd-38e398798807` at 100% traffic. Preflight passed 30/30
-gates, live smoke 10/10, and isolated Firefox 65/65. The Haunted Location
-books and five standalone Repository books remain excluded.
+Production release `rel-ea16819d85fc-f99594709ad1` deployed commit
+`ea16819d85fc1ac5093e0bb8a0adc738040bcb3f` as Worker
+`c3ce48e0-d289-4309-bf35-518ef4c3b6aa` at 100% traffic. The previous Worker
+`c48da23b-d832-49ed-97fd-38e398798807` is the rollback version. The guarded
+preflight certified the exact commit and completed all release gates; production
+smoke passed 10/10 and isolated Firefox acceptance passed 65/65. The Haunted
+Location books and five standalone Repository books remain excluded.
 
 ### 2026-11-12 — Member right-rail order
 

@@ -1,7 +1,7 @@
 # TPI-OPS-017 — Member Right Rail Order
 
 Date: 2026-11-12
-Status: **LOCAL BROWSER CHECK PASSED; GUARDED RELEASE PENDING**
+Status: **DEPLOYED AND LIVE VERIFIED — 2026-11-12**
 
 ## Requested order
 
@@ -30,9 +30,23 @@ render the nine shared rail sections in the order above. The removed video
 panel is absent in both views. The change is shared by own and viewed-member
 profiles through the common member-home renderer.
 
+Guarded preflight certified the exact commit with 30 gates; isolated Firefox
+release acceptance passed 65/65, and the additional Studio management,
+ownership, deletion safety, scene persistence, Notes restoration, and mobile
+acceptance gates all passed. Production anonymous smoke passed 10/10 and live
+isolated Firefox acceptance passed 65/65. The Worker remained at 100% traffic.
+
+Release: `rel-ea16819d85fc-f99594709ad1`
+
+Source commit: `ea16819d85fc1ac5093e0bb8a0adc738040bcb3f`
+
+Worker version: `c3ce48e0-d289-4309-bf35-518ef4c3b6aa`
+
+Rollback version: `c48da23b-d832-49ed-97fd-38e398798807`
+
 ## Scope and release
 
 Only `member-home.html` changes the application UI. No profile, membership,
-honor, feed, Studio, or other production data is modified. No Haunted Location
-books or standalone Repository books are in scope. Guarded preflight, deployment,
-and live acceptance results will be recorded here after release.
+honor, feed, Studio, or other production data was modified. No Haunted Location
+books or standalone Repository books were in scope. The guarded production
+runner reported `DEPLOYED_AND_VERIFIED` and did not trigger rollback.
