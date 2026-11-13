@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Community Moderation | The Paranormal Initiative</title>
+  <link rel="stylesheet" href="style.css?v=92">
+  <link rel="stylesheet" href="member-shell.css?v=64">
+  <style>
+    .moderation-page{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 4rem}.moderation-heading{margin-bottom:1.5rem}.moderation-list{display:grid;gap:1rem}.moderation-item{padding:1.25rem;border:1px solid var(--line,#263746);border-radius:18px;background:rgba(18,20,28,.88)}.moderation-item h3{margin:.3rem 0}.moderation-item p{white-space:pre-wrap;overflow-wrap:anywhere}.moderation-meta{color:#9bb0c2;font-size:.9rem}.moderation-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:end}.moderation-actions label{flex:1 1 18rem}.moderation-actions input{width:100%}.moderation-message{min-height:1.5em;color:#9bb0c2}
+  </style>
+</head>
+<body class="workspace-page">
+  <div id="site-header"></div>
+  <div data-member-content hidden>
+    <main class="moderation-page" data-moderation-page>
+      <header class="moderation-heading">
+        <p class="portal-kicker">Community care</p>
+        <h1>Moderation</h1>
+        <p>Review public Community Feed posts and comments. Hide or remove content only when it breaks TPI’s community rules, and record a clear reason with every action.</p>
+        <button type="button" data-moderation-refresh>Refresh queue</button>
+        <p class="moderation-message" data-moderation-message aria-live="polite"></p>
+      </header>
+      <div class="moderation-list" data-moderation-list><p>Loading community content…</p></div>
+    </main>
+  </div>
+  <div id="site-footer"></div>
+  <script src="includes.js?v=18"></script>
+  <script src="api-client.js?v=18"></script>
+  <script src="member-login.js?v=39"></script>
+  <script src="member-shell.js?v=59"></script>
+  <script>
+  (() => {
+    const root = document.querySelector('[data-moderation-page]');
+    const list = root.querySelector('[data-moderation-list]');
+    const message = root.querySelector('[data-moderation-message]');
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    async function load() {
+      list.innerHTML = '<p>Loading community content…</p>';
+      try {
+        const response = await fetch('/api/moderation/queue?pageSize=60', {credentials:'same-origin', headers:{Accept:'application/json'}});
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+        const items = [
+          ...(data.posts || []).map(item => ({...item, kind:'posts', heading:item.title || 'Community post'})),
+          ...(data.comments || []).map(item => ({...item, kind:'comments', heading:item.postTitle ? `Comment on ${item.postTitle}` : 'Community comment'}))
+        ].sort((a,b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+        list.innerHTML = items.length ? items.map(item => `<article class="moderation-item"><p class="portal-kicker">${item.kind === 'posts' ? 'Post' : 'Comment'} · ${esc(item.status)}</p><h3>${esc(item.heading)}</h3><p class="moderation-meta">${esc(item.authorDisplayName || item.authorUsername || 'Community member')} · ${esc(item.categoryTitle || item.createdAt || '')}</p><p>${esc(item.body || '')}</p><form class="moderation-actions" data-moderation-form data-kind="${item.kind}" data-id="${esc(item.id)}"><label>Action reason<input name="reason" minlength="8" maxlength="1000" required placeholder="Describe the rule violation"></label><button name="status" value="hidden" type="submit">Hide</button><button name="status" value="deleted" type="submit">Remove</button></form></article>`).join('') : '<p>No recent visible or hidden community posts or comments to review.</p>';
+      } catch (error) { list.innerHTML = `<p>${esc(error.message)}</p>`; }
+    }
+    root.addEventListener('submit', async event => {
+      const form = event.target.closest('[data-moderation-form]');
+      if (!form) return;
+      event.preventDefault();
+      const button = event.submitter;
+      const status = button?.value;
+      if (!status || form.elements.reason.value.trim().length < 8) return;
+      button.disabled = true;
+      try {
+        const response = await fetch(`/api/moderation/${form.dataset.kind}/${encodeURIComponent(form.dataset.id)}/status`, {method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({status,reason:form.elements.reason.value})});
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+        message.textContent = `Content ${status === 'deleted' ? 'removed' : 'hidden'} and recorded in the staff audit log.`;
+        await load();
+      } catch (error) { button.disabled = false; message.textContent = error.message; }
+    });
+    root.querySelector('[data-moderation-refresh]').addEventListener('click', load);
+    load();
+  })();
+  </script>
+</body>
+</html>

@@ -4120,14 +4120,17 @@
                 color: item.badge.color === "purple" ? "#a78bfa" : (item.badge.color === "blue" ? "#55b9e9" : "#d6a84f")
             });
         });
-        if (operationalRole === "admin") {
+        var staffIdentity = operationalRole && typeof operationalRole === "object" ? operationalRole : (operationalRole === "admin" ? { role: "administrator", label: "Administrator", badge: "administrator" } : null);
+        if (staffIdentity && ["administrator", "full_administrator", "moderator"].includes(staffIdentity.role)) {
+            var isModerator = staffIdentity.role === "moderator";
+            var staffLabel = staffIdentity.label || (isModerator ? "Moderator" : staffIdentity.role === "full_administrator" ? "Full Administrator" : "Administrator");
             ordered.push({
                 kind: "operational-service",
-                title: "Administrator",
-                detail: "Platform Operations",
-                description: "Recognizes an active Administrator account role. Administrative permissions are enforced separately by the server.",
-                image: cacheBustedRecognitionAsset("/assets/operational-roles/web/administrator-256.png"),
-                color: "#55b9e9"
+                title: staffLabel,
+                detail: isModerator ? "Community Safety" : "Platform Operations",
+                description: "Recognizes an active server-assigned " + staffLabel + " appointment. The server separately enforces all permissions.",
+                image: cacheBustedRecognitionAsset("/assets/operational-roles/web/" + (isModerator ? "moderator" : "administrator") + "-256.png"),
+                color: isModerator ? "#55c95a" : "#55b9e9"
             });
         }
         rows.forEach(function(item) { if (item !== gold) ordered.push(item); });
@@ -4143,9 +4146,6 @@
             image: cacheBustedRecognitionAsset("/assets/community-membership/web/member-256.png"),
             color: "#d6a84f"
         });
-        // Moderator artwork is ready, but there is no Moderator appointment
-        // record in the current account model. Do not infer that role from a
-        // member title, badge, or client-provided field.
         return ordered;
     }
 
@@ -4161,7 +4161,7 @@
         var container = document.querySelector("[data-member-profile-honors]");
         if (!container) return;
         var recognition = profileRecognition || profileUser || {};
-        var markup = renderRecognitionShelf(recognition.foundingMembership, recognition.boardMembership, recognition.leadershipDistinctions, profileUser && profileUser.title, profileUser && profileUser.role);
+        var markup = renderRecognitionShelf(recognition.foundingMembership, recognition.boardMembership, recognition.leadershipDistinctions, profileUser && profileUser.title, recognition.staffIdentity || (profileUser && profileUser.role));
         container.innerHTML = markup;
         container.hidden = !markup;
     }
@@ -4171,7 +4171,7 @@
         var body = document.querySelector("[data-recognition-rail-body]");
         if (!section || !body) return;
         var recognition = profileMode ? (profileRecognition || profileUser || activeUser) : activeUser;
-        var operationalRole = profileMode ? (profileUser && profileUser.role) : (activeUser && activeUser.role);
+        var operationalRole = profileMode ? (recognition && recognition.staffIdentity || (profileUser && profileUser.role)) : (activeUser && activeUser.staffIdentity || (activeUser && activeUser.role));
         var ordered = getRecognitionItems(recognition && recognition.foundingMembership, recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title, operationalRole);
         // The signed-in /me payload is authoritative for the owner's own
         // profile. Keep the wall visible if the separate profile lookup is

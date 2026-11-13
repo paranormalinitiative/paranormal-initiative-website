@@ -42,6 +42,13 @@ historical records.
 
 ### In progress
 
+- Staff roles and moderation are implemented in source, with the guarded
+  production release and live acceptance still pending. The first increment
+  includes explicit appointments, appointment history, server-side role gates,
+  and reasoned Community Feed post/comment moderation. It does not appoint
+  anyone or implement staff suspension, report intake/triage, warnings,
+  temporary restrictions, or appeals. See the current status record and
+  Membership and Staff Rules.
 - The site-wide audit and shared-asset cache repair are complete. Route-by-route visual
   acceptance across the entire site remains open; the audit explains the limits and
   follow-up work in the
@@ -134,9 +141,12 @@ What is now policy:
 - Service insignia are visual distinctions only; active authority and historical
   service are separate states.
 
-Recorded current implementation: production still gates administration with a
-single `owner`/`admin` role value; no Moderator tier, capability table, staff
-directory, or role assignment exists yet.
+Historical snapshot (2026-11-03): production gated administration with a single
+`owner`/`admin` role value; no Moderator tier, capability table, staff
+directory, or role assignment existed at that time. The owner later approved
+implementation; see the 2026-11-13 status in
+[`TPI-CURRENT-DEVELOPMENT-STATUS.md`](../TPI-DEVELOPMENT/TPI-CURRENT-DEVELOPMENT-STATUS.md)
+and the staff-rules completion record.
 
 Assets: the Administrator and Moderator masters were imported byte-identically to
 `assets/operational-roles/masters/` and excluded from publishing. Both arrived as

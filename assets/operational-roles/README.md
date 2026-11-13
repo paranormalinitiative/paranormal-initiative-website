@@ -44,7 +44,9 @@ sizes, optimized PNG, and WebP quality 90. Keep the original masters unchanged.
 
 `.assetsignore` and the guarded release candidate filter exclude
 `assets/operational-roles/masters/`; only the web derivatives are published.
-Current server authorization still uses the existing `owner` / `admin` account
-roles. Moderator and tiered Admin roles have not been implemented or assigned.
+Staff appointments now resolve server-side from `staff_role_appointments`;
+existing `owner`/`admin` account roles remain supported as Owner/Administrator.
+No specific Moderator or other staff appointment is created by the role system
+release. See the current role and release status in the linked documents.
 See the [operational role policy](../../docs/TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
 and [current authorization behavior](../../docs/TPI-DEVELOPMENT/007-SECURITY-AND-PERMISSIONS.md).

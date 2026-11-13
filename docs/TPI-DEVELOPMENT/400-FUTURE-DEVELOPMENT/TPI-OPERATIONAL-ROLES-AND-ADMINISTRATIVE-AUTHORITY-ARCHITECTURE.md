@@ -874,10 +874,9 @@ leadership medallions. The full Medallion system receives its own later section.
 
 ## 82. Owner-confirmed role boundaries — 2026-11-13
 
-The owner has confirmed the following starting policy for future server-side
-implementation. This addendum supersedes any earlier statement that these
-baseline boundaries still require an owner decision; it does **not** activate
-roles or change authorization by itself.
+The owner confirmed the following baseline policy. Its server-side
+implementation is recorded in section 83 and the current Security and
+Permissions document.
 
 | Role | Intended responsibility and limits |
 |---|---|
@@ -887,16 +886,34 @@ roles or change authorization by itself.
 | **Moderator** | Community safety and content moderation: review reports; hide or remove violating posts/comments; document actions; issue warnings and limited temporary content restrictions; escalate serious or disputed cases. No account deletion, staff appointments, access grants, billing/security/configuration access, or access to unrelated private messages. |
 | **Member** | Ordinary community participation under the member and community standards. |
 
-The Owner has not asked to appoint anyone or change any existing role in this
-addendum. A role badge is recognition/presentation only; the server must check an
-active appointment and its capabilities for every protected operation. No
-admin or moderator may use a post-removal permission to silence viewpoint,
-skepticism, criticism, or legitimate research.
+No one is appointed by this policy record. A role badge is
+recognition/presentation only; the server checks active appointments and
+capabilities for protected operations. No admin or moderator may use a
+post-removal permission to silence viewpoint, skepticism, criticism, or
+legitimate research.
 
-“Complete full control” is reserved for executive Owner/CEO authority. Admin
-tiers remain subordinate to that protected executive class. Before engineering
-the operational-role system, implementation must still settle the exact Admin
-tier names, who may appoint/revoke each tier, whether Senior/Lead Moderator and
-Senior/Platform Administrator tiers are needed, and safeguards/appeals for
-permanent account action. Until then, the existing owner/admin server gate is
-the only operational role implementation.
+“Complete full control” is reserved for protected executive authority. Admin
+tiers remain subordinate to that group. The first release uses the role names
+above; additional tiers and safeguards/appeals for permanent account action
+remain open.
+
+## 83. Initial staff appointment and moderation implementation — 2026-11-13
+
+The initial server-side implementation is tracked by the November 13
+Membership and Staff Rules completion record. It adds the
+`staff_role_appointments` table, explicit appointments, role-aware API guards,
+an Owner/Executive Staff Roles view, and a separate moderation queue. The
+authorization policy is implemented independently of the displayed badges.
+
+The Owner remains the protected top authority. Owner alone appoints/revokes
+Executive and Full Administrator appointments; the Owner or Executive may
+appoint/revoke Administrator and Moderator. No person may appoint themselves,
+and each appointment change requires a reason and audit entry. Existing
+`owner` and `admin` accounts resolve as Owner and Administrator respectively
+unless an explicit active appointment overrides the legacy admin baseline.
+
+Current Moderator tools hide/remove Community Feed posts/comments with a
+reasoned audit record. This first increment does not implement member report
+intake/triage, warnings, temporary posting restrictions, staff suspension,
+appeals, or account deletion. Those remain future work. The Member, Contributor,
+Creator, Dual, and Founding access systems remain separate from staff authority.

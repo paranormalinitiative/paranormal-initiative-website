@@ -5,11 +5,10 @@ help, honors, and asset dependencies — is
 [TPI-FUTURE-WORK-REGISTER.md](TPI-FUTURE-WORK-REGISTER.md) (TPI-GOVERNANCE-003B2).
 Listing there records a commitment to remember the work, never permission to start it.
 
-For a concise owner-reviewable starting point that combines membership layers,
-operational staff boundaries, and proposed community rules, see the
-[Membership and Staff Rules working draft](TPI-MEMBERSHIP-AND-STAFF-RULES-WORKING-DRAFT.md).
-It is a discussion aid and does not supersede the authoritative policy records
-linked below or activate application permissions.
+For the owner-approved membership layers and staff authority baseline, see the
+[Membership and Staff Rules](TPI-MEMBERSHIP-AND-STAFF-RULES-WORKING-DRAFT.md).
+Its initial implementation is tracked in the current status and completion
+record; additional community conduct/help systems remain future work.
 
 This directory contains proposals and historical planning. It is not an
 operational release guide. Current commit, push, and deployment instructions
@@ -41,13 +40,13 @@ membership, payment, capability, Founding status, role, and honor — is recorde
 entitlement behavior is implemented by it. Commercial terms remain owner
 decisions.
 
-The operational staff model — Moderator, Senior Moderator, Lead Moderator,
-Administrator, Senior Administrator, Platform Administrator, and the separate
-Owner/Founder authority, with least privilege, capability-based authorization,
-appointment records, and the prohibition on self-escalation — is recorded in
+The operational staff architecture and conduct model is recorded in
 [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
-(TPI-GOVERNANCE-003B). It is policy and asset provenance only: no role is assigned,
-no permission changes, and no staff tier exists yet.
+(TPI-GOVERNANCE-003B). Initial Owner, Executive, Full Administrator,
+Administrator, and Moderator appointments and server-side gates are being
+implemented. Earlier entries in the architecture register are historical.
+Additional role tiers, suspension, reports, appeals, and help systems remain
+future work.
 
 TPI-GOVERNANCE-003B1 amended that record with the constitutional-value principles that
 bound staff authority, the working Moderator/Administrator oath, the moderation

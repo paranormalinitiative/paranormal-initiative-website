@@ -138,6 +138,12 @@ check "anonymous feed list uses the public-safe projection" 200 "$(req GET /comm
 check "unauthenticated conversation list is 401" 401 "$(req GET /conversations '')"
 check "unauthenticated notifications is 401" 401 "$(req GET /notifications '')"
 check "session token A identifies user A" 200 "$(req GET /auth/me tok-a)" "d['user']['username']=='e2e_user_a'"
+check "appointed Moderator can open the moderation queue" 200 "$(req GET /moderation/queue tok-moderator)"
+check "ordinary member cannot open the moderation queue" 403 "$(req GET /moderation/queue tok-a)"
+check "routine Administrator cannot appoint staff" 403 "$(req POST /admin/staff-roles tok-admin '{"username":"e2e_user_a","role":"moderator","reason":"e2e denied appointment"}')"
+check "routine Administrator cannot block the Owner" 403 "$(req POST /admin/members/e2e_owner/block tok-admin '{}')"
+check "routine Administrator cannot block a Moderator" 403 "$(req POST /admin/members/e2e_moderator/block tok-admin '{}')"
+check "Owner can view the staff appointment register" 200 "$(req GET /admin/staff-roles tok-owner)"
 
 ######################## 1b. FOUNDING MEMBERSHIPS / ENTITLEMENTS ########################
 # TPI-CREATOR-INCENTIVE-001 permanent regression: server-side authorization,
@@ -150,7 +156,7 @@ check "ordinary member cannot assign a founding membership" 403 "$(req POST /adm
 check "an administrator who is not the owner cannot read member entitlements" 403 "$(req GET /admin/members/e2e_mbr_plain/entitlements '')"
 check "a clean registry starts with 150 unissued numbers" 200 "$(req GET /admin/founding-memberships tok-owner)" "d['lifetimeIssuanceTotal']==0 and d['lifetimeCapacityTotal']==150 and all(c['remaining']==50 and c['nextNumber']==c['numberPrefix']+'-001' for c in d['classes'])"
 check "the local Worker marks the registry as local review data" 200 "$(req GET /admin/founding-memberships tok-owner)" "d['localReviewData'] is True"
-check "an authorized administrator can assign a founding membership" 201 "$(req POST /admin/founding-memberships/assign tok-admin '{"username":"e2e_mbr_admin","classCode":"FCT"}')" "d['membership']['membershipNumber']=='FCT-001' and d['capabilities']==['contributor']"
+check "a routine administrator cannot assign a founding membership" 403 "$(req POST /admin/founding-memberships/assign tok-admin '{"username":"e2e_mbr_admin","classCode":"FCT"}')"
 check "owner reads all three class capacities" 200 "$(req GET /admin/founding-memberships tok-owner)" "len(d['classes'])==3 and all(c['lifetimeCapacity']==50 for c in d['classes'])"
 check "class counts are derived from the issued registry rows" 200 "$(req GET /admin/founding-memberships tok-owner)" "d['lifetimeIssuanceTotal']==sum(c['issued'] for c in d['classes'])"
 
@@ -160,7 +166,7 @@ check "Founding Creator receives the Creator capability only" 201 "$R" "d['capab
 FC_ID=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['membership']['id'])")
 
 R=$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_contributor","classCode":"FCT"}')
-check "owner issues the next Contributor number with its own prefix" 201 "$R" "d['membership']['membershipNumber']=='FCT-002'"
+check "owner issues the first Contributor number with its own prefix" 201 "$R" "d['membership']['membershipNumber']=='FCT-001'"
 check "Founding Contributor receives the Contributor capability only" 201 "$R" "d['capabilities']==['contributor'] and d['contributor'] is True and d['creator'] is False"
 
 R=$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_allaccess","classCode":"FAA"}')
@@ -220,7 +226,7 @@ check "Contributor capability survives revoking Creator" 200 "$(req GET /me/enti
 
 # Cross-account and privilege-escalation attempts.
 check "a member cannot grant capability to another account" 403 "$(req POST /admin/members/e2e_mbr_plain/entitlements tok-mbr-creator '{"capability":"creator"}')"
-check "an authorized administrator can grant an additional capability" 201 "$(req POST /admin/members/e2e_mbr_admin/entitlements tok-admin '{"capability":"creator"}')" "d['capabilities']==['contributor','creator']"
+check "a routine administrator cannot grant professional capabilities" 403 "$(req POST /admin/members/e2e_mbr_admin/entitlements tok-admin '{"capability":"creator"}')"
 check "that grant does not leak to an unrelated account" 200 "$(req GET /me/entitlements tok-plain)" "d['capabilities']==[]"
 check "a member cannot change their own membership state" 403 "$(req POST "/admin/founding-memberships/$FC_ID/status" tok-mbr-creator '{"state":"revoked"}')"
 check "a member cannot read another account's entitlements" 403 "$(req GET /admin/members/e2e_mbr_allaccess/entitlements tok-mbr-creator)"
@@ -231,7 +237,7 @@ check "a Contributor-only account cannot be enrolled in Creator Incentives" 403 
 check "a Creator-capable account can be enrolled" 200 "$(req POST /admin/creator-incentive/participation tok-owner '{"username":"e2e_mbr_allaccess","state":"enrolled"}')"
 check "enrolled creator is incentive eligible" 200 "$(req GET /me/creator-incentive tok-mbr-allaccess)" "d['eligibility']['eligible'] is True and d['eligibility']['creatorCapable'] is True and d['participation']['state']=='enrolled'"
 check "Contributor alone is not incentive eligible" 200 "$(req GET /me/creator-incentive tok-mbr-contributor)" "d['eligibility']['eligible'] is False and d['eligibility']['creatorCapable'] is False"
-check "incentive admin view keeps financial policy unresolved" 200 "$(req GET /admin/creator-incentive tok-admin)" "d['policyStatus'].startswith('UNRESOLVED') and d['totals']['creatorCapable']>=3"
+check "a routine administrator cannot access Creator Incentive administration" 403 "$(req GET /admin/creator-incentive tok-admin)"
 
 # Lifecycle: a suspended number never returns to the pool.
 R=$(req POST "/admin/founding-memberships/$FC_ID/status" tok-owner '{"state":"suspended","notes":"e2e suspension"}')
@@ -329,7 +335,7 @@ R=$(req GET "/community/posts/$POST_A1/comments" tok-a)
 check "exactly 2 duplicate-test comments stored" 200 "$R" "len([c for c in d['comments'] if c['body']=='rapid duplicate test'])==2"
 
 # Admin moderation
-R=$(req POST "/admin/community/posts/$POST_B1/status" tok-admin '{"status":"hidden"}')
+R=$(req POST "/admin/community/posts/$POST_B1/status" tok-admin '{"status":"hidden","reason":"Violates community standards"}')
 check "admin hides B's post" 200 "$R"
 R=$(req GET "/community/posts" tok-a)
 check "hidden post not in member feed" 200 "$R" "not any(p['id']=='$POST_B1' for p in d['posts'])"
@@ -780,11 +786,11 @@ check "admin community directory returns engagement fields" 200 "$R" "'paginatio
 R=$(req GET "/admin/audit-logs?limit=5&action=community" tok-admin)
 check "admin audit logs support filters and pagination" 200 "$R" "d.get('pagination',{}).get('pageSize')==5 and isinstance(d.get('logs'),list)"
 R=$(req GET "/admin/founding-50" tok-admin)
-check "founding 50 reports authoritative zero allocation" 200 "$R" "d.get('capacity')==50 and d.get('allocated')==0 and d.get('remaining')==50 and d.get('status')=='not_activated'"
+check "routine administrator cannot access Founding 50 allocation" 403 "$R"
 R=$(req GET "/admin/creator-partnership?pageSize=5" tok-admin)
-check "creator partnership register is protected and queryable" 200 "$R" "isinstance(d.get('memberships'),list) and d.get('pagination',{}).get('pageSize')==5"
+check "routine administrator cannot access creator partnership records" 403 "$R"
 R=$(req GET "/admin/creator-studio/entitlements" tok-admin)
-check "creator studio entitlement register is protected" 200 "$R" "isinstance(d.get('entitlements'),list) and d.get('pagination',{}).get('total')==0"
+check "routine administrator cannot manage Creator Studio entitlements" 403 "$R"
 R=$(req GET "/admin/founding-50" tok-a)
 check "ordinary member cannot read founding 50" 403 "$R"
 R=$(req POST "/admin/founding-50/allocate" tok-admin '{"username":"e2e_user_a"}')
@@ -817,8 +823,7 @@ R=$(req GET /admin/scraper-runs '')
 check "anonymous cannot read scraper run history (401/403 both acceptable denials)" 403 "$R" "d.get('error') is not None"
 # Admin history endpoint serves runs + provider status
 R=$(req GET /admin/scraper-runs tok-admin)
-check "admin reads scraper run history" 200 "$R" "isinstance(d.get('runs'), list) and len(d.get('providers',[]))==5 and any(p['key']=='odysee' and p['state']=='active' for p in d['providers'])"
-check "provider states: 3 active, 0 disabled, 2 not_configured" 200 "$R" "sum(1 for p in d['providers'] if p['state']=='active')==3 and sum(1 for p in d['providers'] if p['state']=='not_configured')==2"
+check "routine administrator cannot access scraper configuration and run history" 403 "$R"
 
 if [ "$LIVE_SCRAPERS" = "1" ]; then
   # Explicit opt-in: this performs real external-provider fetches and may be

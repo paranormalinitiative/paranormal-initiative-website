@@ -104,6 +104,7 @@ const migrations = [
   { file: "migrations/0065_member_social_and_bug_reports.sql", tables: ["member_follows", "member_bug_reports"] },
   { file: "migrations/0067_board_members_and_badge.sql", tables: ["board_members"] },
   { file: "migrations/0068_governance_role_rank_metadata.sql", columns: ["role_code"], table: "leadership_distinctions", columnsByTable: { board_members: ["role_code", "domain_code", "medallion_code"] } },
+  { file: "migrations/0071_staff_role_appointments.sql", tables: ["staff_role_appointments"] },
 ];
 
 function missingParts(migration) {

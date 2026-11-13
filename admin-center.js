@@ -7,8 +7,10 @@
   const formatCount = (value) => Number.isFinite(Number(value)) ? Number(value).toLocaleString() : "Unavailable";
   const metricValue = (metrics, path) => path.split(".").reduce((value, key) => value && value[key], metrics);
   const get = (selector) => root.querySelector(selector);
+  let executiveToolsAllowed = false;
 
   function showView(name) {
+    if (name === "staff-roles" && !executiveToolsAllowed) name = "overview";
     root.dataset.adminActiveView = name;
     root.querySelectorAll("[data-admin-view]").forEach((view) => {
       view.hidden = view.dataset.adminView !== name && !(name === "members" && view.id === "members");
@@ -17,6 +19,23 @@
     const sidebar = get("[data-admin-sidebar]");
     sidebar?.classList.remove("is-open");
     get("[data-admin-sidebar-toggle]")?.setAttribute("aria-expanded", "false");
+    if (name === "staff-roles") loadStaffRoles();
+  }
+
+  async function loadStaffRoles() {
+    const host = get("[data-admin-staff-table]");
+    if (!host) return;
+    host.innerHTML = '<tr><td colspan="6">Loading staff appointments…</td></tr>';
+    try {
+      const data = await fetchJson("/api/admin/staff-roles");
+      host.innerHTML = (data.appointments || []).length ? data.appointments.map((row) => {
+        const label = row.roleCode === "executive" ? row.officeTitle : row.roleCode.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+        const current = row.status === "active";
+        return `<tr><td><strong>${esc(row.displayName || row.username)}</strong><small>${esc(row.username)}</small></td><td>${esc(label)}</td><td>${esc(row.status)}</td><td>${esc(row.appointedAt || "—")}</td><td>${esc(row.status === "active" ? row.reason : row.changeNote || row.reason || "—")}</td><td>${current ? `<button type="button" class="admin-center-refresh" data-admin-staff-revoke="${esc(row.id)}">Revoke</button>` : "—"}</td></tr>`;
+      }).join("") : '<tr><td colspan="6">No staff appointments yet. Legacy Owner and Administrator account roles remain recognized.</td></tr>';
+    } catch (error) {
+      host.innerHTML = `<tr><td colspan="6">${esc(error.message)}. Staff appointment management is available to Owner and Executive leadership.</td></tr>`;
+    }
   }
 
   function renderAudit(host, logs) {
@@ -28,6 +47,16 @@
     const response = await fetch(path, { credentials: "same-origin", headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Request failed (${response.status})`);
     return response.json();
+  }
+
+  async function revealExecutiveStaffTools() {
+    const response = await fetch("/api/auth/me", { credentials: "same-origin", headers: { Accept: "application/json" } });
+    if (!response.ok) return;
+    const data = await response.json().catch(() => ({}));
+    const identity = data.user?.staffIdentity;
+    const role = String(identity?.role || (data.user?.role === "owner" ? "owner" : "")).toLowerCase();
+    executiveToolsAllowed = role === "owner" || role === "executive";
+    root.querySelectorAll("[data-executive-only]").forEach((element) => { element.hidden = !executiveToolsAllowed; });
   }
 
   function trendRows(trends, keys) {
@@ -203,6 +232,28 @@
   get("[data-admin-founding-award-form]")?.addEventListener("submit", (event) => event.preventDefault());
   get("[data-admin-membership-refresh]")?.addEventListener("click", () => loadFoundingMemberships().catch(() => {}));
   get("[data-admin-leadership-refresh]")?.addEventListener("click", () => loadLeadershipDistinctions().catch(() => {}));
+  get("[data-admin-staff-refresh]")?.addEventListener("click", () => loadStaffRoles());
+  get("[data-admin-staff-form] [name='roleCode']")?.addEventListener("change", (event) => {
+    const wrap = get("[data-staff-office-wrap]");
+    const isExecutive = event.currentTarget.value === "executive";
+    if (wrap) wrap.hidden = !isExecutive;
+  });
+  get("[data-admin-staff-form]")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const message = get("[data-admin-staff-message]");
+    if (message) message.textContent = "Saving staff appointment…";
+    try {
+      const response = await fetch("/api/admin/staff-roles", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ username: form.elements.username.value, roleCode: form.elements.roleCode.value, officeTitle: form.elements.officeTitle.value, reason: form.elements.reason.value }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || `Request failed (${response.status})`);
+      if (message) message.textContent = `${result.appointment.roleCode.replaceAll("_", " ")} appointed for ${result.appointment.username}. The member’s profile recognition now reflects the server appointment.`;
+      form.reset();
+      const wrap = get("[data-staff-office-wrap]");
+      if (wrap) wrap.hidden = true;
+      await loadStaffRoles();
+    } catch (error) { if (message) message.textContent = error.message; }
+  });
   get("[data-admin-membership-inspect]")?.addEventListener("click", () => inspectMembershipCapabilities());
   get("[data-admin-membership-inspect-input]")?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") { event.preventDefault(); inspectMembershipCapabilities(); }
@@ -259,6 +310,19 @@
     }
   });
   root.addEventListener("click", async (event) => {
+    const staffButton = event.target.closest("[data-admin-staff-revoke]");
+    if (staffButton) {
+      const reason = window.prompt("Reason for revoking this staff appointment:");
+      if (!reason || reason.trim().length < 8) return;
+      staffButton.disabled = true;
+      try {
+        const response = await fetch("/api/admin/staff-roles", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ appointmentId: staffButton.dataset.adminStaffRevoke, reason }) });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || `Request failed (${response.status})`);
+        await loadStaffRoles();
+      } catch (error) { staffButton.disabled = false; window.alert(error.message); }
+      return;
+    }
     const button = event.target.closest("[data-admin-leadership-revoke]");
     if (!button) return;
     if (!window.confirm("Revoke this visual leadership distinction? This does not change account access.")) return;
@@ -277,6 +341,8 @@
   const initialView = initial && !initial.includes("=") && get(`[data-admin-nav='${CSS.escape(initial)}']`) ? initial : "overview";
   window.TPIAdminCenter = { refreshView: () => showView(root.dataset.adminActiveView || initialView) };
   new MutationObserver(() => window.TPIAdminCenter.refreshView()).observe(root, { subtree: true, attributes: true, attributeFilter: ["data-admin-authorized"] });
-  showView(initialView);
-  load();
+  revealExecutiveStaffTools().finally(() => {
+    showView(initialView);
+    load();
+  });
 })();

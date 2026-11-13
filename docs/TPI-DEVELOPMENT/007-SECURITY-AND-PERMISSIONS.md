@@ -21,24 +21,63 @@ Runtime checks passed: anonymous Admin Center access returned 403; the developme
 
 ## Current role policy
 
-Owner-confirmed baseline boundaries for Owner/CEO, Full Administrator,
+Owner-confirmed baseline boundaries for Owner, Executive, Full Administrator,
 Administrator, Moderator, and Member are recorded in section 82 of the
-[operational-role architecture](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md).
-They are policy only: no new role has been assigned and no new permission has
-been activated. The implemented gate remains an `owner` or `admin` account role.
+[operational-role architecture](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
+and the [Membership and Staff Rules](400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-STAFF-RULES-WORKING-DRAFT.md).
+The additive `0071_staff_role_appointments.sql` migration stores explicit,
+audited appointments separately from membership, entitlements, honors, and
+legacy account role values. `lib/staff-roles.js` resolves permissions on the
+server. Badges and client-provided values never grant authority.
 
 The intended operational-role architecture — Moderator, Senior Moderator, Lead Moderator, Administrator, Senior Administrator, Platform Administrator, and the separate Owner/Founder authority, together with least privilege, capability-based authorization, position records, and the rule that no badge or client value grants authority — is recorded in
 [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
-(TPI-GOVERNANCE-003B). It is policy only: the implemented gate today remains an
-owner-or-admin session, and none of those tiers exists yet.
+(TPI-GOVERNANCE-003B). Its earlier statements that no staff appointments or
+tiers exist are historical snapshots, superseded by the 2026-11-13
+implementation record below.
 
 That record now also carries the staff-conduct principles added by
 TPI-GOVERNANCE-003B1 — freedom of religion, speech, and the press as voluntary
 organizational values, viewpoint-neutral moderation, the boundary that free
-expression does not authorize abuse, recusal, fair process, equal application, and
-the working staff oath. None of it changes authorization behavior: no oath
-acknowledgment, staff tier, capability table, or role record is implemented, and
-authority is still resolved entirely server-side from the account's role value.
+expression does not authorize abuse, recusal, fair process, equal application,
+and the working staff oath. The oath and staff help surfaces remain future
+work. The active appointment table is the authority source for appointed staff;
+legacy `owner` and `admin` values remain supported for existing accounts.
+
+### Implemented staff permission baseline (2026-11-13)
+
+- **Owner:** protected highest authority; staff account workflows cannot block
+  or deactivate the Owner. Owner alone may appoint/revoke Executives and Full
+  Administrators, and may appoint/revoke lower staff.
+- **Executive:** CEO, Founder, Director, or Assistant Director appointment;
+  full platform authority except Owner transfer. May appoint/revoke
+  Administrator and Moderator appointments. Executive status is never inferred
+  from a display title.
+- **Full Administrator:** broad Administration Center and moderation access;
+  cannot appoint staff or change/remove Owner, Executive, Full Administrator,
+  Administrator, or Moderator accounts/appointments. Founding membership,
+  leadership honors, Creator incentives, security/settings, and access-entitlement
+  administration remain outside this role.
+- **Administrator:** routine member, community, article, report, event, and
+  team admin routes; may remove inappropriate Community Feed posts with a
+  required reason and audit entry. Cannot change staff/security/ownership or
+  alter staff accounts or grant professional entitlements. Route groups are allowlisted in
+  `mayUseAdminRoute()`.
+- **Moderator:** dedicated `/moderation` surface and server routes to hide or
+  remove Community Feed posts/comments with a required reason and audit entry;
+  no Administration Center access, staff appointment authority, or account
+  controls.
+- **Member:** participation and existing membership-based capabilities only.
+- **Membership stays separate:** Member, Contributor, Creator, Dual, and
+  Founding records do not imply operational authority. The Member badge is
+  recognition only.
+
+Appointments are explicit, one active role per person, reason-required, and
+audited. Revocation preserves history. Existing `owner` remains Owner and
+existing `admin` remains Administrator unless an explicit staff appointment
+overrides that baseline. Moderator warnings, temporary account restrictions,
+report intake/triage, staff suspension, and appeals are not implemented in this
+first release.
 
 ## Membership entitlements and administrative permissions (recorded 2026-11-02)
 

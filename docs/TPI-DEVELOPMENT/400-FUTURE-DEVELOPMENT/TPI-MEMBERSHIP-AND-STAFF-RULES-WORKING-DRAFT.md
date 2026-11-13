@@ -1,12 +1,13 @@
-# TPI Membership and Staff Rules — Working Draft
+# TPI Membership and Staff Rules
 
 Date: 2026-11-13  
-Status: **DISCUSSION DRAFT — NOT FINAL TERMS OR ACTIVE APPLICATION PERMISSIONS**
+Status: **OWNER-APPROVED BASELINE — IMPLEMENTED IN SOURCE; RELEASE PENDING**
 
-This document turns the owner's recent direction into one readable starting
-list. It is for review and refinement. It does not replace the membership and
-operational-role architecture records linked below, grant access, assign staff,
-or describe permissions as already active.
+This document records the owner-approved role boundaries and the first
+server-enforced implementation. The architecture records below remain the
+policy sources for their broader topics. Until the guarded production release
+completes, this document does not claim these new appointments or controls are
+active on the live site. No staff appointment is made by this document.
 
 ## 1. Keep membership, access, office, and honor separate
 
@@ -69,9 +70,9 @@ Do not advertise a benefit until its implementation and terms are approved.
 
 ## 3. Leadership and staff authority
 
-The following is the proposed authority order. Leadership titles and staff roles
-must be recorded explicitly; a profile label or badge alone is not proof of
-authority.
+The following is the approved authority model. Leadership titles and staff
+roles must be recorded explicitly; profile text or a badge alone is not proof
+of authority.
 
 ### Owner / CEO / Founder / Director / Assistant Director
 
@@ -79,8 +80,10 @@ authority.
   executive leadership group.
 - Admins and Moderators must not remove, block, demote, disable, or lock out a
   protected executive.
-- Proposed governance direction, pending confirmation: executive leadership
-  oversees appointments, escalations, and high-impact decisions.
+- The Owner appoints or revokes Executive and Full Administrator appointments.
+  The Owner and Executive leadership appoint or revoke Administrator and
+  Moderator appointments. No one may appoint themselves. Each change requires
+  a reason and is written to the administrative audit log.
 
 ### Full Administrator
 
@@ -90,6 +93,8 @@ authority.
 - Must not remove, block, demote, or disable a protected executive, another
   Administrator, or a Moderator.
 - Must not grant themselves higher authority or bypass an executive safeguard.
+- Does not appoint staff or administer Founding memberships, leadership honors,
+  Creator incentives, security settings, or high-impact configuration.
 - A “Full Administrator” label does not mean Owner or executive authority.
 
 ### Administrator
@@ -101,16 +106,18 @@ authority.
 - Must not remove or block protected executives, another Administrator, or a
   Moderator; must not self-elevate.
 - Does not automatically control ownership, executive appointments, billing,
-  security settings, permanent account deletion, or unrelated private messages.
+  membership entitlements, security settings, permanent account deletion, or
+  unrelated private messages.
   Those capabilities require separate explicit grants.
 
 ### Moderator
 
-- Reviews member reports and addresses conduct that violates the Community
-  Standards.
-- May hide or remove violating posts or comments, record the reason, warn a
-  member, apply limited temporary content restrictions if authorized, and
-  escalate serious or disputed cases.
+- Reviews Community Feed posts and comments and addresses conduct that violates
+  the Community Standards. The initial console can hide or remove posts and
+  comments; every action requires a reason and is audited.
+- Cannot change account access, appoint staff, or use the Administration
+  Center. Warnings, temporary posting restrictions, report intake/triage, and
+  appeals are not part of this first implementation.
 - Does not appoint staff, change account access or billing, change security or
   platform configuration, permanently delete accounts, or inspect unrelated
   private messages.
@@ -123,10 +130,10 @@ authority.
 - Cannot moderate another member or administer accounts because of membership,
   Founding status, badges, popularity, or personal relationship.
 
-## 4. Community conduct baseline — proposed for review
+## 4. Community conduct baseline — existing standards apply
 
-These are proposed member-facing rules to build into the formal Community
-Standards:
+The Community Standards remain the source for member-facing conduct rules.
+These principles guide staff enforcement and do not create a new site policy:
 
 1. Treat other members respectfully. No targeted harassment, threats, stalking,
    intimidation, or repeated unwanted contact.
@@ -150,7 +157,7 @@ Standards:
 harmful conduct and clearly inappropriate material, not a viewpoint or a claim
 merely because staff disagree with it.
 
-## 5. Staff conduct and enforcement safeguards — proposed for review
+## 5. Staff conduct and enforcement safeguards
 
 - Apply the same standards regardless of membership class, staff title, personal
   relationship, viewpoint, or criticism of TPI.
@@ -167,33 +174,43 @@ merely because staff disagree with it.
 - No staff role may grant itself additional access. Use server-enforced,
   capability-specific permissions and protect owner recovery.
 
-## 6. Decisions to settle before these rules become final
+## 6. Remaining policy and product work
 
-1. Set the exact ordering among protected executive offices, including whether
-   the Owner retains exclusive ownership and succession control while the other
-   designated executives retain full platform authority.
-2. Confirm whether “Full Administrator” and “Administrator” are separate ranks,
-   and name their exact capabilities.
-3. Decide who appoints, reviews, suspends, and removes each staff role; do not
-   allow self-appointment or self-elevation.
-4. Decide whether Senior Moderator or Lead Moderator is needed and what each
-   additional tier may do.
-5. Set the boundaries for temporary restrictions, account suspension, permanent
+1. Define executive succession, ownership transfer, and any board governance in
+   the separate governance architecture. Owner remains the protected highest
+   authority in the current implementation.
+2. Expand the role capability matrix as new administrative areas are reviewed.
+   Current API route groups are documented in Security and Permissions.
+3. Decide whether staff suspension is required. The first interface supports
+   appointment and revocation, retaining appointment history.
+4. Build member report intake/triage, warning/restriction actions, and an appeal
+   path before claiming those Moderator powers exist.
+5. Decide whether additional tiers such as Senior Moderator or Lead Moderator
+   are needed. They are not implemented or implied by current badges.
+6. Set the boundaries for temporary restrictions, account suspension, permanent
    bans, account deletion, and emergency action.
-6. Define the appeal path and the required audit history.
-7. Approve the member-facing Community Standards, including investigation
+7. Define the appeal path and the required audit history.
+8. Approve the member-facing Community Standards, including investigation
    safety, privacy, copyright, and content-specific rules.
-8. Separately settle paid membership names, prices, and benefits before offering
+9. Separately settle paid membership names, prices, and benefits before offering
    them publicly.
 
 ## 7. Current implementation boundary
 
-The production server currently has Owner and Admin account roles, Contributor
-publishing rules, Founding membership entitlements, and profile recognition.
-This draft's role descriptions are not all enforced as distinct role tiers.
-There is no Moderator appointment system or Full Administrator tier yet. Do not
-assign or promise these powers until the server-side role model, audit trail,
-appeal flow, and recovery safeguards are implemented and verified.
+As of 2026-11-13, source includes server-resolved staff appointments for
+Executive, Full Administrator, Administrator, and Moderator; reasoned
+appointment/revocation audit history; role-specific Administration Center API
+allowlists; protected staff-account controls; and a dedicated Moderator console
+for hiding/removing Feed posts and comments with a required reason. Existing
+Owner/Admin account values retain their safe compatibility mapping. No
+individual staff appointments were created during implementation. The additive
+schema change and application controls are **not live until the guarded release
+and live acceptance complete**. Refer to the dated completion record for the
+latest release and verification state.
+
+The Moderator console does not yet implement warning/restriction actions,
+member report intake/triage, or appeals. Keep those powers out of role claims
+until separately implemented and verified.
 
 ## Related authoritative records
 

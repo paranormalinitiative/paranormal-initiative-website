@@ -22,28 +22,39 @@ The intended review path is an authenticated development account on the isolated
 
 The existing `/admin-panel` remains the production Administration Center and must not be replaced by the preview during development work.
 
-## Operational staff management (future)
+## Operational staff management
 
-The preserved roadmap item **TPI Administration Center — Complete Quality &
-Functional Audit** covers the eventual staff-facing work: a staff directory, role
-assignment and suspension, permission inspection, appointment notes, audit
-history, and role-state management. Future UI should show only the tools the signed-in
-account's resolved capabilities permit.
+The initial staff appointment and moderation surfaces are implemented under the
+2026-11-13 staff-role work. The existing `/admin-panel` includes a Staff Roles
+view; server APIs restrict it to Owner and Executive. It records appointment
+and revocation reasons and preserves history. A separate `/moderation` surface
+lets staff with moderation authority hide or remove Community Feed posts and
+comments with an audited reason. These controls do not grant authority from
+badges or client state.
 
-Current production behavior is unchanged: `/admin-panel`, the protected admin
-pages, and every admin API require an owner-or-admin session, and there is no
-Moderator tier, staff directory, or role-assignment surface yet. The role model
-that this work must implement is
+Legacy Owner and Administrator accounts remain supported. Explicit Executive,
+Full Administrator, Administrator, and Moderator assignments now resolve
+server-side from `staff_role_appointments`. The Owner appoints/revokes Executive
+and Full Administrator; the Owner or Executive appoints/revokes Administrator
+and Moderator. Assignment forms require a reason. Existing admin APIs apply a
+server-side role allowlist, with protected Owner/Executive and staff-peer
+boundaries. The broader complete-quality audit remains open for capabilities
+not covered by the initial implementation. The role model is
 [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
 (TPI-GOVERNANCE-003B).
 
-That record, as amended by TPI-GOVERNANCE-003B1, also fixes the conduct standard the
-future staff surface must support: viewpoint-neutral moderation, protection for
-criticism of TPI and its leadership, recusal and escalation, documented fair process,
-equal application regardless of status, the working staff oath, and the rule that
-service recognition never reactivates expired authority. A future staff directory or
-oath-acknowledgment surface is not designed or implemented here, and the audit
-roadmap item recorded above is unchanged.
+Not yet implemented: staff suspension, member report intake and triage, warning
+and temporary restriction actions, appeals, a full staff directory, and an
+expanded per-capability inspection interface. Moderators currently manage
+Community Feed posts and comments only. Do not describe these future tools as
+available.
+
+That record, as amended by TPI-GOVERNANCE-003B1, also fixes the conduct standard staff
+must support: viewpoint-neutral moderation, protection for criticism of TPI and its
+leadership, recusal and escalation, documented fair process, equal application
+regardless of status, the working staff oath, and the rule that service recognition
+never reactivates expired authority. The oath acknowledgment and help surfaces remain
+future work, and the complete-quality audit remains open.
 
 The future management areas this Center must eventually carry — membership and
 entitlement administration, Founding Membership administration, role management and

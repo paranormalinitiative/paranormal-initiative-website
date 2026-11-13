@@ -253,8 +253,10 @@ async function servePageAsset(request, env) {
 // publication surface. Each editorial API route re-checks its own capability.
 async function hasAdministrationCenterAccess(env, user) {
   if (!user) return false;
-  if (user.role === "owner" || user.role === "admin") return true;
   try {
+    const staff = await env.TPI_DB.prepare("SELECT role_code FROM staff_role_appointments WHERE contributor_id = ? AND status = 'active' LIMIT 1").bind(user.id).first();
+    if (staff?.role_code) return ["executive", "full_administrator", "administrator"].includes(staff.role_code);
+    if (user.role === "owner" || user.role === "admin") return true;
     if (await memberHasCapability(env, user, CAPABILITY.EDITORIAL_REVIEW)) return true;
     return await memberHasCapability(env, user, CAPABILITY.EDITORIAL_PUBLISH);
   } catch (error) {
@@ -276,6 +278,20 @@ async function serveCanonicalAdminCenter(request, env) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (["/moderation", "/moderation/", "/moderation.html"].includes(url.pathname)) {
+      const user = await getSessionUser(request, env);
+      let allowed = false;
+      if (user && !allowed) {
+        try {
+          const appointment = await env.TPI_DB.prepare("SELECT role_code FROM staff_role_appointments WHERE contributor_id = ? AND status = 'active' LIMIT 1").bind(user.id).first();
+          allowed = appointment?.role_code
+            ? ["executive", "full_administrator", "administrator", "moderator"].includes(appointment.role_code)
+            : ["owner", "admin"].includes(user.role);
+        } catch (error) { allowed = false; }
+      }
+      if (!allowed) return new Response(ADMIN_GATE_HTML, { status: 403, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+      return serveAssets(new Request(new URL("/moderation.html", url.origin), request), env);
+    }
 
     // R2 WASM route (public, unchanged)
     if (url.pathname === "/app-assets/itc-visual-studio/ffmpeg-core.wasm") {
@@ -457,7 +473,7 @@ export default {
     ].includes(url.pathname);
     if (isAdminPage) {
       const user = await getSessionUser(request, env);
-      const hasAdminAccess = user && (user.role === "owner" || user.role === "admin");
+      const hasAdminAccess = await hasAdministrationCenterAccess(env, user);
       if (!hasAdminAccess) {
         return new Response(ADMIN_GATE_HTML, {
           status: 403,

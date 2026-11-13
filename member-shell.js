@@ -453,7 +453,14 @@
     // TPI-NOVA-004R6D: an Editorial Reviewer reaches the Administration Center
     // for the Editorial Review Queue. The flag is server-derived navigation
     // only; every review API route re-checks EDITORIAL_REVIEW.
-    var canUseAdminPanel = role === "owner" || role === "admin" || Boolean(user && user.editorialReviewAccess === true);
+    var staffRole = String(user && user.staffIdentity && user.staffIdentity.role || "").toLowerCase();
+    var canUseAdminPanel = staffRole
+      ? ["owner", "executive", "full_administrator", "administrator"].includes(staffRole)
+      : role === "owner" || role === "admin" || Boolean(user && user.editorialReviewAccess === true);
+    document.querySelectorAll("[data-moderator-only]").forEach(function (element) {
+      element.hidden = !["owner", "executive", "full_administrator", "administrator", "moderator"].includes(staffRole)
+        && role !== "owner" && role !== "admin";
+    });
     var canUseContentEditor = canUseAdminPanel || role === "contributor";
     var canUseCreatorStudio = Boolean(user && user.creatorStudioAccess);
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
@@ -573,6 +580,8 @@
           '<span class="member-mobile-notification-badge" data-notification-count hidden>0</span></a>' +
         '<a class="mobile-nav-link" href="/admin-panel" data-nav="admin-center" data-admin-only hidden>' +
           '<span class="mobile-nav-icon">&#9881;</span>Admin</a>' +
+        '<a class="mobile-nav-link" href="/moderation" data-nav="moderation" data-moderator-only hidden>' +
+          '<span class="mobile-nav-icon">&#9878;</span>Moderation</a>' +
         '<a class="mobile-nav-link" href="member-dashboard.html" data-nav="settings">' +
           '<span class="mobile-nav-icon">&#9881;</span>Settings</a>' +
       '</div>';

@@ -41,6 +41,7 @@ import {
   listLeadershipProfiles,
 } from "../../lib/leadership-distinctions.js";
 import { BOARD_DOMAIN_CATALOG, BOARD_MEMBER_BADGE, BOARD_ROLE_CATALOG, boardRolePayload, getBoardMembership, listBoardMembers } from "../../lib/board-members.js";
+import { activeStaffAppointment, effectiveStaffRole, mayUseAdminRoute, publicStaffIdentity, validOfficeTitle } from "../../lib/staff-roles.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -66,6 +67,10 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
+    if (request.method === "GET" && path === "/admin/staff-roles") return requireExecutive(request, env, user => handleAdminStaffRoles(request, env, user));
+    if (request.method === "POST" && path === "/admin/staff-roles") return requireExecutive(request, env, user => handleAdminSetStaffRole(request, env, user));
+    if (request.method === "GET" && path === "/moderation/queue") return requireModeration(request, env, user => handleModerationQueue(request, env, user));
+    if (request.method === "POST" && path.match(/^\/moderation\/(posts|comments)\/[^/]+\/status$/)) return requireModeration(request, env, user => handleModerationStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/overview") return requireAdmin(request, env, user => handleAdminOverview(request, env, user));
     if (request.method === "GET" && path === "/admin/analytics") return requireAdmin(request, env, user => handleAdminAnalytics(request, env, user));
     if (request.method === "GET" && path === "/admin/audit-logs") return requireAdmin(request, env, user => handleAdminAuditLogs(request, env, user));
@@ -518,8 +523,9 @@ async function handleMe(request, env) {
   return json({
     user: {
       ...privateMemberUser(user, await hasCreatorStudioAccess(env, user)),
+      staffIdentity: await publicStaffIdentity(env, user),
       editorialReviewAccess,
-      adminAccess: user.role === "owner" || user.role === "admin" || editorialReviewAccess,
+      adminAccess: ["owner", "executive", "full_administrator", "administrator"].includes(await effectiveStaffRole(env, user)) || editorialReviewAccess,
       educationLeadershipAccess: await hasEducationLeadershipAccess(env, user),
       foundingMembership: await publicMembershipIdentity(env, user.id),
       leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
@@ -590,8 +596,8 @@ async function handleCreateInvite(request, env, user) {
   const assignment = getInviteAssignment(code);
   const role = assignment?.role || (["owner", "admin", "contributor", "member"].includes(data.role) ? data.role : "contributor");
   if (!code) return json({ error: "Invite code is required." }, 400);
-  if (["owner", "admin"].includes(role) && user.role !== "owner") {
-    return json({ error: "Only the Director can create Director, Assistant Director, or Admin invites." }, 403);
+  if (["owner", "admin"].includes(role) && !["owner", "executive"].includes(await effectiveStaffRole(env, user))) {
+    return json({ error: "Only the Owner or Executive leadership can create leadership or Administrator invites." }, 403);
   }
 
   await env.TPI_DB.prepare("INSERT INTO invite_codes (code, role, created_by) VALUES (?, ?, ?)")
@@ -2295,6 +2301,120 @@ async function handleAdminRoles(request, env) {
   return json({ roles: results || [], metadataOnly: true, mutationBoundary: "Role and capability changes remain on existing protected Contributor Management workflows." }, 200, { "Cache-Control": "no-store" });
 }
 
+async function handleAdminStaffRoles(request, env, actingUser) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT a.id, a.role_code AS roleCode, a.office_title AS officeTitle,
+           a.status, a.reason, a.appointed_at AS appointedAt,
+           a.changed_at AS changedAt, a.change_note AS changeNote,
+           target.username, target.display_name AS displayName,
+           target.role AS accountRole, target.active AS accountActive,
+           actor.username AS appointedBy
+    FROM staff_role_appointments a
+    JOIN contributors target ON target.id = a.contributor_id
+    JOIN contributors actor ON actor.id = a.appointed_by
+    ORDER BY CASE a.status WHEN 'active' THEN 0 WHEN 'suspended' THEN 1 ELSE 2 END,
+             a.appointed_at DESC
+    LIMIT 300
+  `).all();
+  return json({ appointments: results || [], canAssignExecutive: actingUser.role === "owner", metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminSetStaffRole(request, env, actingUser) {
+  const data = await readJson(request);
+  const reason = clean(data.reason).slice(0, 1000);
+  if (reason.length < 8) return json({ error: "Add a brief appointment or change reason (at least 8 characters)." }, 400);
+
+  if (data.appointmentId) {
+    const appointment = await env.TPI_DB.prepare(`
+      SELECT id, contributor_id AS contributorId, role_code AS roleCode, status
+      FROM staff_role_appointments WHERE id = ?
+    `).bind(clean(data.appointmentId)).first();
+    if (!appointment) return json({ error: "Staff appointment was not found." }, 404);
+    if (appointment.status !== "active") return json({ error: "Only an active appointment can be changed." }, 409);
+    const target = await env.TPI_DB.prepare("SELECT id, username FROM contributors WHERE id = ?").bind(appointment.contributorId).first();
+    if (!target || target.id === actingUser.id) return json({ error: "You cannot change your own staff appointment." }, 403);
+    if (actingUser.role !== "owner" && ["executive", "full_administrator"].includes(appointment.roleCode)) {
+      return json({ error: "Only the Owner can revoke executive or Full Administrator appointments." }, 403);
+    }
+    await env.TPI_DB.prepare(`
+      UPDATE staff_role_appointments
+      SET status = 'revoked', changed_by = ?, changed_at = CURRENT_TIMESTAMP, change_note = ?
+      WHERE id = ? AND status = 'active'
+    `).bind(actingUser.id, reason, appointment.id).run();
+    await writeAdminAuditLog(env, actingUser, "staff_role.revoked", "staff_role_appointment", appointment.id, { username: target.username, roleCode: appointment.roleCode, reason });
+    return json({ appointment: { id: appointment.id, username: target.username, roleCode: appointment.roleCode, status: "revoked" } });
+  }
+
+  const username = clean(data.username).slice(0, 80);
+  const roleCode = clean(data.roleCode).toLowerCase();
+  const officeTitle = clean(data.officeTitle).slice(0, 80);
+  if (!username || !["executive", "full_administrator", "administrator", "moderator"].includes(roleCode)) {
+    return json({ error: "Choose a registered member and a supported staff role." }, 400);
+  }
+  if (["executive", "full_administrator"].includes(roleCode) && actingUser.role !== "owner") {
+    return json({ error: "Only the Owner can appoint an Executive or Full Administrator." }, 403);
+  }
+  if (roleCode === "executive" && !validOfficeTitle(officeTitle)) {
+    return json({ error: "Choose CEO, Founder, Director, or Assistant Director." }, 400);
+  }
+  if (roleCode !== "executive" && officeTitle) return json({ error: "Office titles apply only to executive appointments." }, 400);
+  const target = await getUserByUsername(env, username);
+  if (!target || !target.active) return json({ error: "Active member was not found." }, 404);
+  if (target.id === actingUser.id || target.role === "owner") return json({ error: "Owner accounts cannot receive or change staff appointments." }, 403);
+  const current = await activeStaffAppointment(env, target.id);
+  if (current) return json({ error: "This member already has an active staff appointment. Revoke it before assigning another role." }, 409);
+  const id = crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO staff_role_appointments
+      (id, contributor_id, role_code, office_title, reason, appointed_by, changed_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).bind(id, target.id, roleCode, officeTitle, reason, actingUser.id, actingUser.id).run();
+  await writeAdminAuditLog(env, actingUser, "staff_role.appointed", "staff_role_appointment", id, { username: target.username, roleCode, officeTitle, reason });
+  return json({ appointment: { id, username: target.username, displayName: target.display_name, roleCode, officeTitle, status: "active" } }, 201);
+}
+
+async function handleModerationQueue(request, env) {
+  const url = new URL(request.url);
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "40", 10) || 40, 100));
+  const [posts, comments] = await Promise.all([
+    env.TPI_DB.prepare(`
+      SELECT cp.id, cp.title, cp.body, cp.status, cp.created_at AS createdAt,
+             c.username AS authorUsername, c.display_name AS authorDisplayName,
+             cc.title AS categoryTitle
+      FROM community_posts cp LEFT JOIN contributors c ON c.id = cp.author_id
+      LEFT JOIN community_categories cc ON cc.id = cp.category_id
+      WHERE cp.status IN ('visible', 'hidden')
+      ORDER BY cp.created_at DESC LIMIT ?
+    `).bind(pageSize).all(),
+    env.TPI_DB.prepare(`
+      SELECT cm.id, cm.post_id AS postId, cm.body, cm.status,
+             cm.created_at AS createdAt, c.username AS authorUsername,
+             c.display_name AS authorDisplayName, cp.title AS postTitle
+      FROM community_comments cm JOIN community_posts cp ON cp.id = cm.post_id
+      LEFT JOIN contributors c ON c.id = cm.author_id
+      WHERE cm.status IN ('visible', 'hidden')
+      ORDER BY cm.created_at DESC LIMIT ?
+    `).bind(pageSize).all()
+  ]);
+  return json({ posts: posts.results || [], comments: comments.results || [], metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleModerationStatus(path, request, env, actingUser) {
+  const [, kind, rawId] = path.match(/^\/moderation\/(posts|comments)\/([^/]+)\/status$/) || [];
+  const id = clean(decodeURIComponent(rawId || ""));
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  const reason = clean(data.reason).slice(0, 1000);
+  if (!id || !["hidden", "deleted"].includes(status)) return json({ error: "Moderators may hide or remove content." }, 400);
+  if (reason.length < 8) return json({ error: "Add a brief reason (at least 8 characters)." }, 400);
+  const table = kind === "posts" ? "community_posts" : "community_comments";
+  const item = await env.TPI_DB.prepare(`SELECT id, status FROM ${table} WHERE id = ?`).bind(id).first();
+  if (!item) return json({ error: "Community content was not found." }, 404);
+  await env.TPI_DB.prepare(`UPDATE ${table} SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`).bind(status, id).run();
+  await writeAdminAuditLog(env, actingUser, `community.${kind.slice(0, -1)}_moderated`, kind === "posts" ? "community_post" : "community_comment", id, { previousStatus: item.status, status, reason });
+  return json({ item: { id, status } });
+}
+
 async function handleAdminRestrictions(request, env) {
   const url = new URL(request.url);
   const search = clean(url.searchParams.get("search") || "").slice(0, 120);
@@ -2496,7 +2616,11 @@ async function handleAdminSetMemberActive(path, env, actingUser, active) {
   const target = await getUserByUsername(env, username);
   if (!target) return json({ error: "Member was not found." }, 404);
   if (target.id === actingUser.id) return json({ error: "You cannot block your own account." }, 400);
-  if (target.role === "owner" && actingUser.role !== "owner") return json({ error: "Only the owner can change a director account." }, 403);
+  const actingRole = await effectiveStaffRole(env, actingUser);
+  const targetRole = await effectiveStaffRole(env, target);
+  if (targetRole === "owner") return json({ error: "The Owner account is protected from staff account changes." }, 403);
+  if (targetRole !== "member" && !["owner", "executive"].includes(actingRole)) return json({ error: "Only the Owner or Executive leadership can change a staff account." }, 403);
+  if (targetRole === "executive" && actingRole !== "owner") return json({ error: "Only the Owner can change an Executive account." }, 403);
 
   await env.TPI_DB.prepare("UPDATE contributors SET active = ? WHERE username = ?")
     .bind(active ? 1 : 0, username)
@@ -2513,7 +2637,11 @@ async function handleAdminUpdateMemberAccess(path, request, env, actingUser) {
   if (!username) return json({ error: "Member username is required." }, 400);
   const target = await getUserByUsername(env, username);
   if (!target) return json({ error: "Member was not found." }, 404);
-  if (target.role === "owner" && actingUser.role !== "owner") return json({ error: "Only the owner can change a director account." }, 403);
+  const actingRole = await effectiveStaffRole(env, actingUser);
+  const targetRole = await effectiveStaffRole(env, target);
+  if (targetRole === "owner") return json({ error: "The Owner account is protected from staff account changes." }, 403);
+  if (targetRole !== "member" && !["owner", "executive"].includes(actingRole)) return json({ error: "Only the Owner or Executive leadership can change a staff account." }, 403);
+  if (targetRole === "executive" && actingRole !== "owner") return json({ error: "Only the Owner can change an Executive account." }, 403);
   const data = await readJson(request);
   await env.TPI_DB.prepare(`
     UPDATE contributors
@@ -2764,10 +2892,12 @@ async function handleAdminSetCommunityPostStatus(path, request, env, actingUser)
   const postId = clean(decodeURIComponent(path.match(/^\/admin\/community\/posts\/([^/]+)\/status$/)?.[1] || ""));
   const data = await readJson(request);
   const status = clean(data.status).toLowerCase();
+  const reason = clean(data.reason).slice(0, 1000);
   if (!postId) return json({ error: "Post id is required." }, 400);
   if (!["visible", "hidden", "deleted"].includes(status)) {
     return json({ error: "Post status was not recognized." }, 400);
   }
+  if (status !== "visible" && reason.length < 8) return json({ error: "Add a brief reason (at least 8 characters) before hiding or removing this post." }, 400);
 
   const post = await env.TPI_DB.prepare("SELECT id, title, status FROM community_posts WHERE id = ?").bind(postId).first();
   if (!post) return json({ error: "Post was not found." }, 404);
@@ -2778,7 +2908,8 @@ async function handleAdminSetCommunityPostStatus(path, request, env, actingUser)
 
   await writeAdminAuditLog(env, actingUser, "community.post_status_updated", "community_post", postId, {
     previousStatus: post.status,
-    status
+    status,
+    reason: reason || undefined
   });
 
   return json({ post: { id: post.id, title: post.title, status } });
@@ -9588,6 +9719,7 @@ async function handleMemberProfile(request, env, user) {
   }
   return json({
     profile: { id: target.id, ...publicUser(target) },
+    staffIdentity: await publicStaffIdentity(env, target),
     relationship: await getMemberRelationship(env, user, target),
     foundingMembership: await publicMembershipIdentity(env, target.id),
     leadershipDistinctions: await listLeadershipDistinctions(env, "member", target.id),
@@ -10646,7 +10778,28 @@ async function requireMember(request, env, handler) {
 
 async function requireAdmin(request, env, handler) {
   const user = await getSessionUser(request, env);
-  if (!user || !["owner", "admin"].includes(user.role)) return json({ error: "Owner or admin access required." }, 403);
+  if (!user) return json({ error: "Administrative access required." }, 403);
+  const role = await effectiveStaffRole(env, user);
+  const path = new URL(request.url).pathname.replace(/^\/api/, "");
+  if (!mayUseAdminRoute(role, path, request.method)) return json({ error: "Your staff role does not have access to this administrative area." }, 403);
+  return handler(user);
+}
+
+async function requireExecutive(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Executive authorization required." }, 403);
+  const role = await effectiveStaffRole(env, user);
+  if (!["owner", "executive"].includes(role)) return json({ error: "Only the Owner or Executive leadership can manage staff appointments." }, 403);
+  return handler(user);
+}
+
+async function requireModeration(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Staff sign-in required." }, 401);
+  const role = await effectiveStaffRole(env, user);
+  if (!["owner", "executive", "full_administrator", "administrator", "moderator"].includes(role)) {
+    return json({ error: "Moderator access required." }, 403);
+  }
   return handler(user);
 }
 
@@ -10661,7 +10814,9 @@ async function requireStudioAccess(request, env, handler) {
 
 async function requireOwner(request, env, handler) {
   const user = await getSessionUser(request, env);
-  if (!user || user.role !== "owner") return json({ error: "Owner access required." }, 403);
+  if (!user) return json({ error: "Executive authorization required." }, 403);
+  const role = await effectiveStaffRole(env, user);
+  if (!["owner", "executive"].includes(role)) return json({ error: "Owner or Executive authorization required." }, 403);
   return handler(user);
 }
 

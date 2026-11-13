@@ -1,18 +1,25 @@
 # TPI Current Development Status
 
-## 2026-11-13 — Membership and staff rules working draft
+## 2026-11-13 — Staff roles and moderation implementation
 
-Prepared a concise discussion draft bringing together Community Member,
-Creator, Contributor, Dual, and Founding access with Owner/executive,
-Full Administrator, Administrator, and Moderator boundaries. It also proposes
-a member conduct baseline, staff enforcement safeguards, and the decisions to
-settle before finalizing these rules. This is a policy draft only: it does not
-supersede the current architecture records, change account permissions, or
-grant staff roles. See [Membership and Staff Rules working draft](400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-STAFF-RULES-WORKING-DRAFT.md).
+Status: **IMPLEMENTED IN SOURCE; RELEASE AND LIVE ACCEPTANCE PENDING.** Added
+explicit staff appointments with reasoned audit history; server-side authority
+resolution; role-specific Admin Center API access; Owner/Executive appointment
+management; and a dedicated Moderator console for reasoned hide/remove actions
+on Community Feed posts and comments. Existing Owner/Admin accounts retain
+their baseline mapping, and no individual was newly appointed. Migration
+`0071_staff_role_appointments.sql` is additive. Focused verification passed:
+staff role rules **14/14**, isolated API E2E **300/300**, authentication
+lifecycle **38/38**, Firefox Developer Edition **65/65**, profile honors wall
+**13/13**, and member profile/feed **35/35**. The guarded release and live
+acceptance remain pending; no live deployment is claimed here. See [Membership and Staff
+Rules](400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-STAFF-RULES-WORKING-DRAFT.md)
+and [Staff Roles and Moderation](300-COMPLETED-WORK/2026-11-13-STAFF-ROLES-AND-MODERATION.md)
+for implementation details and the exact verification/release state.
 
 ## 2026-11-13 — Universal Member badge and owner-confirmed staff-role boundaries
 
-Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-5ee1fc9f2d50-3a843a3d7d47`; Worker `dfee6075-5bc3-4e88-aceb-09c97bb53c93`.** Added the
+Status: **DEPLOYED AND LIVE VERIFIED AT THAT RELEASE — RELEASE `rel-5ee1fc9f2d50-3a843a3d7d47`; Worker `dfee6075-5bc3-4e88-aceb-09c97bb53c93`.** Added the
 owner-supplied transparent Member badge to the shared Honors & Distinctions
 renderer, so it appears for existing active members as well as new signups.
 Added transparent Administrator and Moderator badge derivatives from the new
@@ -21,8 +28,9 @@ current presentation source. Updated operational role policy with the
 owner-confirmed boundary: executives retain full control; Admins can remove
 inappropriate content but cannot remove/block protected executives or peer
 Admins/Moderators; Moderators handle reports and violating content with limited
-temporary actions and escalation. These role boundaries remain policy only:
-roles are not assigned and new server authorization is not active.
+temporary actions and escalation. At that release, role boundaries were policy
+only. The later staff-role implementation is tracked in the 2026-11-13 record
+above; no staff appointments were made as part of that implementation.
 
 The member-profile API/Firefox suites passed 35/35 each, including actual
 loading of the Member and Administrator badge files. The complete guarded
@@ -1351,8 +1359,10 @@ DEPLOYMENT.**
 
 ## TPI-GOVERNANCE-003B — Operational roles and administrative authority (2026-11-03)
 
-Status: **DOCUMENTATION AND ASSET IMPORT ONLY. NO ROLE ASSIGNMENT, PERMISSION
-CHANGE, OR DEPLOYMENT.**
+Historical status as of 2026-11-03: **DOCUMENTATION AND ASSET IMPORT ONLY. NO
+ROLE ASSIGNMENT, PERMISSION CHANGE, OR DEPLOYMENT.** The owner subsequently
+authorized implementation; current status is recorded in the dated section at
+the top of this file.
 
 - The operational staff architecture is recorded in
   [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md):
@@ -1365,9 +1375,9 @@ CHANGE, OR DEPLOYMENT.**
   them; paid, Creator, Contributor, and Founding states simply coexist.
 - The historical **Assistant Administrator** term is preserved as an unresolved
   role question instead of being erased.
-- Current implementation is recorded factually and separately: a single
-  `owner`/`admin` role value gates the admin routes and APIs; no Moderator tier,
-  capability table, staff directory, or role assignment exists.
+- The implementation facts in this historical directive describe the state on
+  2026-11-03. They are superseded by the 2026-11-13 staff-role implementation
+  record and must not be used as a statement of current behavior.
 - Operational badge masters imported byte-identically to
   `assets/operational-roles/masters/` (Administrator and Moderator, 1024×1024).
   Both were delivered as `.png` files that are actually JPEG without alpha, and

@@ -26,6 +26,16 @@ status text is historical and is superseded by the current snapshot in
 and the linked November 11 completion records. This register remains the source for
 work that is genuinely future, unresolved, or owner-decision dependent.
 
+**Staff-role reconciliation (2026-11-13):** The owner has explicitly
+authorized and source implementation now covers the baseline staff model:
+appointment records, role-aware server authorization, appointment history, and
+a narrow moderation console. This supersedes earlier blanket statements that
+no role permissions or staff appointments may be implemented. The guarded
+release and live acceptance state are tracked in the current status and
+completion record; no production role assignments are implied. Moderator
+report intake/triage, warnings, temporary restrictions, appeals, staff
+suspension, and the remaining governance architecture stay future work.
+
 ---
 
 ## 1. How this register relates to the other records
@@ -149,18 +159,15 @@ Governance architecture work must not wait on these assets.
 
 ### Operational badge web derivative cleanup
 
-Status: **FUTURE — REQUIRED ONLY WHEN OPERATIONAL BADGES ARE ACTUALLY DISPLAYED.**
+Status: **COMPLETE FOR THE SUPPLIED MODERATOR AND ADMINISTRATOR ART.**
 
-`assets/operational-roles/masters/ModeratorBadgeMaster.jpg` contains a baked grey/white
-checkerboard instead of genuine transparency. The master stays preserved and unchanged
-with its hash recorded. When operational badges are genuinely implemented, the work is:
+The supplied transparent Moderator and Administrator art has optimized web
+derivatives and is used by the shared profile recognition renderer. The supplied
+masters remain unchanged and excluded from publishing. No cleanup remains for these
+two supplied designs. New higher staff tiers may need their own approved artwork.
 
-- create proper web/display derivatives;
-- remove the visible checkerboard **only** from derivative artwork;
-- keep the original master untouched;
-- optimize for the dark TPI interface;
-- verify the Administrator badge's background treatment on the same surfaces;
-- preserve provenance and hashes for both master and derivative.
+- confirm any additional role art supplied for future tiers;
+- preserve the current rule that badge presence is presentation only.
 
 ### Operational master release-packaging exclusion
 
@@ -424,30 +431,28 @@ be edited into a different rule set.
 
 ---
 
-## 11. Not authorized to start
+## 11. Historical authorization boundary and remaining work
 
-Explicitly **future work only**. None of the following is authorized by this register or
-by 003B2:
+The original 003B2 boundary was documentation-only. The owner later authorized
+the initial staff appointment and moderation implementation, described above.
+The following items remain future work and are not part of that implementation:
 
 - complete Community Standards;
 - Community Help Center;
 - Internal Help Desk;
 - Mystic Help integration;
-- new Moderator or Administrator artwork;
+- future higher-tier Moderator or Administrator artwork;
 - Board medallions;
 - additional leadership medallions;
 - operational badge derivative repair;
 - Honors Wall implementation;
 - achievements implementation;
-- staff hierarchy implementation;
+- additional staff hierarchy implementation beyond the initial appointments;
 - staff oath implementation;
-- new role permissions;
-- any application, database, or Worker change;
-- any deployment or release certification.
+- expanded permissions beyond the implemented baseline;
 
-The owner does not currently have all required artwork or final policy decisions. That is
-acceptable and expected. These items stay visible on the roadmap without blocking
-current architecture work.
+The owner does not currently have all future artwork or policy decisions. Those
+items stay visible on the roadmap without blocking the implemented baseline.
 
 ---
 
@@ -460,9 +465,10 @@ current architecture work.
 | Gold / Silver / Bronze medallion policy | Implemented in development | Production release and future qualification refinement |
 | Board and leadership medallions | Unresolved | Owner artwork and policy |
 | Additional badge / medallion artwork | Owner dependency | Owner artwork |
-| Senior / Lead / Platform role finalization | Unresolved | Owner decisions |
-| Assistant Administrator question | Unresolved | Owner decision |
+| Senior / Lead / Platform role finalization | Deferred; not in initial role model | Owner decision |
+| Assistant Administrator question | Deferred; not in initial role model | Owner decision |
 | Staff oath implementation | Documented, not implemented | Owner directive |
+| Initial staff appointments and scoped moderation | Implemented in source; guarded release pending | Release and live acceptance |
 | Complete Community Standards | Not authored | Owner directive |
 | Community Help Center | Not built | Community Standards and help directive |
 | Internal Help Desk | Not built | Staff policy finalization |
@@ -472,7 +478,7 @@ current architecture work.
 | Achievement system | Not implemented | Owner policy |
 | Education credentials on Honors Wall | Not implemented | Education policy |
 | Profile Primary Distinction | Not implemented | Honors policy |
-| Moderator badge derivative cleanup | Not started | Actual badge display work |
+| Moderator and Administrator badge derivatives | Complete; deployed assets from supplied transparent art | New art only if future tiers are adopted |
 | Operational master release exclusion | Required before release certification | Next release directive |
 | Administration Center full audit | Preserved roadmap item | Owner directive |
 
