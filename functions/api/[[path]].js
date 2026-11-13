@@ -1781,10 +1781,14 @@ async function handleAdminGrantMemberCapability(path, request, env, actingUser) 
   const data = await readJson(request);
   const member = await findExistingMember(env, username);
   if (!member) return json({ error: "An active existing TPI account is required." }, 400, { "Cache-Control": "no-store" });
+  const capability = clean(data.capability).toLowerCase();
+  if ([CAPABILITY.EDITORIAL_REVIEW, CAPABILITY.EDITORIAL_PUBLISH].includes(capability) && actingUser?.role !== "owner") {
+    return json({ error: "Only the owner can grant Nova editorial authority." }, 403, { "Cache-Control": "no-store" });
+  }
   try {
     const result = await grantCapability(env, {
       member,
-      capability: clean(data.capability).toLowerCase(),
+      capability,
       actor: actingUser,
       notes: clean(data.notes).slice(0, 2000),
     });
@@ -1805,6 +1809,11 @@ async function handleAdminGrantMemberCapability(path, request, env, actingUser) 
 async function handleAdminRevokeMemberCapability(path, request, env, actingUser) {
   const entitlementId = clean(decodeURIComponent(path.match(/^\/admin\/members\/entitlements\/([^/]+)\/revoke$/)?.[1] || ""));
   const data = await readJson(request);
+  if (!entitlementId) return json({ error: "An entitlement id is required." }, 400, { "Cache-Control": "no-store" });
+  const entitlement = await env.TPI_DB.prepare("SELECT capability FROM member_entitlements WHERE id = ?").bind(entitlementId).first();
+  if (entitlement && [CAPABILITY.EDITORIAL_REVIEW, CAPABILITY.EDITORIAL_PUBLISH].includes(entitlement.capability) && actingUser?.role !== "owner") {
+    return json({ error: "Only the owner can revoke Nova editorial authority." }, 403, { "Cache-Control": "no-store" });
+  }
   try {
     const result = await revokeCapability(env, {
       entitlementId,

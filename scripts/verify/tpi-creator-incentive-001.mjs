@@ -197,6 +197,7 @@ const migrations = [
   // Audit table used by every membership mutation.
   "migrations/0047_admin_audit_logs.sql",
   "migrations/0058_founding_membership_entitlements.sql",
+  "migrations/0062_editorial_capabilities.sql",
 ];
 
 // SQL is passed on stdin: migration files begin with comments, and a leading
@@ -440,6 +441,21 @@ check(
   sqlJson("SELECT capability FROM member_entitlements WHERE contributor_id='acct-plain' AND state='active' ORDER BY capability;").map((row) => row.capability).join(",") === "contributor",
 );
 check("the revoked row is preserved, not deleted", sqlJson("SELECT COUNT(*) AS total FROM member_entitlements WHERE contributor_id='acct-plain';")[0].total === 2);
+
+const reviewGrant = await grantCapability(fakeEnv, { member: plainA, capability: "editorial_review", actor: { id: "owner-id", username: "owner", role: "owner" }, notes: "Nova review duty" });
+const publishGrant = await grantCapability(fakeEnv, { member: plainA, capability: "editorial_publish", actor: { id: "owner-id", username: "owner", role: "owner" }, notes: "Nova publisher duty" });
+check("explicit Nova reviewer authority is stored as an active entitlement", sqlJson("SELECT capability FROM member_entitlements WHERE contributor_id='acct-plain' AND state='active' AND capability='editorial_review';").length === 1);
+check("explicit Nova publisher authority is stored independently", sqlJson("SELECT capability FROM member_entitlements WHERE contributor_id='acct-plain' AND state='active' AND capability='editorial_publish';").length === 1);
+check("granting Nova editorial authority preserves the existing Contributor grant", sqlJson("SELECT capability FROM member_entitlements WHERE contributor_id='acct-plain' AND state='active' ORDER BY capability;").map((row) => row.capability).join(",") === "contributor,editorial_publish,editorial_review");
+let duplicateEditorialGrant = null;
+try { await grantCapability(fakeEnv, { member: plainA, capability: "editorial_review", actor: { username: "owner", role: "owner" } }); } catch (error) { duplicateEditorialGrant = error; }
+check("duplicate Nova editorial authority is refused", duplicateEditorialGrant instanceof MembershipError && duplicateEditorialGrant.status === 409);
+await revokeCapability(fakeEnv, { entitlementId: reviewGrant.entitlement.id, actor: { id: "owner-id", username: "owner", role: "owner" }, notes: "Reviewer duty ended" });
+check("revoking reviewer authority preserves publisher authority and the historical row", sqlJson("SELECT capability || ':' || state AS value FROM member_entitlements WHERE id IN ('" + reviewGrant.entitlement.id + "','" + publishGrant.entitlement.id + "') ORDER BY capability;").map((row) => row.value).join(",") === "editorial_publish:active,editorial_review:revoked");
+check("Nova editorial grants and revocations are recorded in the administrative audit log", sqlJson("SELECT COUNT(*) AS total FROM admin_audit_logs WHERE action IN ('member.capability_granted','member.capability_revoked') AND target_type='member' AND target_id='acct_plain';")[0].total >= 3);
+const apiSource = readFileSync(resolve(repoRoot, "functions/api/[[path]].js"), "utf8");
+check("the Nova grant API explicitly requires the owner role for reviewer/publisher access", /\[CAPABILITY\.EDITORIAL_REVIEW, CAPABILITY\.EDITORIAL_PUBLISH\][\s\S]{0,220}actingUser\?\.role !== "owner"/.test(apiSource));
+check("the Nova revoke API explicitly requires the owner role for reviewer/publisher access", /entitlement\.capability\)[\s\S]{0,220}actingUser\?\.role !== "owner"/.test(apiSource));
 
 section("Registry: database-enforced uniqueness and numbering");
 
