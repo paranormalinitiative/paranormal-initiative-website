@@ -1,6 +1,6 @@
 # TPI-OPS-017 — Site-Wide Shell and Theme Audit
 
-Verified: 2026-11-12  
+Verified: 2026-11-12; production release verified 2026-11-13 UTC
 Source: tracked HTML files and shared theme/shell implementation in the canonical repository.
 
 ## Scope and method
@@ -107,6 +107,23 @@ A full page-by-page visual pass remains open. It should cover the remaining
 in-scope public pages, member pages, and application surfaces, while continuing
 to exclude all Haunted Location books and all other Repository books.
 
-Nova's theme token source and generated build assets, plus the shared Worker
-theme behavior for access gates, were changed locally. No books, member data,
-production data, or production site were changed.
+### Production release
+
+The changes were deployed through the guarded release workflow from source
+commit `8d444b943916a68a995facc1dbdbf1393b3dec2f` as release
+`rel-8d444b943916-8e1f9c61cc85`. The active Worker version is
+`33e72eed-f4f3-41bd-9106-0217ee89baf1`; the release workflow confirmed that it
+held 100% of traffic.
+
+- Release preflight: certified; all 30 release gates passed.
+- Live anonymous production smoke: 10/10 passed.
+- Live isolated Firefox Developer Edition acceptance: 65/65 passed.
+- Production schema readiness was read-only and passed with no pending
+  migrations.
+- Rollback version captured before deployment:
+  `f65602de-f2ff-4af4-85e4-bef08490f6ee`.
+
+The production release changed the Nova Editorial theme palettes and the
+shared theme behavior for access gates. No Haunted Location books, other
+Repository books, or production data were changed. A complete visual review
+of all 234 in-scope page files remains open and is the next audit phase.

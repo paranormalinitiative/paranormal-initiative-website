@@ -2,7 +2,7 @@
 
 ## 2026-11-12 — Site-wide shell and theme audit
 
-Status: **AUDIT IN PROGRESS — THEME DEFECT FIXED LOCALLY.** The current
+Status: **AUDIT IN PROGRESS — THEME FIX DEPLOYED AND LIVE VERIFIED.** The current
 tracked source contains 293 HTML documents. After excluding the 51 Haunted
 Location directory documents, five standalone Repository books, and three
 shared fragments, 234 in-scope page files remain. None of those in-scope pages
@@ -21,10 +21,14 @@ the saved theme path.
 Representative Firefox theme routes passed 48/48; Nova access-gate theme
 checks passed 6/6; Education Center/Ghostology acceptance passed 30/30; Nova
 theme rendering passed 6/6; source checks passed 5/5; navigation checks
-passed 13/13. A full page-by-page visual pass remains
-open, and historical OPS-015/016 284-route results are not current full-site
-certification. No protected books or production data were changed. Details
-and counts are in [TPI-OPS-017](200-AUDITS/TPI-OPS-017-SITE-WIDE-SHELL-AND-THEME-AUDIT.md).
+passed 13/13. Guarded production preflight certified all 30 gates, live
+anonymous smoke passed 10/10, and isolated Firefox production acceptance
+passed 65/65. Release `rel-8d444b943916-8e1f9c61cc85` is live at 100% traffic
+on Worker version `33e72eed-f4f3-41bd-9106-0217ee89baf1`. A full
+page-by-page visual pass remains open, and historical OPS-015/016 284-route
+results are not current full-site certification. No protected books or
+production data were changed. Details and counts are in
+[TPI-OPS-017](200-AUDITS/TPI-OPS-017-SITE-WIDE-SHELL-AND-THEME-AUDIT.md).
 
 ## 2026-11-12 — Founding Membership header pill removal
 
