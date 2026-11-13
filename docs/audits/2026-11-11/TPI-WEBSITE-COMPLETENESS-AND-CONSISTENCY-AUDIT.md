@@ -54,7 +54,7 @@ passes for 237 HTML files. The five standalone books and Haunted Locations direc
 remain excluded. The guarded production release completed successfully.
 
 The aligned cache keys are `style.css?v=92`, `member-shell.css?v=63`,
-`member-shell.js?v=59`, `profile-style.css?v=6`, `profile-style.js?v=2`,
+`member-shell.js?v=60`, `profile-style.css?v=6`, `profile-style.js?v=2`,
 `includes.js?v=18`, and `api-client.js?v=18` wherever those shared assets are
 referenced. The automatic member-shell loader requests the same CSS and JS versions.
 

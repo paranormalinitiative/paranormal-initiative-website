@@ -190,7 +190,7 @@
 
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "/member-shell.js?v=59";
+      script.src = "/member-shell.js?v=60";
       script.dataset.tpiMemberShellAuto = "1";
       script.onload = resolve;
       script.onerror = reject;
