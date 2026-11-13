@@ -338,7 +338,7 @@
             font-size: 11.5px;
         }
 
-        /* Active Members */
+        /* Active People */
         .rail-member {
             display: flex;
             align-items: center;
@@ -387,7 +387,7 @@
             font-size: 11px;
         }
 
-        /* ParaNews Spotlight + Featured Video */
+        /* ParaNews Spotlight + Featured Content */
         .rail-feature {
             display: block;
             text-decoration: none;
@@ -3104,6 +3104,36 @@
                     <div data-recognition-rail-body></div>
                 </section>
 
+                <!-- ACTIVE PEOPLE -->
+                <section class="rail-card" data-rail-members>
+                    <div class="rail-card-head">
+                        <h4>Active People</h4>
+                    </div>
+                    <div data-members-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- PEOPLE DISCOVERY -->
+                <section class="rail-card" data-rail-discover>
+                    <div class="rail-card-head">
+                        <h4>People to Discover</h4>
+                    </div>
+                    <div data-discover-members-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- RECENTLY VIEWED PROFILES -->
+                <section class="rail-card" data-rail-recent>
+                    <div class="rail-card-head">
+                        <h4>Recently Viewed Members</h4>
+                    </div>
+                    <div data-recent-members-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
                 <!-- PARANEWS SPOTLIGHT -->
                 <section class="rail-card" data-rail-news>
                     <div class="rail-card-head">
@@ -3180,17 +3210,6 @@
                     </div>
                 </section>
 
-                <!-- FEATURED VIDEO -->
-                <section class="rail-card" data-rail-video>
-                    <div class="rail-card-head">
-                        <h4>Featured Video</h4>
-                        <a class="rail-card-link" href="tpi-videos.html">All</a>
-                    </div>
-                    <div data-video-body>
-                        <p class="rail-loading">Loading…</p>
-                    </div>
-                </section>
-
                 <!-- UPCOMING EVENTS -->
                 <section class="rail-card" data-rail-events>
                     <div class="rail-card-head">
@@ -3198,36 +3217,6 @@
                         <a class="rail-card-link" href="events.html">All</a>
                     </div>
                     <div data-events-body>
-                        <p class="rail-loading">Loading…</p>
-                    </div>
-                </section>
-
-                <!-- ACTIVE MEMBERS -->
-                <section class="rail-card" data-rail-members>
-                    <div class="rail-card-head">
-                        <h4>Active Members</h4>
-                    </div>
-                    <div data-members-body>
-                        <p class="rail-loading">Loading…</p>
-                    </div>
-                </section>
-
-                <!-- PEOPLE DISCOVERY -->
-                <section class="rail-card" data-rail-discover>
-                    <div class="rail-card-head">
-                        <h4>People to Discover</h4>
-                    </div>
-                    <div data-discover-members-body>
-                        <p class="rail-loading">Loading…</p>
-                    </div>
-                </section>
-
-                <!-- RECENTLY VIEWED PROFILES -->
-                <section class="rail-card" data-rail-recent>
-                    <div class="rail-card-head">
-                        <h4>Recently Viewed</h4>
-                    </div>
-                    <div data-recent-members-body>
                         <p class="rail-loading">Loading…</p>
                     </div>
                 </section>
@@ -3468,7 +3457,6 @@
         loadProfileDiscovery();
         loadRailDiscussions();
         loadRailNews();
-        loadRailVideo();
         loadRailFeatured();
         // Fade back in after the swap window; loaders fill in whenever their
         // fetches resolve, the fade just softens the moment of replacement.
@@ -3666,34 +3654,6 @@
         } catch (e) {
             body.innerHTML = '<p class="rail-empty">Headlines unavailable right now.</p>';
         }
-    }
-
-    function loadRailVideo() {
-        var body = document.querySelector("[data-video-body]");
-        if (!body) return;
-        window.TPIApi.communityFeed(20, 0).then(function(data) {
-            var video = (data.items || []).find(function(item) { return item.type === "video"; });
-            if (!video) {
-                var section = document.querySelector("[data-rail-video]");
-                if (section) section.hidden = true;
-                return;
-            }
-            var watchUrl = window.preserveMemberMode ? window.preserveMemberMode("tpi-video.html?id=" + encodeURIComponent(video.slug || video.id)) : "tpi-video.html?id=" + encodeURIComponent(video.slug || video.id);
-            body.innerHTML =
-                '<a class="rail-feature" href="' + escapeAttr(watchUrl) + '">' +
-                    '<div class="rail-feature-media' + (video.thumbnail ? '' : ' no-image') + '">' +
-                        (video.thumbnail ? '<img src="' + escapeAttr(video.thumbnail) + '" alt="" loading="lazy">' : "\u25B6") +
-                        (video.isLive ? '<span class="rail-feature-tag">&#9679; Live</span>' : '<span class="rail-feature-tag">TPI Video</span>') +
-                    '</div>' +
-                    '<div class="rail-feature-body">' +
-                        '<p class="rail-feature-title">' + escapeHtml(video.title || "Featured video") + '</p>' +
-                        '<p class="rail-feature-meta">The Paranormal Initiative</p>' +
-                    '</div>' +
-                '</a>';
-        }).catch(function() {
-            var section = document.querySelector("[data-rail-video]");
-            if (section) section.hidden = true;
-        });
     }
 
     function renderPulse() {

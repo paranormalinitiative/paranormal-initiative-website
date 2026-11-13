@@ -197,3 +197,14 @@ commit `da185da5ae939b75d74670944135e8084e01172d`, Worker
 passed 30/30, production smoke passed 10/10, and isolated Firefox acceptance
 passed 65/65. This completes the representative sample, not visual review of
 all 234 pages. Protected books and production data were not changed.
+
+### Member right-rail order — 2026-11-12
+
+The member right rail is now ordered consistently for the signed-in member and
+viewed profiles: My Pulse, Honors & Distinctions, Active People, People to
+Discover, Recently Viewed Members, ParaNews Spotlight, Featured Content,
+Upcoming Events, and Active Discussions. The redundant standalone Featured
+Video panel was removed; video remains represented in Featured Content. Local
+Firefox confirmed the requested order on both member home and a member profile.
+The release record is
+[`TPI-OPS-017-MEMBER-RIGHT-RAIL-ORDER.md`](TPI-OPS-017-MEMBER-RIGHT-RAIL-ORDER.md).

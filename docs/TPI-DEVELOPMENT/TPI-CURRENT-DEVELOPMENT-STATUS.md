@@ -62,6 +62,17 @@ Production release `rel-da185da5ae93-5ab88ae30d0e` deployed commit
 gates, live smoke 10/10, and isolated Firefox 65/65. The Haunted Location
 books and five standalone Repository books remain excluded.
 
+### 2026-11-12 — Member right-rail order
+
+Status: **LOCAL BROWSER CHECK PASSED; GUARDED RELEASE PENDING.** All member
+profiles now use the requested rail order: My Pulse, Honors & Distinctions,
+Active People, People to Discover, Recently Viewed Members, ParaNews Spotlight,
+Featured Content, Upcoming Events, and Active Discussions. The separate
+Featured Video panel was removed from the rail because Featured Content already
+includes video items. Isolated local Firefox confirmed the same order on member
+home and a member profile. See
+[the right-rail order record](200-AUDITS/TPI-OPS-017-MEMBER-RIGHT-RAIL-ORDER.md).
+
 The Firefox audit uncovered HTML validation patterns that rejected the
 literal punctuation syntax under current browser rules. Username fields and
 the creator-channel slug pattern were corrected; the three-field Firefox

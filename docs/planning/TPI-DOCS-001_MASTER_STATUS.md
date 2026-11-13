@@ -24,6 +24,12 @@ historical records.
   live smoke 10/10, and isolated Firefox acceptance 65/65. Full visual review of all
   234 pages remains open; see the
   [review record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md).
+- The member right rail is being reordered consistently across own and viewed-member
+  profiles: Honors, Active People, discovery, recently viewed members, ParaNews,
+  Featured Content, Events, and Discussions. The separate Featured Video rail panel
+  was removed because video already appears in Featured Content. Local browser checks
+  passed; production release is pending. See the
+  [rail order record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-MEMBER-RIGHT-RAIL-ORDER.md).
 - Release-specific test and production evidence is recorded in the November 11
   completion records under
   [`docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/`](../TPI-DEVELOPMENT/300-COMPLETED-WORK/).
