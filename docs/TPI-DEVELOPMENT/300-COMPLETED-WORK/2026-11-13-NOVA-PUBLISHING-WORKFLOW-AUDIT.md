@@ -7,8 +7,8 @@ code and its editorial submission/event tables are present in production. Local
 workflow behavior is covered by passing automated checks. Production review and
 publication are **not operational yet**: although the schema accepts the
 reviewer and publisher capabilities, no grants exist. The owner-only grant
-interface is implemented locally and still needs its guarded release before it
-can be used in production.
+interface is deployed and live verified; production review and publication
+still require owner-selected capability assignments.
 
 No production article was created or edited. The owner-approved entitlement
 schema migration is documented below; all existing entitlement rows were
@@ -89,8 +89,13 @@ control in Administration Center → Creators → Founding Memberships →
 Capability inspection. It requires an active inspected account, asks for
 confirmation, records the administrative action, and keeps editorial grants
 independent from account role and membership. The server rejects admin-only
-grant or revoke attempts. Local verifier coverage and the Administration
-Center production build pass; the code is not yet released to production.
+grant or revoke attempts. Local verifier coverage passed 165/165 and the
+Administration Center production build passed. Release
+`rel-2126b93a5d67-4b68e0bf8f4e` deployed source commit
+`2126b93a5d671d5c4e5e07f8af8667aec1a26de1` as Worker version
+`47082bce-2eac-4790-a5c6-c9f7c93ec75e`; anonymous production smoke passed
+10/10, isolated Firefox acceptance passed 65/65, and the version holds 100%
+of traffic. No editorial grant or article was created or changed.
 
 ## Files changed for this audit
 
@@ -106,8 +111,7 @@ Center production build pass; the code is not yet released to production.
 
 ## Next action
 
-Complete the guarded production release and live acceptance of the owner-only
-grant and revoke controls. Then assign capabilities to explicitly selected
-accounts and run a controlled author → review → publication acceptance without
-leaving test content in the public catalog. The schema migration is complete;
-no further schema change is needed for these two capabilities.
+Assign capabilities only to explicitly selected accounts. Then run a controlled
+author → review → publication acceptance without leaving test content in the
+public catalog. The schema migration and release are complete; no further
+schema change is needed for these two capabilities.

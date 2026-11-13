@@ -496,9 +496,8 @@ and the editorial submission/event schema are present in the current production
 release. Owner-approved migration 0062 has widened the production
 `member_entitlements.capability` CHECK, preserving all six existing rows. No
 editorial grants exist yet. An owner-only, auditable reviewer/publisher grant
-and revoke control is implemented in the Administration Center source, with
-local build and verifier passing; it still needs the guarded production release
-and live acceptance. See the 2026-11-13 Nova publishing workflow audit.
+and revoke control is deployed in the Administration Center and live verified.
+See the 2026-11-13 Nova publishing workflow audit.
 TPI-NOVA-004R6D has implemented the Editorial Review Queue, reviewer actions (Start Review,
 Request Changes, Approve), Contributor-visible feedback and exact pinned-version review inside
 the existing Administration Center.
@@ -510,9 +509,8 @@ direct Contributor or Admin routes; legacy articles keep their existing behavior
 keeps its specialized publish path. The production code and workflow tables are
 deployed. Migration 0062 now permits `editorial_review` and
 `editorial_publish` in the production entitlement ledger. The owner-only grant
-and revoke controls are implemented in source, but publication remains blocked
-until that change is released and the owner assigns these capabilities to
-named accounts.
+and revoke controls are deployed and live verified, but publication remains
+blocked until the owner assigns these capabilities to named accounts.
 
 TPI-NOVA-004R6F has implemented the published-revision lifecycle — an owner-scoped Start New
 Revision that guards `approved → draft`, records a `revision_started` event and leaves the
@@ -521,8 +519,8 @@ article id and URL — and has contained legacy direct publishing: new normal Ed
 content is created workflow-native and refused server-side if it asks to be published, while
 existing `legacy` records stay grandfathered with their current compatibility.
 The production event schema includes `revision_started`. Migration 0062 has
-been applied; the new owner-gated reviewer/publisher grant path still needs
-production release before capabilities can be assigned.
+been applied, and the owner-gated reviewer/publisher grant path is deployed and
+live verified. Capabilities can be assigned to explicitly selected accounts.
 
 Remaining open Nova work:
 

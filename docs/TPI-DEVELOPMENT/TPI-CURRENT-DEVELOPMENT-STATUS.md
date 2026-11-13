@@ -2,14 +2,14 @@
 
 ## 2026-11-13 — Nova publishing workflow audit
 
-Status: **LOCAL WORKFLOW VERIFIED; PRODUCTION SCHEMA MIGRATION APPLIED;
-OWNER-GATED GRANT PATH IMPLEMENTED LOCALLY; RELEASE PENDING.** The Nova article workflow was checked
+Status: **WORKFLOW VERIFIED; PRODUCTION SCHEMA MIGRATION APPLIED; OWNER-GATED
+GRANT PATH DEPLOYED AND LIVE VERIFIED.** The Nova article workflow was checked
 from editing and autosave through submission, withdrawal/resubmission, review,
 changes requested, approval, approved-version publication, and published
 revision. R6B–R6F route, state, permission and snapshot suites passed locally.
 Nova Core, Content Editor, Administration Center, Slides, document persistence,
-and Education destination checks also passed. No test article was created on
-production and no production schema or row was changed.
+and Education destination checks also passed. No test article or editorial
+grant was created in production.
 
 Firefox found a revision-restore defect in both Nova document surfaces: loading
 the restored server snapshot emitted an editor update and caused an unwanted
@@ -40,11 +40,14 @@ Read-only production schema inspection found the editorial submission/event
 tables and append-only triggers present, including the `revision_started`
 event. The live entitlement ledger still has six active membership grants
 (five contributor and one creator) and no editorial grants. An owner-only
-reviewer/publisher grant and revoke control is implemented in the source
-Administration Center, with confirmation, audit logging, and a server-side
-owner check; it has not yet been released to production. Its focused verifier
-passes 165/165 and the Administration Center build passes. Complete the guarded
-release and live acceptance before using it. See
+reviewer/publisher grant and revoke control is deployed in the Administration
+Center, with confirmation, audit logging, and a server-side owner check. Its
+focused verifier passed 165/165 and the Administration Center build passed.
+Release `rel-2126b93a5d67-4b68e0bf8f4e` deployed Worker version
+`47082bce-2eac-4790-a5c6-c9f7c93ec75e`; production smoke passed 10/10 and
+isolated Firefox acceptance passed 65/65. The new version holds 100% of
+traffic. No editorial grants exist yet. Assign capabilities only to selected
+accounts, then run a controlled author → review → publication acceptance. See
 [`2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md`](300-COMPLETED-WORK/2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md).
 
 ## 2026-11-12 — Site-wide shell and theme audit
