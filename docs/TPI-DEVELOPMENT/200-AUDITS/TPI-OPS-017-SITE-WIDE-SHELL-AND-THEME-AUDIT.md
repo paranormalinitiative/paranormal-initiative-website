@@ -68,6 +68,14 @@ theme. Nova now maps its workspace tokens to all six themes. Its HTML entry
 document still has a Cryptid fallback attribute, which the shared Worker
 replaces with the stored choice when served through the site.
 
+The Firefox route pass also found invalid modern HTML pattern syntax on the
+username and creator-channel fields. Literal punctuation and hyphens are now
+escaped for the browser's current Unicode-set (`v`) pattern rules. The local
+Firefox check confirms the fields accept valid values and reject spaces. This
+small cross-browser correction is verified locally; it is not part of the
+previously recorded production release and must go through the guarded release
+workflow before being considered live.
+
 ### Complete: no in-scope legacy brand-header pages found
 
 All in-scope HTML with the shared public shell or member shell is on the
@@ -89,6 +97,16 @@ and coming-soon access gates also follow the saved theme.
 - The official local Worker at `127.0.0.1:8787` was available for targeted
   Firefox checks. The checks sampled the home page, Education Center,
   Ghostology, Teams, Nova's access gate, and the authorized Nova workspace.
+- A subsequent local Firefox route/render matrix checked all 234 in-scope
+  HTML files with anonymous and synthetic role sessions. All 234 were
+  accounted for: 227 passed normally, seven had documented expected
+  limitations, zero failed, and zero remained unverified. Focused interaction
+  checks passed 61/61. The [browser acceptance report](TPI-OPS-017-BROWSER-ROUTE-ACCEPTANCE.md)
+  lists every file and its outcome.
+- The seven expected limitations are five internal source/test files that are
+  not Worker-served visitor pages, one editor bootstrap that only renders when
+  mounted inside Paper Editor, and Nova's intended anonymous authentication
+  gate. No broken user-facing route was found in this pass.
 - All six themes were exercised on those representative routes and in the
   authorized Nova workspace. This was not a page-by-page visual pass across
   all 234 in-scope pages.
@@ -109,9 +127,15 @@ palettes passed 6/6, site theme source checks passed 5/5, and navigation
 checks passed 13/13. The official local Worker is
 available at `127.0.0.1:8787`.
 
-A full page-by-page visual pass remains open. It should cover the remaining
-in-scope public pages, member pages, and application surfaces, while continuing
-to exclude all Haunted Location books and all other Repository books.
+A visual consistency review remains open; the 234-page pass verifies expected
+response, rendering, and focused interactions, but does not compare every
+page's spacing, responsive layout, theme color rendering, images, and shared
+navigation at desktop and mobile sizes. Continue with representative page
+families and responsive/theme checks, then fix confirmed exceptions in shared
+components first. Keep all Haunted Location books and other Repository books
+excluded. The [browser runner](../../../scripts/e2e/tpi-ops-017-browser-routes.mjs)
+and route report make reruns reproducible without asking the owner to review
+234 pages individually.
 
 ### Production release
 
@@ -131,5 +155,6 @@ held 100% of traffic.
 
 The production release changed the Nova Editorial theme palettes and the
 shared theme behavior for access gates. No Haunted Location books, other
-Repository books, or production data were changed. A complete visual review
-of all 234 in-scope page files remains open and is the next audit phase.
+Repository books, or production data were changed. Local route/render and
+focused interaction checks now pass across the complete 234-file scope. The
+responsive and visual consistency review remains the next audit phase.
