@@ -98,6 +98,9 @@ try {
   check("Ghostology uses the shared member shell and active theme", ghostologyShell.memberMode && ghostologyShell.sidebar && ghostologyShell.main && ghostologyShell.educationLabel.includes("Education Center") && Boolean(ghostologyShell.theme), JSON.stringify(ghostologyShell));
   await driver.get(`${base}/education-center`);
   await waitForDirectory();
+  const bannerLayout = await driver.executeScript(`var image=document.querySelector('.education-center-banner img'), rect=image && image.getBoundingClientRect();
+    return {loaded:Boolean(image && image.complete && image.naturalWidth > 0),naturalWidth:image?.naturalWidth || 0,naturalHeight:image?.naturalHeight || 0,renderedWidth:rect?.width || 0,renderedHeight:rect?.height || 0,alt:image?.alt || '',ratio:rect && rect.width ? rect.width / rect.height : 0};`);
+  check("Education Center banner loads in its full-width aspect ratio", bannerLayout.loaded && bannerLayout.naturalWidth === 2172 && bannerLayout.naturalHeight === 724 && bannerLayout.renderedWidth > 0 && Math.abs(bannerLayout.ratio - 3) < 0.02 && bannerLayout.alt.includes("Education Center"), JSON.stringify(bannerLayout));
   const ghostologyNav = await driver.executeScript(`var link=document.querySelector('[data-nav="ghostology"]'); return {exists:Boolean(link),label:link?.textContent.trim()||'',href:link ? new URL(link.getAttribute('href'),location.href).pathname + new URL(link.getAttribute('href'),location.href).search : ''};`);
   check("left navigation exposes Ghostology", ghostologyNav.exists && ghostologyNav.label === "👻 Ghostology" && ghostologyNav.href === "/ghostology-101?member=1", JSON.stringify(ghostologyNav));
 
@@ -123,8 +126,9 @@ try {
   await driver.manage().window().setRect({ width: 390, height: 844 });
   await driver.get(`${base}/education-center`);
   await waitForDirectory();
-  const mobileLayout = await driver.executeScript("return {count:document.querySelectorAll('.edu-accordion-item').length,scrollWidth:document.documentElement.scrollWidth,innerWidth:innerWidth};");
-  check("mobile subject shelves keep all subjects without horizontal overflow", mobileLayout.count === destinations.length && mobileLayout.scrollWidth <= mobileLayout.innerWidth + 1, JSON.stringify(mobileLayout));
+  const mobileLayout = await driver.executeScript(`var image=document.querySelector('.education-center-banner img'), rect=image && image.getBoundingClientRect();
+    return {count:document.querySelectorAll('.edu-accordion-item').length,scrollWidth:document.documentElement.scrollWidth,innerWidth:innerWidth,bannerVisible:Boolean(rect && rect.width > 0 && rect.height > 0),bannerRatio:rect && rect.width ? rect.width / rect.height : 0};`);
+  check("mobile subject shelves and banner fit without horizontal overflow", mobileLayout.count === destinations.length && mobileLayout.scrollWidth <= mobileLayout.innerWidth + 1 && mobileLayout.bannerVisible && Math.abs(mobileLayout.bannerRatio - 3) < 0.02, JSON.stringify(mobileLayout));
 
   for (const path of destinations) {
     await openRoute(path);

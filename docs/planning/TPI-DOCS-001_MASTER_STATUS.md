@@ -1,6 +1,6 @@
 # TPI-DOCS-001 — Master Documentation Status
 
-## Current Project Snapshot — November 12, 2026
+## Current Project Snapshot — November 13, 2026
 
 This snapshot supersedes older “current,” “next,” and release-state statements below
 where later work has changed the status. Those older sections are retained as dated
@@ -31,6 +31,10 @@ historical records.
   release `rel-ea16819d85fc-f99594709ad1` is live at 100% traffic; preflight passed,
   live smoke passed 10/10, and isolated Firefox acceptance passed 65/65. See the
   [rail order record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-MEMBER-RIGHT-RAIL-ORDER.md).
+- The owner-provided Education Center banner is integrated above the library
+  introduction and passed local desktop/phone Firefox checks. Guarded production
+  release is pending; see the
+  [banner verification record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-EDUCATION-CENTER-BANNER.md).
 - Release-specific test and production evidence is recorded in the November 11
   completion records under
   [`docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/`](../TPI-DEVELOPMENT/300-COMPLETED-WORK/).

@@ -66,7 +66,7 @@ Location books and five standalone Repository books remain excluded.
 
 ### 2026-11-12 — Member right-rail order
 
-Status: **LOCAL BROWSER CHECK PASSED; GUARDED RELEASE PENDING.** All member
+Status: **DEPLOYED AND LIVE VERIFIED.** All member
 profiles now use the requested rail order: My Pulse, Honors & Distinctions,
 Active People, People to Discover, Recently Viewed Members, ParaNews Spotlight,
 Featured Content, Upcoming Events, and Active Discussions. The separate
@@ -84,6 +84,15 @@ input checks. This correction is deployed and live verified: release preflight
 passed all 30 gates, live anonymous smoke passed 10/10, and isolated Firefox
 Developer Edition acceptance passed 65/65. Release ID, source commit, Worker
 version, and remaining visual-review scope are recorded in TPI-OPS-017.
+
+### 2026-11-13 — Education Center banner
+
+Status: **LOCAL BROWSER ACCEPTANCE PASSED; GUARDED RELEASE PENDING.** Added the
+owner-provided 2172 x 724 Education Center banner above the library introduction.
+It keeps its full 3:1 composition across desktop and phone widths. Isolated
+Firefox Education Center acceptance passed 31/31; local authentication lifecycle
+passed 38/38. See
+[the banner verification record](200-AUDITS/TPI-OPS-017-EDUCATION-CENTER-BANNER.md).
 
 ## 2026-11-12 — Founding Membership header pill removal
 
