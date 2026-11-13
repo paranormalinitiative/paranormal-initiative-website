@@ -585,11 +585,11 @@ check "ordinary member cannot create articles" 403 "$R"
 R=$(req POST /articles tok-admin '{"id":"e2e-pub-article","destination":"education-area-general.html","title":"E2E Editorial Draft","subtitle":"editorial workflow test","articleType":"Research Paper","bodyHtml":"<p>draft body</p>","status":"draft"}')
 check "admin creates an editorial draft" 200 "$R" "d['article']['status']=='draft'"
 R=$(req POST /articles tok-admin '{"id":"e2e-pub-article","destination":"education-area-general.html","title":"E2E Published","subtitle":"published test","articleType":"Research Paper","bodyHtml":"<p>published body</p>","status":"published"}')
-check "direct article publish is refused by the editorial workflow" 409 "$R" "d.get('code')=='editorial_workflow_publish_refused'"
+check "open-subject article publishes directly when requested" 200 "$R" "d['article']['status']=='published'"
 R=$(req GET "/articles" tok-a)
-check "published article list remains visible to members" 200 "$R" "any('itc-ethics' in (a.get('id') or '') for a in (d.get('articles') or [])) and not any(a.get('id')=='e2e-pub-article' for a in (d.get('articles') or []))"
-# Saving an editorial draft does not notify members; publication is covered by
-# the dedicated Nova editorial workflow suite after review approval.
+check "directly published open-subject article is visible to members" 200 "$R" "any(a.get('id')=='e2e-pub-article' and a.get('status')=='published' for a in (d.get('articles') or []))"
+# Saving an editorial draft does not notify members; publication notification
+# behavior remains covered by the dedicated Nova editorial workflow suite.
 R=$(req GET /notifications tok-b); N1=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(len([n for n in json.load(sys.stdin)['notifications'] if n.get('type')=='education']))")
 R=$(req POST /articles tok-admin '{"id":"e2e-pub-article","destination":"education-area-general.html","title":"E2E Editorial Draft (edit)","subtitle":"editorial workflow test","articleType":"Research Paper","bodyHtml":"<p>draft body v2</p>","status":"draft"}')
 check "re-saving an editorial draft does not re-notify" 200 "$R" "d['article']['status']=='draft'"
@@ -612,32 +612,34 @@ R=$(req POST /tpi-videos '' '{"title":"Anonymous video","videoUrl":"https://www.
 check "anonymous cannot create video" 401 "$R"
 VIDEO_BODY='{"id":"e2e-video-a","title":"E2E Video A","description":"Isolated video security fixture","videoUrl":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","thumbnail":"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg","category":"Education","tags":["e2e","video"],"viewingAccess":"public"}'
 R=$(req POST /tpi-videos tok-contrib "$VIDEO_BODY")
+check "Contributor cannot create a restricted TPI video" 403 "$R"
+R=$(req POST /tpi-videos tok-owner "$VIDEO_BODY")
 check "creator creates video as draft" 200 "$R" "d.get('status')=='draft' and d.get('slug')=='e2e-video-a'"
 R=$(req GET /tpi-videos '')
 check "public catalog excludes creator draft" 200 "$R" "not any(v.get('slug')=='e2e-video-a' for v in d.get('videos',[]))"
-R=$(req GET "/tpi-videos?mine=true&status=all" tok-contrib)
+R=$(req GET "/tpi-videos?mine=true&status=all" tok-owner)
 check "creator sees own draft" 200 "$R" "any(v.get('slug')=='e2e-video-a' and v.get('status')=='draft' for v in d.get('videos',[]))"
 R=$(req GET /tpi-videos/e2e-video-a tok-a)
 check "member cannot read creator draft detail" 404 "$R"
 R=$(req GET /tpi-videos/e2e-video-a tok-b)
 check "second creator cannot read creator draft detail" 404 "$R"
-R=$(req PUT /tpi-videos/e2e-video-a tok-contrib '{"videoUrl":"javascript:alert(1)"}')
+R=$(req PUT /tpi-videos/e2e-video-a tok-owner '{"videoUrl":"javascript:alert(1)"}')
 check "javascript video URL rejected" 400 "$R"
-R=$(req PUT /tpi-videos/e2e-video-a tok-contrib '{"embedUrl":"https://evil.example/embed/123"}')
+R=$(req PUT /tpi-videos/e2e-video-a tok-owner '{"embedUrl":"https://evil.example/embed/123"}')
 check "unsupported embed host rejected" 400 "$R"
 R=$(req PUT /tpi-videos/e2e-video-a tok-b '{"title":"hijack"}')
 check "second creator cannot edit creator video" 403 "$R"
-R=$(req POST /tpi-videos/e2e-video-a/publish tok-contrib '{}')
+R=$(req POST /tpi-videos/e2e-video-a/publish tok-owner '{}')
 check "creator explicitly publishes video" 200 "$R" "d.get('status')=='published'"
 R=$(req GET /tpi-videos '')
 check "published public video appears in catalog" 200 "$R" "any(v.get('slug')=='e2e-video-a' and v.get('status')=='published' for v in d.get('videos',[]))"
 R=$(req GET /tpi-videos/e2e-video-a '')
 check "published public video detail is readable" 200 "$R" "d.get('video',{}).get('embedUrl','').startswith('https://www.youtube-nocookie.com/embed/')"
-R=$(req GET /tpi-channels/e2e-contrib '')
-check "creator channel endpoint uses stable account slug" 200 "$R" "d.get('channel',{}).get('owner',{}).get('username')=='e2e_contrib'"
-R=$(req POST /tpi-channels/e2e-contrib/follow tok-a '{}')
+R=$(req GET /tpi-channels/e2e-owner '')
+check "creator channel endpoint uses stable account slug" 200 "$R" "d.get('channel',{}).get('owner',{}).get('username')=='e2e_owner'"
+R=$(req POST /tpi-channels/e2e-owner/follow tok-a '{}')
 check "member can follow a public creator channel" 200 "$R" "d.get('following') is True and d.get('followerCount',0)>=1"
-R=$(req GET /tpi-channels/e2e-contrib tok-a)
+R=$(req GET /tpi-channels/e2e-owner tok-a)
 check "channel reports authenticated follow state" 200 "$R" "d.get('channel',{}).get('following') is True"
 R=$(req GET "/tpi-videos?following=true" tok-a)
 check "following discovery returns followed channel videos" 200 "$R" "any(v.get('slug')=='e2e-video-a' for v in d.get('videos',[]))"
@@ -652,15 +654,15 @@ R=$(req POST /video-comments tok-b "{\"videoId\":\"e2e-video-a\",\"body\":\"Repl
 check "member can reply to a video comment" 200 "$R" "d.get('parentId')=='$PARENT_COMMENT'"
 R=$(req GET "/video-comments?videoId=e2e-video-a" tok-a)
 check "video comment list preserves reply parent" 200 "$R" "any(c.get('parentId')=='$PARENT_COMMENT' for c in d.get('comments',[]))"
-R=$(req POST /tpi-videos/e2e-video-a/unpublish tok-contrib '{}')
+R=$(req POST /tpi-videos/e2e-video-a/unpublish tok-owner '{}')
 check "creator can unpublish own video" 200 "$R" "d.get('status')=='draft'"
 R=$(req GET /tpi-videos/e2e-video-a '')
 check "unpublished video detail is hidden again" 404 "$R"
 R=$(req POST /tpi-videos/e2e-video-a/remove tok-b '{}')
 check "second creator cannot remove creator video" 403 "$R"
-R=$(req POST /tpi-videos/e2e-video-a/remove tok-contrib '{}')
+R=$(req POST /tpi-videos/e2e-video-a/remove tok-owner '{}')
 check "creator can remove own listing without deleting external media" 200 "$R" "d.get('status')=='removed'"
-R=$(req DELETE /tpi-channels/e2e-contrib/follow tok-a)
+R=$(req DELETE /tpi-channels/e2e-owner/follow tok-a)
 check "member can unfollow a creator channel" 200 "$R" "d.get('following') is False"
 R=$(req GET "/tpi-videos?following=true" tok-a)
 check "unfollow removes channel videos from following discovery" 200 "$R" "not any(v.get('slug')=='e2e-video-a' for v in d.get('videos',[]))"
