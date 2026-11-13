@@ -6,6 +6,7 @@
 //   node scripts/e2e/isolated-worker.mjs start   # foreground; run under a LaunchAgent or background
 //   node scripts/e2e/isolated-worker.mjs clean   # delete the /tmp test root (only ours)
 import { spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import {
   cpSync,
   existsSync,
@@ -64,7 +65,13 @@ function prepare() {
   if (!existsSync(sourceAssets)) throw new Error("owner staged assets missing; run scripts/stage-local-studio-assets.mjs first");
   // Copy assets (read-only source) so the test Worker can never write to owner assets.
   rmSync(testAssetsPath, { recursive: true, force: true });
-  cpSync(sourceAssets, testAssetsPath, { recursive: true });
+  if (process.platform === "darwin") {
+    // APFS clonefile copies stay isolated from the owner's staged assets while
+    // avoiding a second full physical copy of the large asset library.
+    execFileSync("/bin/cp", ["-cR", sourceAssets, testAssetsPath], { stdio: "pipe" });
+  } else {
+    cpSync(sourceAssets, testAssetsPath, { recursive: true });
+  }
   writeFileSync(testConfigPath, buildConfig(), { mode: 0o600 });
   return { configPath: testConfigPath, statePath: testStatePath, port: isolatedPort, ownerPaths };
 }
