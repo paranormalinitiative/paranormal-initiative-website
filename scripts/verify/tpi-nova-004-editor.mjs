@@ -637,11 +637,11 @@ async function checkFirefox(driver) {
   await driver.wait(async () => Number((await textOf("[data-testid='document-version']")).replace(/[^0-9]/g, "")) > versionBeforeRestore, 20_000, "revision restore did not create a new version");
   await waitForSave("saved");
   const afterRestore = await api(`/nova/items/${documentId}`, { token: USERS.owner.token });
-  check("revision restore creates a new current version", afterRestore.data?.item?.version > versionBeforeRestore, `v${afterRestore.data?.item?.version}`);
+  check("revision restore creates exactly one new current version", afterRestore.data?.item?.version === versionBeforeRestore + 1, `before=v${versionBeforeRestore} after=v${afterRestore.data?.item?.version}`);
   check(
     "revision restore applies the stored revision content",
     JSON.stringify(normalizedNovaJson(afterRestore.data?.item?.content)) === JSON.stringify(normalizedNovaJson(oldestRevision.content)),
-    JSON.stringify(afterRestore.data?.item?.content).slice(0, 200)
+    `actual=${JSON.stringify(normalizedNovaJson(afterRestore.data?.item?.content)).slice(0, 500)} expected=${JSON.stringify(normalizedNovaJson(oldestRevision.content)).slice(0, 500)}`
   );
   check("revision restore leaves the editor usable", !(await exists("[data-testid='readonly-banner']")));
 

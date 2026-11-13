@@ -397,7 +397,11 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     setServerItem(fresh);
     setTitle(fresh.title);
     setDocumentMetaState(documentMeta(fresh.content as NovaDocumentEnvelope));
-    editorRef.current?.commands.setContent((fresh.content as NovaDocumentEnvelope).doc);
+    // Server snapshots must not emit a synthetic editor update: doing so can
+    // schedule an autosave immediately after revision restore and create an
+    // extra version with normalized defaults instead of preserving the exact
+    // historical snapshot as the new current version.
+    editorRef.current?.commands.setContent((fresh.content as NovaDocumentEnvelope).doc, { emitUpdate: false });
     clearDraft(fresh.id);
     setSaveState({ kind: "saved", at: fresh.updatedAt });
     onChangedRef.current();

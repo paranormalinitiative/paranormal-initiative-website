@@ -491,7 +491,13 @@ architecture-only, recorded in
 [`TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md`](TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
 TPI-NOVA-004R6B has implemented its server-side foundation (capabilities, additive
 schema, transition engine). TPI-NOVA-004R6C2 has implemented Contributor submission, withdrawal,
-locking and resubmission, and TPI-NOVA-004R6C3 has accepted it (local-only; production not yet updated).
+locking and resubmission, and TPI-NOVA-004R6C3 has accepted it. R6B–R6F code
+and the editorial submission/event schema are present in the current production
+release; the workflow is not production-operational because production's
+`member_entitlements.capability` CHECK still permits only `creator` and
+`contributor`, so reviewer and publisher grants cannot be stored. See the
+2026-11-13 Nova publishing workflow audit for live schema evidence and the
+required approval gate.
 TPI-NOVA-004R6D has implemented the Editorial Review Queue, reviewer actions (Start Review,
 Request Changes, Approve), Contributor-visible feedback and exact pinned-version review inside
 the existing Administration Center.
@@ -500,15 +506,19 @@ TPI-NOVA-004R6E has implemented the Publisher side in the same Administration Ce
 atomic Publish Approved Version action that server-renders the approved Nova version and replaces
 the public Education Center snapshot. Enrolled articles can no longer be published through the
 direct Contributor or Admin routes; legacy articles keep their existing behavior and TPI Video
-keeps its specialized publish path. Both phases are local-only; production has not received them.
+keeps its specialized publish path. The production code and workflow tables are
+deployed, but publication remains blocked until `editorial_review` and
+`editorial_publish` can be stored in the production entitlement ledger.
 
 TPI-NOVA-004R6F has implemented the published-revision lifecycle — an owner-scoped Start New
 Revision that guards `approved → draft`, records a `revision_started` event and leaves the
 published snapshot live while the new round is edited, reviewed and republished on the same
 article id and URL — and has contained legacy direct publishing: new normal Education Center
 content is created workflow-native and refused server-side if it asks to be published, while
-existing `legacy` records stay grandfathered with their current compatibility. R6F is local-only;
-production has not received it.
+existing `legacy` records stay grandfathered with their current compatibility.
+The production event schema includes `revision_started`; production
+reviewer/publisher grants remain blocked by the `member_entitlements` CHECK
+noted above.
 
 Remaining open Nova work:
 

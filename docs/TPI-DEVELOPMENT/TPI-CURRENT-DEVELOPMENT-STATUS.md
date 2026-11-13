@@ -1,5 +1,44 @@
 # TPI Current Development Status
 
+## 2026-11-13 — Nova publishing workflow audit
+
+Status: **LOCAL WORKFLOW VERIFIED; PRODUCTION PUBLISHER AUTHORITY BLOCKED BY
+THE PRODUCTION ENTITLEMENT CONSTRAINT.** The Nova article workflow was checked
+from editing and autosave through submission, withdrawal/resubmission, review,
+changes requested, approval, approved-version publication, and published
+revision. R6B–R6F route, state, permission and snapshot suites passed locally.
+Nova Core, Content Editor, Administration Center, Slides, document persistence,
+and Education destination checks also passed. No test article was created on
+production and no production schema or row was changed.
+
+Firefox found a revision-restore defect in both Nova document surfaces: loading
+the restored server snapshot emitted an editor update and caused an unwanted
+second save/version. Server-snapshot hydration now uses `emitUpdate: false` and
+the browser regression requires exactly one new version with the restored
+content. The Nova Core isolated Worker also received an ephemeral Inspector
+port so its verifier can run while the official local Workerd remains on port
+8787.
+
+Verification: Nova Core 105/105; Nova editor Firefox/Chromium 134/134; shared
+Content Editor 14/14; Nova persistence 67/67; Nova Slides 23/23; document
+parity 11/11; workstation 9/9; workflow R6B 47/47, R6C 23/23, R6D 47/47,
+R6E 60/60 and R6F 26/26; Education destinations 37/37. Content Editor,
+standalone Nova and Administration Center builds passed.
+
+Read-only production schema inspection found the editorial submission/event
+tables and append-only triggers present, including the `revision_started`
+event. However, production `member_entitlements.capability` still permits only
+`creator` and `contributor`; it cannot store `editorial_review` or
+`editorial_publish`. The live table currently has six active membership grants
+(five contributor and one creator) and no editorial grants. Therefore the
+review and publishing queues cannot be granted to staff yet. Migration
+`0062_editorial_capabilities.sql` widens this CHECK by rebuilding the table and
+copying existing rows. Because that production change includes a table drop,
+it is held for the required separate owner approval. Once approved, capture and
+compare a pre-change export and row-level preservation checks, apply the
+focused migration, then run the guarded release and live acceptance. See
+[`2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md`](300-COMPLETED-WORK/2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md).
+
 ## 2026-11-12 — Site-wide shell and theme audit
 
 Status: **AUDIT IN PROGRESS — THEME AND FIREFOX VALIDATION FIXES DEPLOYED AND LIVE VERIFIED.** The current
