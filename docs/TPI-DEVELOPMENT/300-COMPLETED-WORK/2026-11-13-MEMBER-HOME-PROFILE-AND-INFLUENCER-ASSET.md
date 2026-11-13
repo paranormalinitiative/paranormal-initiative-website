@@ -1,6 +1,6 @@
 # Member Home Profile and Influencer Asset — 2026-11-13
 
-Status: **SOURCE IMPLEMENTATION AND LOCAL ACCEPTANCE COMPLETE; PRODUCTION RELEASE PENDING; NOT DEPLOYED.**
+Status: **DEPLOYED AND LIVE VERIFIED — release `rel-317b1a56ad82-802e3a56cca7`, source commit `317b1a56ad8248ba9b9494f7a668e8ec1f9e0053`, Worker `80dd04d1-c1f3-4624-8b7d-02b66c63435e`.**
 
 ## Requested behavior
 
@@ -44,8 +44,13 @@ records its dimensions and source checksum.
   rolled-back site passed 65/65. The checker now accepts the login page's
   server-confirmed authenticated card and waits one second between fallback
   session probes. Local Firefox acceptance passed 65/65 after this adjustment.
-- The updated checker has not yet passed a new guarded preflight and live
-  release. Production deployment and live acceptance remain pending.
+- The updated checker passed a new guarded preflight (30/30 gates), then the
+  guarded release completed. Anonymous production smoke passed 10/10 and
+  isolated production Firefox acceptance passed 65/65; the Worker confirmed
+  100% traffic on the new version.
+- Read-only live homepage checks returned 200 for both `/` and `/member-home`:
+  the public page contains the brand banner, while signed-in Home contains the
+  profile shell and no brand banner.
 
 ## Scope
 
