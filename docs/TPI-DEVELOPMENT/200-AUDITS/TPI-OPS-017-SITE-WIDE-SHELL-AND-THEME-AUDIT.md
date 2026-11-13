@@ -70,11 +70,9 @@ replaces with the stored choice when served through the site.
 
 The Firefox route pass also found invalid modern HTML pattern syntax on the
 username and creator-channel fields. Literal punctuation and hyphens are now
-escaped for the browser's current Unicode-set (`v`) pattern rules. The local
-Firefox check confirms the fields accept valid values and reject spaces. This
-small cross-browser correction is verified locally; it is not part of the
-previously recorded production release and must go through the guarded release
-workflow before being considered live.
+escaped for the browser's current Unicode-set (`v`) pattern rules. Firefox
+checks confirm the fields accept valid values and reject spaces. The fix was
+deployed and passed the guarded live acceptance recorded below.
 
 ### Complete: no in-scope legacy brand-header pages found
 
@@ -153,8 +151,24 @@ held 100% of traffic.
 - Rollback version captured before deployment:
   `f65602de-f2ff-4af4-85e4-bef08490f6ee`.
 
-The production release changed the Nova Editorial theme palettes and the
-shared theme behavior for access gates. No Haunted Location books, other
-Repository books, or production data were changed. Local route/render and
-focused interaction checks now pass across the complete 234-file scope. The
-responsive and visual consistency review remains the next audit phase.
+The earlier production release changed the Nova Editorial theme palettes and
+the shared theme behavior for access gates. No Haunted Location books, other
+Repository books, or production data were changed.
+
+The follow-up browser-compatibility fix was deployed from source commit
+`926fbdd8b65924857b6a81a068598564cf570f8c` as release
+`rel-926fbdd8b659-1e05e0517898`. Worker version
+`0df5ebd5-e07c-42d8-a094-bd7d4f1abe75` holds 100% of production traffic;
+rollback version `33e72eed-f4f3-41bd-9106-0217ee89baf1` was captured before
+deployment. Certification passed all 30 release gates, including the
+authentication lifecycle (38/38 before and after restart and 38/38 after the
+production build), production preflight, and the StudioFlow regressions.
+Live anonymous production smoke passed 10/10, and isolated Firefox Developer
+Edition production acceptance passed 65/65. Production schema readiness was
+read-only and passed without pending migrations. No protected books or
+production data were changed.
+
+The responsive and visual consistency review remains open. The route/render
+and focused interaction checks now pass across the complete 234-file scope,
+but they do not compare every page's spacing, responsive layout, images, and
+shared navigation at desktop and mobile sizes across every theme.

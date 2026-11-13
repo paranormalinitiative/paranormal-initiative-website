@@ -2,7 +2,7 @@
 
 ## 2026-11-12 — Site-wide shell and theme audit
 
-Status: **AUDIT IN PROGRESS — THEME FIX LIVE; FIREFOX VALIDATION FIX VERIFIED LOCALLY, RELEASE PENDING.** The current
+Status: **AUDIT IN PROGRESS — THEME AND FIREFOX VALIDATION FIXES DEPLOYED AND LIVE VERIFIED.** The current
 tracked source contains 293 HTML documents. After excluding the 51 Haunted
 Location directory documents, five standalone Repository books, and three
 shared fragments, 234 in-scope page files remain. None of those in-scope pages
@@ -29,9 +29,11 @@ anonymous access gate; no broken visitor route was found. The full route table
 is in [TPI-OPS-017 browser acceptance](200-AUDITS/TPI-OPS-017-BROWSER-ROUTE-ACCEPTANCE.md).
 Guarded production preflight certified all 30 gates, live
 anonymous smoke passed 10/10, and isolated Firefox production acceptance
-passed 65/65. Release `rel-8d444b943916-8e1f9c61cc85` is live at 100% traffic
-on Worker version `33e72eed-f4f3-41bd-9106-0217ee89baf1`. A full
-responsive visual consistency remains open: the route sweep did not inspect
+passed 65/65. The initial theme release `rel-8d444b943916-8e1f9c61cc85` was
+followed by the browser-validation fix release `rel-926fbdd8b659-1e05e0517898`,
+which is live at 100% traffic on Worker version
+`0df5ebd5-e07c-42d8-a094-bd7d4f1abe75`. A full
+responsive visual consistency review remains open: the route sweep did not inspect
 every page at mobile/desktop sizes or compare all six themes on each page.
 Historical OPS-015/016 284-route results are not current full-site
 certification. No protected books or production data were changed. Details
@@ -43,8 +45,10 @@ literal punctuation syntax under current browser rules. Username fields and
 the creator-channel slug pattern were corrected; the three-field Firefox
 spot-check passed. The complete 234-page Firefox rerun passed with zero route
 failures, and the repeatable browser runner now includes focused valid/invalid
-input checks. This correction still needs the guarded production release and
-live Firefox acceptance before it is marked complete.
+input checks. This correction is deployed and live verified: release preflight
+passed all 30 gates, live anonymous smoke passed 10/10, and isolated Firefox
+Developer Edition acceptance passed 65/65. Release ID, source commit, Worker
+version, and remaining visual-review scope are recorded in TPI-OPS-017.
 
 ## 2026-11-12 — Founding Membership header pill removal
 

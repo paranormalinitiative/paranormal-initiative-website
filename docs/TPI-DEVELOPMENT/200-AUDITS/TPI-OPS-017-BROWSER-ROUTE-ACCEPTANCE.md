@@ -27,6 +27,20 @@ contributor, StudioFlow, ParaTube, and public/education pages.
 - Unexpected browser/console/request issues on application routes: **0**
 - External requests dispatched: **0**
 
+## Production release
+
+The username and creator-channel validation fixes found during this route
+audit were deployed through the guarded release workflow. Release
+`rel-926fbdd8b659-1e05e0517898` deployed source commit
+`926fbdd8b65924857b6a81a068598564cf570f8c` as Worker version
+`0df5ebd5-e07c-42d8-a094-bd7d4f1abe75`, now at 100% of production traffic.
+The pre-deployment rollback version was
+`33e72eed-f4f3-41bd-9106-0217ee89baf1`. All 30 certification gates passed;
+production smoke passed 10/10 and isolated Firefox Developer Edition
+acceptance passed 65/65. The route matrix itself was run against the official
+local Worker with a Playwright-managed isolated Firefox build; the production
+release acceptance used Firefox Developer Edition.
+
 ## Classification rules
 
 - PASS means the selected role received the expected local response, the
