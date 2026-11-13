@@ -221,6 +221,7 @@ function stopIsolatedE2E() {
 }
 async function verifyAuthLifecycle() {
   const before = localAdminFingerprint();
+  await waitForLocalReleaseSurfaces();
   await runLocalAuthCheck("local_admin authentication before restart");
   run("Managed local Worker restart", process.execPath, ["scripts/local-dev-service.mjs", "restart"], { env: { TPI_LOCAL_OWNER_CONTROL: "1" } });
   await waitForLocalReleaseSurfaces();
