@@ -41,6 +41,12 @@ The 29 legacy brand-header files consist of 24 Haunted Location state pages
 and the five protected standalone books. No other tracked page uses that
 legacy header.
 
+The exact list of 234 in-scope HTML files is in the
+[in-scope HTML inventory](TPI-OPS-017-IN-SCOPE-HTML-INVENTORY.md). This is a
+source-file count, not 234 distinct public URLs: the list includes individual
+lessons and articles, application entry points, and internal preview/lab
+files. Route and authentication behavior varies by file.
+
 ## Findings
 
 ### Complete: core site and member pages share theme behavior
