@@ -36,6 +36,10 @@ sqlite.exec(`
     id TEXT PRIMARY KEY, contributor_id TEXT, title TEXT, body TEXT, action_href TEXT, type TEXT, created_by TEXT,
     read_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE admin_audit_logs (
+    id TEXT PRIMARY KEY, actor_id TEXT, actor_username TEXT, actor_role TEXT, action TEXT,
+    target_type TEXT, target_id TEXT, metadata_json TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
   CREATE TABLE nova_items (
     id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, type TEXT NOT NULL DEFAULT 'nova-document',
     title TEXT NOT NULL DEFAULT 'Untitled', collection_id TEXT, trash_collection_id TEXT,
@@ -737,6 +741,58 @@ check("the legacy direct Admin status change is refused for an enrolled publishe
   const article = articleOf(articleId);
   assert.equal(article.status, "published");
   assert.equal(article.body_html, "<p>LIVE SNAPSHOT</p>");
+});
+check("limited Admin can remove an Education article from public view while preserving Nova and audit history", async () => {
+  const seeded = await approvedArticle({ title: "Admin Moderation Removal" });
+  const res = await call("DELETE", `/admin/articles/${seeded.articleId}`, "tok-admin");
+  assert.equal(res.status, 200, JSON.stringify(res.body));
+  assert.equal(res.body.removedFromPublic, true);
+  assert.equal(res.body.editorialHistoryPreserved, true);
+  assert.equal(articleOf(seeded.articleId).status, "deleted");
+  assert.ok(sqlite.prepare("SELECT id FROM nova_items WHERE id = ?").get(seeded.itemId));
+  assert.equal(submissionsFor(seeded.articleId).length, 1);
+  assert.equal(eventsFor(seeded.articleId).some(event => event.event_type === "approved"), true);
+  assert.equal(sqlite.prepare("SELECT action FROM admin_audit_logs WHERE target_id = ?").get(seeded.articleId)?.action, "article.moderation_removed");
+  const adminQueue = await call("GET", "/admin/articles?status=deleted", "tok-admin");
+  assert.equal(adminQueue.status, 200);
+  assert.ok(adminQueue.body.articles.some(article => article.id === seeded.articleId));
+  const publisherQueue = await publicationsOf("tok-pub");
+  assert.equal(publisherQueue.body.submissions.some(article => article.articleId === seeded.articleId), false);
+  const publisherDetail = await detailOf("tok-pub", seeded.articleId);
+  assert.equal(publisherDetail.status, 409);
+  assert.equal(publisherDetail.body.code, "article_moderation_removed");
+  const publicList = await call("GET", "/articles", null);
+  assert.equal(publicList.status, 200);
+  assert.equal(publicList.body.articles.some(article => article.id === seeded.articleId), false);
+  const publish = await publishAs("tok-pub", seeded.articleId);
+  assert.equal(publish.status, 409);
+  assert.equal(publish.body.code, "article_moderation_removed");
+  assert.equal(articleOf(seeded.articleId).status, "deleted");
+  assert.equal(submissionsFor(seeded.articleId)[0].outcome, "open");
+});
+check("limited Admin moderation can remove restricted Ghostology content without receiving authoring rights", async () => {
+  const seeded = seedArticle({ editorial: "legacy", title: "Admin Removed Ghostology", destination: "ghostology-101.html", articleType: "Ghostology", status: "published" });
+  const res = await call("DELETE", `/admin/articles/${seeded.articleId}`, "tok-admin");
+  assert.equal(res.status, 200, JSON.stringify(res.body));
+  assert.equal(articleOf(seeded.articleId).status, "deleted");
+  const attemptedPublish = await call("POST", `/admin/articles/${seeded.articleId}/status`, "tok-admin", { status: "published" });
+  assert.equal(attemptedPublish.status, 403);
+  assert.equal(attemptedPublish.body.code, "education_leadership_required");
+});
+check("ordinary Contributors cannot use the Admin moderation removal route", async () => {
+  const seeded = seedArticle({ editorial: "legacy", title: "Contributor Cannot Moderate" });
+  const res = await call("DELETE", `/admin/articles/${seeded.articleId}`, "tok-a");
+  assert.equal(res.status, 403);
+  assert.equal(articleOf(seeded.articleId).status, "draft");
+});
+check("a moderation-removed legacy article cannot be republished from its status control", async () => {
+  const seeded = seedArticle({ editorial: "legacy", title: "Removed Legacy Article" });
+  const removed = await call("DELETE", `/admin/articles/${seeded.articleId}`, "tok-admin");
+  assert.equal(removed.status, 200);
+  const publish = await call("POST", `/admin/articles/${seeded.articleId}/status`, "tok-admin", { status: "published" });
+  assert.equal(publish.status, 409);
+  assert.equal(publish.body.code, "article_moderation_removed");
+  assert.equal(articleOf(seeded.articleId).status, "deleted");
 });
 check("legacy articles keep their existing direct Admin publication path", async () => {
   const seeded = seedArticle({ editorial: "legacy", title: "Legacy Admin Article", href: "published-article.html?id=legacy-admin" });

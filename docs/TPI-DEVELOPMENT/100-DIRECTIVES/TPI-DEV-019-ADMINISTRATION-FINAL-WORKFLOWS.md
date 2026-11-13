@@ -14,7 +14,7 @@ This directive completes the remaining development-only Administration Center wo
 
 ### Education Center
 
-`GET /api/admin/articles/:id` returns the supported article fields, including the existing `body_html` and `article_html` content, plus administrative history. `PUT`/`PATCH /api/admin/articles/:id` validates the title, destination, and body, preserves the existing article columns, writes `article.updated`, and requires the loaded `updated_at` value when supplied. A stale save returns `409 ARTICLE_EDIT_CONFLICT`; publication remains the existing separate status action.
+`GET /api/admin/articles/:id` returns the supported article fields, including the existing `body_html` and `article_html` content, plus administrative history. `PUT`/`PATCH /api/admin/articles/:id` validates the title, destination, and body, preserves the existing article columns, writes `article.updated`, and requires the loaded `updated_at` value when supplied. A stale save returns `409 ARTICLE_EDIT_CONFLICT`; publication remains the existing separate status action. Owners and Admins can use `DELETE /api/admin/articles/:id` to remove content from public Education Center listings. This is a soft removal (`articles.status = 'deleted'`): Nova source items and append-only editorial/audit history remain intact, and removed articles cannot be republished through the direct status or Nova Publisher paths. Contributor access does not grant this moderation route. The Community Posts administration queue separately supports `visible`, `hidden`, and `deleted` post statuses.
 
 ### Notifications
 

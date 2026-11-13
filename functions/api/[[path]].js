@@ -118,6 +118,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "GET" && path === "/admin/articles") return requireAdmin(request, env, user => handleAdminArticles(request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/admin\/articles\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminRemoveArticle(path, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/articles\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminArticleDetail(path, env, user));
     if ((request.method === "PUT" || request.method === "PATCH") && path.match(/^\/admin\/articles\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminArticleUpdate(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/articles\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminArticleStatus(path, request, env, user));
@@ -3766,7 +3767,7 @@ async function handleAdminArticles(request, env, actingUser) {
   const url = new URL(request.url);
   const search = clean(url.searchParams.get("search")).slice(0, 120);
   const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
-  const status = ["draft", "published", "all"].includes(requestedStatus) ? requestedStatus : "all";
+  const status = ["draft", "published", "deleted", "all"].includes(requestedStatus) ? requestedStatus : "all";
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
   const where = [];
@@ -3828,6 +3829,24 @@ async function handleAdminArticleDetail(path, env) {
     LIMIT 50
   `).bind(id).all().catch(() => ({ results: [] }));
   return json({ article, history: (history.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminRemoveArticle(path, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/articles\/([^/]+)$/)?.[1] || ""));
+  if (!id) return json({ error: "Article id is required." }, 400);
+  const article = await env.TPI_DB.prepare("SELECT id, title, status, destination, article_type AS contributionType FROM articles WHERE id = ?").bind(id).first();
+  if (!article) return json({ error: "Article was not found." }, 404);
+  if (article.status === "deleted") return json({ article: { ...article, changed: false } });
+  const result = await env.TPI_DB.prepare("UPDATE articles SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status != 'deleted'").bind(id).run();
+  if (!Number(result.meta?.changes || 0)) return json({ error: "This article changed before removal completed. Refresh and try again.", code: "ARTICLE_MODERATION_CONFLICT" }, 409);
+  await writeAdminAuditLog(env, actingUser, "article.moderation_removed", "article", id, {
+    title: article.title,
+    previousStatus: article.status,
+    destination: article.destination,
+    contributionType: article.contributionType,
+    editorialHistoryPreserved: true
+  });
+  return json({ article: { ...article, status: "deleted", changed: true }, removedFromPublic: true, editorialHistoryPreserved: true });
 }
 
 async function handleAdminArticleUpdate(path, request, env, actingUser) {
@@ -3902,6 +3921,7 @@ async function handleAdminArticleStatus(path, request, env, actingUser) {
   const data = await readJson(request);
   const status = clean(data.status).toLowerCase();
   if (!["draft", "published"].includes(status)) return json({ error: "Article status must be draft or published." }, 400);
+  if (article.status === "deleted") return json({ error: "This article was removed by an administrator and cannot be republished through the status control.", code: "article_moderation_removed" }, 409);
   if (status === article.status) return json({ article: { ...article, changed: false } });
   // TPI-NOVA-004R6E: legacy direct status changes are preserved for legacy
   // articles only. An enrolled article's public visibility is changed by the
@@ -4233,6 +4253,7 @@ async function loadOwnedArticleForWorkflow(env, articleId, user) {
   const article = await env.TPI_DB.prepare("SELECT id, destination, article_type, created_by, nova_item_id, status, editorial_status FROM articles WHERE id = ?").bind(articleId).first();
   if (!article) return { response: json({ error: "Article not found." }, 404) };
   if (article.created_by !== user.id) return { response: json({ error: "This article belongs to another contributor." }, 403) };
+  if (article.status === "deleted") return { response: json({ error: "This article was removed by an administrator and cannot re-enter the editorial workflow.", code: "article_moderation_removed" }, 409) };
   return { article };
 }
 
@@ -4510,7 +4531,7 @@ async function handleEditorialQueue(request, env) {
     LEFT JOIN contributors c ON c.id = a.created_by
     LEFT JOIN contributors rv ON rv.id = s.reviewer_id
     WHERE a.editorial_status IN (${placeholders})
-      AND COALESCE(a.status, '') != 'published'
+      AND COALESCE(a.status, '') NOT IN ('published', 'deleted')
       AND COALESCE(a.article_type, '') != 'TPI Video'
       AND COALESCE(a.destination, '') != 'tpi-videos.html'
     ORDER BY s.submitted_at ASC, a.title ASC
@@ -4787,7 +4808,7 @@ async function handleEditorialPublications(env) {
     JOIN article_editorial_submissions s ON s.article_id = a.id AND s.outcome = 'open' AND s.approved_nova_version IS NOT NULL
     LEFT JOIN contributors c ON c.id = a.created_by
     LEFT JOIN contributors ab ON ab.id = s.approved_by
-    WHERE a.editorial_status = 'approved'
+    WHERE a.editorial_status = 'approved' AND a.status != 'deleted'
       AND COALESCE(a.article_type, '') != 'TPI Video'
       AND COALESCE(a.destination, '') != 'tpi-videos.html'
     ORDER BY s.approved_at ASC, a.title ASC
@@ -4803,6 +4824,7 @@ async function handleEditorialPublication(path, env, user) {
   if (!articleId) return json({ error: "Article id is required." }, 400);
   const article = await readPublicationArticle(env, articleId);
   if (!article) return json({ error: "Article not found." }, 404);
+  if (article.publicationStatus === "deleted") return json({ error: "This article was removed by an administrator and cannot be published.", code: "article_moderation_removed" }, 409);
   if (editorialNotApplicable(article)) return json({ error: "TPI Video items are not part of the editorial workflow.", code: "editorial_workflow_not_applicable" }, 409);
   const submission = await env.TPI_DB.prepare(`
     SELECT s.*, (SELECT COUNT(*) FROM article_editorial_submissions r WHERE r.article_id = s.article_id AND r.rowid <= s.rowid) AS round,
@@ -4890,6 +4912,7 @@ async function handleEditorialPublish(path, request, env, user, capabilities) {
   }
   const article = await readPublicationArticle(env, articleId);
   if (!article) return json({ error: "Article not found." }, 404);
+  if (article.publicationStatus === "deleted") return json({ error: "This article was removed by an administrator and cannot be published.", code: "article_moderation_removed" }, 409);
   if (editorialNotApplicable(article)) return json({ error: "TPI Video items are not part of the editorial workflow.", code: "editorial_workflow_not_applicable" }, 409);
   const title = clean(article.title);
   if (!title || /^untitled/i.test(title)) return json({ error: "A titled article is required before publication.", code: "title_required" }, 422);
@@ -4934,11 +4957,11 @@ async function handleEditorialPublish(path, request, env, user, capabilities) {
     WHERE id = ? AND outcome = 'open' AND approved_nova_version = ? AND approved_by IS NOT NULL
       AND submitted_by != ? AND submitted_destination = ? AND submitted_article_type = ?
       AND EXISTS (SELECT 1 FROM articles WHERE id = ? AND editorial_status = 'approved'
-        AND COALESCE(destination, '') = ? AND COALESCE(article_type, '') = ?)
+        AND status != 'deleted' AND COALESCE(destination, '') = ? AND COALESCE(article_type, '') = ?)
   `).bind(user.id, token, token, submission.id, submission.approved_nova_version, user.id, destination, articleType, articleId, destination, articleType);
   const published = env.TPI_DB.prepare(`
     UPDATE articles SET body_html = ?, article_html = ?, status = 'published', updated_at = CURRENT_TIMESTAMP
-    WHERE id = ? AND EXISTS (SELECT 1 FROM article_editorial_submissions WHERE id = ? AND published_at = ?)
+    WHERE id = ? AND status != 'deleted' AND EXISTS (SELECT 1 FROM article_editorial_submissions WHERE id = ? AND published_at = ?)
   `).bind(snapshot.bodyHtml, snapshot.articleHtml, articleId, submission.id, token);
   const transition = { event: "published", from: "approved", to: "approved" };
   const event = insertEditorialEventGuarded(

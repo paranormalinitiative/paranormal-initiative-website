@@ -6165,3 +6165,29 @@ archive/trash/restore controls are deferred.
 
 **Production has not received migrations 0059/0060 or the 004R5 application
 changes.**
+
+## Education Center moderation removal (2026-11-13)
+
+- Owners and Admins can remove an Education Center article from public view via
+  the Administration Center article queue. The action sets `articles.status` to
+  `deleted`, writes `article.moderation_removed` with the prior status and
+  article context, and keeps the article, Nova source, and editorial history.
+- The Admin article queue includes a Removed filter. The confirmation explains
+  that members lose visibility while the Nova and audit records are retained.
+- Public article listing already selects only `published` rows. The Nova
+  Publisher claim and article snapshot updates now also reject `deleted` rows,
+  preventing a concurrent or later workflow publish from restoring removed
+  content. Removed records are excluded from review and publish queues,
+  submission/detail reads refuse them, and legacy direct Admin status changes
+  cannot republish a removed row.
+- Moderation is available to both Owner and Admin roles through `requireAdmin`,
+  including on Ghostology and TPI Videos records; this does not grant either
+  role new authoring or publishing capabilities for restricted destinations.
+  Ordinary Contributors are denied the Admin removal route. Community Feed
+  moderation already supports audited `visible`, `hidden`, and `deleted` states.
+- Verification on the local code: Nova publication verifier 64 passed / 0
+  failed, including Admin removal, public invisibility, retained Nova/editorial
+  history, restricted-destination moderation, Contributor denial, and
+  republishing refusal. Administration Center TypeScript/Vite build passed.
+- Production release and authenticated browser acceptance: pending the guarded
+  release workflow.
