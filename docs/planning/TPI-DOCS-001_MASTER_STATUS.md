@@ -31,9 +31,10 @@ historical records.
   release `rel-ea16819d85fc-f99594709ad1` is live at 100% traffic; preflight passed,
   live smoke passed 10/10, and isolated Firefox acceptance passed 65/65. See the
   [rail order record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-MEMBER-RIGHT-RAIL-ORDER.md).
-- The owner-provided Education Center banner is integrated above the library
-  introduction and passed local desktop/phone Firefox checks. Guarded production
-  release is pending; see the
+- The owner-provided Education Center banner is deployed above the library
+  introduction and passed local and production desktop/phone Firefox checks.
+  Production release `rel-35617bb613c0-a02a95e5044a` is live at 100% traffic;
+  its dedicated Education Center suite passed 31/31. See the
   [banner verification record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-EDUCATION-CENTER-BANNER.md).
 - Release-specific test and production evidence is recorded in the November 11
   completion records under

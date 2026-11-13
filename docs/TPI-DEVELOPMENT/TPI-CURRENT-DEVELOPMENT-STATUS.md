@@ -87,11 +87,15 @@ version, and remaining visual-review scope are recorded in TPI-OPS-017.
 
 ### 2026-11-13 — Education Center banner
 
-Status: **LOCAL BROWSER ACCEPTANCE PASSED; GUARDED RELEASE PENDING.** Added the
+Status: **DEPLOYED AND LIVE VERIFIED — 2026-11-13.** Added the
 owner-provided 2172 x 724 Education Center banner above the library introduction.
 It keeps its full 3:1 composition across desktop and phone widths. Isolated
-Firefox Education Center acceptance passed 31/31; local authentication lifecycle
-passed 38/38. See
+Firefox Education Center acceptance passed 31/31 locally and 31/31 in production;
+the local authentication lifecycle passed 38/38, production smoke passed 10/10,
+and isolated production Firefox acceptance passed 65/65. Release
+`rel-35617bb613c0-a02a95e5044a` deployed source commit
+`35617bb613c0ea562a8070620f3baf825c6b8404` as Worker
+`c53f719e-ba9a-4c2e-95ae-cde5dc1a0172` at 100% traffic. See
 [the banner verification record](200-AUDITS/TPI-OPS-017-EDUCATION-CENTER-BANNER.md).
 
 ## 2026-11-12 — Founding Membership header pill removal
