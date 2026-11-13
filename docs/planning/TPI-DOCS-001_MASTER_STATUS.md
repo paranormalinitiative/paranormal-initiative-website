@@ -19,8 +19,10 @@ historical records.
   [cache consistency completion record](../TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-11-TPI-SHARED-ASSET-CACHE-CONSISTENCY.md).
 - A representative responsive/theme review checked 17 page families across six themes,
   four applicable access roles, and desktop/phone sizes. Three responsive layout defects
-  were fixed locally and the final 204-check browser sweep passed. The guarded release
-  and full visual review of all 234 pages remain open; see the
+  were fixed and the final 204-check browser sweep passed. Release
+  `rel-da185da5ae93-5ab88ae30d0e` is live at 100% traffic; preflight passed 30/30,
+  live smoke 10/10, and isolated Firefox acceptance 65/65. Full visual review of all
+  234 pages remains open; see the
   [review record](../TPI-DEVELOPMENT/200-AUDITS/TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md).
 - Release-specific test and production evidence is recorded in the November 11
   completion records under

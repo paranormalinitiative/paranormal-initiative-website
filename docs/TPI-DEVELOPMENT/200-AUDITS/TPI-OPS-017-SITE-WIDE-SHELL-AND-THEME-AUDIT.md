@@ -180,3 +180,20 @@ The responsive and visual consistency review remains open. The route/render
 and focused interaction checks now pass across the complete 234-file scope,
 but they do not compare every page's spacing, responsive layout, images, and
 shared navigation at desktop and mobile sizes across every theme.
+
+### Responsive sample follow-up — 2026-11-12
+
+The representative responsive review in
+[`TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md`](TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md)
+checked 17 routes across six themes, applicable roles, and desktop/phone
+viewports (204 combinations). It fixed mobile overflow in the profile editor,
+Settings, and member home. The final sweep passed with zero layout, theme,
+rendering, image, browser-error, or title/greeting overlap findings. The
+profile editor also passed ten viewport widths from 320px to 1440px.
+
+The repairs deployed as release `rel-da185da5ae93-5ab88ae30d0e` from source
+commit `da185da5ae939b75d74670944135e8084e01172d`, Worker
+`c48da23b-d832-49ed-97fd-38e398798807` at 100% traffic. The guarded preflight
+passed 30/30, production smoke passed 10/10, and isolated Firefox acceptance
+passed 65/65. This completes the representative sample, not visual review of
+all 234 pages. Protected books and production data were not changed.

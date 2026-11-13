@@ -1,7 +1,7 @@
 # TPI-OPS-017 — Responsive Visual Sample Review
 
 Date: 2026-11-12
-Status: **LOCAL REVIEW COMPLETE; GUARDED RELEASE PENDING**
+Status: **DEPLOYED AND LIVE VERIFIED — REPRESENTATIVE REVIEW COMPLETE**
 
 ## Scope
 
@@ -57,8 +57,9 @@ paths; they are local evidence and are not committed. `git diff --check` and
 the JavaScript syntax check passed before release preparation. The required
 local authentication lifecycle passed 38/38 before restart, 38/38 after
 restart, and 38/38 after the StudioFlow build; its isolated Firefox Developer
-Edition acceptance passed 65/65. The production preflight and live acceptance
-are still pending.
+Edition acceptance passed 65/65. Production preflight certified all 30 gates;
+live anonymous smoke passed 10/10 and isolated Firefox Developer Edition
+acceptance passed 65/65.
 
 ## Limits and remaining work
 
@@ -77,5 +78,16 @@ records, membership data, profile data, honors, or articles were modified.
 
 ## Release record
 
-Release evidence will be added here after the required authentication lifecycle,
-release preflight, guarded deployment, and live Firefox acceptance complete.
+- Source commit: `da185da5ae939b75d74670944135e8084e01172d`
+- Release: `rel-da185da5ae93-5ab88ae30d0e`
+- Worker version: `c48da23b-d832-49ed-97fd-38e398798807` (100% traffic)
+- Rollback version: `0df5ebd5-e07c-42d8-a094-bd7d4f1abe75`
+- Guarded release preflight: 30 gates passed; schema readiness passed with no
+  pending migrations.
+- Production anonymous smoke: 10/10 passed.
+- Isolated production Firefox acceptance: 65/65 passed.
+- Read-only production asset checks: profile editor, member shell, workspace
+  shell, member home, Settings, and member profile routes returned HTTP 200;
+  updated responsive CSS rules were present.
+- No production member, membership, profile, honor, article, or Studio data
+  changed. No protected book content changed.

@@ -42,7 +42,7 @@ and counts are in
 
 ### 2026-11-12 — Responsive visual sample
 
-Status: **LOCAL REVIEW PASSED; GUARDED RELEASE PENDING.** A repeatable Firefox
+Status: **DEPLOYED AND LIVE VERIFIED — REPRESENTATIVE REVIEW COMPLETE.** A repeatable Firefox
 sample checked 17 representative page routes in the applicable public, member,
 contributor, and administrator sessions, at desktop and phone sizes, across all
 six themes (204 combinations). It exposed mobile layout issues in the profile
@@ -56,7 +56,11 @@ This is representative coverage, not visual certification of all 234 pages.
 Continue auditing page families as source review and owner reports identify
 them. The runnable check, scope, results, and limitations are in
 [the visual sample review](200-AUDITS/TPI-OPS-017-RESPONSIVE-VISUAL-SAMPLE-REVIEW.md).
-The Haunted Location books and five standalone Repository books remain excluded.
+Production release `rel-da185da5ae93-5ab88ae30d0e` deployed commit
+`da185da5ae939b75d74670944135e8084e01172d` as Worker
+`c48da23b-d832-49ed-97fd-38e398798807` at 100% traffic. Preflight passed 30/30
+gates, live smoke 10/10, and isolated Firefox 65/65. The Haunted Location
+books and five standalone Repository books remain excluded.
 
 The Firefox audit uncovered HTML validation patterns that rejected the
 literal punctuation syntax under current browser rules. Username fields and
