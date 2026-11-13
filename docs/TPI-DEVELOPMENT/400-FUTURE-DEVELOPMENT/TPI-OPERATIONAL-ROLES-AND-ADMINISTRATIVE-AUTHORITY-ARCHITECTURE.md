@@ -871,3 +871,32 @@ will address Founder, CEO, President where applicable, Board structure, Chair, V
 Chair, Secretary, Treasurer, Directors/Board Members, organizational office versus
 operational authority, Full Platform Authority, and the relationship to future
 leadership medallions. The full Medallion system receives its own later section.
+
+## 82. Owner-confirmed role boundaries — 2026-11-13
+
+The owner has confirmed the following starting policy for future server-side
+implementation. This addendum supersedes any earlier statement that these
+baseline boundaries still require an owner decision; it does **not** activate
+roles or change authorization by itself.
+
+| Role | Intended responsibility and limits |
+|---|---|
+| **Owner / CEO / Founder / Director / Assistant Director** | Executive leadership authority and full platform control. These offices are explicit, protected leadership records, not aliases for an ordinary Admin account. |
+| **Full Administrator** | Broad platform and member administration, including removing inappropriate posts and content. An Admin cannot remove, block, demote, or disable an Owner, Founder, CEO, Director, Assistant Director, or other designated high official; cannot remove or block another Admin or Moderator; and cannot grant themselves higher authority. |
+| **Administrator** | Delegated administration for routine member and content operations. May remove inappropriate posts. Does not receive executive or unrestricted platform authority. Specific account, role, security, billing, and permanent-deletion actions require explicitly granted capabilities. |
+| **Moderator** | Community safety and content moderation: review reports; hide or remove violating posts/comments; document actions; issue warnings and limited temporary content restrictions; escalate serious or disputed cases. No account deletion, staff appointments, access grants, billing/security/configuration access, or access to unrelated private messages. |
+| **Member** | Ordinary community participation under the member and community standards. |
+
+The Owner has not asked to appoint anyone or change any existing role in this
+addendum. A role badge is recognition/presentation only; the server must check an
+active appointment and its capabilities for every protected operation. No
+admin or moderator may use a post-removal permission to silence viewpoint,
+skepticism, criticism, or legitimate research.
+
+“Complete full control” is reserved for executive Owner/CEO authority. Admin
+tiers remain subordinate to that protected executive class. Before engineering
+the operational-role system, implementation must still settle the exact Admin
+tier names, who may appoint/revoke each tier, whether Senior/Lead Moderator and
+Senior/Platform Administrator tiers are needed, and safeguards/appeals for
+permanent account action. Until then, the existing owner/admin server gate is
+the only operational role implementation.

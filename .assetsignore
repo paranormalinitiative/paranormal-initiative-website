@@ -46,6 +46,10 @@ assets/board-members/masters/**
 # derivatives and a narrower rule when the operational insignia feature is built.
 assets/operational-roles/masters/
 assets/operational-roles/masters/**
+# TPI community membership recognition: preserve the source master; publish only
+# optimized web derivatives to Honors & Distinctions profile surfaces.
+assets/community-membership/masters/
+assets/community-membership/masters/**
 CLOUDFLARE_PORTAL_SETUP.md
 CONTRIBUTOR_PORTAL_PLAN.md
 PAPER_EDITOR_ROADMAP.md

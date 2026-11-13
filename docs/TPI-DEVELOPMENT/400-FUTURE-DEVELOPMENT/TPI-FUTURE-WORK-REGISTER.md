@@ -178,13 +178,15 @@ The script is not modified by documentation directives, including this one.
 
 ## 5. Staff role finalization
 
-Status: **UNRESOLVED POLICY — OWNER DECISION REQUIRED.**
+Status: **BASELINE BOUNDARIES OWNER-CONFIRMED 2026-11-13; ROLE ENGINE AND
+REMAINING HIGH-RISK DECISIONS NOT IMPLEMENTED.** See section 82 of the
+[operational-role architecture](TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md).
 
 ### Moderator family
 
 - whether Senior Moderator remains;
 - whether Lead Moderator remains;
-- exact capabilities per tier;
+- exact capabilities beyond the owner-confirmed Moderator baseline;
 - appointment authority per tier;
 - removal authority per tier;
 - escalation boundaries between tiers.
@@ -192,14 +194,13 @@ Status: **UNRESOLVED POLICY — OWNER DECISION REQUIRED.**
 ### Administrator family
 
 - whether the historical **Assistant Administrator** term remains, and what it maps to;
-- whether it sits below Administrator;
-- the exact Administrator hierarchy;
-- Senior Administrator definition;
-- Platform Administrator definition;
-- the exact high-risk capability list;
+- exact Administrator tier names and delegation beyond the owner-confirmed limits;
+- Senior Administrator and Platform Administrator definitions, if needed;
+- final high-risk capability and permanent account-action policy;
 - appointment and removal authority per tier.
 
-No tier, capability, or appointment rule is settled by being listed here.
+The confirmed baseline in section 82 is policy only. No roles have been assigned
+and no new permission has been activated by that policy record.
 
 ### Moderator / Administrator oath implementation
 

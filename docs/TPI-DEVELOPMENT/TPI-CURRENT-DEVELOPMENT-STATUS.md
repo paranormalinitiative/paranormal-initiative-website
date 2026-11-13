@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## 2026-11-13 — Universal Member badge and owner-confirmed staff-role boundaries
+
+Status: **IMPLEMENTED AND VERIFIED LOCALLY; GUARDED PRODUCTION RELEASE PENDING.** Added the
+owner-supplied transparent Member badge to the shared Honors & Distinctions
+renderer, so it appears for existing active members as well as new signups.
+Added transparent Administrator and Moderator badge derivatives from the new
+owner artwork; older opaque assets remain preserved but are no longer the
+current presentation source. Updated operational role policy with the
+owner-confirmed boundary: executives retain full control; Admins can remove
+inappropriate content but cannot remove/block protected executives or peer
+Admins/Moderators; Moderators handle reports and violating content with limited
+temporary actions and escalation. Roles remain unassigned and new authorization
+is not active. The API/profile acceptance passed 35/35 and disposable Firefox
+Developer Edition acceptance passed 35/35, including actual loading of the
+Member and Administrator image files. See [Member Badge and Role Boundaries](300-COMPLETED-WORK/2026-11-13-MEMBER-BADGE-AND-ROLE-BOUNDARIES.md),
+operational-role architecture section 82, and badge asset READMEs.
+
 ## 2026-11-13 — Main website banners on both home pages
 
 Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-baec1094a400-690375b626c2`; Worker `bf5b1570-3d63-4dad-a435-d1fefce49603`.** Added the supplied Main Website Banner image to the anonymous public landing page and signed-in Member Home, using its full 3:1 aspect ratio without cropping. The image is hidden on member profile views so profile pages keep their own selected banner or empty cover area.

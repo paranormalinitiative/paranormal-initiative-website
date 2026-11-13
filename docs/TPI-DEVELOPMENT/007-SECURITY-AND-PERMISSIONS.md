@@ -21,7 +21,11 @@ Runtime checks passed: anonymous Admin Center access returned 403; the developme
 
 ## Current role policy
 
-Future Owner, Assistant Administrator, and Moderator roles remain planning items. TPI-DEV-001 does not change role assignments or permissions.
+Owner-confirmed baseline boundaries for Owner/CEO, Full Administrator,
+Administrator, Moderator, and Member are recorded in section 82 of the
+[operational-role architecture](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md).
+They are policy only: no new role has been assigned and no new permission has
+been activated. The implemented gate remains an `owner` or `admin` account role.
 
 The intended operational-role architecture — Moderator, Senior Moderator, Lead Moderator, Administrator, Senior Administrator, Platform Administrator, and the separate Owner/Founder authority, together with least privilege, capability-based authorization, position records, and the rule that no badge or client value grants authority — is recorded in
 [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)

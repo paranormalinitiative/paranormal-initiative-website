@@ -4060,7 +4060,7 @@
     function cacheBustedRecognitionAsset(path) {
         var value = String(path || "").trim();
         if (!value) return "";
-        return value + (value.indexOf("?") >= 0 ? "&" : "?") + "tpi-recognition=20261111";
+        return value + (value.indexOf("?") >= 0 ? "&" : "?") + "tpi-recognition=20261113";
     }
 
     function foundingMembershipDescription(item) {
@@ -4080,7 +4080,7 @@
         return '<button type="button" class="profile-recognition-trigger" data-recognition-trigger data-recognition-image="' + escapeAttr(image || "") + '" data-recognition-title="' + escapeAttr(title || "Recognition") + '" data-recognition-detail="' + escapeAttr(detail || "") + '" data-recognition-description="' + escapeAttr(description || "") + '" aria-label="View ' + escapeAttr(title || "recognition") + ' details"><img src="' + escapeAttr(image || "") + '" alt="' + escapeAttr(title || "Recognition") + '" loading="lazy" decoding="async"></button>';
     }
 
-    function getRecognitionItems(foundingMembership, boardMembership, distinctions, profileTitle) {
+    function getRecognitionItems(foundingMembership, boardMembership, distinctions, profileTitle, operationalRole) {
         var rows = Array.isArray(distinctions)
             ? distinctions.filter(function(item) { return item && item.status === "active" && item.assetPath; }).map(function(item) {
                 return {
@@ -4120,12 +4120,37 @@
                 color: item.badge.color === "purple" ? "#a78bfa" : (item.badge.color === "blue" ? "#55b9e9" : "#d6a84f")
             });
         });
+        if (operationalRole === "admin") {
+            ordered.push({
+                kind: "operational-service",
+                title: "Administrator",
+                detail: "Platform Operations",
+                description: "Recognizes an active Administrator account role. Administrative permissions are enforced separately by the server.",
+                image: cacheBustedRecognitionAsset("/assets/operational-roles/web/administrator-256.png"),
+                color: "#55b9e9"
+            });
+        }
         rows.forEach(function(item) { if (item !== gold) ordered.push(item); });
+        // Every active member receives the community-membership recognition.
+        // The badge is a public identity marker only; server-side records remain
+        // the sole source for every operational permission. Keep it after earned
+        // distinctions so existing leadership and founding badges retain order.
+        ordered.push({
+            kind: "community-membership",
+            title: "TPI Member",
+            detail: "Community Member",
+            description: "Recognizes membership in The Paranormal Initiative community. This badge identifies membership only and does not grant administrative or moderation authority.",
+            image: cacheBustedRecognitionAsset("/assets/community-membership/web/member-256.png"),
+            color: "#d6a84f"
+        });
+        // Moderator artwork is ready, but there is no Moderator appointment
+        // record in the current account model. Do not infer that role from a
+        // member title, badge, or client-provided field.
         return ordered;
     }
 
-    function renderRecognitionShelf(foundingMembership, boardMembership, distinctions, profileTitle) {
-        var ordered = getRecognitionItems(foundingMembership, boardMembership, distinctions, profileTitle);
+    function renderRecognitionShelf(foundingMembership, boardMembership, distinctions, profileTitle, operationalRole) {
+        var ordered = getRecognitionItems(foundingMembership, boardMembership, distinctions, profileTitle, operationalRole);
         if (!ordered.length) return "";
         return '<section class="profile-recognition-shelf" aria-label="Honors and distinctions"><p class="portal-kicker">Honors &amp; Distinctions</p><div class="rail-recognition-grid profile-recognition-grid">' + ordered.map(function(item) {
             return '<button type="button" class="rail-recognition-item profile-recognition-item" data-recognition-trigger data-recognition-image="' + escapeAttr(item.image || "") + '" data-recognition-title="' + escapeAttr(item.title || "Recognition") + '" data-recognition-detail="' + escapeAttr(item.detail || "") + '" data-recognition-description="' + escapeAttr(item.description || "") + '" aria-label="View ' + escapeAttr(item.title || "recognition") + ' details"><img src="' + escapeAttr(item.image || "") + '" alt="' + escapeAttr(item.title || "Recognition") + '" loading="lazy" decoding="async"><span class="rail-recognition-title">' + escapeHtml(item.title || "Recognition") + '</span><span class="rail-recognition-detail">' + escapeHtml(item.detail || "") + '</span></button>';
@@ -4136,7 +4161,7 @@
         var container = document.querySelector("[data-member-profile-honors]");
         if (!container) return;
         var recognition = profileRecognition || profileUser || {};
-        var markup = renderRecognitionShelf(recognition.foundingMembership, recognition.boardMembership, recognition.leadershipDistinctions, profileUser && profileUser.title);
+        var markup = renderRecognitionShelf(recognition.foundingMembership, recognition.boardMembership, recognition.leadershipDistinctions, profileUser && profileUser.title, profileUser && profileUser.role);
         container.innerHTML = markup;
         container.hidden = !markup;
     }
@@ -4146,12 +4171,13 @@
         var body = document.querySelector("[data-recognition-rail-body]");
         if (!section || !body) return;
         var recognition = profileMode ? (profileRecognition || profileUser || activeUser) : activeUser;
-        var ordered = getRecognitionItems(recognition && recognition.foundingMembership, recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title);
+        var operationalRole = profileMode ? (profileUser && profileUser.role) : (activeUser && activeUser.role);
+        var ordered = getRecognitionItems(recognition && recognition.foundingMembership, recognition && recognition.boardMembership, recognition && recognition.leadershipDistinctions, recognition && recognition.title, operationalRole);
         // The signed-in /me payload is authoritative for the owner's own
         // profile. Keep the wall visible if the separate profile lookup is
         // temporarily incomplete or returns a stale recognition projection.
         if (!ordered.length && activeUser && recognition !== activeUser) {
-            ordered = getRecognitionItems(activeUser.foundingMembership, activeUser.boardMembership, activeUser.leadershipDistinctions, activeUser.title);
+            ordered = getRecognitionItems(activeUser.foundingMembership, activeUser.boardMembership, activeUser.leadershipDistinctions, activeUser.title, activeUser.role);
         }
         if (!ordered.length) {
             section.hidden = true;

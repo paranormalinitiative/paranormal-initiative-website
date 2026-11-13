@@ -85,13 +85,14 @@ const excludedDirectories = new Set([".git", ".wrangler", ".local-dev", "node_mo
 // it would only certify a byte that is never deployed and let a stray Finder
 // touch invalidate an otherwise valid certification.
 const excludedFiles = new Set([".dev.vars", ".env", ".DS_Store", "wrangler.toml", "wrangler.dev.toml", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]);
-// Badge masters remain repository sources and are not published. The approved
-// leadership distinction feature publishes only optimized Society / Leadership
-// derivatives; excluding the masters here keeps the certified candidate and its
-// digest equal to what is uploaded without carrying source art through staging.
+// Badge masters remain repository sources and are not published. Display
+// surfaces publish only their optimized web derivatives; excluding masters
+// keeps the certified candidate digest aligned with the uploaded asset set.
 const unpublishedAssetPrefixes = [
   `assets${sep}founding-memberships${sep}masters${sep}`,
   `assets${sep}society-leadership${sep}masters${sep}`,
+  `assets${sep}operational-roles${sep}masters${sep}`,
+  `assets${sep}community-membership${sep}masters${sep}`,
 ];
 
 const filter = (source) => {
