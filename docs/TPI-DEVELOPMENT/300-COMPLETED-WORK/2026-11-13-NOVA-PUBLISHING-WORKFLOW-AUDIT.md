@@ -2,13 +2,13 @@
 
 ## Outcome
 
-The Nova publishing workflow implementation is present in the current production
-code and its editorial submission/event tables are present in production. Local
-workflow behavior is covered by passing automated checks. Production review and
-publication are **not operational yet**: although the schema accepts the
-reviewer and publisher capabilities, no grants exist. The owner-only grant
-interface is deployed and live verified; production review and publication
-still require owner-selected capability assignments.
+The audited Nova publishing and authoring policy is deployed and live verified
+in release `rel-82efb66d9f7e-28da9cf411ca` (Worker
+`63ae879b-cde7-45fc-9dcc-f41c19a85c52`). Contributors can publish immediately
+in open Education Center subjects; existing review rounds remain protected;
+Ghostology and TPI Videos are leadership-only. The reviewer/publisher grant
+workflow described in the historical audit sections remains available for
+articles already enrolled in review.
 
 No production article was created or edited. The owner-approved entitlement
 schema migration is documented below; all existing entitlement rows were
@@ -135,8 +135,26 @@ choices when the signed-in account lacks leadership access. Ordinary
 Contributors retain immediate publishing access in all other Education Center
 subjects.
 
-Implementation is currently local and not yet released. Focused verification
-passes 30/30, covering direct publication for an open subject, contributor
-denial and leadership allowance for Ghostology, ordinary Contributor denial
-for TPI Videos, and preservation of the enrolled-article workflow. Release and
-browser acceptance remain pending.
+Before deployment, focused verification passed 30/30, covering direct
+publication for an open subject, contributor denial and leadership allowance
+for Ghostology, ordinary Contributor denial for TPI Videos, and preservation
+of the enrolled-article workflow.
+
+### Release completion
+
+The previous paragraph was accurate before deployment and is superseded by the
+completed release. The isolated release API suite passed 295/295 after its
+expectations were updated for immediate open-subject publishing and leadership-
+only TPI Video creation. The full guarded preflight certified source commit
+`82efb66d9f7ec9d186d2d6746e120a64e519371d` as
+`rel-82efb66d9f7e-28da9cf411ca`. Production release completed on 2026-11-13
+with Worker version `63ae879b-cde7-45fc-9dcc-f41c19a85c52`; it now holds 100%
+of traffic. Anonymous production smoke passed 10/10 and isolated production
+Firefox acceptance passed 65/65. No new schema migration or member-content
+mutation was needed.
+
+The regression suite had retained old expectations that direct publication
+would be refused and that a generic Contributor could create TPI Videos. Those
+test expectations were corrected to assert immediate publishing in open
+subjects, Contributor denial for restricted TPI Videos, and successful video
+management by an owner account. The corrected isolated suite passed 295/295.

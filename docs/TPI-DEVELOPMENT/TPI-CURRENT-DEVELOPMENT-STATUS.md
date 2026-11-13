@@ -2,7 +2,7 @@
 
 ## 2026-11-13 — Nova authoring permissions and direct publishing
 
-Status: **IMPLEMENTED LOCALLY; FOCUSED VERIFICATION PASSED; RELEASE PENDING.**
+Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-82efb66d9f7e-28da9cf411ca`; Worker `63ae879b-cde7-45fc-9dcc-f41c19a85c52`.**
 Following the owner’s clarification, new Contributor articles in open Education
 Center subjects publish immediately when the author selects Publish; they do
 not require reviewer or publisher approval. Saving still creates a draft.
@@ -14,9 +14,12 @@ leadership-only subject and TPI Video choices for other accounts.
 
 Existing articles already enrolled in editorial review remain in that workflow.
 The R6F policy that all new standard articles must enter review is superseded by
-this owner decision. Focused R6F regression verification now passes 30/30,
-including open-subject direct publication and leadership restrictions. Browser
-acceptance and guarded production release are still required.
+this owner decision. Focused R6F regression verification passed 30/30; the
+isolated release API suite passed 295/295; the full guarded preflight passed;
+production smoke passed 10/10; and isolated production Firefox acceptance
+passed 65/65. The release completed through the certified-candidate path, and
+the new Worker version holds 100% of traffic. No schema migration or member
+content change was needed for this release.
 
 See [Nova Publishing Workflow Audit](300-COMPLETED-WORK/2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md)
 for the prior release record and this policy addendum.

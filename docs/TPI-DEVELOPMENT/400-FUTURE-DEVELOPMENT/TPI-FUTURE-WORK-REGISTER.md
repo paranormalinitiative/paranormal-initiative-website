@@ -528,8 +528,12 @@ outside the reviewer/publisher workflow. Existing articles already enrolled in
 review retain their workflow. Ghostology and TPI Videos authoring are limited
 to the owner and active Founder/Director, CEO, COO, CTO/CIO, and Assistant
 Director distinction holders. Generic Admin access alone is insufficient.
-Implementation and focused verification are in progress; see the current
-status and Nova publishing workflow audit.
+This policy is implemented and live verified in release
+`rel-82efb66d9f7e-28da9cf411ca` (Worker
+`63ae879b-cde7-45fc-9dcc-f41c19a85c52`). The corrected isolated release API
+suite passed 295/295, production smoke passed 10/10, and production Firefox
+acceptance passed 65/65. See the current status and Nova publishing workflow
+audit for the release record.
 
 Remaining open Nova work:
 
