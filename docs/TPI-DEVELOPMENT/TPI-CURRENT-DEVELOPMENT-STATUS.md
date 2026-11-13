@@ -1,5 +1,11 @@
 # TPI Current Development Status
 
+## 2026-11-13 — Main website banners on both home pages
+
+Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-baec1094a400-690375b626c2`; Worker `bf5b1570-3d63-4dad-a435-d1fefce49603`.** Added the supplied Main Website Banner image to the anonymous public landing page and signed-in Member Home, using its full 3:1 aspect ratio without cropping. The image is hidden on member profile views so profile pages keep their own selected banner or empty cover area.
+
+Focused local Firefox acceptance passed 33/33, including rendered dimensions for both home pages. The full guarded preflight passed all 30 gates; production smoke passed 10/10; isolated production Firefox acceptance passed 65/65. A separate live Firefox check verified the public home banner, signed-in member home banner, and banner-free member profile view (3/3). See [Main Website Home Banners](300-COMPLETED-WORK/2026-11-13-MAIN-HOME-BANNERS.md).
+
 ## 2026-11-13 — Nova authoring permissions and direct publishing
 
 Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-82efb66d9f7e-28da9cf411ca`; Worker `63ae879b-cde7-45fc-9dcc-f41c19a85c52`.**
