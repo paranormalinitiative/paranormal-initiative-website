@@ -1,7 +1,7 @@
 # Member Badge and Role Boundaries
 
 Date: 2026-11-13
-Status: **LOCAL VERIFICATION PASSED; GUARDED PRODUCTION RELEASE PENDING**
+Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-5ee1fc9f2d50-3a843a3d7d47`; Worker `dfee6075-5bc3-4e88-aceb-09c97bb53c93`**
 
 ## Owner-confirmed staff boundaries
 
@@ -42,7 +42,8 @@ exact tier hierarchy, and appointment/revocation authority remain future work.
   existing active member's Honors shelf and the Administrator badge renders
   with Member recognition on the existing synthetic Admin account.
 - Badge master files verified as 1254 × 1254 RGBA PNGs with real transparency.
-- Local Worker served the Member derivative with HTTP 200.
-
-The production deployment record will be added after guarded release and live
-acceptance complete.
+- The complete guarded preflight certified the exact pushed candidate with all
+  **30 gates passed**. Live anonymous production smoke passed **10/10** and
+  isolated production Firefox Developer Edition acceptance passed **65/65**.
+- Production confirmed the new Worker version holds 100% of traffic; the
+  release completed without a schema migration or member-data changes.

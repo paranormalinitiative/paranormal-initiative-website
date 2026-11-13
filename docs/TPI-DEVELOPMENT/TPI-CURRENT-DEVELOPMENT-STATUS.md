@@ -2,7 +2,7 @@
 
 ## 2026-11-13 — Universal Member badge and owner-confirmed staff-role boundaries
 
-Status: **IMPLEMENTED AND VERIFIED LOCALLY; GUARDED PRODUCTION RELEASE PENDING.** Added the
+Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-5ee1fc9f2d50-3a843a3d7d47`; Worker `dfee6075-5bc3-4e88-aceb-09c97bb53c93`.** Added the
 owner-supplied transparent Member badge to the shared Honors & Distinctions
 renderer, so it appears for existing active members as well as new signups.
 Added transparent Administrator and Moderator badge derivatives from the new
@@ -11,10 +11,14 @@ current presentation source. Updated operational role policy with the
 owner-confirmed boundary: executives retain full control; Admins can remove
 inappropriate content but cannot remove/block protected executives or peer
 Admins/Moderators; Moderators handle reports and violating content with limited
-temporary actions and escalation. Roles remain unassigned and new authorization
-is not active. The API/profile acceptance passed 35/35 and disposable Firefox
-Developer Edition acceptance passed 35/35, including actual loading of the
-Member and Administrator image files. See [Member Badge and Role Boundaries](300-COMPLETED-WORK/2026-11-13-MEMBER-BADGE-AND-ROLE-BOUNDARIES.md),
+temporary actions and escalation. These role boundaries remain policy only:
+roles are not assigned and new server authorization is not active.
+
+The member-profile API/Firefox suites passed 35/35 each, including actual
+loading of the Member and Administrator badge files. The complete guarded
+preflight certified the exact release candidate through all 30 gates; the live
+production smoke passed 10/10 and isolated Firefox release acceptance passed
+65/65. See [Member Badge and Role Boundaries](300-COMPLETED-WORK/2026-11-13-MEMBER-BADGE-AND-ROLE-BOUNDARIES.md),
 operational-role architecture section 82, and badge asset READMEs.
 
 ## 2026-11-13 — Main website banners on both home pages
