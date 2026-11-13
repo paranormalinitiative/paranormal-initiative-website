@@ -168,6 +168,13 @@
     const publishBtn = document.querySelector('[data-action="publish"]');
     if (publishBtn) {
       publishBtn.textContent = isVideo ? "Publish Video" : "Publish Article";
+      if (isVideo && !hasEducationLeadershipAccess()) {
+        publishBtn.disabled = true;
+        publishBtn.title = "TPI Videos posting is reserved for designated TPI leadership";
+      } else {
+        publishBtn.disabled = false;
+        publishBtn.removeAttribute("title");
+      }
     }
     if (destinationInput) {
       if (isVideo) {
@@ -451,6 +458,27 @@
     return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase());
   }
 
+  const LEADERSHIP_ONLY_DESTINATIONS = new Set(["ghostology-101.html", "ghostology.html", "tpi-videos.html"]);
+  function hasEducationLeadershipAccess(user = currentUser) {
+    return user?.role === "owner" || user?.educationLeadershipAccess === true;
+  }
+  function isLeadershipOnlyDestination(value) {
+    return LEADERSHIP_ONLY_DESTINATIONS.has(String(value || "").trim().toLowerCase().split(/[?#]/, 1)[0].replace(/^\/+/, ""));
+  }
+  function applyEducationSubjectAccess(user = currentUser) {
+    const allowed = hasEducationLeadershipAccess(user);
+    destinationInput?.querySelectorAll("option").forEach(option => {
+      if (!isLeadershipOnlyDestination(option.value)) return;
+      option.disabled = !allowed;
+      option.title = allowed ? "Leadership posting area" : "Posting is reserved for designated TPI leadership";
+    });
+    const videoTypeOption = contributionTypeInput?.querySelector('option[value="TPI Video"]');
+    if (videoTypeOption) {
+      videoTypeOption.disabled = !allowed;
+      videoTypeOption.title = allowed ? "Leadership posting area" : "Posting is reserved for designated TPI leadership";
+    }
+  }
+
   function getEditorAccessMessage(user) {
     if (user && !hasContributorAccess(user)) {
       return "Nova Editorial Workspace access has not been enabled for this account yet. A Director or Admin can grant access from the Admin Panel.";
@@ -464,6 +492,7 @@
 
   function unlockEditor(user, options = {}) {
     currentUser = user;
+    applyEducationSubjectAccess(user);
     if (user.username) localStorage.setItem(ACCESS_SESSION_KEY, user.username);
     document.body.classList.remove("editor-locked");
     document.body.classList.add("editor-authenticated");
@@ -541,6 +570,7 @@
           displayName: result.user.displayName,
           title: result.user.title,
           role: result.user.role,
+          educationLeadershipAccess: result.user.educationLeadershipAccess === true,
           correspondence: result.user.correspondence,
           affiliation: result.user.affiliation,
           organization: result.user.organization,
@@ -1064,7 +1094,7 @@
   // TPI-NOVA-004R6C1: Contributor workflow controls. Server state is authoritative;
   // buttons and the editor lock are derived from it, never from local recovery content.
   const WORKFLOW_LABELS = {
-    legacy: "Legacy / Not in Review",
+    legacy: "Direct Publishing",
     draft: "Draft",
     submitted: "Submitted for Review",
     in_review: "In Review",
@@ -1136,14 +1166,15 @@
       }
     }
     const enrolled = status !== "legacy";
-    show("workflow-submit", isLinked && (status === "legacy" || status === "draft"));
+    show("workflow-submit", isLinked && status === "draft");
     show("workflow-resubmit", isLinked && status === "changes_requested");
     show("workflow-withdraw", isLinked && status === "submitted");
     // TPI-NOVA-004R6F: the server decides eligibility (canStartRevision); the button
     // only reflects it.
     show("workflow-start-revision", isLinked && payload?.canStartRevision === true);
     // Enrolled articles never get the direct Publish action; the server refuses it too.
-    show("publish", isVideo || !enrolled);
+    const leadershipOnly = isLeadershipOnlyDestination(payload?.destination) || payload?.contributionType === "TPI Video";
+    show("publish", (isVideo || !enrolled) && (!leadershipOnly || hasEducationLeadershipAccess()));
     if (novaMode.handle && novaMode.handle.setReadOnly) {
       novaMode.handle.setReadOnly(locked);
     }
@@ -3018,6 +3049,7 @@ ${articleHtml}
             displayName: result.user.displayName,
             title: result.user.title,
             role: result.user.role,
+            educationLeadershipAccess: result.user.educationLeadershipAccess === true,
             correspondence: result.user.correspondence,
             affiliation: result.user.affiliation,
             organization: result.user.organization,

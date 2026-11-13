@@ -63,6 +63,8 @@ for (const file of [
 ]) {
   sqlite.exec(readFileSync(resolve(repoRoot, file), "utf8"));
 }
+sqlite.exec(readFileSync(resolve(repoRoot, "migrations/0066_leadership_profiles_and_distinctions.sql"), "utf8"));
+sqlite.exec("ALTER TABLE leadership_distinctions ADD COLUMN role_code TEXT NOT NULL DEFAULT 'legacy-recognition'");
 
 // Minimal D1 surface over node:sqlite, matching prepare().bind().first/all/run and batch().
 function d1() {
@@ -103,12 +105,14 @@ const OTHER = "contrib-b";
 const REVIEWER = "reviewer-r";
 const PUBLISHER = "publisher-p";
 const ADMIN = "admin-a";
+const LEADER = "leader-a";
 sqlite.exec(`
   INSERT INTO contributors (id, username, display_name, role) VALUES ('${OWNER}', 'alice', 'Alice Contributor', 'contributor');
   INSERT INTO contributors (id, username, display_name, role) VALUES ('${OTHER}', 'bob', 'Bob Contributor', 'contributor');
   INSERT INTO contributors (id, username, display_name, role) VALUES ('${REVIEWER}', 'rev', 'Rae Reviewer', 'contributor');
   INSERT INTO contributors (id, username, display_name, role) VALUES ('${PUBLISHER}', 'pub', 'Pat Publisher', 'contributor');
   INSERT INTO contributors (id, username, display_name, role) VALUES ('${ADMIN}', 'admin', 'Avery Admin', 'admin');
+  INSERT INTO contributors (id, username, display_name, role) VALUES ('${LEADER}', 'director', 'Dana Director', 'contributor');
   INSERT INTO member_entitlements (id, contributor_id, capability, source_type, state) VALUES ('ent-r', '${REVIEWER}', 'editorial_review', 'admin_grant', 'active');
   INSERT INTO member_entitlements (id, contributor_id, capability, source_type, state) VALUES ('ent-p', '${PUBLISHER}', 'editorial_publish', 'admin_grant', 'active');
   INSERT INTO sessions VALUES ('tok-a', '${OWNER}', '2099-01-01T00:00:00Z');
@@ -116,7 +120,12 @@ sqlite.exec(`
   INSERT INTO sessions VALUES ('tok-rev', '${REVIEWER}', '2099-01-01T00:00:00Z');
   INSERT INTO sessions VALUES ('tok-pub', '${PUBLISHER}', '2099-01-01T00:00:00Z');
   INSERT INTO sessions VALUES ('tok-admin', '${ADMIN}', '2099-01-01T00:00:00Z');
+  INSERT INTO sessions VALUES ('tok-leader', '${LEADER}', '2099-01-01T00:00:00Z');
 `);
+sqlite.prepare(`INSERT INTO leadership_distinctions
+  (id, subject_type, subject_id, distinction_code, label, description, asset_path, color, role_code)
+  VALUES (?, 'member', ?, 'gold', 'Founder / Director', 'Authorized leadership', '/assets/gold.png', '#d6a84f', 'founder-director')`)
+  .run("leader-distinction", LEADER);
 
 // ---- HTTP helper: drives the real Worker router ----
 async function call(method, path, token, payload) {
@@ -444,21 +453,65 @@ check("a second revision cycle is supported without duplicating anything", async
 });
 
 // ---- Legacy containment ----
-check("a new normal article is created workflow-native", async () => {
+check("a new normal article stays outside review workflow for direct publishing", async () => {
   const id = `new-normal-${++counter}`;
   const res = await call("POST", "/articles", "tok-a", { id, title: "Workflow Native Article", destination: "education", articleType: "Research Paper", bodyHtml: "<p>x</p>" });
   assert.ok([200, 201].includes(res.status), JSON.stringify(res.body));
   const article = articleOf(id);
-  assert.equal(article.editorial_status, "draft");
+  assert.equal(article.editorial_status, "legacy");
   assert.equal(article.status, "draft");
 });
 
-check("a new normal article cannot be directly published through create/update", async () => {
+check("a Contributor can directly publish a new open-subject article", async () => {
   const id = `new-published-${++counter}`;
   const res = await call("POST", "/articles", "tok-a", { id, title: "Trying To Publish", destination: "education", status: "published" });
-  assert.equal(res.status, 409, JSON.stringify(res.body));
-  assert.equal(res.body.code, "editorial_workflow_publish_refused");
-  assert.equal(articleOf(id), undefined);
+  assert.ok([200, 201].includes(res.status), JSON.stringify(res.body));
+  assert.equal(articleOf(id).status, "published");
+  assert.equal(articleOf(id).editorial_status, "legacy");
+});
+
+check("Ghostology is blocked for Contributors and available to designated leadership", async () => {
+  const blockedId = `ghostology-blocked-${++counter}`;
+  const blocked = await call("POST", "/articles", "tok-a", { id: blockedId, title: "Unauthorized Ghostology", destination: "ghostology-101.html", status: "published" });
+  assert.equal(blocked.status, 403, JSON.stringify(blocked.body));
+  assert.equal(blocked.body.code, "education_leadership_required");
+  assert.equal(articleOf(blockedId), undefined);
+
+  const allowedId = `ghostology-leader-${++counter}`;
+  const allowed = await call("POST", "/articles", "tok-leader", { id: allowedId, title: "Leadership Ghostology", destination: "ghostology-101.html", status: "published" });
+  assert.ok([200, 201].includes(allowed.status), JSON.stringify(allowed.body));
+  assert.equal(articleOf(allowedId).status, "published");
+
+  const adminId = `ghostology-admin-${++counter}`;
+  const adminAttempt = await call("POST", "/articles", "tok-admin", { id: adminId, title: "Admin Only Is Not Leadership", destination: "ghostology-101.html", status: "published" });
+  assert.equal(adminAttempt.status, 403, JSON.stringify(adminAttempt.body));
+  assert.equal(articleOf(adminId), undefined);
+});
+
+check("Nova auth response exposes the server-computed leadership posting flag", async () => {
+  const member = await call("GET", "/auth/me", "tok-a");
+  const leader = await call("GET", "/auth/me", "tok-leader");
+  assert.equal(member.status, 200, JSON.stringify(member.body));
+  assert.equal(member.body.user.educationLeadershipAccess, false);
+  assert.equal(leader.status, 200, JSON.stringify(leader.body));
+  assert.equal(leader.body.user.educationLeadershipAccess, true);
+});
+
+check("TPI Videos authoring is blocked for ordinary Contributors", async () => {
+  const res = await call("POST", "/tpi-videos", "tok-a", { title: "Unauthorized Video" });
+  assert.equal(res.status, 403, JSON.stringify(res.body));
+  assert.equal(res.body.code, "education_leadership_required");
+});
+
+check("Nova editor disables leadership-only destinations and TPI Video for other accounts", () => {
+  const html = readFileSync(resolve(repoRoot, "paper-editor.html"), "utf8");
+  const editor = readFileSync(resolve(repoRoot, "paper-editor.js"), "utf8");
+  assert.match(html, /option value="ghostology-101\.html"/);
+  assert.match(html, /option value="tpi-videos\.html"/);
+  assert.match(editor, /educationLeadershipAccess: result\.user\.educationLeadershipAccess === true/);
+  assert.match(editor, /option\.disabled = !allowed/);
+  assert.match(editor, /show\("publish", \(isVideo \|\| !enrolled\) && \(!leadershipOnly \|\| hasEducationLeadershipAccess\(\)\)\)/);
+  assert.match(editor, /show\("workflow-submit", isLinked && status === "draft"\)/);
 });
 
 check("a grandfathered legacy article keeps direct-publish compatibility", async () => {
@@ -499,12 +552,12 @@ check("an admin without editorial_publish cannot publish enrolled content", asyn
 check("TPI Video keeps its separate publish path and never joins the workflow", async () => {
   counter += 1;
   const id = `video-${counter}`;
-  sqlite.prepare("INSERT INTO articles (id, created_by, status, destination, article_type, title, author, href) VALUES (?, ?, 'draft', 'tpi-videos.html', 'TPI Video', 'Synthetic Video', 'Alice Contributor', ?)")
-    .run(id, OWNER, `published-article.html?id=${id}`);
-  const submitted = await call("POST", `/articles/${id}/submission`, "tok-a", {});
+  sqlite.prepare("INSERT INTO articles (id, created_by, status, destination, article_type, title, author, href) VALUES (?, ?, 'draft', 'tpi-videos.html', 'TPI Video', 'Synthetic Video', 'Dana Director', ?)")
+    .run(id, LEADER, `published-article.html?id=${id}`);
+  const submitted = await call("POST", `/articles/${id}/submission`, "tok-leader", {});
   assert.equal(submitted.status, 409, JSON.stringify(submitted.body));
   assert.equal(submitted.body.code, "editorial_workflow_not_applicable");
-  const direct = await call("POST", "/articles", "tok-a", { id, title: "Synthetic Video", destination: "tpi-videos.html", articleType: "TPI Video", status: "published" });
+  const direct = await call("POST", "/articles", "tok-leader", { id, title: "Synthetic Video", destination: "tpi-videos.html", articleType: "TPI Video", status: "published" });
   assert.ok([200, 201].includes(direct.status), JSON.stringify(direct.body));
   assert.equal(articleOf(id).status, "published");
 });

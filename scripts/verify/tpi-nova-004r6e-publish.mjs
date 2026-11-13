@@ -756,14 +756,16 @@ check("an enrolled Contributor still cannot publish through the direct article w
   assert.equal(article.status, "draft");
   assert.equal(article.body_html, "");
 });
-check("TPI Video keeps its specialized publication path and is never published by the Publisher route", async () => {
+check("ordinary Admin and Publisher roles cannot manage TPI Video content", async () => {
   const seeded = seedArticle({ editorial: "legacy", title: "TPI Video Legacy", articleType: "TPI Video", destination: "tpi-videos.html" });
   const res = await call("POST", `/admin/articles/${seeded.articleId}/status`, "tok-admin", { status: "published" });
-  assert.equal(res.status, 200, JSON.stringify(res.body));
-  assert.equal(articleOf(seeded.articleId).status, "published");
+  assert.equal(res.status, 403, JSON.stringify(res.body));
+  assert.equal(res.body.code, "education_leadership_required");
+  assert.equal(articleOf(seeded.articleId).status, "draft");
   const publish = await publishAs("tok-pub", seeded.articleId);
-  assert.equal(publish.status, 409);
+  assert.equal(publish.status, 409, JSON.stringify(publish.body));
   assert.equal(publish.body.code, "editorial_workflow_not_applicable");
+  assert.equal(articleOf(seeded.articleId).status, "draft");
 });
 
 // ---- §8 renderer authority ----

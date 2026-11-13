@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-13 — Nova authoring permissions and direct publishing
+
+Status: **IMPLEMENTED LOCALLY; FOCUSED VERIFICATION PASSED; RELEASE PENDING.**
+Following the owner’s clarification, new Contributor articles in open Education
+Center subjects publish immediately when the author selects Publish; they do
+not require reviewer or publisher approval. Saving still creates a draft.
+Ghostology and TPI Videos authoring, editing, and publication are restricted to
+the owner or members with an active Founder/Director, CEO, COO, CTO/CIO, or
+Assistant Director distinction. An ordinary Admin role alone does not grant
+this access. Server routes enforce the restrictions; Nova disables the
+leadership-only subject and TPI Video choices for other accounts.
+
+Existing articles already enrolled in editorial review remain in that workflow.
+The R6F policy that all new standard articles must enter review is superseded by
+this owner decision. Focused R6F regression verification now passes 30/30,
+including open-subject direct publication and leadership restrictions. Browser
+acceptance and guarded production release are still required.
+
+See [Nova Publishing Workflow Audit](300-COMPLETED-WORK/2026-11-13-NOVA-PUBLISHING-WORKFLOW-AUDIT.md)
+for the prior release record and this policy addendum.
+
 ## 2026-11-13 — Nova publishing workflow audit
 
 Status: **WORKFLOW VERIFIED; PRODUCTION SCHEMA MIGRATION APPLIED; OWNER-GATED

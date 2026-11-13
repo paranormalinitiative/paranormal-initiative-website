@@ -260,14 +260,14 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
-    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/nova$/)) return requireContributor(request, env, user => handleArticleNovaLink(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/nova$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleNovaLink(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItem(path, env, user));
-    if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItemUpdate(path, request, env, user));
-    if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/metadata$/)) return requireContributor(request, env, user => handleArticleMetadataUpdate(path, request, env, user));
-    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/resubmit$/)) return requireContributor(request, env, user => handleArticleResubmission(path, env, user));
-    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission$/)) return requireContributor(request, env, user => handleArticleSubmission(path, env, user));
-  if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/revision\/start$/)) return requireContributor(request, env, user => handleStartRevision(path, env, user));
-    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/withdraw$/)) return requireContributor(request, env, user => handleArticleWithdrawal(path, env, user));
+    if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleNovaItemUpdate(path, request, env, user));
+    if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/metadata$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleMetadataUpdate(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/resubmit$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleResubmission(path, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleSubmission(path, env, user));
+  if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/revision\/start$/)) return requireContributorArticleAccess(request, env, path, user => handleStartRevision(path, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/withdraw$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleWithdrawal(path, env, user));
     // TPI-NOVA-004R6D: reviewer routes for the Editorial Review Queue. Every
     // route requires EDITORIAL_REVIEW; access is not derived from the admin role.
     if (request.method === "GET" && path === "/editorial/access") return requireMember(request, env, user => handleEditorialAccess(env, user));
@@ -283,7 +283,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/editorial/publications") return requirePublisher(request, env, () => handleEditorialPublications(env));
     if (request.method === "GET" && path.match(/^\/editorial\/articles\/[^/]+\/publication$/)) return requirePublisher(request, env, user => handleEditorialPublication(path, env, user));
     if (request.method === "POST" && path.match(/^\/editorial\/articles\/[^/]+\/publish$/)) return requirePublisher(request, env, (user, capabilities) => handleEditorialPublish(path, request, env, user, capabilities));
-    if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
+    if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributorArticleAccess(request, env, path, user => handleDeleteArticle(path, env, user));
     if (request.method === "GET" && path === "/link-preview") return handleLinkPreview(request, env);
     if (request.method === "GET" && path === "/feed") return handleCommunityFeed(request, env);
     if (request.method === "GET" && path === "/feed/user") return handleUserFeed(request, env);
@@ -320,11 +320,11 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleGetLiveReactions(path, env, user));
     if (request.method === "GET" && path === "/tpi-videos") return handleListTpiVideos(request, env);
     if (request.method === "GET" && path.match(/^\/tpi-videos\/[^/]+$/)) return handleGetTpiVideo(path, env, request);
-    if (request.method === "POST" && path === "/tpi-videos") return requireContributor(request, env, user => handleCreateTpiVideo(request, env, user));
-    if (request.method === "PUT" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireContributor(request, env, user => handleUpdateTpiVideo(path, request, env, user));
-    if (request.method === "POST" && path.match(/^\/tpi-videos\/[^/]+\/(publish|unpublish|remove)$/)) return requireContributor(request, env, user => handleTpiVideoLifecycle(path, env, user));
+    if (request.method === "POST" && path === "/tpi-videos") return requireEducationLeadership(request, env, user => handleCreateTpiVideo(request, env, user));
+    if (request.method === "PUT" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireEducationLeadership(request, env, user => handleUpdateTpiVideo(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/tpi-videos\/[^/]+\/(publish|unpublish|remove)$/)) return requireEducationLeadership(request, env, user => handleTpiVideoLifecycle(path, env, user));
     if (request.method === "POST" && path.match(/^\/tpi-videos\/[^/]+\/share$/)) return requireMember(request, env, user => handleShareTpiVideo(path, request, env, user));
-    if (request.method === "DELETE" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireContributor(request, env, user => handleDeleteTpiVideo(path, env, user));
+    if (request.method === "DELETE" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireEducationLeadership(request, env, user => handleDeleteTpiVideo(path, env, user));
     if (request.method === "GET" && path === "/tpi-channels/me") return requireContributorOrStudio(request, env, user => handleGetMyTpiChannel(env, user));
     if (request.method === "PUT" && path === "/tpi-channels/me") return requireContributorOrStudio(request, env, user => handleUpdateMyTpiChannel(request, env, user));
     if (request.method === "POST" && path.match(/^\/tpi-channels\/[^/]+\/follow$/)) return requireMember(request, env, user => handleToggleTpiChannelFollow(path, env, user, true));
@@ -519,6 +519,7 @@ async function handleMe(request, env) {
       ...privateMemberUser(user, await hasCreatorStudioAccess(env, user)),
       editorialReviewAccess,
       adminAccess: user.role === "owner" || user.role === "admin" || editorialReviewAccess,
+      educationLeadershipAccess: await hasEducationLeadershipAccess(env, user),
       foundingMembership: await publicMembershipIdentity(env, user.id),
       leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
       boardMembership: await getBoardMembership(env, user.id),
@@ -3682,13 +3683,18 @@ async function handleCreateArticle(request, env, user) {
   const author = clean(data.author);
   const source = clean(data.source);
   const labels = clean(data.labels);
-  const existingArticle = await env.TPI_DB.prepare("SELECT status, created_by, editorial_status FROM articles WHERE id = ?").bind(id).first();
-  // TPI-NOVA-004R6F: a new normal article never begins as legacy direct-publish
-  // content. It is created as an editorial-workflow draft and cannot be published
-  // through this route; publication happens only through the review workflow.
-  if (!existingArticle && status === "published") {
-    return json({ error: "New articles enter the editorial workflow. Submit for review instead of publishing directly.", code: "editorial_workflow_publish_refused" }, 409);
+  const existingArticle = await env.TPI_DB.prepare("SELECT status, created_by, editorial_status, destination, article_type FROM articles WHERE id = ?").bind(id).first();
+  if (isLeadershipOnlyEducationDestination(destination)
+      || isLeadershipOnlyEducationDestination(existingArticle?.destination)
+      || contributionType.toLowerCase() === "tpi video"
+      || String(existingArticle?.article_type || "").toLowerCase() === "tpi video") {
+    if (!await hasEducationLeadershipAccess(env, user)) {
+      return json({ error: "Only designated TPI leadership can create or edit Ghostology and TPI Videos content.", code: "education_leadership_required" }, 403);
+    }
   }
+  // Standard Education contributions publish directly by owner choice; they do
+  // not need a reviewer/publisher approval round. Keep existing enrolled drafts
+  // on their current workflow state while new content remains outside it.
   // An existing article may only be changed by the contributor who created it.
   // Ownership is never transferred through this endpoint.
   if (existingArticle && existingArticle.created_by !== user.id) {
@@ -3706,7 +3712,7 @@ async function handleCreateArticle(request, env, user) {
   }
   const upsertResult = await env.TPI_DB.prepare(`
     INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, editorial_status, created_by, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, CURRENT_TIMESTAMP)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'legacy', ?, CURRENT_TIMESTAMP)
     ON CONFLICT(id) DO UPDATE SET
       destination = excluded.destination,
       href = excluded.href,
@@ -3829,6 +3835,10 @@ async function handleAdminArticleUpdate(path, request, env, actingUser) {
   if (!id) return json({ error: "Article id is required." }, 400);
   const current = await env.TPI_DB.prepare("SELECT * FROM articles WHERE id = ?").bind(id).first();
   if (!current) return json({ error: "Article was not found." }, 404);
+  if ((isLeadershipOnlyEducationDestination(current.destination) || String(current.article_type || "").toLowerCase() === "tpi video")
+      && !await hasEducationLeadershipAccess(env, actingUser)) {
+    return json({ error: "Only designated TPI leadership can create or edit Ghostology and TPI Videos content.", code: "education_leadership_required" }, 403);
+  }
   // TPI-NOVA-004R6E: an enrolled article may only be published through the
   // approved Publisher workflow. The legacy direct Admin write would otherwise
   // bypass review and replace the public snapshot with unreviewed HTML.
@@ -3852,6 +3862,10 @@ async function handleAdminArticleUpdate(path, request, env, actingUser) {
   const href = clean(Object.prototype.hasOwnProperty.call(data, "href") ? data.href : current.href);
   const subtitle = clean(Object.prototype.hasOwnProperty.call(data, "subtitle") ? data.subtitle : current.subtitle);
   const contributionType = clean(Object.prototype.hasOwnProperty.call(data, "contributionType") ? data.contributionType : current.article_type);
+  if ((isLeadershipOnlyEducationDestination(destination) || contributionType.toLowerCase() === "tpi video")
+      && !await hasEducationLeadershipAccess(env, actingUser)) {
+    return json({ error: "Only designated TPI leadership can create or edit Ghostology and TPI Videos content.", code: "education_leadership_required" }, 403);
+  }
   const author = clean(Object.prototype.hasOwnProperty.call(data, "author") ? data.author : current.author);
   const source = clean(Object.prototype.hasOwnProperty.call(data, "source") ? data.source : current.source);
   const articleHtml = String(Object.prototype.hasOwnProperty.call(data, "articleHtml") ? data.articleHtml || "" : current.article_html || "");
@@ -3879,8 +3893,12 @@ async function handleAdminArticleUpdate(path, request, env, actingUser) {
 async function handleAdminArticleStatus(path, request, env, actingUser) {
   const id = clean(decodeURIComponent(path.match(/^\/admin\/articles\/([^/]+)\/status$/)?.[1] || ""));
   if (!id) return json({ error: "Article id is required." }, 400);
-  const article = await env.TPI_DB.prepare("SELECT id, href, title, subtitle, article_type AS contributionType, author, status, editorial_status AS editorialStatus FROM articles WHERE id = ?").bind(id).first();
+  const article = await env.TPI_DB.prepare("SELECT id, href, title, subtitle, destination, article_type AS contributionType, author, status, editorial_status AS editorialStatus FROM articles WHERE id = ?").bind(id).first();
   if (!article) return json({ error: "Article was not found." }, 404);
+  if ((isLeadershipOnlyEducationDestination(article.destination) || String(article.contributionType || "").toLowerCase() === "tpi video")
+      && !await hasEducationLeadershipAccess(env, actingUser)) {
+    return json({ error: "Only designated TPI leadership can manage Ghostology and TPI Videos content.", code: "education_leadership_required" }, 403);
+  }
   const data = await readJson(request);
   const status = clean(data.status).toLowerCase();
   if (!["draft", "published"].includes(status)) return json({ error: "Article status must be draft or published." }, 400);
@@ -4067,6 +4085,63 @@ async function handleArticleNovaItemUpdate(path, request, env, user) {
   return response;
 }
 
+const EDUCATION_LEADERSHIP_ROLE_CODES = Object.freeze([
+  "founder-director",
+  "chief-executive-officer",
+  "chief-ai-operating-officer",
+  "chief-ai-technology-information-officer",
+  "assistant-director",
+]);
+
+function isLeadershipOnlyEducationDestination(value) {
+  const normalized = clean(value).toLowerCase().split(/[?#]/, 1)[0].replace(/^\/+/, "").replace(/\.html$/, "");
+  return normalized === "ghostology-101" || normalized === "ghostology" || normalized === "tpi-videos";
+}
+
+async function hasEducationLeadershipAccess(env, user) {
+  if (user?.role === "owner") return true;
+  if (!user?.id) return false;
+  try {
+    const placeholders = EDUCATION_LEADERSHIP_ROLE_CODES.map(() => "?").join(", ");
+    const row = await env.TPI_DB.prepare(`
+      SELECT 1 AS allowed
+      FROM leadership_distinctions
+      WHERE subject_type = 'member' AND subject_id = ? AND status = 'active'
+        AND role_code IN (${placeholders})
+      LIMIT 1
+    `).bind(user.id, ...EDUCATION_LEADERSHIP_ROLE_CODES).first();
+    return Boolean(row?.allowed);
+  } catch {
+    return false;
+  }
+}
+
+async function requireContributorArticleAccess(request, env, path, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Contributor login required." }, 401);
+  if (!(await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR))) {
+    return json({ error: "Contributor access is required." }, 403);
+  }
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").split("/")[0] || ""));
+  if (articleId) {
+    const article = await env.TPI_DB.prepare("SELECT destination, article_type AS articleType FROM articles WHERE id = ?").bind(articleId).first();
+    if (article && (isLeadershipOnlyEducationDestination(article.destination) || String(article.articleType || "").toLowerCase() === "tpi video")
+        && !await hasEducationLeadershipAccess(env, user)) {
+      return json({ error: "Only designated TPI leadership can create or edit Ghostology and TPI Videos content.", code: "education_leadership_required" }, 403);
+    }
+  }
+  return handler(user);
+}
+
+async function requireEducationLeadership(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "TPI leadership login required." }, 401);
+  if (!await hasEducationLeadershipAccess(env, user)) {
+    return json({ error: "Only designated TPI leadership can create or manage TPI Videos content.", code: "education_leadership_required" }, 403);
+  }
+  return handler(user);
+}
+
 // TPI-NOVA-005A6B: narrow metadata route. Only the Education Center article columns below
 // may change; body, status, editorial state, ownership and publication fields are refused.
 const ARTICLE_METADATA_FIELDS = Object.freeze(["title", "subtitle", "destination", "contributionType", "author", "affiliation", "organization", "correspondence", "website"]);
@@ -4088,6 +4163,12 @@ async function handleArticleMetadataUpdate(path, request, env, user) {
   if (!data || typeof data !== "object" || Array.isArray(data)) return json({ error: "Invalid metadata." }, 400);
   const refused = Object.keys(data).filter(key => !ARTICLE_METADATA_FIELDS.includes(key));
   if (refused.length) return json({ error: "This route only accepts title, subtitle, destination, contributionType, author, affiliation, organization, correspondence and website.", code: "field_not_allowed", fields: refused }, 400);
+  if (("destination" in data && isLeadershipOnlyEducationDestination(data.destination))
+      || ("contributionType" in data && String(data.contributionType).trim().toLowerCase() === "tpi video")) {
+    if (!await hasEducationLeadershipAccess(env, user)) {
+      return json({ error: "Only designated TPI leadership can create or edit Ghostology and TPI Videos content.", code: "education_leadership_required" }, 403);
+    }
+  }
   const sets = [];
   const values = [];
   for (const key of ARTICLE_METADATA_FIELDS) {

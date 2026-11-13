@@ -670,11 +670,11 @@ check("approval is refused for an article without an open submission", async () 
 });
 
 // ---- §30 TPI Video ----
-check("TPI Video enrollment continues to return editorial_workflow_not_applicable", async () => {
+check("ordinary Contributors cannot submit TPI Video items to editorial review", async () => {
   const { articleId } = seedArticle({ editorial: "legacy", articleType: "TPI Video", destination: "tpi-videos.html" });
   const res = await call("POST", `/articles/${articleId}/submission`, "tok-a");
-  assert.equal(res.status, 409);
-  assert.equal(res.body.code, "editorial_workflow_not_applicable");
+  assert.equal(res.status, 403);
+  assert.equal(res.body.code, "education_leadership_required");
   assert.equal(stateOf(articleId).editorial_status, "legacy");
 });
 

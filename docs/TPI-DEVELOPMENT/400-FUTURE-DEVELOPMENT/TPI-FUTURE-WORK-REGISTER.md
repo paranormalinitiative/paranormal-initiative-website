@@ -516,17 +516,26 @@ TPI-NOVA-004R6F has implemented the published-revision lifecycle — an owner-sc
 Revision that guards `approved → draft`, records a `revision_started` event and leaves the
 published snapshot live while the new round is edited, reviewed and republished on the same
 article id and URL — and has contained legacy direct publishing: new normal Education Center
-content is created workflow-native and refused server-side if it asks to be published, while
-existing `legacy` records stay grandfathered with their current compatibility.
+content was initially set to enter review and refused direct publication, while
+existing `legacy` records stayed grandfathered with their current compatibility.
 The production event schema includes `revision_started`. Migration 0062 has
 been applied, and the owner-gated reviewer/publisher grant path is deployed and
 live verified. Capabilities can be assigned to explicitly selected accounts.
 
+**Superseding owner decision (2026-11-13):** Open Education Center subjects
+publish immediately when a Contributor chooses Publish; new drafts remain
+outside the reviewer/publisher workflow. Existing articles already enrolled in
+review retain their workflow. Ghostology and TPI Videos authoring are limited
+to the owner and active Founder/Director, CEO, COO, CTO/CIO, and Assistant
+Director distinction holders. Generic Admin access alone is insufficient.
+Implementation and focused verification are in progress; see the current
+status and Nova publishing workflow audit.
+
 Remaining open Nova work:
 
-- **Full retirement of grandfather compatibility.** Not deleted: the legacy direct-publish path
-  remains available only to records that are still `editorial_status='legacy'`, and it can be
-  removed once those records are migrated. No mass migration is planned or performed.
+- **Existing review rounds remain protected.** New open-subject articles bypass
+  review by owner decision, while articles already enrolled in review remain
+  gated to their existing workflow. No mass enrollment or conversion is planned.
 - **`member-home.html` `published` fallback removal**, which was not part of R6F.
 - **Nova revision retention review** beyond editorial pinning, if ordinary revision trimming ever
   needs a different policy.

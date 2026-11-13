@@ -115,3 +115,28 @@ Assign capabilities only to explicitly selected accounts. Then run a controlled
 author → review → publication acceptance without leaving test content in the
 public catalog. The schema migration and release are complete; no further
 schema change is needed for these two capabilities.
+
+## Owner policy clarification — direct publishing and restricted subjects
+
+The owner later clarified that standard Education Center subjects do not need
+reviewer/publisher approval. New articles stay outside the editorial workflow
+and publish immediately only when the Contributor chooses **Publish**; saving
+still saves a draft. R6F's earlier policy that every new standard article must
+enter review is superseded. An article already enrolled in editorial review
+continues through its existing round and cannot bypass review with direct
+publication.
+
+Ghostology and TPI Videos are restricted to designated leadership: the owner or
+a member with an active Founder/Director, CEO, COO, CTO/CIO, or Assistant
+Director distinction. Generic Admin access is insufficient. Server-side checks
+cover article creation, editing, metadata changes, review routes, admin updates,
+and TPI Video creation/edit/publish lifecycle; Nova greys out these posting
+choices when the signed-in account lacks leadership access. Ordinary
+Contributors retain immediate publishing access in all other Education Center
+subjects.
+
+Implementation is currently local and not yet released. Focused verification
+passes 30/30, covering direct publication for an open subject, contributor
+denial and leadership allowance for Ghostology, ordinary Contributor denial
+for TPI Videos, and preservation of the enrolled-article workflow. Release and
+browser acceptance remain pending.
