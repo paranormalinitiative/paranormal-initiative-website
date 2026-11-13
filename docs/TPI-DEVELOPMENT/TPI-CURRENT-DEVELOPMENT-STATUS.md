@@ -1,5 +1,15 @@
 # TPI Current Development Status
 
+## 2026-11-13 — Membership and staff rules working draft
+
+Prepared a concise discussion draft bringing together Community Member,
+Creator, Contributor, Dual, and Founding access with Owner/executive,
+Full Administrator, Administrator, and Moderator boundaries. It also proposes
+a member conduct baseline, staff enforcement safeguards, and the decisions to
+settle before finalizing these rules. This is a policy draft only: it does not
+supersede the current architecture records, change account permissions, or
+grant staff roles. See [Membership and Staff Rules working draft](400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-STAFF-RULES-WORKING-DRAFT.md).
+
 ## 2026-11-13 — Universal Member badge and owner-confirmed staff-role boundaries
 
 Status: **DEPLOYED AND LIVE VERIFIED — RELEASE `rel-5ee1fc9f2d50-3a843a3d7d47`; Worker `dfee6075-5bc3-4e88-aceb-09c97bb53c93`.** Added the

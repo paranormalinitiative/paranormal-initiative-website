@@ -5,6 +5,12 @@ help, honors, and asset dependencies — is
 [TPI-FUTURE-WORK-REGISTER.md](TPI-FUTURE-WORK-REGISTER.md) (TPI-GOVERNANCE-003B2).
 Listing there records a commitment to remember the work, never permission to start it.
 
+For a concise owner-reviewable starting point that combines membership layers,
+operational staff boundaries, and proposed community rules, see the
+[Membership and Staff Rules working draft](TPI-MEMBERSHIP-AND-STAFF-RULES-WORKING-DRAFT.md).
+It is a discussion aid and does not supersede the authoritative policy records
+linked below or activate application permissions.
+
 This directory contains proposals and historical planning. It is not an
 operational release guide. Current commit, push, and deployment instructions
 are in `../TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`; StudioFlow source integration is
