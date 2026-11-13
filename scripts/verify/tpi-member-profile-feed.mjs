@@ -51,6 +51,11 @@ const contributor = await login("local_contributor");
 const target = contributor.user.username;
 const targetId = contributor.user.id;
 
+const publicHome = await request("/");
+check("public home displays the shared full-width site banner", publicHome.response.status === 200 && publicHome.text.includes('class="main-website-banner"') && publicHome.text.includes('src="assets/main-website-banner.png"'));
+const memberHome = await request("/member-home.html", auth(member.token));
+check("member home displays the same banner and hides it on profile views", memberHome.response.status === 200 && memberHome.text.includes('class="member-home-brand-banner"') && memberHome.text.includes('src="assets/main-website-banner.png"') && memberHome.text.includes("body.member-profile-mode .member-home-brand-banner { display: none; }"));
+
 const bannerSave = await request("/api/contributors/me/profile", auth(member.token, {
   method: "POST",
   headers: { "Content-Type": "application/json" },

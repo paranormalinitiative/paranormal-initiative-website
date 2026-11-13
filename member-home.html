@@ -46,6 +46,15 @@
 
         .member-home-main { min-width: 0; }
 
+        .member-home-brand-banner {
+            margin: 0 auto 24px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+        }
+        .member-home-brand-banner img { display: block; width: 100%; height: auto; }
+        body.member-profile-mode .member-home-brand-banner { display: none; }
+
         .member-home-rail {
             display: flex;
             flex-direction: column;
@@ -2831,6 +2840,9 @@
 
 <div data-member-content hidden>
         <div class="member-main-inner">
+            <figure class="member-home-brand-banner">
+                <img src="assets/main-website-banner.png" alt="The Paranormal Initiative banner illustrating paranormal research, investigation, documentation, education, and creation" fetchpriority="high">
+            </figure>
             <div class="member-home-layout">
             <div class="member-home-main">
             <!-- COMMUNITY IDENTITY — front and center: members are the initiative.
