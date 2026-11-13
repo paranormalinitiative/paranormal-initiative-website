@@ -1,6 +1,6 @@
 # Member Home Profile and Influencer Asset — 2026-11-13
 
-Status: **SOURCE IMPLEMENTATION COMPLETE; LOCAL ACCEPTANCE PENDING; NOT DEPLOYED.**
+Status: **SOURCE IMPLEMENTATION AND LOCAL ACCEPTANCE COMPLETE; PRODUCTION RELEASE PENDING; NOT DEPLOYED.**
 
 ## Requested behavior
 
@@ -35,7 +35,17 @@ records its dimensions and source checksum.
   feed; and confirming the public home retains its complete brand banner.
 - Acceptance used synthetic local accounts. Owner account/profile data was not
   used or modified.
-- Production deployment and live acceptance have not occurred for this change.
+- The first guarded live attempt activated its candidate, passed anonymous
+  smoke 10/10, then rolled back automatically when the Firefox acceptance
+  checker timed out despite the login page showing its server-confirmed signed-
+  in state. The rollback completed successfully; no new feature version remains
+  live.
+- A fresh isolated production QA login and full Firefox acceptance against the
+  rolled-back site passed 65/65. The checker now accepts the login page's
+  server-confirmed authenticated card and waits one second between fallback
+  session probes. Local Firefox acceptance passed 65/65 after this adjustment.
+- The updated checker has not yet passed a new guarded preflight and live
+  release. Production deployment and live acceptance remain pending.
 
 ## Scope
 

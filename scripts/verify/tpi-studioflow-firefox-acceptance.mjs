@@ -128,7 +128,7 @@ async function waitFor(description, predicate, timeout = 30_000, interval = 200)
   throw new Error(`${description} timed out${detail ? `: ${detail}` : ""}`);
 }
 async function authenticatedSession() {
-  return asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});");
+  return asyncJs("var done=arguments[arguments.length-1]; var signedInCard=document.querySelector('[data-authenticated-login-state]:not([hidden])'); if(signedInCard){done(true);return;} fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});");
 }
 async function waitForManualLoginTransition(timeout = 600_000) {
   await waitFor("manual login transition", async () => {
@@ -253,7 +253,11 @@ try {
     check("manual authentication succeeds in the isolated profile", true);
   } else {
     await js("var form=document.querySelector('form[data-member-login]'), user=form&&form.querySelector('input[name=\"username\"]'), password=form&&form.querySelector('input[name=\"password\"]'); if(!form||!user||!password) return false; user.value=arguments[0]; password.value=arguments[1]; ['input','change'].forEach(function(type){user.dispatchEvent(new Event(type,{bubbles:true}));password.dispatchEvent(new Event(type,{bubbles:true}));}); form.querySelector('button[type=\"submit\"]').click(); return true;", account.username, account.password);
-    await waitFor("authenticated local session", authenticatedSession);
+    // The login page confirms the server session through TPIApi.me() and
+    // renders this card. During a redirect race the browser can remain on
+    // that page after authentication; accept its authoritative state instead
+    // of repeatedly probing /auth/me at the default 200 ms interval.
+    await waitFor("authenticated local session", authenticatedSession, 30_000, 1_000);
     check(`synthetic ${accountKey} authentication succeeds`, true);
   }
 

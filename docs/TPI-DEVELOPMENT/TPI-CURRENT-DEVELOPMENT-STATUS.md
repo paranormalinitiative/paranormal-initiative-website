@@ -1,5 +1,13 @@
 # TPI Current Development Status
 
+## 2026-11-13 — Member Home profile and isolated live acceptance recovery
+
+Status: **MEMBER HOME SOURCE COMPLETE; LOCAL VERIFICATION PASSED; PRODUCTION RELEASE PENDING.** Signed-in Home shows the current member's personal profile summary and shared Community Feed, while View Profile opens the member's own-post feed. The public home banner remains unchanged, and the visible “My Pulse” heading is removed. The Influencer medallion master is retained in the private source-assets folder for future use only.
+
+Local member-profile/feed checks passed 40/40 and 38/38; staff-role checks passed 14/14; local auth lifecycle passed 38/38 and the full isolated Firefox StudioFlow suite passed 65/65. An initial guarded production attempt passed anonymous smoke 10/10 but failed its Firefox authentication gate and automatically rolled back to the prior Worker. The login card showed the server-confirmed QA session, so the Firefox checker was corrected to recognize that authoritative state and to reduce repeated session probes. Afterward, the full production Firefox acceptance passed 65/65 against the rolled-back site, and local Firefox acceptance passed 65/65. A fresh guarded preflight and production release still remain to be run for the updated checker. No member/profile content or production database records were changed.
+
+See [Member Home Profile and Influencer Asset](300-COMPLETED-WORK/2026-11-13-MEMBER-HOME-PROFILE-AND-INFLUENCER-ASSET.md) for scope and release status.
+
 ## 2026-11-13 — Staff roles and moderation implementation
 
 Status: **IMPLEMENTED IN SOURCE; RELEASE AND LIVE ACCEPTANCE PENDING.** Added
