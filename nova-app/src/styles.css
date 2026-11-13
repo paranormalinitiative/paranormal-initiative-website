@@ -2,7 +2,7 @@
    A deliberate dark editorial surface built from the existing TPI palette.
    Scoped under .nova-* so nothing here can leak into StudioFlow. */
 
-:root {
+:root, html[data-theme="cryptid"] {
   color-scheme: dark;
   --nova-bg: #141b17;
   --nova-bg-deep: #101613;
@@ -25,6 +25,44 @@
   --nova-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
   --nova-font: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --nova-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+}
+
+/* Keep Nova Editorial on the member's selected TPI site theme. These values
+   intentionally mirror the shared site palette while retaining Nova's own
+   workspace layout and component styling. */
+html[data-theme="seance"] {
+  --nova-bg: #120c1f; --nova-bg-deep: #0e0918; --nova-panel: #1e162d; --nova-panel-raised: #251b37;
+  --nova-sidebar: #0d0816; --nova-canvas: #171126; --nova-line: #332a47; --nova-line-soft: #28203c;
+  --nova-text: #f9f6ee; --nova-text-secondary: #b9b3a9; --nova-text-muted: #8a857c;
+  --nova-accent: #8f152a; --nova-accent-strong: #b01e37; --nova-mint: #d46a7e; --nova-on-accent: #f9f6ee;
+}
+
+html[data-theme="cosmic"] {
+  --nova-bg: #0d0c28; --nova-bg-deep: #0a0920; --nova-panel: #161537; --nova-panel-raised: #1d1c44;
+  --nova-sidebar: #0b0a1f; --nova-canvas: #12112e; --nova-line: #2b2a58; --nova-line-soft: #20204e;
+  --nova-text: #f0f2fa; --nova-text-secondary: #b8bbd0; --nova-text-muted: #8a8da8;
+  --nova-accent: #14b8d4; --nova-accent-strong: #0e93aa; --nova-mint: #3fcfe6; --nova-on-accent: #04141a;
+}
+
+html[data-theme="asylum"] {
+  --nova-bg: #1e1e1e; --nova-bg-deep: #191919; --nova-panel: #2d2d2d; --nova-panel-raised: #353535;
+  --nova-sidebar: #171717; --nova-canvas: #242424; --nova-line: #454545; --nova-line-soft: #3a3a3a;
+  --nova-text: #f2eee6; --nova-text-secondary: #e5e0d8; --nova-text-muted: #a39e94;
+  --nova-accent: #e08600; --nova-accent-strong: #b06e05; --nova-mint: #f39c1a; --nova-on-accent: #1c1200;
+}
+
+html[data-theme="fieldops"] {
+  --nova-bg: #0a0c10; --nova-bg-deep: #08090d; --nova-panel: #12151c; --nova-panel-raised: #171b24;
+  --nova-sidebar: #08090d; --nova-canvas: #10131a; --nova-line: #2a2f3e; --nova-line-soft: #1e2230;
+  --nova-text: #e8ecf4; --nova-text-secondary: #c8cdd8; --nova-text-muted: #8d93a3;
+  --nova-accent: #59a9dc; --nova-accent-strong: #3576a3; --nova-mint: #6db8e8; --nova-on-accent: #081018;
+}
+
+html[data-theme="gothicnight"] {
+  --nova-bg: #0e0a1a; --nova-bg-deep: #0a0612; --nova-panel: #1a1228; --nova-panel-raised: #211736;
+  --nova-sidebar: #0a0612; --nova-canvas: #140d24; --nova-line: #322449; --nova-line-soft: #261b3f;
+  --nova-text: #f5f1fa; --nova-text-secondary: #cfc4dd; --nova-text-muted: #9c8fb0;
+  --nova-accent: #c084fc; --nova-accent-strong: #8b46cc; --nova-mint: #e0b45c; --nova-on-accent: #1a0b2e;
 }
 
 * { box-sizing: border-box; }

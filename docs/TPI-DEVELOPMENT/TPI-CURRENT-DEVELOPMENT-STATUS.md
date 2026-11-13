@@ -1,5 +1,31 @@
 # TPI Current Development Status
 
+## 2026-11-12 — Site-wide shell and theme audit
+
+Status: **AUDIT IN PROGRESS — THEME DEFECT FIXED LOCALLY.** The current
+tracked source contains 293 HTML documents. After excluding the 51 Haunted
+Location directory documents, five standalone Repository books, and three
+shared fragments, 234 in-scope page files remain. None of those in-scope pages
+uses the old `.brand-header` shell. All 29 tracked legacy brand-header pages
+are within the protected scope: 24 Haunted Location state books and the five
+standalone Repository books. They were not modified.
+
+Theme-source review found Nova Editorial's internal workspace colors were
+fixed to Cryptid. Nova now maps its workspace colors to all six site themes,
+and server-generated access gates use the saved theme and matching color
+tokens. The shared Worker, member shell, Teams, and Administration Center
+theme paths were also reviewed. StudioFlow, Nova Editorial, Administration
+Center, Teams, and Reels retain distinct application layouts while following
+the saved theme path.
+
+Representative Firefox theme routes passed 48/48; Nova access-gate theme
+checks passed 6/6; Education Center/Ghostology acceptance passed 30/30; Nova
+theme rendering passed 6/6; source checks passed 5/5; navigation checks
+passed 13/13. A full page-by-page visual pass remains
+open, and historical OPS-015/016 284-route results are not current full-site
+certification. No protected books or production data were changed. Details
+and counts are in [TPI-OPS-017](200-AUDITS/TPI-OPS-017-SITE-WIDE-SHELL-AND-THEME-AUDIT.md).
+
 ## 2026-11-12 — Founding Membership header pill removal
 
 Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** Founding Membership

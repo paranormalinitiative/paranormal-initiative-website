@@ -6,9 +6,22 @@ import { scrapeNews } from "./lib/news-scraper.js";
 import { scrapeVideos } from "./lib/video-scraper.js";
 import { pruneScraperRuns } from "./lib/scraper-log.js";
 
+// Reuse the saved site theme on server-generated access pages as well as static
+// HTML assets. This runs before the gate's inline styles for a consistent first
+// paint and reads no authentication or account data.
+const EARLY_THEME_BOOTSTRAP = `<style data-tpi-theme-bootstrap>
+html,body{background:#1a221e;color:#f2f7f3}
+html[data-theme="seance"],html[data-theme="seance"] body{background:#120c1f;color:#f9f6ee}
+html[data-theme="cosmic"],html[data-theme="cosmic"] body{background:#0d0c28;color:#f0f2fa}
+html[data-theme="asylum"],html[data-theme="asylum"] body{background:#1e1e1e;color:#ededed}
+html[data-theme="fieldops"],html[data-theme="fieldops"] body{background:#0a0c10;color:#e8ecf4}
+html[data-theme="gothicnight"],html[data-theme="gothicnight"] body{background:#0e0a1a;color:#f5f1fa}
+</style><script data-tpi-theme-bootstrap>(function(){try{var t=localStorage.getItem("tpiSiteTheme");var ok=["cryptid","seance","cosmic","asylum","fieldops","gothicnight"].indexOf(t)!==-1;document.documentElement.setAttribute("data-theme",ok?t:"cryptid")}catch(e){document.documentElement.setAttribute("data-theme","cryptid")}})();</script>`;
+
 const MEMBER_GATE_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
+  ${EARLY_THEME_BOOTSTRAP}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
@@ -17,23 +30,30 @@ const MEMBER_GATE_HTML = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root { --gate-bg:#0a0c10; --gate-card:#12151c; --gate-border:#1e2230; --gate-accent:#59a9dc; --gate-accent-hover:#6db8e8; --gate-text:#c8cdd8; --gate-heading:#e8ecf4; --gate-muted:#8d93a3; --gate-button:#1e2230; --gate-button-border:#2a2f3e; --gate-button-hover:#252a3a; --gate-on-accent:#081018; }
+    html[data-theme="cryptid"] { --gate-bg:#1a221e; --gate-card:#2a3430; --gate-border:#34403a; --gate-accent:#2f9e44; --gate-accent-hover:#4bb263; --gate-text:#cfd6d3; --gate-heading:#f2f7f3; --gate-muted:#9ba8a0; --gate-button:#1f2824; --gate-button-border:#34403a; --gate-button-hover:#323d38; --gate-on-accent:#0b140b; }
+    html[data-theme="seance"] { --gate-bg:#120c1f; --gate-card:#1e162d; --gate-border:#332a47; --gate-accent:#8f152a; --gate-accent-hover:#b01e37; --gate-text:#b9b3a9; --gate-heading:#f9f6ee; --gate-muted:#8a857c; --gate-button:#171126; --gate-button-border:#332a47; --gate-button-hover:#251b37; --gate-on-accent:#f9f6ee; }
+    html[data-theme="cosmic"] { --gate-bg:#0d0c28; --gate-card:#161537; --gate-border:#2b2a58; --gate-accent:#14b8d4; --gate-accent-hover:#3fcfe6; --gate-text:#b8bbd0; --gate-heading:#f0f2fa; --gate-muted:#8a8da8; --gate-button:#12112e; --gate-button-border:#2b2a58; --gate-button-hover:#1d1c44; --gate-on-accent:#04141a; }
+    html[data-theme="asylum"] { --gate-bg:#1e1e1e; --gate-card:#2d2d2d; --gate-border:#454545; --gate-accent:#e08600; --gate-accent-hover:#f39c1a; --gate-text:#e5e0d8; --gate-heading:#f2eee6; --gate-muted:#a39e94; --gate-button:#242424; --gate-button-border:#454545; --gate-button-hover:#353535; --gate-on-accent:#1c1200; }
+    html[data-theme="fieldops"] { --gate-bg:#0a0c10; --gate-card:#12151c; --gate-border:#1e2230; --gate-accent:#59a9dc; --gate-accent-hover:#6db8e8; --gate-text:#c8cdd8; --gate-heading:#e8ecf4; --gate-muted:#8d93a3; --gate-button:#1e2230; --gate-button-border:#2a2f3e; --gate-button-hover:#252a3a; --gate-on-accent:#081018; }
+    html[data-theme="gothicnight"] { --gate-bg:#0e0a1a; --gate-card:#1a1228; --gate-border:#322449; --gate-accent:#c084fc; --gate-accent-hover:#d0a4fd; --gate-text:#cfc4dd; --gate-heading:#f5f1fa; --gate-muted:#9c8fb0; --gate-button:#140d24; --gate-button-border:#322449; --gate-button-hover:#211736; --gate-on-accent:#1a0b2e; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0a0c10; color: #c8cdd8; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-    .gate-card { max-width: 520px; width: 100%; background: #12151c; border: 1px solid #1e2230; border-radius: 12px; padding: 2.5rem; text-align: center; }
-    .gate-kicker { text-transform: uppercase; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; color: #59a9dc; margin-bottom: 0.75rem; }
-    h1 { font-size: 1.5rem; font-weight: 700; color: #e8ecf4; margin-bottom: 1rem; }
-    .gate-message { font-size: 0.95rem; line-height: 1.6; color: #8d93a3; margin-bottom: 2rem; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--gate-bg); color: var(--gate-text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+    .gate-card { max-width: 520px; width: 100%; background: var(--gate-card); border: 1px solid var(--gate-border); border-radius: 12px; padding: 2.5rem; text-align: center; }
+    .gate-kicker { text-transform: uppercase; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; color: var(--gate-accent); margin-bottom: 0.75rem; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: var(--gate-heading); margin-bottom: 1rem; }
+    .gate-message { font-size: 0.95rem; line-height: 1.6; color: var(--gate-muted); margin-bottom: 2rem; }
     .gate-actions { display: flex; flex-direction: column; gap: 0.75rem; }
     .gate-button { display: block; width: 100%; padding: 0.85rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; text-decoration: none; text-align: center; cursor: pointer; border: none; transition: background 0.2s, transform 0.1s; }
     .gate-button:hover { transform: translateY(-1px); }
     .gate-button:active { transform: translateY(0); }
-    .gate-button-primary { background: #59a9dc; color: #0a0c10; }
-    .gate-button-primary:hover { background: #6db8e8; }
-    .gate-button-secondary { background: #1e2230; color: #c8cdd8; border: 1px solid #2a2f3e; }
-    .gate-button-secondary:hover { background: #252a3a; }
-    .gate-button-tertiary { background: transparent; color: #59a9dc; font-weight: 400; font-size: 0.85rem; }
-    .gate-button-tertiary:hover { color: #6db8e8; }
-    .gate-divider { width: 40px; height: 1px; background: #1e2230; margin: 0.5rem auto; }
+    .gate-button-primary { background: var(--gate-accent); color: var(--gate-on-accent); }
+    .gate-button-primary:hover { background: var(--gate-accent-hover); }
+    .gate-button-secondary { background: var(--gate-button); color: var(--gate-text); border: 1px solid var(--gate-button-border); }
+    .gate-button-secondary:hover { background: var(--gate-button-hover); }
+    .gate-button-tertiary { background: transparent; color: var(--gate-accent); font-weight: 400; font-size: 0.85rem; }
+    .gate-button-tertiary:hover { color: var(--gate-accent-hover); }
+    .gate-divider { width: 40px; height: 1px; background: var(--gate-border); margin: 0.5rem auto; }
   </style>
 </head>
 <body>
@@ -140,18 +160,6 @@ const LOCAL_REQUEST_GUARD = `<script data-tpi-local-request-guard>(function(){
     navigator.sendBeacon = function(url, data) { assert(url); return nativeBeacon(url, data); };
   }
 })();</script>`;
-
-// Keep the first paint on the same dark surface as the TPI design system.
-// This is deliberately limited to the browser's existing local theme choice;
-// it does not inspect authentication state or expose account information.
-const EARLY_THEME_BOOTSTRAP = `<style data-tpi-theme-bootstrap>
-html,body{background:#1a221e;color:#f2f7f3}
-html[data-theme="seance"],html[data-theme="seance"] body{background:#120c1f;color:#f9f6ee}
-html[data-theme="cosmic"],html[data-theme="cosmic"] body{background:#0d0c28;color:#f0f2fa}
-html[data-theme="asylum"],html[data-theme="asylum"] body{background:#1e1e1e;color:#ededed}
-html[data-theme="fieldops"],html[data-theme="fieldops"] body{background:#0a0c10;color:#e8ecf4}
-html[data-theme="gothicnight"],html[data-theme="gothicnight"] body{background:#0e0a1a;color:#f5f1fa}
-</style><script data-tpi-theme-bootstrap>(function(){try{var t=localStorage.getItem("tpiSiteTheme");var ok=["cryptid","seance","cosmic","asylum","fieldops","gothicnight"].indexOf(t)!==-1;document.documentElement.setAttribute("data-theme",ok?t:"cryptid")}catch(e){document.documentElement.setAttribute("data-theme","cryptid")}})();</script>`;
 
 async function serveAssets(request, env) {
   const response = await env.ASSETS.fetch(request);
