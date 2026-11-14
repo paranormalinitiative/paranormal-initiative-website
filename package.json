@@ -49,6 +49,7 @@
     "local:creator-incentive-review": "node scripts/local-creator-incentive-review.mjs --local-only",
     "verify:release-safety": "node scripts/verify/tpi-release-safety.mjs",
     "verify:release-impact": "node scripts/verify/tpi-release-impact.mjs",
+    "verify:member-sidebar": "node scripts/verify/tpi-member-sidebar.mjs",
     "verify:help-center-separation": "node scripts/verify/tpi-help-center-separation.mjs",
     "verify:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs --check",
     "update:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs",
