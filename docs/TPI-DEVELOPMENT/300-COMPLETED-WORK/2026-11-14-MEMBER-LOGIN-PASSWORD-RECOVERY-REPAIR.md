@@ -112,3 +112,41 @@ Rollback version: `9552fe40-5519-41d1-b089-1582ce913c33`
   interaction in the auth release gate.
 - Owner completion with a real code and login is not independently verified;
   it requires the owner to enter the private code and password.
+
+## Live service availability gate follow-up
+
+The owner then saw “Password recovery needs the live member service.” Both
+recovery actions ran `cloudflareReady()`, which probes `/api/auth/me`, before
+calling the dedicated reset endpoints. This made an unrelated availability
+check a hard prerequisite for recovery. The page now calls the request and
+confirmation endpoints directly and surfaces their real errors.
+
+The targeted Firefox interaction forced `TPIApi.isAvailable()` to return false
+and verified that both actions still reached their mocked API calls. It passed
+against the local and live pages. No actual owner code or password was entered
+by the test. Password recovery checks passed 12/12, local auth lifecycle 38/38,
+full preflight 30 gates, live anonymous smoke 10/10, and isolated production
+Firefox acceptance 65/65. The release changed no production member record or
+schema.
+
+Source commit: `e5d9f57a0b0c5d7f00493ab3b1d423e7a5ad5346`
+
+Release: `rel-e5d9f57a0b0c-c10bb753c43e`
+
+Worker: `ec81be70-cdf1-4c61-96fa-aea079c70509`
+
+Rollback version: `d71984cf-a52d-4d65-af82-c28b066b51e1`
+
+### Remaining recovery audit items
+
+- The confirmation SQL compares ISO `expires_at` text with SQLite's
+  `CURRENT_TIMESTAMP` text. This can accept a code beyond its intended
+  30-minute lifetime on the same UTC day. Use a normalized timestamp comparison
+  and test the expiration boundary.
+- The confirmation endpoint has no attempt limit. Add a server-side limit before
+  broad member onboarding.
+- A failed email send is logged while the request still returns the same
+  “instructions have been sent” message. Keep account enumeration resistance
+  while making delivery failures operationally visible.
+- The owner's successful password change and subsequent login still require
+  the owner to complete the flow privately.
