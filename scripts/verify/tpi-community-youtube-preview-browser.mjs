@@ -60,7 +60,7 @@ try {
     // A member page can restore more than one chat frame from browser-local
     // layout state. Hide every restored frame so Messenger cannot intercept
     // the feed's Play control during this unrelated acceptance.
-    await driver.executeScript("Array.from(document.querySelectorAll('.member-floating-chat')).forEach(function(node){ node.classList.add('is-hidden'); });");
+    await driver.executeScript("Array.from(document.querySelectorAll('.member-floating-chat, .member-chat-list')).forEach(function(node){ node.classList.add('is-hidden'); node.style.setProperty('display','none','important'); node.style.setProperty('pointer-events','none','important'); });");
   }
   const state = await driver.executeScript(`var card=document.getElementById('post-'+arguments[0]); return {
     previews:Array.from(card.querySelectorAll('[data-youtube-preview]')).map(function(node){return {
@@ -80,6 +80,9 @@ try {
   assert.equal(state.links, 2);
 
   await driver.executeScript(`var meta=document.createElement('meta'); meta.httpEquiv='Content-Security-Policy'; meta.content="frame-src 'none'"; document.head.appendChild(meta);`);
+  // Re-apply the isolation immediately before the click because Messenger can
+  // restore its list while the feed is finishing hydration.
+  await driver.executeScript("Array.from(document.querySelectorAll('.member-floating-chat, .member-chat-list')).forEach(function(node){ node.classList.add('is-hidden'); node.style.setProperty('display','none','important'); node.style.setProperty('pointer-events','none','important'); });");
   await driver.findElement(By.css(`#post-${postId} [data-youtube-play="qB3dMpROEdE"]`)).click();
   await driver.wait(async () => (await driver.findElements(By.css(`#post-${postId} iframe.youtube-preview-frame`))).length === 1, 10_000);
   const player = await driver.executeScript(`var frame=document.querySelector('#post-'+arguments[0]+' iframe.youtube-preview-frame'); return {src:frame?.getAttribute('src'), title:frame?.getAttribute('title'), fullscreen:frame?.hasAttribute('allowfullscreen'), cardPresent:Boolean(frame?.closest('[data-youtube-preview="qB3dMpROEdE"]'))};`, postId);
