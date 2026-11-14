@@ -46,6 +46,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 | A non-YouTube video link shows only a chain icon or will not play | [External video preview](#inc-2026-11-14-15--external-non-youtube-video-preview) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
+| Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
 
 ## Incident and fix register
 
@@ -545,6 +546,34 @@ an MP4 uploaded to TPI is required for guaranteed in-feed playback.
 
 **Completion record:**
 [`2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md)
+
+### INC-2026-11-14-16 — Owner Admin authorization mismatch
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 15:45:38 ET**, shown in the supplied Admin Center screenshot |
+| Root cause confirmed | **2026-11-14**, authenticated production session and read-only D1 account check |
+| Fixed | **2026-11-14**, one guarded production account-role correction |
+| Account | `Todd_Wayne` / contributor ID `5d9e7ec6-9507-487a-96fd-00441f7f7570` |
+| Previous authorization | `role: admin` → resolved staff role `administrator` |
+| Correct authorization | `role: owner` → resolved staff role `owner` |
+| Status | **Repaired and live verified** |
+
+**What happened:** The Owner/Founder account could enter the Administration
+Center shell but Founding Memberships rejected the request as a narrower staff
+role.
+
+**How it was fixed:** The exact active authenticated account was promoted from
+legacy `admin` to server-authoritative `owner`, with an audit record. The
+existing server-side route matrix now grants the intended Owner access while
+continuing to protect the area from ordinary members and narrower staff roles.
+
+**Verification:** `/api/auth/me` returned Owner identity; the Founding
+Memberships API returned **200**; and the live Admin Center opened
+`/admin-panel#founding-memberships` with the issuance and registry controls.
+
+**Completion record:**
+[`2026-11-14-OWNER-ADMIN-AUTHORIZATION-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-OWNER-ADMIN-AUTHORIZATION-REPAIR.md)
 
 ### INC-2026-11-14-11 — Local Worker asset freshness
 
