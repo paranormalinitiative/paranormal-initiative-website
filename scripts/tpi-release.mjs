@@ -266,6 +266,12 @@ async function preflight() {
   // HTML with an old asset manifest, which presents as a blank StudioFlow page.
   run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"], { timing: { bucket: "staging" } });
   await verifyAuthLifecycle();
+  run("Legacy Admin session and staff-role regression", process.execPath, ["scripts/verify/tpi-staff-roles.mjs"], { timing: { bucket: "certification" } });
+  run("Password recovery API regression", process.execPath, ["scripts/verify/tpi-password-recovery.mjs"], { timing: { bucket: "certification" } });
+  run("Password recovery Firefox interaction", process.execPath, ["scripts/verify/tpi-password-recovery-browser.mjs"], {
+    env: { TPI_RECOVERY_BASE_URL: "http://127.0.0.1:8787" },
+    timing: { bucket: "certification", browser: true },
+  });
   const adminBefore = localAdminFingerprint();
   mark("Persistent local_admin fingerprint (before isolated E2E)", { bucket: "certification" });
     await runLocalAuthCheck("Persistent development authentication");

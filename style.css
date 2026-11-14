@@ -3460,7 +3460,8 @@ footer {
     border-radius: var(--radius-sm);
 }
 
-.member-login-shell [data-login-status] {
+.member-login-shell [data-login-status],
+.member-login-shell [data-member-register-status] {
     margin: 0;
     text-align: left;
 }

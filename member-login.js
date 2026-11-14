@@ -7,6 +7,7 @@
   let visibleInviteTimer = null;
   const status = document.getElementById("member-login-status");
   const loginStatus = document.querySelector("[data-login-status]");
+  const memberRegisterStatus = document.querySelector("[data-member-register-status]");
   const recoveryStatus = document.querySelector("[data-password-recovery-status]");
   const recoveryHomeLink = document.querySelector("[data-password-recovery-home]");
   const inviteCodePanel = document.querySelector("[data-invite-code-panel]");
@@ -75,6 +76,12 @@
     loginStatus.classList.toggle("access-error", Boolean(isError));
   }
 
+  function setMemberRegisterStatus(message, isError) {
+    if (!memberRegisterStatus) return;
+    memberRegisterStatus.textContent = message;
+    memberRegisterStatus.classList.toggle("access-error", Boolean(isError));
+  }
+
   document.addEventListener("click", event => {
     const toggle = event.target.closest("[data-toggle-password]");
     if (!toggle) return;
@@ -114,6 +121,9 @@
   }
 
   async function cloudflareReady() {
+    // A hosted failure must surface from the real API. Falling back to browser
+    // storage can create an account or invite that does not exist on the site.
+    if (!isLocalPreviewOrigin()) return true;
     return Boolean(window.TPIApi && await window.TPIApi.isAvailable());
   }
 
@@ -2279,6 +2289,10 @@
         setStatus("Owner/admin login is required to create invite links.", true);
         return;
       }
+      if (!isLocalPreviewOrigin() && !hasCloudflareInviteAccess) {
+        setStatus("Sign in with an owner or admin account before creating a live invite.", true);
+        return;
+      }
 
       const inviteAssignment = getInviteAssignment(data.get("inviteAssignment"));
       const typedCode = String(data.get("inviteCode") || "").trim();
@@ -2392,28 +2406,30 @@
       const displayName = String(data.get("displayName") || username).trim();
       const email = String(data.get("email") || "").trim();
       if (!username || !password || !displayName) {
-        setStatus("Display name, username, and password are required.", true);
+        setMemberRegisterStatus("Display name, username, and password are required.", true);
         return;
       }
       if (!isValidUsername(username)) {
-        setStatus(usernameErrorMessage(), true);
+        setMemberRegisterStatus(usernameErrorMessage(), true);
         return;
       }
       if (!email || !email.includes("@")) {
-        setStatus("A valid email address is required.", true);
+        setMemberRegisterStatus("A valid email address is required.", true);
         return;
       }
       if (password.length < 8) {
-        setStatus("Password must be at least 8 characters.", true);
+        setMemberRegisterStatus("Password must be at least 8 characters.", true);
         return;
       }
       if (password !== confirmPassword) {
-        setStatus("Passwords do not match.", true);
+        setMemberRegisterStatus("Passwords do not match.", true);
         return;
       }
 
       if (await cloudflareReady()) {
         try {
+          if (!window.TPIApi) throw new Error("The live member service did not load. Refresh this page and try again.");
+          setMemberRegisterStatus("Creating your member account…", false);
           await window.TPIApi.registerMember({
             username,
             password,
@@ -2422,21 +2438,28 @@
             title: "Member",
             commentSignatureEnabled: data.get("commentSignature") === "on"
           });
-          await window.TPIApi.login(username, password);
-          localStorage.setItem(ACCESS_SESSION_KEY, username);
-          window.location.href = "/member-home?username=" + encodeURIComponent(username);
+          setMemberRegisterStatus("Account created. Signing you in…", false);
+          try {
+            await window.TPIApi.login(username, password);
+            const session = await window.TPIApi.me();
+            if (!session.user) throw new Error("Session unavailable");
+            try { localStorage.setItem(ACCESS_SESSION_KEY, username); } catch (storageError) {}
+            window.location.href = "/member-home?username=" + encodeURIComponent(username);
+          } catch (signInError) {
+            setMemberRegisterStatus("Your account was created, but automatic sign-in failed. Use Sign In above with this username and password.", true);
+          }
         } catch (error) {
-          setStatus(error.message, true);
+          setMemberRegisterStatus(error.message || "Account creation failed. Please try again.", true);
         }
         return;
       }
 
       if (users.some(user => user.username === username)) {
-        setStatus("That username already exists.", true);
+        setMemberRegisterStatus("That username already exists.", true);
         return;
       }
       if (users.some(user => String(user.correspondence || user.email || "").toLowerCase() === email.toLowerCase())) {
-        setStatus("That email is already connected to an account.", true);
+        setMemberRegisterStatus("That email is already connected to an account.", true);
         return;
       }
       users.push({

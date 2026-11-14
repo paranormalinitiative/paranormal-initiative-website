@@ -91,8 +91,23 @@ try {
     await driver.wait(async () => (await driver.executeScript(() => window.__loginCalls.length)) === 1, 10000, "hosted login did not reach API");
     assert.deepEqual(await driver.executeScript(() => window.__loginCalls[0]), { username: "synthetic_member", password: "sample-password-123" });
     assert.match(await driver.findElement(By.css("[data-login-status]")).getText(), /Signing in/);
+    await driver.executeScript(() => {
+      window.__memberRegistrationCalls = [];
+      window.TPIApi.registerMember = async data => {
+        window.__memberRegistrationCalls.push(data);
+        return new Promise(() => {});
+      };
+    });
+    await fill("displayName", "Synthetic Member", "[data-member-register]");
+    await fill("email", "synthetic@example.com", "[data-member-register]");
+    await fill("username", "synthetic_member_2", "[data-member-register]");
+    await fill("password", "sample-password-123", "[data-member-register]");
+    await fill("confirmPassword", "sample-password-123", "[data-member-register]");
+    await driver.findElement(By.css('[data-member-register] button[type="submit"]')).click();
+    await driver.wait(async () => (await driver.executeScript(() => window.__memberRegistrationCalls.length)) === 1, 10000, "hosted registration did not reach API");
+    assert.match(await driver.findElement(By.css("[data-member-register-status]")).getText(), /Creating your member account/);
   }
-  console.log("PASS: Firefox recovery feedback and password eye work; hosted sign-in bypasses the availability probe when tested live");
+  console.log("PASS: Firefox recovery and password eye work; hosted sign-in and registration reach the live API when availability probing fails");
 } finally {
   await driver.quit();
 }

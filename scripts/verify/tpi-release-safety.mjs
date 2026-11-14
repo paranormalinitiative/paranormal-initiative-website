@@ -41,6 +41,12 @@ check("runbook requires commit, push, preflight and guarded deployment", () => {
 check("release preflight includes the full local_admin lifecycle", () => {
   assert.match(release, /await verifyAuthLifecycle\(\)/);
 });
+check("release preflight blocks legacy Admin and password recovery regressions", () => {
+  assert.match(release, /Legacy Admin session and staff-role regression/);
+  assert.match(release, /tpi-staff-roles\.mjs/);
+  assert.match(release, /tpi-password-recovery\.mjs/);
+  assert.match(release, /tpi-password-recovery-browser\.mjs/);
+});
 check("release preflight runs the Studio Management lifecycle regression", () => {
   assert.match(release, /tpi-studioflow-studio-lifecycle\.mjs/);
 });
