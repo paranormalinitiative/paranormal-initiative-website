@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## 2026-11-14 — Member Home authentication redirect loop
+
+Status: **FIX IMPLEMENTED; GUARDED RELEASE IN PROGRESS.** Production
+`/api/auth/me` returned HTTP 500 because the deployed D1 database does not have
+the additive `staff_role_appointments` table. That exception prevented
+session confirmation; the login page then reused stale browser identity and
+redirected back to Member Home, creating the loop. The API role resolver now
+falls back to the legacy Owner/Admin/member roles when the optional appointment
+table is unavailable, and hosted login no longer trusts browser-stored
+identity when the server session cannot be confirmed. Local role checks passed
+18/18, profile/feed checks 40/40, Firefox member navigation/profile acceptance
+44/44, and local auth lifecycle 38/38 at each checkpoint. Production D1 was
+not migrated; the release runbook excludes schema changes from ordinary code
+deployments. Live production acceptance and release identifiers will be
+recorded here after the guarded release completes. See the follow-up in [Member
+Home Navigation and Creator Studio Parity Repair](300-COMPLETED-WORK/2026-11-13-MEMBER-HOME-NAVIGATION-PARITY-REPAIR.md).
+
 ## 2026-11-13 — Member Home navigation and Creator Studio parity repair
 
 Status: **DEPLOYED AND LIVE VERIFIED — release `rel-775f9c40e0c3-1b13f7ed1083`,

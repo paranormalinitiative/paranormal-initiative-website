@@ -58,3 +58,40 @@ source commit `775f9c40e0c3e823eae5a5be0511eb8dec82bbf6`, Worker version
 traffic. GitHub and the source commit matched before deployment. The remaining
 acceptance limitation is that the owner's existing browser session was not
 used; live Firefox acceptance used the isolated synthetic release account.
+
+## Production follow-up — authentication redirect loop
+
+Date: 2026-11-14
+
+After release, the owner reported that Home repeatedly switched between
+`/member-home?member=1` and `/member-login`. Cloudflare Worker error logs
+confirmed that `/api/auth/me` failed with `D1_ERROR: no such table:
+staff_role_appointments`. The staff-role feature's additive migration had been
+applied to local D1, but not production. As a result, an otherwise valid
+session could not be confirmed. The login page's browser-storage fallback then
+treated stale identity as a signed-in session and sent the browser back to
+Home.
+
+The repair makes `effectiveStaffRole` fall back to the existing legacy
+Owner/Admin/member role when appointment lookup is unavailable. This preserves
+authentication and profile access while appointment-dependent roles and
+permissions fail closed until the table exists. Hosted login now trusts only a
+server-confirmed session; local preview retains its browser-storage fallback.
+No production migration or member data change was performed.
+
+Verification before release: staff-role checks 18/18; member profile/feed
+checks 40/40; Firefox Developer Edition member navigation/profile acceptance
+44/44; local authentication lifecycle 38/38 at all three checkpoints, with
+isolated StudioFlow browser acceptance 65/65; and focused admin functional,
+ParaNews/ParaTube, shared-asset, and workspace checks passed. The initial
+authentication lifecycle attempt ran while the official local Worker was
+stopped and timed out; it was rerun successfully after the documented local
+launcher confirmed the Worker was running. Release preflight was first invoked
+before committing and correctly stopped because the working tree was dirty; it
+must be rerun against the committed candidate.
+
+**Release and isolated production browser acceptance: pending.** Record the
+release identifier, deployed Worker version, live `/api/auth/me` result, and
+Firefox login-to-Home result here when complete. Production D1 migration
+`0071_staff_role_appointments.sql` remains unapplied under the runbook's
+separate-migration rule.

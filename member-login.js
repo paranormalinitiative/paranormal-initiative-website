@@ -100,10 +100,18 @@
         const session = await window.TPIApi.me();
         return session.user || null;
       } catch (error) {
-        // Local previews may not provide the Cloudflare API.
+        // Only local previews may recover a session from browser storage. On
+        // the hosted site, stale local data must never bounce a signed-out or
+        // temporarily unverifiable browser between login and Member Home.
+        if (!isLocalPreviewOrigin()) return null;
       }
     }
-    return getLocalSessionUser();
+    return isLocalPreviewOrigin() ? getLocalSessionUser() : null;
+  }
+
+  function isLocalPreviewOrigin() {
+    return window.location.protocol === "file:" ||
+      ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname);
   }
 
   async function initAuthenticatedLoginState() {
