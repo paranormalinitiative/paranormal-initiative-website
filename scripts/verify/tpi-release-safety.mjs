@@ -47,6 +47,15 @@ check("release preflight blocks legacy Admin and password recovery regressions",
   assert.match(release, /tpi-password-recovery\.mjs/);
   assert.match(release, /tpi-password-recovery-browser\.mjs/);
 });
+check("release preflight blocks Community YouTube preview regressions", () => {
+  assert.match(release, /Community YouTube preview and in-feed playback/);
+  assert.match(release, /verify:community-youtube-preview/);
+  const pkg = JSON.parse(packageSource);
+  assert.equal(
+    pkg.scripts["verify:community-youtube-preview"],
+    "node scripts/qa/tpi-link-preview-regression.mjs && node scripts/verify/tpi-community-youtube-preview-browser.mjs",
+  );
+});
 check("release preflight runs the Studio Management lifecycle regression", () => {
   assert.match(release, /tpi-studioflow-studio-lifecycle\.mjs/);
 });

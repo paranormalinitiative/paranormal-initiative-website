@@ -55,6 +55,7 @@
   "verify:profile-honors-wall": "node scripts/verify/tpi-profile-honors-wall.mjs",
     "verify:staff-roles": "node scripts/verify/tpi-staff-roles.mjs",
     "verify:password-recovery": "node scripts/verify/tpi-password-recovery.mjs",
+    "verify:community-youtube-preview": "node scripts/qa/tpi-link-preview-regression.mjs && node scripts/verify/tpi-community-youtube-preview-browser.mjs",
   "verify:governance-subject-index": "node scripts/verify/tpi-governance-006-subject-index.mjs",
     "verify:education-destinations": "node scripts/verify/tpi-governance-006-subject-index.mjs",
     "verify:education-destinations-browser": "node scripts/verify/tpi-education-center-destinations.mjs",

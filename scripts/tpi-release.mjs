@@ -272,6 +272,10 @@ async function preflight() {
     env: { TPI_RECOVERY_BASE_URL: "http://127.0.0.1:8787" },
     timing: { bucket: "certification", browser: true },
   });
+  run("Community YouTube preview and in-feed playback", "npm", ["run", "verify:community-youtube-preview"], {
+    env: { TPI_COMMUNITY_BASE_URL: "http://127.0.0.1:8787" },
+    timing: { bucket: "certification", browser: true },
+  });
   const adminBefore = localAdminFingerprint();
   mark("Persistent local_admin fingerprint (before isolated E2E)", { bucket: "certification" });
     await runLocalAuthCheck("Persistent development authentication");

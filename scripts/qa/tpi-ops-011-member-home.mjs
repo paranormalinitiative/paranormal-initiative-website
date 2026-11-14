@@ -88,7 +88,7 @@ check("mobile member header gives the authenticated greeting its own row", membe
 check("mobile Messenger defaults to minimized without a saved mobile expansion", memberShell.includes("isMobileChatViewport") && memberShell.includes("frame.mobileExpanded") && memberShellCss.includes(".member-floating-chat.is-collapsed"));
 check("member-home contains events section", memberHome.text.includes("data-events-body"));
 check("member-home contains news section", memberHome.text.includes("data-news-body"));
-check("member-home contains video section", memberHome.text.includes("data-video-body"));
+check("member-home contains video destinations", memberHome.text.includes("data-fc-video-slot") && memberHome.text.includes("data-fc-paratube"));
 
 const events = await request("/api/events?limit=100", { headers: authHeaders(member) });
 check("events API is available", events.response.status === 200 && events.body?.events?.some(event => event.external_id === "local-ops011-event"));

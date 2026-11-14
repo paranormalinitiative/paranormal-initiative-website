@@ -1625,6 +1625,10 @@
             border-color: color-mix(in srgb, var(--accent) 55%, transparent);
         }
 
+        .youtube-preview-card:hover {
+            border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+        }
+
         .link-preview-media {
             position: relative;
             width: 100%;
@@ -1639,6 +1643,58 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .youtube-preview-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border: 0;
+            background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.34));
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .youtube-preview-play-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 68px;
+            height: 48px;
+            border-radius: 14px;
+            background: #ff0033;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            font-size: 24px;
+            line-height: 1;
+            padding-left: 4px;
+        }
+
+        .youtube-preview-play:hover .youtube-preview-play-icon,
+        .youtube-preview-play:focus-visible .youtube-preview-play-icon {
+            transform: scale(1.06);
+        }
+
+        .youtube-preview-frame {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .youtube-preview-external {
+            display: inline-block;
+            margin-top: 7px;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .youtube-preview-external:hover {
+            text-decoration: underline;
         }
 
         .link-preview-noimg {
@@ -4815,9 +4871,9 @@
     }
 
     // ===== LINK PREVIEW CARDS (Facebook-style) =====
-    // After the feed paints, each post's first link attachment is checked
-    // against /api/link-preview; matching cards get an image + title +
-    // description preview under the post body.
+    // After the feed paints, each link attachment is checked against
+    // /api/link-preview; matching cards get an image + title + description
+    // preview under the post body. Multiple links keep their original order.
     function hydrateLinkPreviews(items) {
         items.forEach(function(item) {
             if (item.type !== "community_post") return;
@@ -4825,25 +4881,39 @@
             if (!links.length) return;
             var slot = document.querySelector('[data-link-preview-slot="' + cssEscape(item.postId || "") + '"]');
             if (!slot) return;
-            var url = links[0].url;
-            if (linkPreviewCache[url]) {
-                slot.innerHTML = renderLinkPreviewCard(linkPreviewCache[url]);
-                return;
-            }
-            if (linkPreviewPending[url]) {
-                linkPreviewPending[url].push(function(meta) { if (meta) slot.innerHTML = renderLinkPreviewCard(meta); });
-                return;
-            }
-            linkPreviewPending[url] = [function(meta) { if (meta) slot.innerHTML = renderLinkPreviewCard(meta); }];
-            window.TPIApi.linkPreview(url).then(function(meta) {
-                linkPreviewCache[url] = meta;
-                (linkPreviewPending[url] || []).forEach(function(cb) { cb(meta); });
-            }).catch(function() {
-                // No preview available (404/blocked) — chips still render fine.
-            }).finally(function() {
-                delete linkPreviewPending[url];
+            slot.innerHTML = "";
+            links.forEach(function(link, index) {
+                var url = link.url;
+                var previewSlot = document.createElement("div");
+                previewSlot.setAttribute("data-link-preview-item", String(index));
+                slot.appendChild(previewSlot);
+                var paint = function(meta) {
+                    if (meta) previewSlot.innerHTML = renderLinkPreviewCard(meta);
+                };
+                if (linkPreviewCache[url]) {
+                    paint(linkPreviewCache[url]);
+                    return;
+                }
+                if (linkPreviewPending[url]) {
+                    linkPreviewPending[url].push(paint);
+                    return;
+                }
+                linkPreviewPending[url] = [paint];
+                window.TPIApi.linkPreview(url).then(function(meta) {
+                    linkPreviewCache[url] = meta;
+                    (linkPreviewPending[url] || []).forEach(function(cb) { cb(meta); });
+                }).catch(function() {
+                    // No preview available (404/blocked) — the clickable link chip remains.
+                }).finally(function() {
+                    delete linkPreviewPending[url];
+                });
             });
         });
+    }
+
+    function safeYouTubeVideoId(meta) {
+        var id = meta && meta.provider === "youtube" ? String(meta.videoId || "") : "";
+        return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : "";
     }
 
     function renderLinkPreviewCard(meta) {
@@ -4851,11 +4921,29 @@
         var host = meta.host || "";
         var title = meta.title || host || "Link";
         var desc = meta.description || "";
+        var youtubeId = safeYouTubeVideoId(meta);
         var media;
         if (meta.image) {
-            media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\").classList.add(\'link-preview-noimg\'); this.remove();"></div>';
+            media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();"></div>';
         } else {
             media = '<div class="link-preview-media link-preview-noimg">' + LINK_ICON_SVG + '</div>';
+        }
+        if (youtubeId) {
+            media = '<div class="link-preview-media">' +
+                '<img src="' + escapeAttr(meta.image || ("https://i.ytimg.com/vi/" + youtubeId + "/hqdefault.jpg")) + '" alt="' + escapeAttr(title) + '" loading="lazy">' +
+                '<button class="youtube-preview-play" type="button" data-youtube-play="' + escapeAttr(youtubeId) + '" data-youtube-title="' + escapeAttr(title) + '" aria-label="Play ' + escapeAttr(title) + ' in the Community Feed">' +
+                    '<span class="youtube-preview-play-icon" aria-hidden="true">&#9654;</span>' +
+                '</button>' +
+            '</div>';
+            return '<div class="link-preview-card youtube-preview-card" data-youtube-preview="' + escapeAttr(youtubeId) + '">' +
+                media +
+                '<div class="link-preview-info">' +
+                    '<span class="link-preview-host">YouTube</span>' +
+                    '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
+                    (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : "") +
+                    '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open on YouTube</a>' +
+                '</div>' +
+            '</div>';
         }
         return '<a class="link-preview-card" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">' +
             media +
@@ -4866,6 +4954,18 @@
             '</div>' +
         '</a>';
     }
+
+    document.addEventListener("click", function(event) {
+        var play = event.target.closest("[data-youtube-play]");
+        if (!play) return;
+        event.preventDefault();
+        var id = String(play.getAttribute("data-youtube-play") || "");
+        if (!/^[a-zA-Z0-9_-]{11}$/.test(id)) return;
+        var media = play.closest(".link-preview-media");
+        if (!media) return;
+        var title = play.getAttribute("data-youtube-title") || "YouTube video";
+        media.innerHTML = '<iframe class="youtube-preview-frame" src="https://www.youtube-nocookie.com/embed/' + escapeAttr(id) + '?autoplay=1&rel=0" title="' + escapeAttr(title) + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+    });
 
     function cssEscape(value) {
         if (window.CSS && CSS.escape) return CSS.escape(value);
