@@ -45,6 +45,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger opens as a blank or unusable surface | [Messenger navigation](#inc-2026-11-10-02--messenger-navigation-and-release-certification) | Shared member shell, route target, disposable schema |
 | Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
+| A non-YouTube video link shows only a chain icon or will not play | [External video preview](#inc-2026-11-14-15--external-non-youtube-video-preview) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 
 ## Incident and fix register
 
@@ -511,6 +512,39 @@ and Creator Studio were not modified or replaced by this repair.
 
 **Completion record:**
 [`2026-11-14-MESSENGER-MEDIA-UPLOAD-AND-CLIPBOARD-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-MEDIA-UPLOAD-AND-CLIPBOARD-REPAIR.md)
+
+### INC-2026-11-14-15 — External non-YouTube video preview
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 15:08:50 ET**, shown in the supplied Community Feed screenshot |
+| Root cause confirmed | **2026-11-14**, link-preview source inspection and live API check |
+| Fixed in source | **2026-11-14**, commits `70f386c1` and `2d5c8e6e` |
+| Certified release | `rel-2d5c8e6e2f65-844575167462`, shared-api profile |
+| Production Worker | `6d5d40e2-5fba-49c8-a890-dd9d89106148` |
+| Status | **External-video support deployed; supplied HTTP/JavaScript page remains source-limited** |
+
+**What happened:** A non-YouTube research link rendered as a generic chain-icon
+card instead of a playable video preview.
+
+**How it was fixed:** The shared preview service now recognizes direct external
+video responses, standard video metadata, `<video>/<source>` tags, and older
+pages that expose MP4/WebM/MOV/OGV files through links or scripts. The feed
+renders a native HTML5 player with controls and a source fallback.
+
+**Remaining source limitation:** The supplied page is JavaScript-rendered and
+does not publish a safe direct video source in its initial HTML. It is also
+HTTP-only; its HTTPS endpoint fails TLS negotiation and the browser blocks the
+HTTP page in the current environment. TPI cannot safely bypass those external
+host restrictions. A direct HTTPS video URL, standard `og:video` metadata, or
+an MP4 uploaded to TPI is required for guaranteed in-feed playback.
+
+**Verification:** Link-preview regression **16/16**; member interactions
+**27/27**; release safety **35/35**; release impact **12/12**; preflight
+**CERTIFIED** with **10** gates; production smoke **10/10**.
+
+**Completion record:**
+[`2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md)
 
 ### INC-2026-11-14-11 — Local Worker asset freshness
 
