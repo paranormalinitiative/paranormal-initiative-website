@@ -239,3 +239,46 @@ Owner acceptance: the owner confirmed that signing in on production opened
 Member Home. The private password was not shared with the agent. This confirms
 the owner access incident is resolved; the separate recovery hardening items
 above remain follow-up work.
+
+## Hosted account fallback and recovery hardening
+
+A later resilience release removed the hosted registration and owner-invitation
+fallback to browser-stored accounts when the member-service availability probe
+fails. Registration now reports its outcome beside the form, including when an
+account was created but automatic sign-in failed. The release also added legacy
+Admin and recovery regressions to the guarded release gate.
+
+Source commit: `dab0a4a6db89498b610682837aa5c84af2b4659a`
+
+Release: `rel-dab0a4a6db89-86846ac551d4`
+
+Worker: `689c02b6-624e-425c-9f85-83d858c9dc15`
+
+The subsequent recovery release added per-source and per-email request limits,
+per-source confirmation limits, and a six-code-per-account rolling-hour cap.
+The Worker returns a generic response for an unknown or limited account and
+does not claim that delivery occurred. If the hosted rate limiter is missing
+or fails, reset operations return a temporary-unavailable error. A valid code
+is claimed by one conditional database update before the password/session
+update, preventing parallel reuse. The session lookup now compares normalized
+expiration timestamps. No production schema migration was required.
+
+Focused recovery checks passed 23/23. The local auth lifecycle passed 38/38
+with isolated Firefox 65/65, the full release preflight passed 33 gates, the
+live anonymous smoke passed 10/10, isolated live Firefox passed 65/65, and a
+focused live recovery Firefox test passed with mocked credentials. A single
+synthetic nonexistent-address request returned the expected generic response
+on production. The owner account, code, password, and browser profile were not
+used in these tests. The owner had already confirmed Member Home access.
+
+Source commits: `582a988d` (recovery protection), `ad0198bcf13d`
+(subpixel Firefox test tolerance)
+
+Release: `rel-ad0198bcf13d-be5a64930272`
+
+Worker: `c26d3d21-3d0e-4fe3-b401-87b4403f58a8`
+
+Rollback version: `689c02b6-624e-425c-9f85-83d858c9dc15`
+
+The broader audit and remaining risks are recorded in
+[Member Access Resilience Audit](../200-AUDITS/2026-11-14-MEMBER-ACCESS-RESILIENCE-AUDIT.md).
