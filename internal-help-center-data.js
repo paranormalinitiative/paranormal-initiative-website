@@ -1,8 +1,8 @@
 (function () {
   var publicData = window.TPI_HELP_CENTER || {};
   window.TPI_INTERNAL_HELP_CENTER = {
-    title: "Internal Help Center",
-    subtitle: "The Paranormal Initiative · Staff operations",
+    title: "Help Desk",
+    subtitle: "The Paranormal Initiative · Internal operations",
     email: publicData.email || "paranormalinitiative@yahoo.com",
     themes: publicData.themes || [
       { id: "cryptid", label: "Cryptid & Folklore" },
@@ -68,6 +68,30 @@
         shortLabel: "Security & audit",
         description: "Keep internal work safe, minimize private data exposure, and leave an accurate administrative record.",
         tone: "slate"
+      },
+      {
+        id: "operations-workflow",
+        icon: "⇄",
+        label: "Daily operations & workflow",
+        shortLabel: "Daily operations",
+        description: "Use the internal work queue, hand off tasks, confirm outcomes, and keep operational work from getting lost.",
+        tone: "green"
+      },
+      {
+        id: "incidents-continuity",
+        icon: "!",
+        label: "Incidents, outages & continuity",
+        shortLabel: "Incidents & outages",
+        description: "Recognize a security or availability incident, preserve evidence, communicate clearly, and escalate safely.",
+        tone: "red"
+      },
+      {
+        id: "staff-reference",
+        icon: "⌘",
+        label: "Staff reference & training",
+        shortLabel: "Reference & training",
+        description: "Shared vocabulary, decision checklists, role handoffs, and practical training for new internal people.",
+        tone: "violet"
       }
     ],
     articles: [
@@ -79,7 +103,7 @@
         updated: "November 14, 2026",
         popular: true,
         body: [
-          { type: "p", text: "The Internal Help Center is for people with an active server-side staff appointment or another explicitly approved internal access path. It explains how the existing TPI tools work; it does not grant a role or bypass a server gate." },
+          { type: "p", text: "The internal Help Desk is for people with an active server-side staff appointment or another explicitly approved internal access path. It explains how the existing TPI tools work; it does not grant a role or bypass a server gate." },
           { type: "h2", text: "Choose the right surface" },
           { type: "ul", items: ["Administration Center: protected operations, member records, reports, content, governance, health, and audit views.", "Moderation: the focused queue for community posts and comments that need a Hide or Remove decision.", "Member Help Center: public-facing instructions, policies, privacy guidance, and abuse-reporting directions.", "Creator Studio and Nova: separate applications with their own entitlement and editorial boundaries."] },
           { type: "h2", text: "Work from the smallest authority needed" },
@@ -253,6 +277,99 @@
           { type: "ul", items: ["The route or Administration Center section.", "The action attempted and the visible result.", "The account role or appointment, described without sharing credentials.", "Approximate time, browser/device, and a safe reference to the affected record.", "Whether the issue is a privacy concern, security concern, availability issue, or ordinary product bug."] },
           { type: "h2", text: "Do not include" },
           { type: "p", text: "Passwords, recovery codes, session cookies, stream keys, private message bodies, exact residential addresses, or downloaded member exports." }
+        ]
+      },
+      {
+        id: "daily-operations-checklist",
+        category: "operations-workflow",
+        title: "Use the daily operations checklist",
+        excerpt: "A repeatable start-to-finish routine for internal work that protects member data and keeps decisions attributable.",
+        updated: "November 14, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "Internal work is easier to audit and hand off when each task follows the same basic sequence." },
+          { type: "h2", text: "Before you act" },
+          { type: "ol", items: ["Sign in with your own approved account and confirm the active role or appointment.", "State the operational question before opening member records.", "Open the narrowest tool that can answer the question.", "Confirm the target record, current status, and supported action."] },
+          { type: "h2", text: "After you act" },
+          { type: "ol", items: ["Record a concise factual reason when the workflow requires one.", "Refresh the record and confirm the visible result.", "Check the audit entry or queue status.", "Hand off the safe reference and next action without exporting private data."] }
+        ]
+      },
+      {
+        id: "handoffs-and-ownership",
+        category: "operations-workflow",
+        title: "Hand off an internal task cleanly",
+        excerpt: "What the next admin, moderator, reviewer, or owner needs to continue work without repeating risky access.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "A handoff should let the next authorized person understand the state without receiving your credentials or an unnecessary data export." },
+          { type: "h2", text: "Include" },
+          { type: "ul", items: ["The protected route or queue name.", "A safe record identifier or report reference.", "What has already been checked and what remains unresolved.", "The current status, time, and any visible error.", "The next decision needed and which role should make it."] },
+          { type: "h2", text: "Do not hand off" },
+          { type: "p", text: "Never hand off a live session, password, recovery code, copied token, downloaded member list, or private conversation transcript." }
+        ]
+      },
+      {
+        id: "security-incident-first-response",
+        category: "incidents-continuity",
+        title: "Respond to a suspected security incident",
+        excerpt: "The first safe actions when credentials, private data, authorization, or a protected route may be compromised.",
+        updated: "November 14, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "Treat a suspected security incident as a preservation and escalation problem. Do not experiment in production or attempt to erase evidence." },
+          { type: "h2", text: "First response" },
+          { type: "ol", items: ["Stop the action and do not continue testing the boundary.", "Preserve the time, route, visible message, and safe technical context.", "Sign out of the affected session if it may be exposed; do not copy its credentials.", "Notify the authorized security or owner contact through the internal request path.", "Use only approved containment instructions from the person responsible for the incident."] },
+          { type: "callout", tone: "warning", title: "Do not improvise", text: "Do not delete records, rotate production secrets, change roles, or publish an explanation unless the authorized incident owner directs that action." }
+        ]
+      },
+      {
+        id: "service-outage-and-degraded-mode",
+        category: "incidents-continuity",
+        title: "Handle an outage or degraded service",
+        excerpt: "How to distinguish a local browser problem from a shared service issue and communicate without creating confusion.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "A blank page, failed API request, missing asset, or delayed queue can have different causes. Confirm the scope before asking other staff to repeat the same risky action." },
+          { type: "h2", text: "Check in order" },
+          { type: "ul", items: ["Record the affected route, browser, time, and exact visible error.", "Check the protected Platform Health and current status surfaces when your role permits it.", "Compare one safe public route and one affected protected route without using owner data.", "Do not create duplicate records, resend destructive actions, or repeatedly refresh a live production control.", "Escalate with the scope, evidence, and user impact."] }
+        ]
+      },
+      {
+        id: "moderation-decision-checklist",
+        category: "staff-reference",
+        title: "Use the moderation decision checklist",
+        excerpt: "A concise reference for consistent decisions across reports, posts, comments, and account actions.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Moderation should be consistent, proportionate, and tied to an adopted standard. Disagreement, criticism, or unusual beliefs are not automatically violations." },
+          { type: "h2", text: "Ask five questions" },
+          { type: "ol", items: ["What exact content or conduct is being reviewed?", "Which standard or safety concern applies?", "What is the smallest effective action?", "What evidence is necessary for the decision?", "What should the member or next reviewer be able to understand from the record?"] },
+          { type: "h2", text: "Separate the actions" },
+          { type: "p", text: "Content visibility, report status, member-to-member blocking, account restriction, and staff appointment changes are separate actions. Never bundle them because one queue feels convenient." }
+        ]
+      },
+      {
+        id: "privacy-review-checklist",
+        category: "staff-reference",
+        title: "Run a privacy review before sharing or publishing",
+        excerpt: "A practical internal check for member records, screenshots, reports, content drafts, media, and team information.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Internal access often makes it possible to see more than a task requires. A privacy review removes unnecessary exposure before a record moves to another person or a public surface." },
+          { type: "h2", text: "Check the material" },
+          { type: "ul", items: ["Does the recipient need this exact field, image, or message?", "Can a username, address, email, or location be removed or generalized?", "Does the screenshot reveal another tab, notification, token, or private conversation?", "Is the content covered by a consent, editorial, or publication condition?", "Is the destination approved for this type of information?"] }
+        ]
+      },
+      {
+        id: "new-staff-training-path",
+        category: "staff-reference",
+        title: "New staff training path",
+        excerpt: "A recommended order for learning internal tools without starting with high-impact member actions.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "New internal people should learn the boundaries before operating the controls. Training should use disposable or approved records whenever possible." },
+          { type: "h2", text: "Recommended order" },
+          { type: "ol", items: ["Read Start here and the role and authorization guides.", "Practice navigation with read-only dashboard, health, and audit views.", "Review moderation and privacy examples with an authorized mentor.", "Learn the exact Member Directory and Help Desk handoff procedures.", "Only then perform a live action that your appointment explicitly permits, with a second-person review when required."] }
         ]
       }
     ]

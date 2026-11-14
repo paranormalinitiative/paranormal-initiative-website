@@ -58,6 +58,30 @@
         shortLabel: "Policies & safety",
         description: "Understand TPI policies, privacy boundaries, community standards, abuse reporting, and safety-first escalation.",
         tone: "slate"
+      },
+      {
+        id: "media-events",
+        icon: "▶",
+        label: "Videos, Reels, ParaTube & events",
+        shortLabel: "Media & events",
+        description: "Watch, save, share, and troubleshoot TPI video, creator media, livestream, and event experiences.",
+        tone: "cyan"
+      },
+      {
+        id: "teams-membership",
+        icon: "⚑",
+        label: "Teams, membership & participation",
+        shortLabel: "Teams & membership",
+        description: "Learn how teams, contributors, founding membership, applications, and participation fit together.",
+        tone: "gold"
+      },
+      {
+        id: "accessibility-help",
+        icon: "◎",
+        label: "Accessibility & troubleshooting",
+        shortLabel: "Accessibility & help",
+        description: "Use TPI with assistive technology, smaller screens, supported browsers, and clear troubleshooting steps.",
+        tone: "blue"
       }
     ],
     articles: [
@@ -88,7 +112,7 @@
           { type: "h2", text: "The main destinations" },
           { type: "ul", items: ["Education Center: lessons, field guides, Ghostology 101, and EVP/ITC study material.", "Repository: reference books, terminology, evidence, and investigation resources.", "Community: the member Feed, Messenger, Friends, profiles, and events.", "Our Apps: TPI tools, StudioFlow, and the Nova editorial workspace.", "Standards & Ethics: the conduct and evidence principles that guide TPI work."] },
           { type: "h2", text: "When you need a person" },
-          { type: "p", text: "Use the Help Desk path when you cannot resolve an issue from an article. Include the page, feature, device, and what you expected to happen. Do not send a password or private recovery code." }
+          { type: "p", text: "Use the member support path when you cannot resolve an issue from an article. Include the page, feature, device, and what you expected to happen. Do not send a password or private recovery code." }
         ]
       },
       {
@@ -103,7 +127,7 @@
           { type: "h2", text: "To get started" },
           { type: "ol", items: ["Open Member Login from the site navigation or the Help Center header.", "Choose the registration option and complete the requested account fields.", "After registration, return to Member Login and sign in with your username and password.", "Open Member Home to reach your feed, profile, Messenger, saved content, and settings."] },
           { type: "h2", text: "Keep your account secure" },
-          { type: "p", text: "Use a password that is unique to TPI. TPI staff will never need your password. If you suspect an account problem, use the recovery flow and contact the Help Desk without sharing credentials." }
+          { type: "p", text: "Use a password that is unique to TPI. TPI staff will never need your password. If you suspect an account problem, use the recovery flow and contact member support without sharing credentials." }
         ]
       },
       {
@@ -115,7 +139,7 @@
         body: [
           { type: "p", text: "Start at Member Login and use the password recovery option. The recovery flow is designed to avoid revealing whether an account exists to an unauthenticated visitor." },
           { type: "h2", text: "If recovery does not work" },
-          { type: "p", text: "Open a Help Desk request and include the username or email you used, the approximate time of the last successful sign-in, and the exact message you see. Never include your password, a recovery token, or a screenshot containing private credentials." },
+          { type: "p", text: "Open a member support request and include the username or email you used, the approximate time of the last successful sign-in, and the exact message you see. Never include your password, a recovery token, or a screenshot containing private credentials." },
           { type: "callout", tone: "warning", title: "Account safety", text: "TPI support will not ask you to send a password. If a message asks for one, treat it as suspicious and report it." }
         ]
       },
@@ -158,7 +182,7 @@
         body: [
           { type: "p", text: "The member shell groups social tools under Community and You. Friends helps you find and manage connections; Notifications keeps track of activity that needs your attention." },
           { type: "h2", text: "If a notification looks wrong" },
-          { type: "p", text: "Open the linked activity first. If a link is missing, stale, or points to content you should not be able to view, report it through the Help Desk with the notification text and time." }
+          { type: "p", text: "Open the linked activity first. If a link is missing, stale, or points to content you should not be able to view, report it through member support with the notification text and time." }
         ]
       },
       {
@@ -213,7 +237,7 @@
         body: [
           { type: "p", text: "Nova is TPI’s contributor-oriented editorial workspace. Access is role-gated because it can involve draft content, review, and publishing workflows." },
           { type: "h2", text: "If you cannot open Nova" },
-          { type: "p", text: "Confirm that you are signed in to the intended member account and that your contributor access is active. If the access gate appears for the wrong role, use the Help Desk and include the page URL and account username." }
+          { type: "p", text: "Confirm that you are signed in to the intended member account and that your contributor access is active. If the access gate appears for the wrong role, use member support and include the page URL and account username." }
         ]
       },
       {
@@ -227,7 +251,7 @@
           { type: "h2", text: "Do not publish" },
           { type: "ul", items: ["Exact residential addresses, private contact information, or identifying client details without clear permission.", "Private messages, photos, recordings, or documents that another person shared with a reasonable expectation of privacy.", "Medical, mental-health, legal, or safety claims about another person.", "Passwords, recovery codes, session details, or screenshots that expose account access."] },
           { type: "h2", text: "When in doubt" },
-          { type: "p", text: "Pause publication and ask for consent or contact the Help Desk. Removing identifying details is not always enough if the surrounding story still makes a person easy to recognize." }
+          { type: "p", text: "Pause publication and ask for consent or contact member support. Removing identifying details is not always enough if the surrounding story still makes a person easy to recognize." }
         ]
       },
       {
@@ -238,10 +262,225 @@
         updated: "November 14, 2026",
         popular: true,
         body: [
-          { type: "p", text: "Use Report a Bug for a broken button, page, layout, media control, or other product behavior. Use the Help Desk for account access, privacy, safety, or questions that need a human response." },
+          { type: "p", text: "Use Report a Bug for a broken button, page, layout, media control, or other product behavior. Use member support for account access, privacy, safety, or questions that need a human response." },
           { type: "h2", text: "Include useful evidence" },
           { type: "ul", items: ["The page or feature name and a link if possible.", "The steps that led to the problem.", "What you expected and what actually happened.", "Browser, device, and approximate time.", "A screenshot only after checking that it does not expose passwords, private messages, or unrelated personal information."] },
           { type: "callout", tone: "warning", title: "Urgent safety concerns", text: "TPI support is not emergency response. If someone is in immediate danger, contact emergency services or an appropriate qualified professional first." }
+        ]
+      },
+      {
+        id: "member-home-dashboard",
+        category: "getting-started",
+        title: "Use Member Home as your starting point",
+        excerpt: "A simple map of your member home, activity, profile, saved content, settings, and community shortcuts.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Member Home is the signed-in starting point for your TPI activity. It keeps your community feed, recent activity, member identity, saved items, and key shortcuts in one place." },
+          { type: "h2", text: "What lives where" },
+          { type: "ul", items: ["Home: your member-facing activity and community starting point.", "Profile: your public member identity, bio, photo, and profile details.", "Saved and Watch History: your personal reading and viewing shortcuts.", "Settings: account, theme, privacy, Messenger blocks, and preferences.", "Help Center: member instructions, policies, and reporting routes."] },
+          { type: "h2", text: "If something is missing" },
+          { type: "p", text: "Check that you are signed in to the intended account, refresh once, and search the Help Center by the feature name. If the control is still missing, use member support rather than trying an administrative route." }
+        ]
+      },
+      {
+        id: "member-navigation-map",
+        category: "getting-started",
+        title: "Understand the member navigation",
+        excerpt: "What the TPI left navigation means and which areas are public, member-only, contributor-only, or staff-only.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "The left navigation is organized by the kind of task you are trying to do: learn about TPI, use media and apps, participate in the community, manage your own member space, or get help." },
+          { type: "h2", text: "Navigation groups" },
+          { type: "ul", items: ["TPI: public information, Education Center, Repository, Haunted Locations, teams, standards, and search.", "Video & Studio: TPI media, Reels, and Creator Studio when your account is eligible.", "Community: events, ParaNews, ParaTube, Chat, Friends, and reporting.", "Content Tools: Nova Editorial Workspace only when contributor access is active.", "You: Profile, Saved, Watch History, Settings, Help Center, and Log Out."] },
+          { type: "p", text: "Some links are intentionally hidden until the server confirms the account’s access. That is expected and protects member and staff boundaries." }
+        ]
+      },
+      {
+        id: "change-member-password",
+        category: "account-access",
+        title: "Change your password safely",
+        excerpt: "Use the account settings flow and protect your account when you believe someone else may know the password.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Change your password from the member account settings flow when you can still sign in. Use a unique password that you do not reuse on another service." },
+          { type: "h2", text: "After a suspected compromise" },
+          { type: "ol", items: ["Change the TPI password from a trusted device.", "Sign out of other sessions if the account flow offers that control.", "Review profile and contact details for changes you did not make.", "Report suspicious messages, posts, or profile changes through member support."] },
+          { type: "callout", tone: "warning", title: "Never send the password", text: "TPI staff do not need your password to investigate an account issue. Do not email or message it." }
+        ]
+      },
+      {
+        id: "login-troubleshooting",
+        category: "account-access",
+        title: "Troubleshoot sign-in without weakening account security",
+        excerpt: "A practical checklist for login errors, stale sessions, browser issues, and recovery loops.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Start with the exact message shown on Member Login. Do not repeatedly guess a password or use a different person’s account to test access." },
+          { type: "h2", text: "Try these safe checks" },
+          { type: "ul", items: ["Confirm the username spelling and use the supported Member Login page.", "Refresh the page and try a private browser window if the session appears stale.", "Disable an extension only if it is known to interfere with forms; do not install unknown software.", "Use password recovery rather than creating duplicate accounts.", "If the issue continues, send the route, time, browser, and exact error to member support without credentials."] }
+        ]
+      },
+      {
+        id: "community-posts-comments-reactions",
+        category: "community",
+        title: "Create, edit, and participate in Community Feed posts",
+        excerpt: "Use posts, comments, and reactions to share useful observations without overwhelming or exposing other members.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "The Community Feed works best when posts give readers enough context to understand what was observed and what remains uncertain." },
+          { type: "h2", text: "Before you publish" },
+          { type: "ul", items: ["Choose a clear title and explain the time, place at a safe level of detail, and direct observation.", "Separate evidence from interpretation and label speculation as speculation.", "Check images, links, and attachments for private information before posting.", "Use comments for focused follow-up instead of repeating the entire post.", "Use reactions as lightweight acknowledgement; they are not evidence or endorsement."] },
+          { type: "h2", text: "If you need to correct something" },
+          { type: "p", text: "Edit the post when the feature allows it, add a clear correction, or report the issue if the content cannot be corrected. Do not publish a second copy that leaves the incorrect version circulating without context." }
+        ]
+      },
+      {
+        id: "messenger-blocks-and-boundaries",
+        category: "community",
+        title: "Manage Messenger boundaries and member blocks",
+        excerpt: "Understand private conversations, member-to-member blocks, and when a concern belongs in a report.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Messenger is for private member-to-member conversation, not a replacement for emergency support or a private channel for bypassing community standards." },
+          { type: "h2", text: "Use the right control" },
+          { type: "ul", items: ["Mute or leave a conversation when you simply need less activity.", "Use the member-to-member block control when another member should not contact you.", "Report harassment, threats, non-consensual sharing, or other policy concerns through the reporting route.", "Do not forward private messages or screenshots without a clear safety or support reason."] },
+          { type: "callout", tone: "info", title: "Privacy first", text: "When you contact support, describe the minimum necessary facts. Do not paste an entire private conversation unless the authorized support route specifically asks for a safe excerpt." }
+        ]
+      },
+      {
+        id: "repository-and-evidence-guides",
+        category: "research-education",
+        title: "Use the Repository and evidence resources",
+        excerpt: "Find reference material, terminology, evidence guidance, and investigation context without treating a catalog as a conclusion.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "The Repository is a reference surface. Use it to compare terminology, methods, source material, and documentation approaches rather than to prove a preferred explanation." },
+          { type: "h2", text: "Read critically" },
+          { type: "ul", items: ["Check the source, date, author, and context of a claim.", "Separate an eyewitness account from an analysis or later retelling.", "Look for alternative explanations and missing data.", "Keep notes that allow another person to understand how you reached an interpretation."] }
+        ]
+      },
+      {
+        id: "equipment-and-documentation",
+        category: "research-education",
+        title: "Choose equipment and document an investigation",
+        excerpt: "A grounded workflow for equipment, notes, timestamps, environmental context, and reviewable field records.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Equipment records a measurement or signal; it does not decide what caused that signal. Document the device, settings, environment, and limits along with the result." },
+          { type: "h2", text: "A useful field record includes" },
+          { type: "ul", items: ["Permission, location context, date, time, and team members.", "Device model, settings, calibration or baseline notes, and any known limitations.", "Environmental conditions and ordinary activity that could affect the observation.", "Original files and a clear chain of copies or edits.", "A review note that separates observation, analysis, and unresolved questions."] }
+        ]
+      },
+      {
+        id: "studio-scenes-recordings-backup",
+        category: "apps-studio",
+        title: "Work with Studio scenes, media, and recordings",
+        excerpt: "Understand the Creator Studio workspace, scene order, media assignments, recordings, and backup expectations.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Creator Studio keeps the current studio configuration separate from your member account and from other studios. Scene order, media assignments, scripts, and recordings should be treated as intentional working data." },
+          { type: "h2", text: "Before changing a Studio" },
+          { type: "ul", items: ["Confirm the active Studio identity before editing scenes or media.", "Save before switching to another Studio.", "Use the maintained backup and restore flow before deleting or archiving a Studio.", "Verify the recording and media library after a significant change."] },
+          { type: "callout", tone: "warning", title: "Do not troubleshoot destructively", text: "If a Studio looks wrong, stop and report the visible state. Do not delete scenes, recordings, or media to make the interface look clean." }
+        ]
+      },
+      {
+        id: "privacy-policy-and-community-standards",
+        category: "privacy-safety",
+        title: "Read TPI privacy policy and community standards together",
+        excerpt: "How privacy, consent, evidence standards, and community conduct work together across TPI spaces.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Privacy and conduct are connected. A post can be on-topic and still be unsafe if it exposes a person, location, or private conversation without consent." },
+          { type: "h2", text: "Use the standards before sharing" },
+          { type: "ul", items: ["Get permission before recording, entering, naming, or publishing information about a private person or location.", "Avoid harassment, threats, targeted speculation, impersonation, and deliberate misinformation.", "Do not use paranormal language to diagnose or threaten a person.", "When a story involves a vulnerable person, reduce detail and seek appropriate qualified support."] }
+        ]
+      },
+      {
+        id: "report-abuse-and-appeal",
+        category: "privacy-safety",
+        title: "Report abuse, harmful content, or a privacy concern",
+        excerpt: "Choose a report route, preserve only safe evidence, and understand what member support can and cannot do.",
+        updated: "November 14, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "Use the reporting route when content or conduct may violate TPI standards, expose private information, threaten someone, or create a safety concern. A report is reviewed; it is not a guarantee of a particular outcome." },
+          { type: "h2", text: "Include" },
+          { type: "ul", items: ["The account or content link when available.", "A short description of what happened and why it concerns you.", "The approximate time and whether the issue is ongoing.", "A safe screenshot only after removing passwords, private messages, recovery codes, and unrelated personal data."] },
+          { type: "h2", text: "If you disagree with an outcome" },
+          { type: "p", text: "Reply through the support route with the report reference and the new information that should be reviewed. Do not retaliate against the reported member or publish private moderation correspondence." }
+        ]
+      },
+      {
+        id: "watch-save-events",
+        category: "media-events",
+        title: "Watch, save, and return to TPI media",
+        excerpt: "Use TPI Videos, Reels, ParaTube, Saved, and Watch History without losing track of what is public or member-only.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "TPI media appears in several experiences. Use Saved and Watch History for your own return path, and remember that a saved link does not change the access or privacy state of the original item." },
+          { type: "h2", text: "If a video will not play" },
+          { type: "ol", items: ["Check whether the item is public, member-only, or unavailable.", "Refresh once and confirm your browser allows the supported media controls.", "Try another supported browser or a stable connection.", "Report the title, page, time, device, and visible error instead of repeatedly refreshing a failing player."] }
+        ]
+      },
+      {
+        id: "events-and-live-video",
+        category: "media-events",
+        title: "Use Events and live-video pages",
+        excerpt: "Find event details, understand Coming Soon states, and keep event participation separate from emergency communication.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Event pages explain the current schedule, participation details, and any access requirements. A Coming Soon page is an honest availability state, not a broken event registration." },
+          { type: "h2", text: "Before joining" },
+          { type: "ul", items: ["Read the event time, location or access instructions, and participation expectations.", "Do not share private access links publicly.", "Use the event contact route for event questions and the reporting route for conduct or safety concerns.", "If the event page conflicts with a message, save the page URL and time and contact support."] }
+        ]
+      },
+      {
+        id: "teams-and-participation",
+        category: "teams-membership",
+        title: "Find teams and understand participation paths",
+        excerpt: "How Paranormal Teams, contributor work, applications, and member participation connect without granting automatic authority.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Paranormal Teams helps members discover approved team information. A listing, application, badge, or contributor relationship does not automatically grant staff, moderation, or administrative authority." },
+          { type: "h2", text: "Choose the right path" },
+          { type: "ul", items: ["Use team details and contact links for team-specific questions.", "Use contributor or editorial applications when you want to create TPI content.", "Use member support for an application status or access question.", "Use the safety and reporting route for conduct or privacy concerns involving a team."] }
+        ]
+      },
+      {
+        id: "founding-membership-and-applications",
+        category: "teams-membership",
+        title: "Understand memberships, applications, and entitlements",
+        excerpt: "What a membership or approved application may provide, and why access is always checked server-side.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Membership programs and applications describe participation opportunities. They do not override account security, community standards, or a separate feature’s entitlement check." },
+          { type: "h2", text: "If access does not match" },
+          { type: "ol", items: ["Sign out and back in to the intended member account.", "Read the application or membership status shown in the relevant TPI surface.", "Do not create duplicate accounts or ask another person to share access.", "Send the account username, page, status, and time to member support without sending a password or payment information."] }
+        ]
+      },
+      {
+        id: "accessibility-and-supported-browsers",
+        category: "accessibility-help",
+        title: "Use TPI with accessibility settings and supported browsers",
+        excerpt: "Practical tips for keyboard navigation, zoom, contrast, mobile layouts, screen readers, and browser updates.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "TPI pages are designed to remain usable across desktop, tablet, and mobile layouts. Use your browser and operating-system accessibility settings first; they are often more reliable than page-specific workarounds." },
+          { type: "h2", text: "Helpful checks" },
+          { type: "ul", items: ["Use keyboard focus indicators and the browser zoom control when text or controls are difficult to read.", "Keep the browser current and disable an extension only when it clearly interferes with a page.", "On mobile, open the navigation menu before assuming a link is missing.", "For media, check captions, controls, and the direct fallback link when available.", "Report the page, control name, viewport size, browser, and assistive technology when an accessibility barrier remains."] }
+        ]
+      },
+      {
+        id: "clear-cache-without-losing-data",
+        category: "accessibility-help",
+        title: "Troubleshoot a page without losing member data",
+        excerpt: "A careful order of operations for stale pages, broken layouts, missing controls, and local browser state.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Troubleshooting should preserve drafts, recordings, saved preferences, and other member data. Do not clear all browser storage as a first step." },
+          { type: "h2", text: "Use this order" },
+          { type: "ol", items: ["Record the page URL, visible message, and the action that led to the problem.", "Refresh once and check the same page in a private window if no private draft or recording is at risk.", "Sign out and back in only when the issue is clearly session-related.", "Back up important Creator Studio data before any browser reset.", "Contact member support with the safe evidence and stop if the next suggested step could delete data."] }
         ]
       },
     ]
