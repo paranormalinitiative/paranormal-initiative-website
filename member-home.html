@@ -1655,6 +1655,18 @@
             object-fit: cover;
         }
 
+        .link-preview-media video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .external-video-preview-card .link-preview-info {
+            border-top: 1px solid #1e2935;
+        }
+
         .youtube-preview-play {
             position: absolute;
             inset: 0;
@@ -5025,14 +5037,28 @@
         return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : "";
     }
 
+    function safeExternalVideoUrl(meta) {
+        if (!meta || meta.provider !== "external-video") return "";
+        var url = String(meta.videoUrl || "");
+        return /^https?:\/\//i.test(url) ? url : "";
+    }
+
     function renderLinkPreviewCard(meta) {
         if (!meta || (!meta.title && !meta.image && !meta.description)) return "";
         var host = meta.host || "";
         var title = meta.title || host || "Link";
         var desc = meta.description || "";
         var youtubeId = safeYouTubeVideoId(meta);
+        var externalVideoUrl = safeExternalVideoUrl(meta);
         var media;
-        if (meta.image) {
+        if (externalVideoUrl) {
+            var sourceType = String(meta.videoContentType || "").trim();
+            media = '<div class="link-preview-media external-video-preview-media">' +
+                '<video controls preload="metadata" playsinline' + (meta.image ? ' poster="' + escapeAttr(meta.image) + '"' : '') + ' aria-label="' + escapeAttr(title) + '">' +
+                    '<source src="' + escapeAttr(externalVideoUrl) + '"' + (sourceType ? ' type="' + escapeAttr(sourceType) + '"' : '') + '>' +
+                    'Your browser could not load this video. <a href="' + escapeAttr(externalVideoUrl) + '" target="_blank" rel="noopener noreferrer ugc">Open the video</a>.' +
+                '</video></div>';
+        } else if (meta.image) {
             media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();"></div>';
         } else {
             media = '<div class="link-preview-media link-preview-noimg">' + LINK_ICON_SVG + '</div>';
@@ -5051,6 +5077,17 @@
                     '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
                     (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : "") +
                     '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open on YouTube</a>' +
+                '</div>' +
+            '</div>';
+        }
+        if (externalVideoUrl) {
+            return '<div class="link-preview-card external-video-preview-card" data-external-video-preview="true">' +
+                media +
+                '<div class="link-preview-info">' +
+                    (host ? '<span class="link-preview-host">' + escapeHtml(host) + '</span>' : "") +
+                    '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
+                    (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : "") +
+                    '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open source</a>' +
                 '</div>' +
             '</div>';
         }

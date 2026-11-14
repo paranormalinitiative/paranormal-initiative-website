@@ -35,6 +35,21 @@ check("extracts bounded Open Graph metadata", () => {
   assert.equal(result.image, "https://example.com/cover.jpg");
 });
 
+check("extracts safe external video metadata from a linked page", () => {
+  const result = parsePreviewHtml(`<!doctype html><title>Battery Drain Experiment</title><meta property="og:image" content="/cover.jpg"><meta property="og:video:secure_url" content="/media/experiment.mp4"><meta property="og:video:type" content="video/mp4">`, "https://example.com/story");
+  assert.equal(result.provider, "external-video");
+  assert.equal(result.videoUrl, "https://example.com/media/experiment.mp4");
+  assert.equal(result.videoContentType, "video/mp4");
+  assert.equal(result.image, "https://example.com/cover.jpg");
+});
+
+check("extracts video source tags from a linked page", () => {
+  const result = parsePreviewHtml(`<!doctype html><title>Field Study</title><video controls><source src="/media/field-study.webm" type="video/webm"></video>`, "https://example.com/research");
+  assert.equal(result.provider, "external-video");
+  assert.equal(result.videoUrl, "https://example.com/media/field-study.webm");
+  assert.equal(result.videoContentType, "video/webm");
+});
+
 check("recognizes supported YouTube URL forms", () => {
   assert.equal(youtubeVideoId("https://youtu.be/qB3dMpROEdE"), "qB3dMpROEdE");
   assert.equal(youtubeVideoId("https://www.youtube.com/watch?v=qB3dMpROEdE"), "qB3dMpROEdE");
@@ -75,6 +90,16 @@ check("keeps a playable YouTube preview when metadata is rate limited", () => {
   assert.equal(youtubeFallback.preview.title, "YouTube video");
   assert.equal(youtubeFallback.preview.videoId, "nXyaLOYIZso");
   assert.equal(youtubeFallback.preview.image, "https://i.ytimg.com/vi/nXyaLOYIZso/hqdefault.jpg");
+});
+
+const directVideo = await fetchExternalLinkPreview("https://example.com/media/experiment.mp4", {
+  fetcher: async () => new Response(new Uint8Array([0, 1, 2]), { status: 200, headers: { "Content-Type": "video/mp4" } })
+});
+check("renders direct external video responses as playable previews", () => {
+  assert.equal(directVideo.ok, true);
+  assert.equal(directVideo.preview.provider, "external-video");
+  assert.equal(directVideo.preview.videoUrl, "https://example.com/media/experiment.mp4");
+  assert.equal(directVideo.preview.videoContentType, "video/mp4");
 });
 
 const localYoutube = await fetchExternalLinkPreview("https://youtu.be/qB3dMpROEdE", {
