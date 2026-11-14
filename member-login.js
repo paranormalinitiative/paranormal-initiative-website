@@ -1868,6 +1868,7 @@
   document.addEventListener("submit", async event => {
     const loginForm = event.target.closest("[data-member-login]");
     const resetRequestForm = event.target.closest("[data-password-reset-request]");
+    const resetConfirmForm = event.target.closest("[data-password-reset-confirm]");
     const memberRegisterForm = event.target.closest("[data-member-register]");
     const inviteCheckForm = event.target.closest("[data-invite-check]");
     const registerForm = event.target.closest("[data-invite-register]");
@@ -1880,7 +1881,7 @@
     const adminSearchForm = event.target.closest("[data-admin-member-search-form]");
     const adminMemberAccessForm = event.target.closest("[data-admin-member-access-form]");
     const adminSettingsSubmitForm = event.target.closest("[data-admin-settings-form]");
-    if (!loginForm && !resetRequestForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !usernameSubmitForm && !passwordForm && !adminTitleForm && !adminSearchForm && !adminMemberAccessForm && !adminSettingsSubmitForm) return;
+    if (!loginForm && !resetRequestForm && !resetConfirmForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !usernameSubmitForm && !passwordForm && !adminTitleForm && !adminSearchForm && !adminMemberAccessForm && !adminSettingsSubmitForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
@@ -1933,41 +1934,14 @@
 
     if (resetRequestForm) {
       const email = String(data.get("email") || "").trim();
-      const code = String(data.get("code") || "").trim();
-      const password = String(data.get("password") || "");
-      const confirmPassword = String(data.get("confirmPassword") || "");
       if (!email || !email.includes("@")) {
         setStatus("Enter the email address on the account.", true);
         return;
       }
       if (await cloudflareReady()) {
         try {
-          if (code) {
-            // Step 2: complete the reset with the emailed code.
-            if (password.length < 8) {
-              setStatus("Password must be at least 8 characters.", true);
-              return;
-            }
-            if (password !== confirmPassword) {
-              setStatus("Passwords do not match.", true);
-              return;
-            }
-            await window.TPIApi.confirmPasswordReset({ code, password });
-            resetRequestForm.reset();
-            const requestButton = resetRequestForm.querySelector("[data-password-reset-request-submit]");
-            const confirmButton = resetRequestForm.querySelector("[data-password-reset-confirm]");
-            if (requestButton) requestButton.hidden = false;
-            if (confirmButton) confirmButton.hidden = true;
-            setStatus("Password updated. You can sign in with your new password now.", false);
-            return;
-          }
-          // Step 1: request the emailed code.
           const response = await window.TPIApi.requestPasswordReset({ email });
-          const codeInput = resetRequestForm.querySelector("input[name='code']");
-          const requestButton = resetRequestForm.querySelector("[data-password-reset-request-submit]");
-          const confirmButton = resetRequestForm.querySelector("[data-password-reset-confirm]");
-          if (requestButton) requestButton.hidden = true;
-          if (confirmButton) confirmButton.hidden = false;
+          const codeInput = document.querySelector("[data-password-reset-confirm] input[name='code']");
           if (codeInput) codeInput.focus();
           setStatus(response.message || "Reset code sent — check your email.", false);
         } catch (error) {
@@ -1979,6 +1953,28 @@
       setStatus(localUser
         ? "Local preview found that email. Live email delivery needs the Cloudflare backend."
         : "If that email is on an account, reset instructions will be sent.", false);
+      return;
+    }
+
+    if (resetConfirmForm) {
+      const code = String(data.get("code") || "").trim();
+      const password = String(data.get("password") || "");
+      const confirmPassword = String(data.get("confirmPassword") || "");
+      if (password !== confirmPassword) {
+        setStatus("Passwords do not match.", true);
+        return;
+      }
+      if (!await cloudflareReady()) {
+        setStatus("Password recovery needs the live member service.", true);
+        return;
+      }
+      try {
+        await window.TPIApi.confirmPasswordReset({ code, password });
+        resetConfirmForm.reset();
+        setStatus("Password updated. You can sign in with your new password now.", false);
+      } catch (error) {
+        setStatus(error.message || "Password could not be updated.", true);
+      }
       return;
     }
 
@@ -2727,10 +2723,10 @@
     const forgotToggle = event.target.closest("[data-forgot-password-toggle]");
     if (forgotToggle) {
       event.preventDefault();
-      const resetForm = document.querySelector("[data-password-reset-request]");
-      if (!resetForm) return;
-      resetForm.hidden = !resetForm.hidden;
-      if (!resetForm.hidden) resetForm.querySelector("input[name='email']")?.focus();
+      const recovery = document.querySelector("[data-password-recovery]");
+      if (!recovery) return;
+      recovery.hidden = !recovery.hidden;
+      if (!recovery.hidden) recovery.querySelector("input[name='email']")?.focus();
       return;
     }
 
