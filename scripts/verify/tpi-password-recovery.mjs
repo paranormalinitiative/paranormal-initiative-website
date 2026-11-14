@@ -17,6 +17,7 @@ const checks = [
   ["confirmation invalidates existing sessions", api.includes("DELETE FROM sessions WHERE contributor_id = ?")],
   ["login card is labeled for members", login.includes("<h2>Member Login</h2>") && !login.includes("<h2>Contributor Access</h2>")],
   ["footer link is labeled Member Login", footer.includes('href="member-login.html">Member Login</a>') && !footer.includes("Contributor Login")],
+  ["password recovery exposes a final save button", login.includes('data-password-reset-confirm') && login.includes("Save New Password")],
   ["reset email has the expected subject", passwordResetEmail("12345678").subject === "Reset your password — The Paranormal Initiative"],
 ];
 

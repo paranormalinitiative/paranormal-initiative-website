@@ -1954,12 +1954,20 @@
             }
             await window.TPIApi.confirmPasswordReset({ code, password });
             resetRequestForm.reset();
+            const requestButton = resetRequestForm.querySelector("[data-password-reset-request-submit]");
+            const confirmButton = resetRequestForm.querySelector("[data-password-reset-confirm]");
+            if (requestButton) requestButton.hidden = false;
+            if (confirmButton) confirmButton.hidden = true;
             setStatus("Password updated. You can sign in with your new password now.", false);
             return;
           }
           // Step 1: request the emailed code.
           const response = await window.TPIApi.requestPasswordReset({ email });
           const codeInput = resetRequestForm.querySelector("input[name='code']");
+          const requestButton = resetRequestForm.querySelector("[data-password-reset-request-submit]");
+          const confirmButton = resetRequestForm.querySelector("[data-password-reset-confirm]");
+          if (requestButton) requestButton.hidden = true;
+          if (confirmButton) confirmButton.hidden = false;
           if (codeInput) codeInput.focus();
           setStatus(response.message || "Reset code sent — check your email.", false);
         } catch (error) {
