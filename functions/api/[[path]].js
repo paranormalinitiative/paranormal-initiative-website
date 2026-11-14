@@ -10,6 +10,7 @@ import { buildPublicationSnapshot, novaDocumentFromContent, novaDocHasPublishabl
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
+import { passwordResetEmail, randomCode, sendEmail } from "../../lib/email.js";
 import {
   CAPABILITY,
   MEMBERSHIP_CLASSES,
@@ -65,6 +66,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
     if (request.method === "POST" && path === "/auth/logout") return handleLogout(request, env);
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
+    if (request.method === "POST" && path === "/auth/password-reset/confirm") return handlePasswordResetConfirm(request, env);
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/admin/staff-roles") return requireExecutive(request, env, user => handleAdminStaffRoles(request, env, user));
@@ -474,23 +476,54 @@ async function handlePasswordResetRequest(request, env) {
   if (!email || !email.includes("@")) return json({ error: "Enter the email address on the account." }, 400);
 
   const user = await getUserByEmail(env, email);
-  if (user) {
+  if (user?.active && user.correspondence) {
     try {
-      const token = crypto.randomUUID();
-      const expires = new Date(Date.now() + 1000 * 60 * 60).toISOString();
+      const token = randomCode();
+      const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
       await env.TPI_DB.prepare(`
         INSERT INTO password_reset_tokens (token, contributor_id, expires_at)
         VALUES (?, ?, ?)
       `).bind(token, user.id, expires).run();
+      const emailResult = await sendEmail(env, {
+        to: user.correspondence,
+        ...passwordResetEmail(token)
+      });
+      if (!emailResult.ok) console.error("password reset email was not sent", emailResult.error || "unknown-error");
     } catch (error) {
-      // The reset-token table and outbound email provider can be enabled after the UI is live.
+      console.error("password reset request failed", error.message || error);
     }
   }
 
   return json({
     ok: true,
-    message: "If that email is on a member account, reset instructions will be sent when email delivery is connected."
+    message: "If that email is on a member account, reset instructions have been sent."
   });
+}
+
+async function handlePasswordResetConfirm(request, env) {
+  const data = await readJson(request);
+  const code = clean(data.code);
+  const password = String(data.password || "");
+  if (!/^\d{8}$/.test(code)) return json({ error: "Enter the 8-digit reset code from your email." }, 400);
+  if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
+
+  const reset = await env.TPI_DB.prepare(`
+    SELECT prt.token, prt.contributor_id AS contributorId
+    FROM password_reset_tokens prt
+    JOIN contributors c ON c.id = prt.contributor_id
+    WHERE prt.token = ? AND prt.used = 0 AND prt.expires_at > CURRENT_TIMESTAMP AND c.active = 1
+    LIMIT 1
+  `).bind(code).first();
+  if (!reset) return json({ error: "That reset code is invalid or expired." }, 400);
+
+  const passwordHash = await hashPassword(password);
+  await env.TPI_DB.batch([
+    env.TPI_DB.prepare("UPDATE contributors SET password_hash = ? WHERE id = ?").bind(passwordHash, reset.contributorId),
+    env.TPI_DB.prepare("UPDATE password_reset_tokens SET used = 1 WHERE token = ?").bind(reset.token),
+    env.TPI_DB.prepare("DELETE FROM sessions WHERE contributor_id = ?").bind(reset.contributorId)
+  ]);
+
+  return json({ ok: true, message: "Password updated. You can sign in with your new password now." });
 }
 
 async function handleLogout(request, env) {
