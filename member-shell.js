@@ -454,9 +454,14 @@
     // for the Editorial Review Queue. The flag is server-derived navigation
     // only; every review API route re-checks EDITORIAL_REVIEW.
     var staffRole = String(user && user.staffIdentity && user.staffIdentity.role || "").toLowerCase();
+    // The Worker derives this flag from the authenticated session and the
+    // active staff/capability records. Keep the role fields as a compatibility
+    // fallback for older session payloads, but do not hide the Owner path when
+    // the server has already authorized it.
+    var serverAdminAccess = Boolean(user && user.adminAccess === true);
     var canUseAdminPanel = staffRole
       ? ["owner", "executive", "full_administrator", "administrator"].includes(staffRole)
-      : role === "owner" || role === "admin" || Boolean(user && user.editorialReviewAccess === true);
+      : role === "owner" || role === "admin" || serverAdminAccess || Boolean(user && user.editorialReviewAccess === true);
     document.querySelectorAll("[data-moderator-only]").forEach(function (element) {
       element.hidden = !["owner", "executive", "full_administrator", "administrator", "moderator"].includes(staffRole)
         && role !== "owner" && role !== "admin";
