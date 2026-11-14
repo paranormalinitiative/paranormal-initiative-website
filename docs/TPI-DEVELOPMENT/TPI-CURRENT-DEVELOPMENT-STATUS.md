@@ -1,5 +1,9 @@
 # TPI Current Development Status
 
+## 2026-11-14 — Password recovery access repair and live browser verification
+
+Status: **DEPLOYED AND LIVE VERIFIED — release `rel-cd6cb26318a9-86a3b5fb3aec`, Worker `d71984cf-a52d-4d65-af82-c28b066b51e1`, 100% traffic.** The recovery page now has independent Send Reset Code and Save New Password forms, so a member who already has a code can complete recovery without reentering an email. The login document is served with `Cache-Control: no-store` and references a new script version. A dedicated isolated Firefox test passed against both the local and live site, confirming that the save action is rendered and that submitting a code calls confirmation with the email field blank. Full preflight passed 30 gates; production smoke passed 10/10 and Firefox release acceptance passed 65/65. Owner password completion remains for the owner to perform privately. See [Member Login and Password Recovery Repair](300-COMPLETED-WORK/2026-11-14-MEMBER-LOGIN-PASSWORD-RECOVERY-REPAIR.md).
+
 ## 2026-11-14 — Password recovery final save action
 
 Status: **DEPLOYED AND LIVE VERIFIED — release `rel-05bcb175909a-6417cd0fffd8`, Worker `9552fe40-5519-41d1-b089-1582ce913c33`, 100% traffic.** The recovery form was missing the final submit button even though the confirmation API was implemented. Added the visible **Save New Password** action, switched to it after a code request, and restored the request state after a successful reset. Password-recovery verification passed **12/12**, local authentication lifecycle passed **38/38** with isolated Firefox **65/65**, full preflight passed **30/30**, live smoke passed **10/10**, and production Firefox acceptance passed **65/65**. See [Member Login and Password Recovery Repair](300-COMPLETED-WORK/2026-11-14-MEMBER-LOGIN-PASSWORD-RECOVERY-REPAIR.md).

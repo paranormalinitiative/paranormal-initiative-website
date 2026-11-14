@@ -68,3 +68,47 @@ Follow-up release: `rel-05bcb175909a-6417cd0fffd8`
 Deployed Worker version: `9552fe40-5519-41d1-b089-1582ce913c33`
 
 Rollback version: `f7eb7aaa-c736-48bf-98a6-ebef34797245`
+
+## Access repair after owner browser report
+
+The prior fix still coupled code confirmation to the email request form. Its
+save control was hidden until the email request completed in the same page
+session. That failed the owner workflow of using an already received code,
+especially with an empty required email field. A source-only assertion for the
+presence of the button did not test whether it was actually visible.
+
+The recovery panel now contains two independent forms. Save New Password is
+visible whenever the panel is open, and it requires only the eight-digit code
+and matching new password. The login HTML is delivered with `Cache-Control:
+no-store`, and its script URL was updated. An isolated Firefox interaction
+verified the rendered button and mocked confirmation against both local and
+production pages. The production test did not submit an actual owner code.
+
+The owner reported receiving a reset email. This contradicts the preceding
+claim that DNS prevented delivery; that claim was unsupported and should not
+be used as the incident cause.
+
+Verification: recovery checks 12/12, local auth lifecycle 38/38 and Firefox
+65/65, full preflight 30/30 gates, production smoke 10/10, production release
+Firefox 65/65, targeted live recovery Firefox PASS, final login HTML response
+`Cache-Control: no-store`.
+
+Source commit: `cd6cb26318a91e42f54eba25eacfb9e32e8c1c83`
+
+Release: `rel-cd6cb26318a9-86a3b5fb3aec`
+
+Worker: `d71984cf-a52d-4d65-af82-c28b066b51e1`
+
+Rollback version: `9552fe40-5519-41d1-b089-1582ce913c33`
+
+### Follow-up auth audit findings
+
+- Password-reset requests return a generic success even when the email
+  provider rejects the send, making delivery faults invisible to the member.
+- The eight-digit confirmation endpoint currently has no attempt throttle in
+  application code. Add rate limiting before large-scale member onboarding.
+- The original recovery regression test checked source text and a mocked API,
+  so it missed the missing or hidden browser action. Keep the new Firefox
+  interaction in the auth release gate.
+- Owner completion with a real code and login is not independently verified;
+  it requires the owner to enter the private code and password.
