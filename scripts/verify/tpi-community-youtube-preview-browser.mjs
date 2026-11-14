@@ -30,6 +30,7 @@ const driver = await new Builder()
   .build();
 
 let postId = "";
+let bodyOnlyPostId = "";
 try {
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 30_000 });
   await driver.manage().window().setRect({ width: 1280, height: 900 });
@@ -90,6 +91,23 @@ try {
   assert.equal(player.fullscreen, true);
   assert.equal(player.cardPresent, true);
 
+  const bodyOnly = await driver.executeAsyncScript(`var done=arguments[arguments.length-1], urls=arguments[0];
+    fetch('/api/community/posts',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      categoryId:'general',title:'Synthetic body-only YouTube preview acceptance',body:'Two videos in the post text.\\n'+urls.join('\\n')
+    })}).then(function(response){return response.json().catch(function(){return {};}).then(function(body){done({status:response.status,body:body});});})
+      .catch(function(error){done({status:0,error:String(error)});});`, urls);
+  assert.equal(bodyOnly.status, 200, JSON.stringify(bodyOnly));
+  bodyOnlyPostId = bodyOnly.body.postId || bodyOnly.body.post?.id || "";
+  assert.ok(bodyOnlyPostId);
+  await driver.get(`${base}/member-home?member=1&post=${encodeURIComponent(bodyOnlyPostId)}#post-${encodeURIComponent(bodyOnlyPostId)}`);
+  await driver.wait(async () => (await driver.findElements(By.css(`#post-${bodyOnlyPostId} [data-youtube-preview]`))).length === 2, 20_000);
+  const bodyOnlyState = await driver.executeScript(`var card=document.getElementById('post-'+arguments[0]); return {
+    previews:Array.from(card.querySelectorAll('[data-youtube-preview]')).map(function(node){return node.getAttribute('data-youtube-preview');}),
+    storedLinkChips:card.querySelectorAll('.feed-link-chip').length
+  };`, bodyOnlyPostId);
+  assert.deepEqual(bodyOnlyState.previews, ["qB3dMpROEdE", "nXyaLOYIZso"]);
+  assert.equal(bodyOnlyState.storedLinkChips, 0);
+
   console.log(JSON.stringify({
     status: "PASS",
     suite: "TPI-COMMUNITY-YOUTUBE-PREVIEW",
@@ -99,6 +117,7 @@ try {
       "two YouTube attachments render two ordered preview cards",
       "each preview preserves a direct YouTube fallback link",
       "Play opens a privacy-enhanced YouTube iframe inside the Community Feed card",
+      "body-only YouTube URLs render two ordered previews without stored link chips",
       "test used a disposable synthetic member post"
     ]
   }, null, 2));
@@ -106,6 +125,11 @@ try {
   if (postId) {
     try {
       await driver.executeAsyncScript(`var done=arguments[arguments.length-1], id=arguments[0]; fetch('/api/community/posts/'+encodeURIComponent(id),{method:'DELETE',credentials:'same-origin'}).then(function(response){done(response.status);}).catch(function(){done(0);});`, postId);
+    } catch {}
+  }
+  if (bodyOnlyPostId) {
+    try {
+      await driver.executeAsyncScript(`var done=arguments[arguments.length-1], id=arguments[0]; fetch('/api/community/posts/'+encodeURIComponent(id),{method:'DELETE',credentials:'same-origin'}).then(function(response){done(response.status);}).catch(function(){done(0);});`, bodyOnlyPostId);
     } catch {}
   }
   await driver.quit();

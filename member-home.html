@@ -4940,19 +4940,36 @@
     }
 
     // ===== LINK PREVIEW CARDS (Facebook-style) =====
-    // After the feed paints, each link attachment is checked against
-    // /api/link-preview; matching cards get an image + title + description
-    // preview under the post body. Multiple links keep their original order.
+    // After the feed paints, each saved link attachment and each URL found in
+    // the post body is checked against /api/link-preview. This keeps previews
+    // working for older/newer posts even when a client did not persist a link
+    // attachment record. Multiple links keep their original order and are
+    // deduplicated before fetching.
+    function linkPreviewUrlsForPost(item) {
+        var urls = [];
+        var seen = {};
+        var add = function(raw) {
+            var url = String(raw || "").replace(/[),.;!?]+$/g, "");
+            if (!/^https?:\/\//i.test(url) || seen[url]) return;
+            seen[url] = true;
+            urls.push(url);
+        };
+        (item.attachments || []).forEach(function(attachment) {
+            if ((attachment.mediaType || "") === "link") add(attachment.url);
+        });
+        (String(item.body || "").match(/https?:\/\/[^\s<>"']+/gi) || []).forEach(add);
+        return urls;
+    }
+
     function hydrateLinkPreviews(items) {
         items.forEach(function(item) {
             if (item.type !== "community_post") return;
-            var links = (item.attachments || []).filter(function(a) { return (a.mediaType || "") === "link" && /^https?:\/\//i.test(a.url || ""); });
+            var links = linkPreviewUrlsForPost(item);
             if (!links.length) return;
             var slot = document.querySelector('[data-link-preview-slot="' + cssEscape(item.postId || "") + '"]');
             if (!slot) return;
             slot.innerHTML = "";
-            links.forEach(function(link, index) {
-                var url = link.url;
+            links.forEach(function(url, index) {
                 var previewSlot = document.createElement("div");
                 previewSlot.setAttribute("data-link-preview-item", String(index));
                 slot.appendChild(previewSlot);
