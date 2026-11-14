@@ -22,13 +22,37 @@ Some notification records came from SQLite `CURRENT_TIMESTAMP`, which is UTC tex
 4. The shared `member-login.js` cache version was advanced site-wide so every page receives the repaired notification formatter.
 5. Regression checks were added for UTC timestamp parsing and delayed post focusing.
 
+### Follow-up: person-level comment context
+
+The first repair could identify the correct post but did not consistently open the exact comment that generated a notification. This was especially noticeable when the comment panel was collapsed or when delayed media/link-preview layout changes moved the comment after the first scroll.
+
+The follow-up fix now:
+
+1. Adds a `comment=` target to new comment notifications.
+2. Enriches older matching comment notifications from the visible comment record, so existing notifications gain the same person-level destination when a safe match exists.
+3. Opens the exact post, expands its comments, finds the exact comment, highlights it, and settles the scroll position after asynchronous layout changes.
+4. Labels comment notifications as comment notifications while preserving normal post notification behavior.
+5. Parses feed and comment timestamps using the same explicit UTC handling as notification timestamps.
+
 ## Verification
 
 - Existing member interaction regression checks: passed.
 - New timestamp and post-focus source checks: passed.
 - Live Chrome diagnostic: the notification navigated to the exact post URL and the matching post card was present; the missing behavior was confirmed to be the scroll/focus step.
+- Live Chrome final acceptance: the notification opened post `6b08787c-2a22-4920-850b-16755bf347ef`, expanded comments, highlighted comment `f94a2f13-8f64-4b07-84b4-1648a1f561a9`, and left it visible in the viewport.
+- Firefox targeted profile/feed acceptance: 49/49 passed during the final preflight.
+- Production anonymous smoke: 10/10 passed.
 - Browser policy: the implementation uses standard anchors, URL hashes, `Date`, and `scrollIntoView`, with no browser-specific share or navigation API dependency.
 - Release classification: website/member experience only; protected application source and deployments were not included.
+
+## Final release record
+
+- Final source commit: `450d35e16e5ff71d82f3cb99dcb556ebca2c8ba8`
+- Release candidate: `rel-450d35e16e5f-49dab5179161`
+- Production Worker version: `11b578e6-43ac-49f7-b165-6fc3441c6b88`
+- Final preflight duration: 29.5 seconds
+- Final guarded deployment and smoke duration: 17.3 seconds
+- Protected application deployments: skipped; StudioFlow acceptance was not required for this website-only release.
 
 ## Reference lesson
 
