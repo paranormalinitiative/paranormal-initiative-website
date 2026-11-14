@@ -42,8 +42,12 @@ const protectedBaseline = [
   { path: "studio/index.html", bytes: 10, sha256: "studio-old" },
   { path: "nova/index.html", bytes: 10, sha256: "nova-old" },
   { path: "admin-center-preview/index.html", bytes: 10, sha256: "admin-old" },
+  { path: "admin-center-preview/release.json", bytes: 10, sha256: "admin-release-old" },
 ];
-const protectedUnchanged = protectedApplicationDifferences(protectedBaseline, [...protectedBaseline, { path: "index.html", bytes: 2, sha256: "website-new" }]);
+const protectedUnchanged = protectedApplicationDifferences(protectedBaseline, [
+  ...protectedBaseline.map(entry => entry.path === "admin-center-preview/release.json" ? { ...entry, sha256: "admin-release-new" } : entry),
+  { path: "index.html", bytes: 2, sha256: "website-new" },
+]);
 if (protectedUnchanged.length) {
   failures += 1;
   console.error(`FAIL protected app guard rejects an unrelated website byte: ${protectedUnchanged.join(", ")}`);

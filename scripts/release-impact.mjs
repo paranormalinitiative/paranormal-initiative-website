@@ -103,7 +103,12 @@ export function isWebsiteOnlyImpact(impact) {
 }
 
 export function protectedApplicationDifferences(previousAssets = [], currentAssets = []) {
-  const isProtected = entry => PROTECTED_APPLICATION_PREFIXES.some(prefix => entry.path.startsWith(prefix));
+  // The Admin Center release manifest is generated during candidate staging
+  // and intentionally changes its source commit/timestamp on every release.
+  // Protect the actual preview application bytes, but do not mistake this
+  // deployment metadata for an Admin Center application change.
+  const isProtected = entry => entry.path !== "admin-center-preview/release.json"
+    && PROTECTED_APPLICATION_PREFIXES.some(prefix => entry.path.startsWith(prefix));
   const previous = new Map(previousAssets.filter(isProtected).map(entry => [entry.path, `${entry.bytes}:${entry.sha256}`]));
   const current = new Map(currentAssets.filter(isProtected).map(entry => [entry.path, `${entry.bytes}:${entry.sha256}`]));
   const paths = [...new Set([...previous.keys(), ...current.keys()])].sort();
