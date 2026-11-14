@@ -3854,13 +3854,14 @@ async function handleCommunityMediaUpload(request, env, user) {
 }
 
 async function handleMessengerMediaUpload(request, env, user) {
-  return handleMediaUpload(request, env, user, "messenger", "messenger-media", ["image/", "video/", "audio/", "application/pdf", "text/plain", "application/octet-stream"]);
+  return handleMediaUpload(request, env, user, "messenger", "messenger-media", ["image/", "video/", "audio/", "application/pdf", "text/plain", "application/zip", "application/octet-stream"]);
 }
 
 async function handleMediaUpload(request, env, user, area, purpose, allowedTypes) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const upload = await readUploadFile(request);
   if (!upload) return json({ error: "Choose a media file to upload." }, 400);
+  upload.type = normalizeUploadContentType(upload);
 
   const allowed = allowedTypes || [
     "image/",
@@ -3898,9 +3899,13 @@ async function hasMessengerMediaAccess(env, url, user) {
   const { results } = await env.TPI_DB.prepare(`
     SELECT conversation_id AS conversationId, attachments
     FROM messages
-    WHERE deleted_at IS NULL AND attachments LIKE ?
-    LIMIT 100
-  `).bind(`%${url}%`).all();
+    WHERE deleted_at IS NULL AND attachments IS NOT NULL
+    ORDER BY created_at DESC
+    LIMIT 5000
+  `).all();
+  // Do the URL comparison after JSON parsing. Besides avoiding wildcard
+  // interpretation in SQLite, this keeps a media filename containing `%` or
+  // `_` from changing the authorization query or throwing a D1 error.
   for (const row of results || []) {
     const attachments = safeJsonParse(row.attachments);
     if (!Array.isArray(attachments) || !attachments.some(item => item?.url === url)) continue;
@@ -3930,7 +3935,14 @@ async function handleMediaRequest(path, env, request) {
   const object = await env.TPI_MEDIA.get(key);
   if (!object) return json({ error: "Media file not found." }, 404);
   const headers = new Headers();
-  object.writeHttpMetadata(headers);
+  // A small number of older R2 objects were written with incomplete or
+  // browser-specific metadata. Do not let one malformed metadata record turn
+  // an otherwise valid private attachment into a Worker 1101 response.
+  try { object.writeHttpMetadata(headers); } catch (error) {}
+  if (!headers.get("Content-Type")) {
+    const inferredType = mediaContentTypeFromKey(key);
+    if (inferredType) headers.set("Content-Type", inferredType);
+  }
   headers.set("Cache-Control", key.startsWith("private-library/") ? "private, no-store" : "public, max-age=31536000, immutable");
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Content-Security-Policy", "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'none'");
@@ -11242,6 +11254,47 @@ async function readUploadFile(request) {
     size: Number(file.size || 0),
     body: await file.arrayBuffer()
   };
+}
+
+const UPLOAD_CONTENT_TYPES_BY_EXTENSION = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  gif: "image/gif",
+  avif: "image/avif",
+  mp4: "video/mp4",
+  m4v: "video/x-m4v",
+  mov: "video/quicktime",
+  webm: "video/webm",
+  mp3: "audio/mpeg",
+  wav: "audio/wav",
+  m4a: "audio/mp4",
+  pdf: "application/pdf",
+  txt: "text/plain",
+  csv: "text/csv",
+  json: "application/json",
+  rtf: "application/rtf",
+  zip: "application/zip"
+};
+
+function uploadExtension(name) {
+  return clean(name).toLowerCase().match(/\.([a-z0-9]{2,8})$/)?.[1] || "";
+}
+
+function normalizeUploadContentType(upload) {
+  const suppliedType = clean(upload?.type).toLowerCase();
+  const inferredType = UPLOAD_CONTENT_TYPES_BY_EXTENSION[uploadExtension(upload?.name)] || "";
+  const browserGenericType = !suppliedType
+    || suppliedType === "application/octet-stream"
+    || suppliedType === "binary/octet-stream"
+    || suppliedType === "application/x-zip-compressed";
+  return browserGenericType && inferredType ? inferredType : suppliedType || inferredType || "application/octet-stream";
+}
+
+function mediaContentTypeFromKey(key) {
+  const extension = uploadExtension(key);
+  return UPLOAD_CONTENT_TYPES_BY_EXTENSION[extension] || "";
 }
 
 function profileImageContentType(upload) {

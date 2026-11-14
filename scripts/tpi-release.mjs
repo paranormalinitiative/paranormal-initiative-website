@@ -361,6 +361,16 @@ async function preflight() {
         timing: { bucket: "certification", browser: true },
       });
     }
+    if (impact.changedFiles.some(path => /member-shell|member-home|functions\/api|messenger|media/i.test(path))) {
+      run("Targeted Messenger browser regression", process.execPath, ["scripts/verify/tpi-member-messenger.mjs"], {
+        env: { TPI_MESSENGER_BASE_URL: "http://127.0.0.1:8787" },
+        timing: { bucket: "certification", browser: true },
+      });
+      run("Targeted Messenger media upload round trip", process.execPath, ["scripts/qa/tpi-messenger-media-roundtrip.mjs"], {
+        env: { TPI_MESSENGER_BASE_URL: "http://127.0.0.1:8787" },
+        timing: { bucket: "certification" },
+      });
+    }
   } else if (impact.profile === "website") {
     await waitForLocalReleaseSurfaces();
     await runLocalAuthCheck("Website release shared authentication smoke");

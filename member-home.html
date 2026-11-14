@@ -3101,7 +3101,7 @@
                             </div>
                         </div>
                     </div>
-                    <input type="file" data-composer-file-input accept="image/*,video/*" multiple hidden>
+                    <input type="file" data-composer-file-input accept="image/*,video/*,.mp4,.m4v,.mov,.webm,.pdf,.txt,.csv,.json,.rtf,.doc,.docx,.odt,.xls,.xlsx,.zip,application/zip,application/x-zip-compressed" multiple hidden>
                 </div>
                 <div class="composer-link-row" data-composer-link-row hidden>
                     <input type="url" class="composer-link-input" data-composer-link-input placeholder="Paste a link to share (https://...)" inputmode="url">
@@ -4342,6 +4342,7 @@
 
     function setupComposer() {
         if (!composerBody || !composerPostBtn) return;
+        bindPlainTextPasteControls();
         composerBody.addEventListener("input", function() {
             updatePostButtonState();
             syncComposerBodyLinks();
@@ -4471,8 +4472,8 @@
         var newFiles = Array.from(files);
         for (var i = 0; i < newFiles.length; i++) {
             var file = newFiles[i];
-            var isImage = file.type.startsWith("image/");
-            var isVideo = file.type.startsWith("video/");
+            var isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif|avif)$/i.test(file.name || "");
+            var isVideo = file.type.startsWith("video/") || /\.(mp4|m4v|mov|webm)$/i.test(file.name || "");
             if (isImage && images.length >= 10) { composerStatus.textContent = "Maximum 10 images."; continue; }
             if (isVideo && videos.length >= 2) { composerStatus.textContent = "Maximum 2 videos."; continue; }
             if (!isImage && !isVideo && fileAttachments.length >= 5) { composerStatus.textContent = "Maximum 5 files."; continue; }
@@ -4482,6 +4483,28 @@
         }
         renderPreviews();
         updatePostButtonState();
+    }
+
+    function bindPlainTextPasteControls() {
+        if (document.documentElement.dataset.tpiPlainPasteBound) return;
+        document.documentElement.dataset.tpiPlainPasteBound = "1";
+        document.addEventListener("paste", function(event) {
+            var target = event.target && event.target.closest
+                ? event.target.closest("textarea[data-composer-body], textarea[data-comment-input], textarea[data-edit-textarea]")
+                : null;
+            if (!target || !event.clipboardData || typeof event.clipboardData.getData !== "function") return;
+            var text = event.clipboardData.getData("text/plain");
+            if (text === null || text === undefined) return;
+            event.preventDefault();
+            var start = typeof target.selectionStart === "number" ? target.selectionStart : target.value.length;
+            var end = typeof target.selectionEnd === "number" ? target.selectionEnd : start;
+            if (typeof target.setRangeText === "function") {
+                target.setRangeText(text, start, end, "end");
+            } else {
+                target.value = target.value.slice(0, start) + text + target.value.slice(end);
+            }
+            target.dispatchEvent(new Event("input", { bubbles: true }));
+        }, true);
     }
 
     function renderPreviews() {

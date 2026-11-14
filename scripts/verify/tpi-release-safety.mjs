@@ -133,6 +133,12 @@ check("complete QA runs the StudioFlow request-budget guard", () => {
 check("complete QA runs the member profile media source contracts", () => {
   assert.match(qaRunner, /tpi-member-interactions\.mjs/);
 });
+check("Messenger media releases include browser and upload round-trip regressions", () => {
+  assert.match(release, /Targeted Messenger browser regression/);
+  assert.match(release, /tpi-member-messenger\.mjs/);
+  assert.match(release, /Targeted Messenger media upload round trip/);
+  assert.match(release, /tpi-messenger-media-roundtrip\.mjs/);
+});
 check("isolated E2E applies migrations through one ordered disposable D1 operation", () => {
   assert.match(isolatedWorker, /migrations_dir =/);
   assert.match(isolatedApiE2E, /d1 migrations apply TPI_DB/);

@@ -132,9 +132,27 @@ try {
   check("long chat previews stay on one line without overflowing the Chats list", chatPreviewLayout.found && chatPreviewLayout.previewHeight <= 18 && chatPreviewLayout.previewScrollWidth >= chatPreviewLayout.previewClientWidth && chatPreviewLayout.whiteSpace === "nowrap" && chatPreviewLayout.overflow === "hidden" && chatPreviewLayout.textOverflow === "ellipsis" && chatPreviewLayout.listOverflow === "auto", JSON.stringify(chatPreviewLayout));
 
   const composer = await driver.findElement(By.css("[data-chat-input]"));
+  const attachmentPickerState = await js(`var media=document.querySelector('[data-chat-media-input]'), files=document.querySelector('[data-chat-file-input]');
+    return {mediaAccept:media&&media.getAttribute('accept')||'', fileAccept:files&&files.getAttribute('accept')||''};`);
+  check("Messenger pickers expose MP4 and ZIP formats", attachmentPickerState.mediaAccept.includes(".mp4") && attachmentPickerState.fileAccept.includes(".zip") && attachmentPickerState.fileAccept.includes("application/zip"), JSON.stringify(attachmentPickerState));
   await composer.sendKeys("Disposable Messenger composer check");
   check("message composer accepts input", await composer.getAttribute("value") === "Disposable Messenger composer check");
   await composer.clear();
+  const messengerPaste = await js(`var input=document.querySelector('[data-chat-input]');
+    input.focus(); input.value='';
+    var transfer=new DataTransfer(); transfer.setData('text/plain','Pasted Messenger text');
+    var event=new Event('paste',{bubbles:true,cancelable:true}); Object.defineProperty(event,'clipboardData',{value:transfer});
+    input.dispatchEvent(event);
+    return input.value;`);
+  check("Messenger composer accepts pasted text", messengerPaste === "Pasted Messenger text", JSON.stringify(messengerPaste));
+  const feedPaste = await js(`var textarea=document.querySelector('[data-composer-body]');
+    if(!textarea) return null;
+    textarea.focus(); textarea.value='';
+    var transfer=new DataTransfer(); transfer.setData('text/plain','Pasted feed text');
+    var event=new Event('paste',{bubbles:true,cancelable:true}); Object.defineProperty(event,'clipboardData',{value:transfer});
+    textarea.dispatchEvent(event);
+    return textarea.value;`);
+  check("Community composer accepts pasted text", feedPaste === "Pasted feed text", JSON.stringify(feedPaste));
 
   await driver.findElement(By.css("[data-chat-minimize]")).click();
   await waitFor("Messenger hide", async () => (await state())?.hidden === true);

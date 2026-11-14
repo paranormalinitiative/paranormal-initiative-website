@@ -2707,12 +2707,12 @@
             '<p class="member-chat-status" data-chat-status role="status" aria-live="polite" hidden></p>' +
             '<div class="member-chat-tools" aria-label="Message tools">' +
               '<button type="button" data-chat-media title="Add photos or videos">Photo</button>' +
-              '<button type="button" data-chat-file title="Attach a text or PDF file">Files</button>' +
+              '<button type="button" data-chat-file title="Attach a document or ZIP file">Files</button>' +
               '<button type="button" data-chat-voice title="Add a voice message">Voice</button>' +
               '<button type="button" data-chat-emoji title="Open emojis">Emoji</button>' +
             '</div>' +
-            '<input type="file" data-chat-media-input accept="image/*,video/*" multiple hidden>' +
-            '<input type="file" data-chat-file-input accept=".txt,.pdf,text/plain,application/pdf" multiple hidden>' +
+            '<input type="file" data-chat-media-input accept="image/*,video/*,.mp4,.m4v,.mov,.webm" multiple hidden>' +
+            '<input type="file" data-chat-file-input accept=".txt,.pdf,.zip,text/plain,application/pdf,application/zip,application/x-zip-compressed" multiple hidden>' +
             '<input type="text" data-chat-input placeholder="Send a message">' +
               '<button type="button" data-chat-like title="Send thumbs up">Like</button>' +
               '<button type="submit" data-chat-send>Send</button>' +
@@ -2774,6 +2774,7 @@
     var conversationListSyncTimer = null;
     var conversationListSyncInFlight = false;
     var presenceHeartbeatInFlight = false;
+    bindPlainTextPaste(inputEl, false);
     syncChatMinimizeButton();
 
     renderOnline();
@@ -4712,7 +4713,29 @@
       var name = String(fileOrAttachment && fileOrAttachment.name || "").toLowerCase();
       if (contentType === "application/pdf" || name.endsWith(".pdf")) return "PDF document";
       if (contentType === "text/plain" || name.endsWith(".txt")) return "Text document";
+      if (contentType === "application/zip" || contentType === "application/x-zip-compressed" || name.endsWith(".zip")) return "ZIP archive";
       return "Document file";
+    }
+
+    function bindPlainTextPaste(element, multiline) {
+      if (!element || element.dataset.plainPasteBound) return;
+      element.dataset.plainPasteBound = "1";
+      element.addEventListener("paste", function(event) {
+        var clipboard = event.clipboardData;
+        if (!clipboard || typeof clipboard.getData !== "function") return;
+        var text = clipboard.getData("text/plain");
+        if (text === null || text === undefined) return;
+        event.preventDefault();
+        if (!multiline) text = text.replace(/[\r\n]+/g, " ");
+        var start = typeof element.selectionStart === "number" ? element.selectionStart : element.value.length;
+        var end = typeof element.selectionEnd === "number" ? element.selectionEnd : start;
+        if (typeof element.setRangeText === "function") {
+          element.setRangeText(text, start, end, "end");
+        } else {
+          element.value = element.value.slice(0, start) + text + element.value.slice(end);
+        }
+        element.dispatchEvent(new Event("input", { bubbles: true }));
+      });
     }
 
   // Default chat bubble color follows the active theme accent (asylum =
