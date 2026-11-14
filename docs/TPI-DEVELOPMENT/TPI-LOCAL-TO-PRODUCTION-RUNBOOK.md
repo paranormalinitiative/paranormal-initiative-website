@@ -209,9 +209,21 @@ Make only the changes required by the current directive. Preserve unrelated
 systems and use disposable Studios and synthetic media.
 
 If maintained local assets changed, the running local launcher re-stages the
-changed served files automatically (root website files and `assets/`, `nova/`,
-`content-editor-nova/`, `studio/assets/`, `admin-center-preview/`). No owner
-restart is required. A full re-stage is still available when needed:
+changed served files automatically. Calling the maintained local start command
+again is also a safe freshness boundary: if the Worker is already running, it
+refreshes the general website files in place before any browser can reuse the
+Worker. Stable application directories (`studio/`, `nova/`, and
+`content-editor-nova/`) are not touched by that reuse refresh. No owner restart
+is required for ordinary website work. The explicit refresh command is:
+
+```sh
+npm run dev:local:refresh
+```
+
+The refresh command updates the running Worker’s staged website assets in place
+or creates the full stage when the Worker is stopped. It refuses to touch an
+unverified process on port 8787. A full re-stage is still available when needed
+before a Worker restart:
 
 ```sh
 node scripts/stage-local-assets.mjs

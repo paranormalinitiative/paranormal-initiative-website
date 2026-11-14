@@ -72,8 +72,7 @@ export function syncStagedPaths({ repoRoot = process.cwd(), relativePaths = [] }
       continue;
     }
     if (stats.isDirectory()) {
-      rmSync(target, { recursive: true, force: true });
-      cpSync(source, target, { recursive: true, filter });
+      syncDirectoryInPlace(source, target, filter);
     } else {
       mkdirSync(dirname(target), { recursive: true });
       cpSync(source, target, { filter });
@@ -84,6 +83,25 @@ export function syncStagedPaths({ repoRoot = process.cwd(), relativePaths = [] }
     synced.push({ path: segments.join("/"), action: "synced" });
   }
   return { stage, synced };
+}
+
+function syncDirectoryInPlace(source, target, filter) {
+  mkdirSync(target, { recursive: true });
+  const sourceEntries = readdirSync(source, { withFileTypes: true });
+  const sourceNames = new Set(sourceEntries.map(entry => entry.name));
+  for (const entry of readdirSync(target, { withFileTypes: true })) {
+    const sourcePath = join(source, entry.name);
+    if (!sourceNames.has(entry.name) || !filter(sourcePath)) {
+      rmSync(join(target, entry.name), { recursive: true, force: true });
+    }
+  }
+  for (const entry of sourceEntries) {
+    const sourcePath = join(source, entry.name);
+    const targetPath = join(target, entry.name);
+    if (!filter(sourcePath)) continue;
+    if (entry.isDirectory()) syncDirectoryInPlace(sourcePath, targetPath, filter);
+    else cpSync(sourcePath, targetPath, { filter });
+  }
 }
 
 export function stageLocalAssets({ repoRoot = process.cwd(), env = process.env } = {}) {

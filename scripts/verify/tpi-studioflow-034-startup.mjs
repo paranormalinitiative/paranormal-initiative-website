@@ -48,6 +48,7 @@ check("Stable Node path", /<string>\/opt\/homebrew\/bin\/node<\/string>/.test(pl
 check("Local working directory", plist.includes(`<string>${repoRoot}</string>`), repoRoot);
 check("Local-only environment", configSource.includes('TPI_LOCAL_ONLY = "1"') && configSource.includes('TPI_DISABLE_OUTBOUND = "1"'), "loopback/local-only configuration");
 check("Readiness watchdog present", launcherSource.includes("readinessMonitor") && launcherSource.includes("readiness was lost"), "launcher exits for launchd recovery when 8787 readiness is lost");
+check("reusing the local Worker refreshes general website assets", launcherSource.includes("refreshRunningWorkerAssets") && launcherSource.includes("refreshRunningWorkerAssets();"), "an already-running Worker cannot silently retain stale site markup");
 check("LaunchAgent is loaded and running", /state = running/.test(launchdPrint()), "launchctl print reports running");
 
 const status = await httpStatus("/");

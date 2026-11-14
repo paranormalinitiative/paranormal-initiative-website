@@ -35,6 +35,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Login works, then the member is sent somewhere unexpected | [Member access](#inc-2026-11-14-03--member-access-and-home-redirect-loop) | Session identity, staff-role fallback, stale browser state |
 | Password reset appears to work but sign-in fails | [Password recovery](#inc-2026-11-14-04--password-storage-and-recovery-hardening) | Session creation, password hash compatibility, recovery code |
 | A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) and [body-link recurrence](#inc-2026-11-14-10--community-feed-youtube-body-link-recurrence) | Link preview extraction, body URL discovery, iframe boundary |
+| Firefox acceptance cannot see markup that is present in source | [Local Worker asset freshness](#inc-2026-11-14-11--local-worker-asset-freshness) | Local staged assets, Worker reuse, browser acceptance |
 | Help content is visible to the wrong audience | [Two Help Centers](#inc-2026-11-14-06--member-help-center-and-internal-help-desk-confusion) | Member Help Center, internal Help Desk, Admin Center gate |
 | StudioFlow controls are missing during an automated check | [StudioFlow acceptance timing](#inc-2026-11-14-02--studioflow-acceptance-check-clicked-before-controls-were-ready) | Browser hydration, release acceptance timing |
 | A Studio opens with another Studio's scenes or media | [Studio isolation](#inc-2026-10-25-01--studio-creation-and-workspace-isolation) | Per-Studio identity, workspace hydration, local snapshots |
@@ -394,6 +395,25 @@ website-only repairs.
 
 **Completion record:**
 [`2026-11-14-COMMUNITY-FEED-YOUTUBE-BODY-LINK-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-COMMUNITY-FEED-YOUTUBE-BODY-LINK-REPAIR.md)
+
+### INC-2026-11-14-11 — Local Worker asset freshness
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 15:14:15 ET**, during Firefox member profile acceptance |
+| Symptom | Firefox received older profile markup even though the repository source contained the current profile implementation |
+| Root cause | An already-running local Worker reused its previous `.local-dev/assets` stage when `dev:local` returned early; a watcher event could be missed or race with acceptance startup |
+| Fix | Added an in-place general-site asset refresh before reusing the maintained Worker, plus the explicit `npm run dev:local:refresh` command |
+| Protection | Refresh removes stale general-site files without replacing the watched directory and excludes `studio/`, `nova/`, and `content-editor-nova/` |
+| Verification | Staging **14/14**; startup **11/11**; cache-busting/watcher **14/14**; refreshed **280 paths**; Firefox profile/feed acceptance **53/53** |
+| Status | **Repaired locally and pushed; no production deployment required** |
+
+**Lesson:** A browser acceptance run must never rely on a possibly stale staged
+copy. Reusing the maintained local Worker is now itself a freshness boundary,
+while stable application directories remain protected from unrelated website
+refreshes.
+
+**Reference:** [`2026-11-14-LOCAL-WORKER-ASSET-FRESHNESS-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-LOCAL-WORKER-ASSET-FRESHNESS-REPAIR.md)
 
 ### INC-2026-10-25-01 — Studio creation and workspace isolation
 

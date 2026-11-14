@@ -4,6 +4,7 @@
   "scripts": {
     "dev:local": "node scripts/local-dev.mjs",
     "dev:local:status": "node scripts/local-dev.mjs status",
+    "dev:local:refresh": "node scripts/local-dev.mjs refresh",
     "dev:local:stop": "node scripts/local-dev.mjs stop",
     "dev:local:service:install": "node scripts/local-dev-service.mjs install",
     "dev:local:service:start": "node scripts/local-dev-service.mjs start",

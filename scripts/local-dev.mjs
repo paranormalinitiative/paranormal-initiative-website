@@ -5,6 +5,7 @@ import { createConnection } from "node:net";
 import {
   existsSync,
   mkdirSync,
+  readdirSync,
   readFileSync,
   renameSync,
   unlinkSync,
@@ -13,7 +14,7 @@ import {
 } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { syncStagedPaths } from "./stage-local-assets.mjs";
+import { stageLocalAssets, syncStagedPaths } from "./stage-local-assets.mjs";
 import { stageStudioAssets } from "./stage-local-studio-assets.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -47,6 +48,7 @@ const servedAssetWatchTargets = [
 // Root-level pages and hand-authored assets (for example paper-editor.html and
 // its script) are served directly, so a change there must refresh too.
 const rootServedAssetPattern = /\.(?:avif|css|gif|html|ico|jpe?g|js|json|mjs|mp3|mp4|pdf|png|svg|txt|wav|webm|webp|woff2?)$/i;
+const protectedLocalAssetDirectories = new Set(["studio", "nova", "content-editor-nova"]);
 
 function fail(message, code = 1) {
   console.error(message);
@@ -171,6 +173,28 @@ function watchServedAssets() {
     if (debounceTimer) clearTimeout(debounceTimer);
     for (const watcher of watchers) watcher.close();
   };
+}
+
+// A repeated `dev:local` invocation is a deterministic freshness boundary.
+// When the Worker is already running, refresh only the general website paths
+// in place; stable application directories are left alone until their own
+// explicitly authorized workflow runs.
+function refreshRunningWorkerAssets() {
+  const stage = resolve(localRoot, "assets");
+  if (!existsSync(stage)) throw new Error("Local asset stage is missing; restart the local Worker to create it safely.");
+  const paths = [];
+  for (const entry of readdirSync(repoRoot, { withFileTypes: true })) {
+    if (entry.name.startsWith(".") || protectedLocalAssetDirectories.has(entry.name)) continue;
+    const source = resolve(repoRoot, entry.name);
+    if (entry.isFile()) {
+      if (rootServedAssetPattern.test(entry.name)) paths.push(entry.name);
+    } else if (entry.isDirectory() && ["assets", "admin-center-preview"].includes(entry.name)) {
+      paths.push(entry.name);
+    }
+  }
+  const { synced } = syncStagedPaths({ repoRoot, relativePaths: paths });
+  console.log(`Refreshed local assets before reuse: ${synced.length} path(s)`);
+  return synced;
 }
 
 function clearWorkerState(expectedChildPid = null) {
@@ -384,6 +408,7 @@ async function startWorker() {
   const listeners = listenersForPort(workerPort);
   if (listeners.length || await portReachable(workerPort)) {
     if (ownedWorkerState(state)) {
+      refreshRunningWorkerAssets();
       console.log("TPI local Worker is already running under the local launcher; no duplicate was started.");
       printStatus();
       return;
@@ -516,10 +541,26 @@ async function startWorker() {
   }
 }
 
+async function refreshAssetsCommand() {
+  const state = readWorkerState();
+  const listeners = listenersForPort(workerPort);
+  if (listeners.length || await portReachable(workerPort)) {
+    if (!ownedWorkerState(state)) {
+      fail("Refusing to refresh 8787: launcher ownership could not be verified. No process was changed.", 2);
+      return;
+    }
+    refreshRunningWorkerAssets();
+    return;
+  }
+  const result = stageLocalAssets({ repoRoot });
+  console.log(`Staged local assets for the next Worker start: ${JSON.stringify(result)}`);
+}
+
 const command = process.argv[2] || "start";
 if (command === "status") printStatus();
 else if (command === "stop") await stopWorker();
 else if (command === "start") await startWorker();
+else if (command === "refresh") refreshAssetsCommand();
 else {
-  fail(`Unknown local development command: ${command}. Use start, status, or stop.`);
+  fail(`Unknown local development command: ${command}. Use start, status, stop, or refresh.`);
 }

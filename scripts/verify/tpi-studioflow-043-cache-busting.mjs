@@ -34,7 +34,7 @@ check("local development assets retain no-store behavior", worker.includes('cons
 check("Studio authentication runs before asset serving", worker.includes('if (url.pathname === "/studio" || url.pathname.startsWith("/studio/"))') && worker.indexOf("hasCreatorStudioAccess") < worker.indexOf("return servePageAsset(request, env)"));
 check("no production cache policy was changed", !worker.includes("public, max-age=31536000, immutable") || worker.includes('if (!isDevelopmentAsset) return response'));
 check("the local launcher watches StudioFlow asset directories", localDev.includes("studioAssetWatchTargets") && localDev.includes('watch(directory, { persistent: false }') && !localDev.includes('"index-j2x9m9vI.js"') && !localDev.includes('"index-DXjilBOR.css"'));
-check("source changes are debounced before restaging", localDev.includes("setTimeout(stageNow, 300)") && localDev.includes("stage-local-studio-assets.mjs"));
+check("source changes are debounced before restaging", localDev.includes("setTimeout(refreshNow, 300)") && localDev.includes("stage-local-studio-assets.mjs"));
 check("live asset restaging writes atomically", liveStage.includes("renameSync(temporary, target)") && liveStage.includes("stageStudioAssets"));
 
 for (const result of checks) console.log(`${result.passed ? "PASS" : "FAIL"} ${result.name}`);

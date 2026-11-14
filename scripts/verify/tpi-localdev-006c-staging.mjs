@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // TPI-LOCALDEV-006C focused checks for local static asset staging.
 // Run: node scripts/verify/tpi-localdev-006c-staging.mjs
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join, dirname, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import assert from "node:assert/strict";
-import { DEFAULT_ASSET_FILE_LIMIT, assetFileLimit, stageLocalAssets } from "../stage-local-assets.mjs";
+import { DEFAULT_ASSET_FILE_LIMIT, assetFileLimit, stageLocalAssets, syncStagedPaths } from "../stage-local-assets.mjs";
 import { STUDIO_RUNTIME_FILES } from "../stage-local-studio-assets.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -135,6 +135,17 @@ try {
     assert.equal(has("footer.html"), true);
     assert.equal(has("footer.txt"), true);
     assert.equal(has("member-sidebar.txt"), true);
+  });
+
+  check("in-place refresh updates changed assets without replacing the staged directory", () => {
+    const before = readFileSync(join(staged.stage, "assets/logo.svg"), "utf8");
+    write(join(fixture, "assets/logo.svg"), "<svg>updated</svg>\n");
+    write(join(fixture, "assets/new.svg"), "<svg>new</svg>\n");
+    const result = syncStagedPaths({ repoRoot: fixture, relativePaths: ["assets"] });
+    assert.equal(before, "<svg></svg>\n");
+    assert.equal(result.synced[0].path, "assets");
+    assert.equal(readFileSync(join(staged.stage, "assets/logo.svg"), "utf8"), "<svg>updated</svg>\n");
+    assert.equal(readFileSync(join(staged.stage, "assets/new.svg"), "utf8"), "<svg>new</svg>\n");
   });
 
   check("an abnormal asset explosion fails with an actionable ceiling message", () => {
