@@ -30,19 +30,24 @@ try {
 
   await driver.executeScript(() => {
     window.__recoveryCalls = [];
-    window.TPIApi.isAvailable = async () => true;
+    window.TPIApi.isAvailable = async () => false;
     window.TPIApi.requestPasswordReset = async data => { window.__recoveryCalls.push({ type: "request", data }); return { message: "Code requested" }; };
     window.TPIApi.confirmPasswordReset = async data => { window.__recoveryCalls.push({ type: "confirm", data }); return { ok: true }; };
   });
   const fill = async (name, value, form) => driver.findElement(By.css(`${form} input[name="${name}"]`)).sendKeys(value);
+  await fill("email", "example@example.com", "[data-password-reset-request]");
+  await driver.findElement(By.css('[data-password-reset-request] button[type="submit"]')).click();
+  await driver.wait(async () => (await driver.executeScript(() => window.__recoveryCalls.length)) === 1, 10000);
+  assert.deepEqual(await driver.executeScript(() => window.__recoveryCalls[0]), { type: "request", data: { email: "example@example.com" } });
+  await driver.findElement(By.css('[data-password-reset-request] input[name="email"]')).clear();
   await fill("code", "12345678", "[data-password-reset-confirm]");
   await fill("password", "sample-password-123", "[data-password-reset-confirm]");
   await fill("confirmPassword", "sample-password-123", "[data-password-reset-confirm]");
   await driver.findElement(By.css('[data-password-reset-confirm] button[type="submit"]')).click();
-  await driver.wait(async () => (await driver.executeScript(() => window.__recoveryCalls.length)) === 1, 10000);
-  assert.deepEqual(await driver.executeScript(() => window.__recoveryCalls[0]), { type: "confirm", data: { code: "12345678", password: "sample-password-123" } });
+  await driver.wait(async () => (await driver.executeScript(() => window.__recoveryCalls.length)) === 2, 10000);
+  assert.deepEqual(await driver.executeScript(() => window.__recoveryCalls[1]), { type: "confirm", data: { code: "12345678", password: "sample-password-123" } });
   assert.match(await driver.findElement(By.css("#member-login-status")).getText(), /Password updated/);
-  console.log("PASS: Firefox shows the save action and confirms a code without requiring an email field");
+  console.log("PASS: Firefox requests and confirms a code even when the unrelated availability probe fails");
 } finally {
   await driver.quit();
 }

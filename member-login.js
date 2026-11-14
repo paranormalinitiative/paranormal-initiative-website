@@ -1938,21 +1938,14 @@
         setStatus("Enter the email address on the account.", true);
         return;
       }
-      if (await cloudflareReady()) {
-        try {
-          const response = await window.TPIApi.requestPasswordReset({ email });
-          const codeInput = document.querySelector("[data-password-reset-confirm] input[name='code']");
-          if (codeInput) codeInput.focus();
-          setStatus(response.message || "Reset code sent — check your email.", false);
-        } catch (error) {
-          setStatus(error.message, true);
-        }
-        return;
+      try {
+        const response = await window.TPIApi.requestPasswordReset({ email });
+        const codeInput = document.querySelector("[data-password-reset-confirm] input[name='code']");
+        if (codeInput) codeInput.focus();
+        setStatus(response.message || "If that email is on an account, check your inbox for a reset code.", false);
+      } catch (error) {
+        setStatus(error.message || "Could not request a reset code. Please try again.", true);
       }
-      const localUser = users.find(user => String(user.correspondence || user.email || "").toLowerCase() === email.toLowerCase());
-      setStatus(localUser
-        ? "Local preview found that email. Live email delivery needs the Cloudflare backend."
-        : "If that email is on an account, reset instructions will be sent.", false);
       return;
     }
 
@@ -1962,10 +1955,6 @@
       const confirmPassword = String(data.get("confirmPassword") || "");
       if (password !== confirmPassword) {
         setStatus("Passwords do not match.", true);
-        return;
-      }
-      if (!await cloudflareReady()) {
-        setStatus("Password recovery needs the live member service.", true);
         return;
       }
       try {
