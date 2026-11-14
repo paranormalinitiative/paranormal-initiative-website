@@ -1,7 +1,7 @@
 # TPI Community Help Center Foundation
 
 Date: 2026-11-14
-Status: IMPLEMENTED — LOCAL BROWSER VERIFIED / RELEASE PENDING
+Status: IMPLEMENTED — DEPLOYED AND LIVE-VERIFIED
 
 ## Scope
 
@@ -53,4 +53,11 @@ Community Help Center and single-source-of-truth requirements in
 - Official local Worker at `http://127.0.0.1:8787/` — running.
 - Local Firefox-equivalent browser verification — home, category, article,
   search results, theme picker, Help Desk, and mobile navigation drawer passed.
-- No production deployment has been performed from this record yet.
+- `npm run release:preflight` — passed; certified release candidate
+  `rel-f4bf92a6011a-3101bb97aaee`, 35 gates passed.
+- `TPI_PRODUCTION_DEPLOY=approved npm run release:production` — passed.
+- Live anonymous production smoke — passed, 10/10.
+- Live isolated Firefox Developer Edition production acceptance — passed, 65/65;
+  owner profile was not accessed.
+- Deployed Worker version: `84896722-5830-479f-9c7f-78bb93c1dd24`.
+- Rollback Worker version: `6c84d19b-6e50-4d5d-a6d7-75da5152cf12`.
