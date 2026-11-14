@@ -1,4 +1,10 @@
-# Member Access Resilience Audit — 2026-11-14
+# Catastrophic Member Access Resilience Audit — 2026-11-14
+
+Incident: `TPI-SEV1-AUTH-2026-11-13`
+
+Severity: **SEV-1 / catastrophic member-access failure**
+
+Resolution: **Deployed, live verified, and owner accepted**
 
 ## Scope and outcome
 
@@ -8,6 +14,26 @@ owner lockout. It is not a certification of every site feature or of email
 delivery to every provider. The owner confirmed that signing in opened Member
 Home after the legacy Admin session repair. The subsequent recovery safeguards
 are deployed and live verified without using the owner's private credentials.
+This was a sequence of production failures rather than one isolated UI defect.
+The owner could neither authenticate nor reliably complete the recovery path,
+and the same path was exposed to all production members. No evidence of data
+loss, credential disclosure, account takeover, or a TPI cyberattack was found.
+See the dedicated
+[SEV-1 postmortem](2026-11-14-SEV-1-MEMBER-ACCESS-POSTMORTEM.md).
+
+## Severity and blast radius
+
+- **Actual impact:** the production owner account was locked out until the
+  repair was deployed and privately accepted by the owner.
+- **Potential impact:** any member who forgot a password could encounter the
+  same incomplete, blocked, or misleading recovery lifecycle.
+- **Administrative impact:** the owner could not depend on the affected account
+  to reach Member Home and the site's authenticated controls.
+- **Business impact:** a member could reasonably abandon the site after a reset
+  email failed, a save action was absent, or a successful reset returned to
+  Member Login.
+- **Not observed:** destructive data loss, password disclosure, account
+  takeover, unauthorized role change, or a production database breach.
 
 ## Confirmed incident causes
 
@@ -29,6 +55,17 @@ are deployed and live verified without using the owner's private credentials.
 5. The release suite's synthetic member path did not cover the legacy Admin
    identity. Legacy Admin and recovery API/browser gates were added. The
    owner-confirmed login is the direct acceptance evidence for the incident.
+
+## External incident context
+
+The owner reported that many businesses and individuals were experiencing
+problems on November 13. That report is consistent with confirmed Microsoft 365
+and Cloudflare incidents, as documented in the
+[SEV-1 postmortem](2026-11-14-SEV-1-MEMBER-ACCESS-POSTMORTEM.md). The FAA also
+confirmed a separate nationwide communications ground stop. These events are
+important operating context, but there is no evidence that they caused TPI's
+reproducible login and recovery defects or that TPI was attacked. The TPI
+failures have confirmed application and schema-compatibility causes.
 
 ## Safeguards now live
 
@@ -90,6 +127,7 @@ history; cleanup here does not authorize destructive production data changes.
 ## Evidence
 
 - [Member Login and Password Recovery Repair](../300-COMPLETED-WORK/2026-11-14-MEMBER-LOGIN-PASSWORD-RECOVERY-REPAIR.md)
+- [SEV-1 Member Access Incident Postmortem](2026-11-14-SEV-1-MEMBER-ACCESS-POSTMORTEM.md)
 - `functions/api/[[path]].js`, `lib/auth.js`, `lib/staff-roles.js`
 - `scripts/verify/tpi-password-recovery.mjs`,
   `scripts/verify/tpi-password-recovery-browser.mjs`,

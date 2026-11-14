@@ -1,7 +1,25 @@
 # Member Login and Password Recovery Repair
 
 Date: 2026-11-14  
-Status: **DEPLOYED AND LIVE VERIFIED**
+Incident: `TPI-SEV1-AUTH-2026-11-13`
+
+Severity: **SEV-1 / catastrophic member-access failure**
+
+Status: **DEPLOYED, LIVE VERIFIED, AND OWNER ACCEPTED**
+
+## Catastrophic-event classification
+
+This record covers a chain of production member-access failures that locked the
+owner out and exposed every member to an unreliable recovery path. The event is
+classified as SEV-1 because login and account recovery are critical access
+controls, the owner could not reach the authenticated site, and a member could
+leave after encountering the same behavior. The classification does not claim
+that all members attempted recovery or were locked out. No data loss,
+credential disclosure, account takeover, or TPI cyberattack was found.
+
+The complete impact, root-cause chain, external infrastructure context, and
+future incident standard are recorded in the
+[SEV-1 Member Access Incident Postmortem](../200-AUDITS/2026-11-14-SEV-1-MEMBER-ACCESS-POSTMORTEM.md).
 
 ## Incident
 
@@ -282,3 +300,15 @@ Rollback version: `689c02b6-624e-425c-9f85-83d858c9dc15`
 
 The broader audit and remaining risks are recorded in
 [Member Access Resilience Audit](../200-AUDITS/2026-11-14-MEMBER-ACCESS-RESILIENCE-AUDIT.md).
+
+## November 13 external infrastructure context
+
+Cloudflare, Microsoft, and the FAA each reported significant service or
+communications incidents on November 13, and the New Orleans vessel collision
+was also confirmed. Those events explain why many businesses and individuals
+reported an unusually disruptive day. They do not establish that TPI was
+attacked or that a shared cause produced the TPI lockout. TPI's login bounce and
+recovery failures were reproduced and traced to this repository's application
+logic, missing optional-schema compatibility, and incomplete browser coverage.
+The dedicated postmortem preserves the verified external sources and the
+causation boundary.
