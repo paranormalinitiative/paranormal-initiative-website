@@ -168,3 +168,34 @@ Release: `rel-32673265c10c-c70252d5602e`
 Worker: `4229354b-a0fd-4aa5-bfb3-08385104b6b7`
 
 Rollback version: `ec81be70-cdf1-4c61-96fa-aea079c70509`
+
+## Visible reset confirmation and Member Home handoff
+
+The owner reported that Save New Password appeared to do nothing. The prior
+page placed the result message below the login and registration cards, outside
+the visible recovery panel. On success it also stayed on the same page without
+signing the member in. The recovery panel now shows request, error, saving, and
+success messages directly beneath the reset action. A successful confirmation
+invalidates old sessions, creates a fresh session cookie, announces “Password
+saved,” and opens Member Home after a short pause. A visible Member Home link
+provides a fallback. An invalid code remains on the form with an inline error.
+
+The focused browser test exercises both an invalid code and a successful
+response. It passed locally and against the live page with mocked API calls;
+neither test used an owner code or password. Password-recovery checks passed
+15/15, local auth lifecycle 38/38, full preflight 30 gates, live anonymous
+smoke 10/10, and isolated production Firefox acceptance 65/65.
+
+A separate read-only production query counted one recently consumed reset code
+for the owner's account. This is consistent with the prior Save action having
+updated the password while its feedback remained offscreen. The query did not
+read any code, password, or password hash. The owner's actual sign-in was not
+performed by the agent.
+
+Source commit: `541d8e29854a7a3f75c58ec29c65fe3e70c4052b`
+
+Release: `rel-541d8e29854a-b916ab496c03`
+
+Worker: `c9435aa6-59f8-486a-8aaf-2ab5819fb89b`
+
+Rollback version: `4229354b-a0fd-4aa5-bfb3-08385104b6b7`
