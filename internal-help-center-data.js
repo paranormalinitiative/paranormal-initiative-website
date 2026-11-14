@@ -18,7 +18,7 @@
         icon: "✦",
         label: "Staff orientation & boundaries",
         shortLabel: "Start here",
-        description: "Understand the internal Help Center, staff roles, escalation, and the difference between member and operational tools.",
+        description: "Understand the Help Desk, staff roles, escalation, and the difference between member and operational tools.",
         tone: "green"
       },
       {
