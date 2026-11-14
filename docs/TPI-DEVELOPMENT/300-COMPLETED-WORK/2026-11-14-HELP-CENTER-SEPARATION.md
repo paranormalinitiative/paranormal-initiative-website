@@ -1,7 +1,7 @@
 # TPI Member and Internal Help Center Separation
 
 Date: 2026-11-14
-Status: IMPLEMENTED — LOCAL VERIFIED / RELEASE PENDING
+Status: IMPLEMENTED — DEPLOYED AND LIVE-VERIFIED
 
 ## Decision
 
@@ -40,3 +40,13 @@ actions. The current account action is documented using TPI’s interface label
   blocking procedure article, and internal search results passed.
 - Anonymous HTTP verification — member Help Center 200; Internal Help Center
   403.
+
+## Release verification
+
+- Release candidate: `rel-bde8954b4d67-bfc03b60460d` — Tier 1 certified with
+  35 release gates passed.
+- Source commit: `bde8954b4d6734e5eec50b7cf8c124673e51bc6c`.
+- Deployed Worker version: `b014cf10-77c6-497d-a224-15bd277aaf7a`.
+- Rollback version: `84896722-5830-479f-9c7f-78bb93c1dd24`.
+- Live anonymous production smoke — passed, 10/10.
+- Live isolated Firefox Developer Edition acceptance — passed, 65/65.
