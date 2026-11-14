@@ -234,3 +234,8 @@ Release: `rel-44c8b8658580-42b7e7a720da`
 Worker: `d68fde11-e688-457f-bb48-bada8978868f`
 
 Rollback version: `c9435aa6-59f8-486a-8aaf-2ab5819fb89b`
+
+Owner acceptance: the owner confirmed that signing in on production opened
+Member Home. The private password was not shared with the agent. This confirms
+the owner access incident is resolved; the separate recovery hardening items
+above remain follow-up work.
