@@ -50,6 +50,13 @@ check("extracts video source tags from a linked page", () => {
   assert.equal(result.videoContentType, "video/webm");
 });
 
+check("extracts video files linked from older page scripts", () => {
+  const result = parsePreviewHtml(`<!doctype html><title>Field Study</title><script>const clip = "media\\/battery-drain.mp4";</script><a href="/media/backup.webm">Video</a>`, "https://example.com/research");
+  assert.equal(result.provider, "external-video");
+  assert.equal(result.videoUrl, "https://example.com/media/battery-drain.mp4");
+  assert.equal(result.videoContentType, "video/mp4");
+});
+
 check("recognizes supported YouTube URL forms", () => {
   assert.equal(youtubeVideoId("https://youtu.be/qB3dMpROEdE"), "qB3dMpROEdE");
   assert.equal(youtubeVideoId("https://www.youtube.com/watch?v=qB3dMpROEdE"), "qB3dMpROEdE");
