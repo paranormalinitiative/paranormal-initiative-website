@@ -1,6 +1,11 @@
 # Content Editor Roadmap
 
-Last updated: July 26, 2026
+Last updated: November 14, 2026
+
+Current access note: member login and password recovery are deployed. New and
+changed credentials use salted PBKDF2-SHA-256 with guarded compatibility for
+legacy SHA-256 records. The configured recovery provider path is connected;
+real mailbox delivery and provider-failure observability remain open.
 
 ## Goal
 
@@ -342,7 +347,9 @@ Recently completed:
 - Legacy conversion records now include best-fit destination and contribution type metadata, so Convert pre-fills the editor destination/type before saving or publishing.
 - Discussion Portal was added with category browsing, member topics/replies, chat-style bubbles, blue/green activity badges, and leadership/admin cleanup controls.
 - Member/contributor/admin access boundaries were tightened so regular members can use the forum but do not see contributor/editor/admin tools.
-- Account recovery/password reset UI and token table were added, but email delivery is not connected yet.
+- Account recovery/password reset UI, API, token lifecycle, and configured
+  provider path are deployed. Real mailbox delivery and delivery-failure
+  observability remain to be certified.
 
 ## Contributor Portal State
 

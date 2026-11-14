@@ -27,6 +27,9 @@ change was found during this response.
 The owner confirmed that production Sign In opened Member Home after the final
 legacy Admin session repair. Additional recovery limits, single-use code
 protection, hosted-service safeguards, and release gates were then deployed.
+Password storage was subsequently modernized in a separate verified follow-up:
+new and changed credentials now use salted PBKDF2-SHA-256, while legacy
+SHA-256 records upgrade after successful login without a bulk rewrite.
 
 ## Member-visible impact
 
@@ -140,6 +143,8 @@ SEV-1 incident until blast radius and recovery are established.
 
 The unresolved security and resilience work is tracked in
 [Member Access Resilience Audit](2026-11-14-MEMBER-ACCESS-RESILIENCE-AUDIT.md),
-including password-hash modernization, delivery-failure monitoring, recovery
-transaction boundaries, staff-schema readiness, and distributed attempt-limit
-behavior.
+including delivery-failure monitoring, recovery transaction boundaries,
+staff-schema readiness, distributed attempt-limit behavior, and the API async
+error boundary. Password-hash modernization is complete in release
+`rel-710b6c9126f5-dedd127c76c8`; see the
+[completion record](../300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md).

@@ -4,6 +4,8 @@ Legend: **PASS** = executed evidence; **PARTIAL** = some local coverage; **BLOCK
 
 | Pipeline | Local synthetic/integration | Actual media or external transport | Production/authenticated | Evidence / limitation |
 |---|---:|---:|---:|---|
+| Member password storage and legacy upgrade | PASS — 9/9 hash, 23/23 recovery, 20/20 staff roles | n/a | PASS — synthetic QA login in isolated Firefox; no owner/ordinary-member mutation | PBKDF2-SHA-256 120,000 iterations; guarded legacy SHA-256 upgrade; release `rel-710b6c9126f5-dedd127c76c8` |
+| Recovery email delivery | API/provider path connected | real mailbox delivery NOT YET VERIFIED | provider-failure operational signal NOT YET VERIFIED | generic response protects account existence and is not delivery proof |
 | Social auth and permissions | PASS | n/a | anonymous boundaries previously read-only verified | `api-e2e.sh`, production smoke is read-only |
 | Community feed, comments, replies, reactions | PASS | n/a | authenticated production mutation NOT YET VERIFIED | 152/0 local suite |
 | Messenger, unread/read, block/mute | PASS | attachments exercised locally | authenticated production mutation NOT YET VERIFIED | local D1 synthetic identities |

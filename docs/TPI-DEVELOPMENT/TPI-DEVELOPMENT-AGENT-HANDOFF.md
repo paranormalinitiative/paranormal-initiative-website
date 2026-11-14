@@ -1,5 +1,25 @@
 # TPI Development Agent Handoff
 
+## READ THIS FIRST — current release override (2026-11-14)
+
+This section supersedes every older “current release,” “latest Worker,” and
+“next member-access task” statement below. The latest production application
+release is `rel-710b6c9126f5-dedd127c76c8`, website source
+`710b6c9126f5d387a09632bc1263af2ea40375d7`, StudioFlow source
+`2c7c651f34839b0115596d632f1009214e4cd63d`, Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` at 100%, rollback
+`aabd3b01-6769-4402-b05a-b06cbe964c1c`.
+
+New/changed member credentials now use salted PBKDF2-SHA-256 with 120,000
+iterations. Legacy SHA-256 records remain compatible and upgrade after a
+successful login through a guarded compare-and-swap write. There was no bulk
+production credential rewrite, and production acceptance changed no owner or
+ordinary-member row. Verification passed password hash 9/9, recovery 23/23,
+staff roles 20/20, preflight 35 gates, production smoke 10/10, and production
+Firefox 65/65. Remaining member-access work starts with recovery delivery
+observability. Follow the current status, resilience audit, and mandatory
+runbook; treat the dated StudioFlow handoffs below as historical evidence.
+
 ## READ THIS FIRST — current state (TPI-DOCS-ROADMAP-001, 2026-11-02)
 
 Orientation for a new session. Everything below is documentation; no application
@@ -1596,9 +1616,10 @@ The live non-destructive release acceptance passed 64/64 and anonymous smoke
 passed 10/10. The new 033 disposable server round-trip remains local evidence;
 live acceptance did not mutate production Studio configuration.
 
-## Latest verified production release
+## Historical verified production release — TPI-STUDIOFLOW-035
 
-The latest release is TPI-STUDIOFLOW-035: application commit `d0b1f70`, source
+At the time of this dated handoff, the latest release was TPI-STUDIOFLOW-035:
+application commit `d0b1f70`, source
 commit `60af530`, Worker `aa9bff15-6252-4ae5-9422-17d63b99ab5a`, rollback
 `5c8e78b5-f920-4335-940f-a5e4d6df0e49`. It is `DEPLOYED / LIVE VERIFIED`.
 The 035 suite passed 33/33; guarded live smoke and Firefox acceptance passed

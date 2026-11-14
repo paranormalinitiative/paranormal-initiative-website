@@ -1,5 +1,20 @@
 # TPI MASTER BUILD PLAN
 
+## Current production security addendum (2026-11-14)
+
+Password storage modernization is complete, deployed, and live verified.
+New registrations, resets, changes, bootstrap operations, and maintained QA
+account resets write salted PBKDF2-SHA-256 records with 120,000 iterations.
+Legacy 64-character SHA-256 records upgrade after a successful login through a
+guarded compare-and-swap update; no bulk production credential rewrite was
+performed. Release `rel-710b6c9126f5-dedd127c76c8` deployed Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` and passed 35 certified gates, 10/10
+production smoke, and 65/65 isolated production Firefox checks. The next
+member-access resilience priority is recovery delivery observability, not a
+second password migration. See the
+[completion record](docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md)
+and [resilience audit](docs/TPI-DEVELOPMENT/200-AUDITS/2026-11-14-MEMBER-ACCESS-RESILIENCE-AUDIT.md).
+
 ## Current roadmap authority (2026-11-02)
 
 The authoritative development sequence is maintained in

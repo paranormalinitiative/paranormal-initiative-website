@@ -1,5 +1,16 @@
 # TPI Development Overview
 
+## Current production checkpoint — 2026-11-14
+
+The latest verified production application release is
+`rel-710b6c9126f5-dedd127c76c8`, Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12`, at 100% traffic. New and changed
+passwords use salted PBKDF2-SHA-256 with 120,000 iterations; legacy SHA-256
+records upgrade after successful login without a bulk rewrite. The release
+passed 35 certified preflight gates, production smoke 10/10, and isolated
+production Firefox 65/65. This production checkpoint does not change the
+separate development-environment records below.
+
 ## Scope
 
 The Paranormal Initiative (TPI) is maintained from the canonical checkout:
@@ -32,16 +43,17 @@ development Worker, GitHub, and production are not automatically synchronized.
 | --- | --- | --- |
 | Local source | repository checkout | Available; commands are documented in 003-LOCAL-DEVELOPMENT.md |
 | Cloudflare development | https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/ | VERIFIED isolated Worker, D1, R2, and authenticated test workflow |
-| Production | https://paranormalinitiative.com/ | Protected; not modified by TPI-DEV-001 |
+| Production | https://paranormalinitiative.com/ | Protected; latest verified application release recorded above |
 
 The root Wrangler configuration remains production-bound: Worker `theparanormalinitiative`, D1 `tpi_contributor_portal` (`f36b9161-b517-4634-9857-bef4147cefe3`), and R2 `tpi-contributor-media`. The development configuration is `wrangler.dev.toml`; it binds `TPI_DB` to `tpi_contributor_portal_dev` (`4948ecc5-35de-4782-8f6b-b07fa1782b66`) and `TPI_MEDIA` to `tpi-contributor-media-dev`.
 
 The development architecture is implemented and deployed. Its development-only accounts are `tpi-dev-owner` and `tpi-dev-member`; passwords are not documented or committed. The Worker has no cron trigger and no Resend secrets.
 
-## Current TPI-DEV-026 status
+## Historical TPI-DEV-026 development status
 
-The latest committed source is `ba050af` on `codex/tpi-development`. The latest
-deployed application source remains `a8ef0df`, served by development Worker
+At the time of TPI-DEV-026, the latest committed source was `ba050af` on
+`codex/tpi-development`. The latest
+deployed application source was `a8ef0df`, served by development Worker
 version `a51e3478-b620-4b6b-811c-a777af9b4a95`. The deployed provenance endpoint
 reports that Worker, branch, and source commit directly.
 

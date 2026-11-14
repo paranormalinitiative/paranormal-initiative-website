@@ -4,6 +4,8 @@ Run the smallest relevant set, then the full deterministic regression before rel
 
 | Changed paths or behavior | Required checks |
 |---|---|
+| `lib/auth.js`, password writers/verifiers, login, registration, reset/change-password, bootstrap or credential-reset tooling | `npm run verify:password-hash` + `npm run verify:password-recovery` + staff-role regression + complete local auth lifecycle; full certified release gates before production |
+| `lib/email.js`, recovery delivery, provider configuration | recovery regression + provider-failure path + privacy/non-enumeration review; real mailbox evidence and operational observability remain separate |
 | `worker.js`, `functions/api/[[path]].js`, API routes, auth, permissions | syntax checks + `scripts/e2e/api-e2e.sh`; production smoke after deployment |
 | `migrations/`, D1 schema, seed behavior | migration replay/equivalence + full API E2E |
 | `member-*.js`, settings, notifications, Messenger, feed UI | focused browser harness where available + full API E2E |

@@ -302,6 +302,13 @@ Current category set:
 
 ## Next Implementation Order
 
+Current override (November 14, 2026): member login and password recovery are
+deployed, and password storage now uses salted PBKDF2-SHA-256 for new/changed
+credentials with guarded legacy upgrades. The next access-resilience item is
+operational recovery-email delivery observability and safe support handling.
+Actual mailbox/provider delivery still requires explicit certification; do not
+treat the API's generic privacy-preserving response as delivery proof.
+
 1. Live-test member login, dashboard, forum, contributor gate, Content Editor, save draft, publish article, comments, and admin cleanup.
 2. Confirm normal members cannot see admin tools or Content Editor access until upgraded.
 3. Verify R2 profile photo upload and article media upload on the deployed site.
@@ -324,7 +331,9 @@ Recently completed:
 - Legacy authored pages now behave as a conversion queue in My Content. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy. Todd Wayne's current queue can be converted in bulk by applying `migrations/0010_convert_todd_legacy_contributions.sql` in Cloudflare D1.
 - Legacy conversion records now include best-fit destination and contribution type metadata, so Convert pre-fills the editor destination/type before saving or publishing.
 - The Discussion Portal was added with member posting, category browsing, chat-style topic display, leadership/admin cleanup controls, and Education Center-aligned categories.
-- Account recovery/password reset table and UI/API foundation were added, but email delivery is not connected yet.
+- Account recovery/password reset is connected to the configured mail provider
+  and deployed. Delivery-failure observability and independently verified
+  mailbox/provider delivery remain open.
 - Member/contributor/admin access boundaries were tightened so normal members do not see contributor/editor/admin tools.
 
 ## Validation Commands

@@ -98,6 +98,19 @@ Developer Edition profile. Local fixture accounts and owner accounts are
 rejected by the maintained runner. Owner-profile verification is optional,
 non-destructive, and never replaces isolated automated acceptance.
 
+## Latest application release checkpoint — 2026-11-14
+
+The latest successful production application release is
+`rel-710b6c9126f5-dedd127c76c8` from website source
+`710b6c9126f5d387a09632bc1263af2ea40375d7` and StudioFlow source
+`2c7c651f34839b0115596d632f1009214e4cd63d`. Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` is active at 100% traffic; rollback is
+`aabd3b01-6769-4402-b05a-b06cbe964c1c`. The immutable release passed 35
+preflight gates, 10/10 production smoke, and 65/65 isolated Firefox checks.
+This release modernized password storage and performed no production schema
+migration or bulk credential rewrite. The StudioFlow checkpoint below is a
+dated feature baseline, not the latest overall Worker release.
+
 ## StudioFlow release checkpoint status
 
 ### TPI-STUDIOFLOW-126 production baseline — 2026-11-01

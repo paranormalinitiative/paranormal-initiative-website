@@ -30,6 +30,19 @@ source above and integrated into the website repository with the maintained
 staging script. The Desktop workspace is preserved archive/research material
 and must not be synchronized, overwritten, or used for Cloudflare deployment.
 
+## Latest verified production application release — 2026-11-14
+
+Password storage modernization is deployed and live verified from website
+source `710b6c9126f5d387a09632bc1263af2ea40375d7` and StudioFlow source
+`2c7c651f34839b0115596d632f1009214e4cd63d`. Release
+`rel-710b6c9126f5-dedd127c76c8` deployed Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` at 100% traffic; rollback is
+`aabd3b01-6769-4402-b05a-b06cbe964c1c`. The release passed the password-hash
+regression 9/9, full preflight 35 gates, production smoke 10/10, and isolated
+production Firefox 65/65. New/changed credentials use salted PBKDF2-SHA-256;
+legacy SHA-256 records upgrade after successful login without a bulk rewrite.
+See [the completion record](300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md).
+
 ## Environment status
 
 | Environment | Current status |
@@ -48,7 +61,8 @@ Verified development resources:
 - D1: `tpi_contributor_portal_dev` / `4948ecc5-35de-4782-8f6b-b07fa1782b66`
 - R2: `tpi-contributor-media-dev`
 - Branch: `codex/tpi-development`
-- Latest verified deployment: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
+- Latest verified development deployment recorded for this environment:
+  `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb` (not the production Worker above)
 
 ## TPI-STUDIOFLOW-037 production recovery checkpoint — 2026-10-25
 
@@ -86,7 +100,7 @@ the live site using the disposable synthetic production QA account.
 - Rollback: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
 
-Latest verified production release (TPI-STUDIOFLOW-037 Addendum D playback
+Historical verified production release (TPI-STUDIOFLOW-037 Addendum D playback
 and rehearsal repair):
 
 - Application commit: `8d46a45`
@@ -161,7 +175,7 @@ Prior verified production release (TPI-STUDIOFLOW-033 configuration persistence)
 - [Configuration contract and inventory](TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md)
 - [TPI-STUDIOFLOW-033 completion record](300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md)
 
-Latest verified production release (TPI-STUDIOFLOW-032 Background Music
+Historical verified production release (TPI-STUDIOFLOW-032 Background Music
 and Sound Effects icon replacement):
 
 - Worker: `theparanormalinitiative`

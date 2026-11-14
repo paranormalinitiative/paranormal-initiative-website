@@ -117,6 +117,13 @@ after it reports `READY` run
 `TPI_PRODUCTION_DEPLOY=approved npm run release:production`. Never invoke the
 production Wrangler deployment directly or omit the preflight.
 
+For any credential or recovery change, first run
+`npm run verify:password-hash` and `npm run verify:password-recovery`. Preserve
+the salted PBKDF2-SHA-256 writer, legacy SHA-256 compatibility/upgrade path,
+and privacy-preserving recovery response. These focused checks do not prove
+real mailbox delivery; provider delivery and operational failure alerting need
+separate evidence.
+
 ## Always-protected operations
 
 Do not deploy the production target as a development sandbox, run destructive

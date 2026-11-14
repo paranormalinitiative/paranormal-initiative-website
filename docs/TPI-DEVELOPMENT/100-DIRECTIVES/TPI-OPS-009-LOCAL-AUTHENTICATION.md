@@ -1,5 +1,13 @@
 # TPI-OPS-009 — Local Authentication and Synthetic Accounts
 
+> **Current-format amendment — 2026-11-14:** This directive's original
+> SHA-256 fixture description is historical. Maintained fixtures and local
+> credential-reset tooling now write salted PBKDF2-SHA-256 records with
+> 120,000 iterations and verify credentials through the application helper.
+> Legacy SHA-256 records remain covered only for compatibility and guarded
+> successful-login upgrade. See the password-hash modernization completion
+> record.
+
 ## Authorization
 
 This directive authorizes a controlled local-only authentication implementation
@@ -44,7 +52,7 @@ node scripts/local-auth-fixtures.mjs --local-only
 
 The script validates `wrangler.local.toml`, reapplies the idempotent initial
 schema to the isolated local D1 state, and creates synthetic accounts using the
-application's existing SHA-256 password-hash format. Generated passwords are
+application's current salted PBKDF2-SHA-256 password format. Generated passwords are
 stored only in `.local-dev/local-auth-credentials.json` with mode `0600`.
 The file, generated SQL, local D1, and local R2 state are gitignored and must
 not be copied into hosted environments.

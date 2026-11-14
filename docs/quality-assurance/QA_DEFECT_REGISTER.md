@@ -1,5 +1,17 @@
 # QA Defect Register
 
+## Member-access security disposition — 2026-11-14
+
+| Item | Cause | Resolution | Verification |
+|---|---|---|---|
+| Unsalted SHA-256 password storage | Historical password writer produced one deterministic unsalted digest | Salted PBKDF2-SHA-256 with 120,000 iterations for new/changed credentials; successful legacy login performs guarded compare-and-swap upgrade; no bulk rewrite | Password hash 9/9; recovery 23/23; preflight 35 gates; production smoke 10/10; production Firefox 65/65 |
+
+Open resilience work is not closed by the hash repair: provider delivery-failure
+observability and real mailbox certification are high priority; reset
+transaction boundaries, optional staff-schema readiness, and distributed
+attempt-limit behavior remain medium priority; the async API error boundary is
+low priority. See the member-access resilience audit for the exact boundaries.
+
 ## Resolved in TPI-QA-001 bootstrap
 
 | Item | Cause | Resolution | Verification |

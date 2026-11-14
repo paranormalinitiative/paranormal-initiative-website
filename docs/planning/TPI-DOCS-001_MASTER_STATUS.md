@@ -1,10 +1,24 @@
 # TPI-DOCS-001 — Master Documentation Status
 
-## Current Project Snapshot — November 13, 2026
+## Current Project Snapshot — November 14, 2026
 
 This snapshot supersedes older “current,” “next,” and release-state statements below
 where later work has changed the status. Those older sections are retained as dated
 historical records.
+
+### Latest production security release — November 14, 2026
+
+Password storage modernization is complete, deployed, and live verified.
+New/changed credentials use salted PBKDF2-SHA-256 with 120,000 iterations;
+legacy SHA-256 records remain compatible and upgrade after successful login
+without a bulk production rewrite. Release
+`rel-710b6c9126f5-dedd127c76c8`, Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12`, is active at 100% traffic. Password
+hash checks passed 9/9, preflight passed 35 gates, production smoke passed
+10/10, and isolated production Firefox passed 65/65. Recovery delivery
+observability is the next high-impact member-access resilience item. See the
+[completion record](../TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md)
+and [resilience audit](../TPI-DEVELOPMENT/200-AUDITS/2026-11-14-MEMBER-ACCESS-RESILIENCE-AUDIT.md).
 
 ### Latest member Home update — November 13, 2026
 

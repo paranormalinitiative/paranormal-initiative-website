@@ -1,6 +1,28 @@
 # The Paranormal Initiative Website - Agent Handoff
 
-Last updated: October 11, 2026
+Last updated: November 14, 2026
+
+## Current handoff override — November 14, 2026
+
+This section supersedes older current/next/release statements below while
+preserving them as dated history. The latest production application release is
+the password-storage modernization at source commit
+`710b6c9126f5d387a09632bc1263af2ea40375d7`, release
+`rel-710b6c9126f5-dedd127c76c8`, Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12`, with rollback
+`aabd3b01-6769-4402-b05a-b06cbe964c1c`. It is deployed at 100% traffic and
+passed 35 certified preflight gates, 10/10 production smoke, and 65/65
+isolated production Firefox checks.
+
+New and changed passwords use salted PBKDF2-SHA-256 with 120,000 iterations.
+Legacy SHA-256 records remain compatible and upgrade after successful login;
+there was no bulk production credential rewrite. No owner or ordinary-member
+row was changed by production acceptance. Remaining member-access work begins
+with recovery delivery observability and mailbox/provider certification. Use
+the [current status](docs/TPI-DEVELOPMENT/TPI-CURRENT-DEVELOPMENT-STATUS.md),
+[runbook](docs/TPI-DEVELOPMENT/TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md), and
+[completion record](docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md)
+as the current authority.
 
 ## Current documentation authority
 

@@ -8,8 +8,11 @@
 > separate THE CAULDRON & THE CRAFT project; that decision does not authorize
 > copying its credentials or replacing TPI's provider.
 
-The historical setup assumption in this document is Resend for transactional
-email. The live TPI provider and configuration still require an explicit audit.
+The implementation now connects password-recovery requests to the configured
+Resend-compatible provider path. The live provider configuration, failure
+alerting, domain/sender state, and real mailbox delivery still require an
+explicit audit; a generic successful API response is intentionally not proof of
+delivery or account existence.
 Three things use it once the secrets below are set:
 
 1. **Member email verification** — new members get a code on signup; members

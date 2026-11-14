@@ -1,6 +1,17 @@
 # Cloudflare Contributor Portal Setup
 
-Last updated: July 26, 2026
+Last updated: November 14, 2026
+
+## Current member-access security state
+
+The live Worker no longer writes unsalted SHA-256 password records. New and
+changed credentials use salted PBKDF2-SHA-256 with 120,000 iterations; legacy
+records upgrade after successful authentication without a bulk D1 rewrite.
+Password recovery is connected to the configured mail-provider path, but the
+generic API response does not prove mailbox delivery. Provider-failure
+observability and mailbox certification remain required. The latest verified
+release is `rel-710b6c9126f5-dedd127c76c8`, Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12`.
 
 ## Official TPI Cloudflare account
 
@@ -61,7 +72,7 @@ The API supports:
 - R2-backed article media upload endpoint
 - private R2 media serving through `/api/media/...`
 - Discussion Portal categories, topics, replies, read tracking, and admin cleanup controls
-- account recovery/password reset token foundation
+- connected account recovery/password reset request and confirmation lifecycle
 
 ## Cloudflare Storage Choice
 

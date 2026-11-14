@@ -6,6 +6,14 @@
 - [ ] Select tests from `QA_CHANGE_IMPACT_MAP.md`.
 - [ ] Run `node scripts/qa/run-qa.mjs --e2e --studioflow-root /Users/toddknipple/Documents/StudioFlow/web` when both workspaces are in scope.
 - [ ] Run any actual media test required by the changed pipeline; do not convert a connection pass into a media pass.
+- [ ] For authentication, registration, password change, reset, bootstrap, or
+  credential-tooling changes, run `npm run verify:password-hash`,
+  `npm run verify:password-recovery`, staff-role checks, and the complete local
+  authentication lifecycle.
+- [ ] Confirm legacy SHA-256 compatibility and guarded upgrade remain covered;
+  never bulk-rewrite production credential records as a routine release step.
+- [ ] Treat a generic recovery response as privacy behavior, not proof of
+  provider or mailbox delivery. Record delivery observability separately.
 - [x] For TPI-STUDIOFLOW-019A, run an actual local prerecorded media/RTMP capture and record the silent-audio defect without deploying the failed repair.
 - [ ] Review secrets, stream keys, R2 objects, recordings, and database writes.
 - [ ] Run the production build and inspect warnings/failures.
@@ -29,6 +37,9 @@
 - [ ] Run `node scripts/qa/production-smoke.mjs --base <production-url>`.
 - [ ] Verify owner/authenticated workflows separately from anonymous boundaries.
 - [ ] Update `QA_DASHBOARD.md`, the defect register, and the applicable Production Bible.
+- [ ] For member-access releases, record the release ID, Worker, rollback,
+  hash/recovery counts, preflight count, production smoke, Firefox result, and
+  whether any member row or schema was changed.
 
 ## Roadmap phase gate
 

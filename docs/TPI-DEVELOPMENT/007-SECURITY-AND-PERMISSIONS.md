@@ -4,6 +4,13 @@
 
 The existing Worker and production domain remain protected. The audit did not request credentials, cookies, or tokens and did not bypass authentication. Anonymous authenticated-feature acceptance is therefore not claimed.
 
+New and changed production credentials use versioned, salted PBKDF2-SHA-256
+records with 120,000 iterations. Legacy 64-character SHA-256 records remain
+compatible and upgrade only after successful password verification through a
+guarded compare-and-swap update. No bulk credential rewrite is authorized by
+this compatibility path. Password hashes, reset codes, sessions, provider
+secrets, and protected credential files must never be logged or documented.
+
 Because the current workers.dev target maps to the same configured Worker and stateful bindings, development authentication cannot yet be considered independent. Treat session validation, cookies, APIs, and administrative permissions as production-sensitive until a separate environment is configured.
 
 ## Required checks for an isolated environment

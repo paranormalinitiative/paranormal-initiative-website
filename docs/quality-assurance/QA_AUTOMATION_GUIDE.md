@@ -1,5 +1,21 @@
 # QA Automation Guide
 
+## Member-access gate
+
+For any credential or recovery change, run:
+
+```sh
+npm run verify:password-hash
+npm run verify:password-recovery
+npm run verify:local-auth-lifecycle
+```
+
+The password-hash suite covers the current salted PBKDF2 format and legacy
+SHA-256 upgrade path. The recovery suite does not prove real email delivery;
+mailbox/provider delivery and operational failure alerting require separate
+evidence. Production promotion still uses the mandatory certified release
+workflow, not these focused commands alone.
+
 ## Local deterministic gate
 
 From the TPI repository:

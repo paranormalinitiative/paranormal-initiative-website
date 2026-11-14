@@ -37,6 +37,17 @@ The current roadmap and cross-workspace status are maintained in
 These documents consolidate status without replacing historical audit reports.
 Do not restart or reorder completed work based on older handoff or audit text.
 
+### Latest production security checkpoint — November 14, 2026
+
+Member credentials newly created or changed by the live API now use salted
+PBKDF2-SHA-256 with 120,000 iterations. Existing legacy SHA-256 records remain
+compatible and upgrade after a successful login; no bulk credential rewrite
+was performed. Release `rel-710b6c9126f5-dedd127c76c8` is live at 100% on
+Worker `6c84d19b-6e50-4d5d-a6d7-75da5152cf12`. The release passed the 9/9
+password-hash regression, 35 certified preflight gates, 10/10 production smoke,
+and 65/65 isolated production Firefox checks. See the
+[completion record](docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md).
+
 ## App Release Position
 
 The Paranormal Initiative apps are intended to be free ITC, EVP, paranormal research, documentation, and experimentation tools. They are not open-source releases. TPI source code, interface design, branding, workflows, compiled applications, and assets remain protected unless Todd explicitly changes the license.

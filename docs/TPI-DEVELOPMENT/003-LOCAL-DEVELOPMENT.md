@@ -67,6 +67,13 @@ credentials outside any release checkpoint.
 
 Use `git status --short` before and after work, preserve unrelated changes, and run `git diff --check` before any future commit. Run the relevant package tests and build scripts. Stop local servers with the terminal process control used to start them; do not kill unrelated processes.
 
+Authentication, registration, password reset/change, bootstrap, and local
+credential-tooling changes must also run `npm run verify:password-hash`,
+`npm run verify:password-recovery`, and
+`npm run verify:local-auth-lifecycle`. Local credential fixtures use the
+current salted PBKDF2-SHA-256 format; legacy SHA-256 exists only as a tested
+compatibility and upgrade path.
+
 Local tests must use isolated fixtures. Do not point local experiments at production D1/R2 for mutation, and do not treat the current workers.dev endpoint as a development server.
 
 ## Isolated development deployment

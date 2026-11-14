@@ -1,5 +1,18 @@
 # Testing and Verification
 
+## Member credential and recovery gate — 2026-11-14
+
+Member-access changes must run `npm run verify:password-hash`,
+`npm run verify:password-recovery`, and the complete local authentication
+lifecycle before release. The password-hash regression proves new salted
+PBKDF2 records, legacy SHA-256 verification, successful-login upgrade,
+compare-and-swap protection, and deterministic non-password hashing where
+required. The production release at source `710b6c9126f5` passed password hash
+9/9, recovery 23/23, legacy Admin/staff roles 20/20, preflight 35 gates,
+production smoke 10/10, and isolated production Firefox 65/65. These checks do
+not certify real mailbox delivery; provider delivery and failure observability
+remain separate acceptance work.
+
 ## TPI-STUDIOFLOW-122F.4A Notes Trash completion
 
 The D122F.4A candidate is staged only on the authoritative local Worker at

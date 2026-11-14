@@ -3330,7 +3330,7 @@ player.
 - Completion record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-D.md`
 - Owner acceptance: pending
 
-## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-036 cinematic video timers)
+## Historical verified production release — 2026-10-24 (TPI-STUDIOFLOW-036 cinematic video timers)
 
 TPI-STUDIOFLOW-036 is deployed and live-verified. The supplied owner-approved
 Spectacular Cinematic Edition was integrated into the existing Video Timers
@@ -3429,7 +3429,7 @@ smoke 10/10, and isolated live Firefox acceptance 64/64.
   owner-browser access
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md`
 
-## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-032 pad artwork replacement)
+## Historical verified production release — 2026-10-24 (TPI-STUDIOFLOW-032 pad artwork replacement)
 
 StudioFlow's audio pads now show distinct, approved per-category artwork
 inside the unchanged circular icon container: the Waveform image on

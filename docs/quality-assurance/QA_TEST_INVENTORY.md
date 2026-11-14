@@ -1,12 +1,15 @@
 # QA Test Inventory
 
-Last reviewed: 2026-11-11. This inventory preserves dated feature evidence and known
+Last reviewed: 2026-11-14. This inventory preserves dated feature evidence and known
 gaps; it does not claim every listed suite was rerun on this date. Recent profile and
 badge release evidence is linked from
 [`TPI-DOCS-001_MASTER_STATUS.md`](../planning/TPI-DOCS-001_MASTER_STATUS.md).
 
 | Area | Existing or new entrypoint | Evidence class | Default status |
 |---|---|---|---|
+| Password storage compatibility and upgrade | `npm run verify:password-hash` | synthetic hash-format, verification, guarded upgrade, compare-and-swap regression | PASS: 9/9; deployed 2026-11-14 |
+| Password recovery API | `npm run verify:password-recovery` | synthetic request, confirmation, expiry, rate-limit and session behavior | PASS: 23/23; real mailbox delivery remains NOT YET VERIFIED |
+| Complete local authentication lifecycle | `npm run verify:local-auth-lifecycle` | persistent local admin, restart/build and isolated Firefox lifecycle | PASS: 38/38 and Firefox 65/65 for 2026-11-14 release |
 | Shared page asset cache consistency | `npm run verify:shared-asset-cache-consistency` | tracked HTML asset version contract | PASS: 237 in-scope files; deployed 2026-11-11 |
 | TPI Worker and API syntax | `scripts/qa/run-qa.mjs` | local static check | PASS when runner completes |
 | TPI social and video API | `scripts/e2e/api-e2e.sh` | local D1, synthetic multi-user integration | PASS: 181/0 on 2026-10-11; includes TPI-VIDEOS-003 discovery, follows, share, threaded comments, and 002 security/publishing |

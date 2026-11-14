@@ -1,6 +1,6 @@
 # Contributor Portal, Login, Publishing, and Comments Plan
 
-Last updated: July 26, 2026
+Last updated: November 14, 2026
 
 ## Purpose
 
@@ -12,11 +12,22 @@ The user also wants public comments on actual posts/articles, with optional anon
 
 Do **not** implement real usernames and passwords only in static HTML, CSS, or JavaScript.
 
-This repository is currently a static site. Static files can show a login screen, but they cannot securely protect passwords, private editor access, contributor submissions, or moderation controls. Any password stored in front-end code can be viewed by visitors.
+The public pages are static assets backed by a Cloudflare Worker API. Static
+files alone cannot securely protect passwords, private editor access,
+contributor submissions, or moderation controls; the Worker and D1 remain the
+authority for those operations.
 
 Real login needs a backend or hosted auth provider.
 
-Current state note: a Cloudflare-ready backend scaffold has been added. The editor uses a contributor gate, the site owner's 10-click dev copy mode bypasses locks while building, contributor access is admin-managed, public members can use the Discussion Portal, and Cloudflare D1 stores member/contributor accounts, invite codes, sessions, profile text, draft/published article records, comments, replies, forum topics, forum replies, and read tracking. Local `localStorage` behavior remains only as a fallback for local preview.
+Current state note: the Cloudflare Worker backend is deployed. The editor uses
+a contributor gate, contributor access is admin-managed, public members can use
+the Discussion Portal, and Cloudflare D1 stores member/contributor accounts,
+invite codes, sessions, profile text, draft/published article records,
+comments, replies, forum topics, forum replies, read tracking, and recovery
+codes. Hosted authentication does not fall back to browser-only accounts.
+New/changed credentials use salted PBKDF2-SHA-256 with 120,000 iterations;
+legacy SHA-256 records upgrade after a successful login. Local `localStorage`
+behavior is preview-only and is not a hosted authentication authority.
 
 Chosen secure option:
 

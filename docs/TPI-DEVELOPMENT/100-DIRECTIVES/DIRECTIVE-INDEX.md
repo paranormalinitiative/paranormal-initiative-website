@@ -5,6 +5,18 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## Password hash modernization and login compatibility — 2026-11-14
+
+Status: **COMPLETE — DEPLOYED AND LIVE VERIFIED.** New and changed member
+credentials use salted PBKDF2-SHA-256 with 120,000 iterations. Legacy SHA-256
+records remain compatible and upgrade after successful login through a guarded
+compare-and-swap write; no bulk production rewrite was performed. Release
+`rel-710b6c9126f5-dedd127c76c8` deployed Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` at 100% traffic and passed password
+hash 9/9, 35 certified preflight gates, production smoke 10/10, and isolated
+production Firefox 65/65. Record:
+[Password Hash Modernization and Login Compatibility](../300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md).
+
 ## Community workstation — Friends, bug reports, and Messenger identity
 
 Status: **COMPLETE — DEPLOYED AND VERIFIED.** The member shell now provides

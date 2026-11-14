@@ -11,6 +11,17 @@ The inspected root Wrangler configuration binds:
 
 The D1 info check reported 62 tables and approximately 13.4 MB. These values are observational and not a license to mutate the database.
 
+## Credential-storage boundary — 2026-11-14
+
+The application stores new and changed passwords as versioned, salted
+PBKDF2-SHA-256 records with 120,000 iterations. Existing 64-character SHA-256
+records remain compatible only through the password-verification path and are
+upgraded after a successful login with a guarded compare-and-swap write. No
+bulk production credential rewrite was performed. Never copy credential
+records into development, print them in verification output, or use direct D1
+updates for routine password changes. Use the maintained application and local
+credential-reset paths so the current format and compatibility checks apply.
+
 ## Development requirement
 
 Development must use separate writable D1 and R2 resources. Do not copy passwords, sessions, private messages, or other sensitive production records. Use synthetic or sanitized fixtures.

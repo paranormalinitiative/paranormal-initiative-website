@@ -1,5 +1,27 @@
 # QA Dashboard
 
+## Current member-access release snapshot — 2026-11-14
+
+Password storage modernization is deployed and live verified in release
+`rel-710b6c9126f5-dedd127c76c8`, Worker
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12`, at 100% traffic. New and changed
+credentials use salted PBKDF2-SHA-256 with 120,000 iterations. Legacy SHA-256
+records verify and upgrade after successful login through a guarded
+compare-and-swap write; no bulk production rewrite was performed.
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Password-hash compatibility and upgrade | PASS — 9/9 | `npm run verify:password-hash` |
+| Password recovery API | PASS — 23/23 | `npm run verify:password-recovery` |
+| Legacy Admin/staff-role compatibility | PASS — 20/20 | maintained staff-role regression |
+| Full certified preflight | PASS — 35 gates | immutable candidate `710b6c9126f5` |
+| Production smoke | PASS — 10/10 | read-only anonymous checks |
+| Production Firefox | PASS — 65/65 | isolated synthetic production QA account |
+| Real mailbox delivery and failure alerting | NOT YET VERIFIED | high-priority recovery-delivery observability item |
+
+The historical November 11 and October QA sections below remain dated evidence,
+not the latest production release record.
+
 ## Current website release snapshot — 2026-11-11
 
 The most recent deployed application evidence is the November 11 member profile and
