@@ -176,6 +176,15 @@ body.help-center-page {
 .hc-form-actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
 .hc-form-status { color: var(--text-accent); font-size: 12px; }
 
+/* The internal center shares the TPI shell but has a quiet operational cue so
+   staff do not mistake it for the public member support surface. */
+.internal-help-center .hc-topbar { border-bottom-color: color-mix(in srgb, var(--accent) 45%, var(--border-default)); }
+.internal-help-center .hc-brand-mark { background: var(--accent-muted); color: var(--text-accent); }
+.internal-help-center .hc-sidebar-kicker { color: var(--text-accent); }
+.internal-help-center .hc-sidebar-label { color: var(--text-accent); }
+.internal-help-center .hc-hero { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--bg-card)), var(--bg-card) 58%); }
+.internal-help-center .hc-eyebrow { color: var(--text-accent); }
+
 @media (max-width: 980px) {
     .hc-category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .hc-article-layout { grid-template-columns: minmax(0, 1fr); gap: 26px; }

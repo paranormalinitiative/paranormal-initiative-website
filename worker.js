@@ -114,6 +114,14 @@ const ADMIN_GATE_HTML = MEMBER_GATE_HTML
     "The TPI Administration Center is restricted to authorized owner and administrator accounts. Sign in with an approved account to continue."
   );
 
+const INTERNAL_HELP_GATE_HTML = ADMIN_GATE_HTML
+  .replaceAll("Administration Center — Restricted Access", "Internal Help Center — Restricted Access")
+  .replace("<h1>Administration Center</h1>", "<h1>Internal Help Center</h1>")
+  .replace(
+    "The TPI Administration Center is restricted to authorized owner and administrator accounts. Sign in with an approved account to continue.",
+    "The TPI Internal Help Center is restricted to authorized staff accounts. Sign in with an active staff appointment or another approved internal access path to continue."
+  );
+
 const CONTRIBUTOR_GATE_HTML = MEMBER_GATE_HTML
   .replaceAll("ITC Visual Studio — Member Access", "Contributor Tools — Restricted Access")
   .replace(
@@ -265,6 +273,21 @@ async function hasAdministrationCenterAccess(env, user) {
   }
 }
 
+// The Internal Help Center is broader than the Administration Center: a
+// moderator needs the operational procedures even when the moderator cannot
+// open every admin dashboard section. The content remains server-gated for an
+// active staff appointment, and role-specific action APIs remain authoritative.
+async function hasInternalHelpCenterAccess(env, user) {
+  if (!user) return false;
+  if (user.role === "owner" || user.role === "admin") return true;
+  try {
+    const staff = await env.TPI_DB.prepare("SELECT role_code FROM staff_role_appointments WHERE contributor_id = ? AND status = 'active' LIMIT 1").bind(user.id).first();
+    return ["executive", "full_administrator", "administrator", "moderator"].includes(staff?.role_code);
+  } catch (error) {
+    return false;
+  }
+}
+
 async function serveCanonicalAdminCenter(request, env) {
   const sourceUrl = new URL(request.url);
   const targetPath = sourceUrl.pathname === "/admin-panel" ||
@@ -410,6 +433,20 @@ export default {
       const hasNovaAccess = await hasCreatorStudioAccess(env, user);
       if (!hasNovaAccess) {
         return new Response(NOVA_ACCESS_HTML, {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
+        });
+      }
+      return servePageAsset(request, env);
+    }
+
+    // Internal Help Center content is static, but the entire namespace is
+    // protected here so direct HTML, clean URLs, and asset requests cannot
+    // expose staff procedures to public visitors or ordinary members.
+    if (url.pathname === "/internal-help-center" || url.pathname.startsWith("/internal-help-center/") || url.pathname.startsWith("/internal-help-center-") || url.pathname.startsWith("/internal-help-center.")) {
+      const user = await getSessionUser(request, env);
+      if (!await hasInternalHelpCenterAccess(env, user)) {
+        return new Response(INTERNAL_HELP_GATE_HTML, {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });

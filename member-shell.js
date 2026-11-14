@@ -461,6 +461,11 @@
       element.hidden = !["owner", "executive", "full_administrator", "administrator", "moderator"].includes(staffRole)
         && role !== "owner" && role !== "admin";
     });
+    var canUseInternalHelpCenter = ["owner", "executive", "full_administrator", "administrator", "moderator"].includes(staffRole)
+      || role === "owner" || role === "admin";
+    document.querySelectorAll("[data-staff-only]").forEach(function (element) {
+      element.hidden = !canUseInternalHelpCenter;
+    });
     var canUseContentEditor = canUseAdminPanel || role === "contributor";
     // Match the authoritative Worker gate: owner and admin accounts have
     // Studio access even when an older session payload omits this flag.

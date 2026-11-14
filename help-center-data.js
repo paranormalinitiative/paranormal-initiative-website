@@ -54,17 +54,9 @@
       {
         id: "privacy-safety",
         icon: "◇",
-        label: "Privacy, safety & reporting",
-        shortLabel: "Privacy & safety",
-        description: "Understand privacy boundaries, community standards, reporting, and safety-first escalation.",
-        tone: "red"
-      },
-      {
-        id: "administration",
-        icon: "⌑",
-        label: "Administration & governance",
-        shortLabel: "Administration",
-        description: "Orientation for approved staff and members who need to understand TPI governance surfaces.",
+        label: "Policies, privacy, safety & reporting",
+        shortLabel: "Policies & safety",
+        description: "Understand TPI policies, privacy boundaries, community standards, abuse reporting, and safety-first escalation.",
         tone: "slate"
       }
     ],
@@ -252,32 +244,6 @@
           { type: "callout", tone: "warning", title: "Urgent safety concerns", text: "TPI support is not emergency response. If someone is in immediate danger, contact emergency services or an appropriate qualified professional first." }
         ]
       },
-      {
-        id: "administration-center-overview",
-        category: "administration",
-        title: "Administration Center overview",
-        excerpt: "What the protected administration surfaces are for and why access is role-limited.",
-        updated: "November 14, 2026",
-        body: [
-          { type: "p", text: "The Administration Center is a protected staff surface for approved operational work. It is separate from member settings, the Community Feed, and Creator Studio." },
-          { type: "h2", text: "Why you may not see it" },
-          { type: "p", text: "Administration links are hidden unless the signed-in account has the corresponding server-side role. A badge, client-side setting, or direct URL does not grant access." },
-          { type: "h2", text: "Need an administrative answer?" },
-          { type: "p", text: "Use the Help Desk and describe the operational question without including private credentials or production data. Requests that change authority, membership, or stored data may require additional review." }
-        ]
-      },
-      {
-        id: "staff-moderation-boundaries",
-        category: "administration",
-        title: "Staff roles and moderation boundaries",
-        excerpt: "A concise orientation to TPI’s role-based staff controls and viewpoint-neutral moderation standard.",
-        updated: "November 14, 2026",
-        body: [
-          { type: "p", text: "TPI staff tools are role-based and audited. Moderation is intended to protect people and community standards, not to silence criticism or enforce a preferred paranormal conclusion." },
-          { type: "h2", text: "If a decision needs review" },
-          { type: "p", text: "Use the Help Desk to request clarification or escalation. Include the relevant post, action, or policy question and keep the request focused on the conduct or process at issue." }
-        ]
-      }
     ]
   };
 })();
