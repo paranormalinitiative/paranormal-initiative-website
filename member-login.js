@@ -135,7 +135,7 @@
     memberRegisterStatus.classList.toggle("access-error", Boolean(isError));
   }
 
-  document.addEventListener("click", event => {
+  document.addEventListener("click", async event => {
     const toggle = event.target.closest("[data-toggle-password]");
     if (!toggle) return;
     event.preventDefault();
@@ -1293,7 +1293,7 @@
     const isChat = notification.chat || notification.type === "chat" || notification.type === "message";
     const openAction = isChat && notification.conversationId
       ? `<button type="button" class="portal-button portal-button-secondary" data-notification-chat="${escapeHtml(notification.conversationId)}">Open</button>`
-      : (actionHref ? `<button type="button" class="portal-button portal-button-secondary" data-notification-open="${escapeHtml(notification.id)}" data-notification-href="${escapeHtml(actionHref)}">Open</button>` : "");
+      : (actionHref ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(actionHref)}" data-notification-open="${escapeHtml(notification.id)}" data-notification-href="${escapeHtml(actionHref)}">Open</a>` : "");
     return `
       <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}" data-notification-type="${escapeHtml(meta.tone)}" data-notification-category="${escapeHtml(meta.category)}">
         <span class="member-notification-dot" aria-hidden="true"></span>
@@ -2660,14 +2660,13 @@
   document.addEventListener("click", async event => {
     const notificationOpenButton = event.target.closest("[data-notification-open]");
     if (notificationOpenButton) {
-      event.preventDefault();
       const notificationId = notificationOpenButton.dataset.notificationOpen;
-      const notificationHref = notificationOpenButton.dataset.notificationHref;
-      if (!notificationHref || !await cloudflareReady()) return;
-      try {
-        await window.TPIApi.markNotificationRead(notificationId);
-      } catch (error) {}
-      window.location.href = notificationHref;
+      // Keep this a normal same-origin link so Chrome, Firefox, and a
+      // partially initialized member shell all reach the destination. Marking
+      // the item read is best-effort and must never block the deep link.
+      if (notificationId && window.TPIApi && typeof window.TPIApi.markNotificationRead === "function") {
+        Promise.resolve(window.TPIApi.markNotificationRead(notificationId)).catch(() => {});
+      }
       return;
     }
 

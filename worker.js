@@ -1,6 +1,7 @@
 import { onRequest as handleApiRequest } from "./functions/api/[[path]].js";
 import { getSessionUser, hasCreatorStudioAccess } from "./lib/auth.js";
 import { CAPABILITY, memberHasCapability } from "./lib/membership-entitlements.js";
+import { effectiveStaffRole } from "./lib/staff-roles.js";
 import { scrapeAndUpdateEvents } from "./lib/event-scraper.js";
 import { scrapeNews } from "./lib/news-scraper.js";
 import { scrapeVideos } from "./lib/video-scraper.js";
@@ -263,9 +264,11 @@ async function servePageAsset(request, env) {
 async function hasAdministrationCenterAccess(env, user) {
   if (!user) return false;
   try {
-    const staff = await env.TPI_DB.prepare("SELECT role_code FROM staff_role_appointments WHERE contributor_id = ? AND status = 'active' LIMIT 1").bind(user.id).first();
-    if (staff?.role_code) return ["executive", "full_administrator", "administrator"].includes(staff.role_code);
-    if (user.role === "owner" || user.role === "admin") return true;
+    // Resolve the same effective role used by /api/auth/me and every
+    // protected administrative API. This keeps the Owner path authoritative
+    // even when an older or unusual staff appointment is present.
+    const role = await effectiveStaffRole(env, user);
+    if (["owner", "executive", "full_administrator", "administrator"].includes(role)) return true;
     if (await memberHasCapability(env, user, CAPABILITY.EDITORIAL_REVIEW)) return true;
     return await memberHasCapability(env, user, CAPABILITY.EDITORIAL_PUBLISH);
   } catch (error) {
