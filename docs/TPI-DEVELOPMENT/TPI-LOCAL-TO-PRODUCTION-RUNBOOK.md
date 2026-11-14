@@ -72,23 +72,20 @@ finish with `READY`. `release:production` must finish with
 ## Latest verified release record
 
 The latest successful application deployment used website source commit
-`cb9746411398df16282c305101cb0b41425bcd39` and authoritative StudioFlow source
-commit `ce7c389d23db65bd5ebb92597695d9854d21c7ab` (unchanged; the Addendum A
-release is bridge-only). It deployed Worker version
-`21ea05f7-588d-4b5a-b039-c6063f7fd248` on 2026-10-23. The immediate rollback
-reference is `210f4610-ff8a-4192-a944-4668892dd669`. The detailed record is
-`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`
-(including its Addendum A section preserving Sol's After Intro Background
-Music workflow).
+`710b6c9126f5d387a09632bc1263af2ea40375d7` and authoritative StudioFlow source
+commit `2c7c651f34839b0115596d632f1009214e4cd63d`. It deployed Worker version
+`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` on 2026-11-14. The immediate rollback
+reference is `aabd3b01-6769-4402-b05a-b06cbe964c1c`. The detailed record is
+`300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md`.
 
-That release passed anonymous live smoke 10/10, isolated Firefox Developer
-Edition acceptance 60/60, the TPI-STUDIOFLOW-028 scene playback,
-cross-scene independence, and Addendum-A handoff checks 33/33, local
-authentication lifecycle 38/38, reproducible StudioFlow integration, and the
-guarded Wrangler dry-run. It made no D1 migration, R2 mutation, Crossroads
-mutation, or owner-browser storage change. The owner production tab was used
-only for non-destructive final confirmation. Every future release must execute
-the commands above again.
+That release passed the full Tier-1 certified preflight with 35 gates,
+including password-hash compatibility, legacy Admin and recovery checks,
+isolated D1/R2 E2E, StudioFlow lifecycle/browser acceptance, Cloudflare and
+rollback checks, and the guarded Wrangler dry-run. Production then passed
+anonymous smoke 10/10 and isolated Firefox Developer Edition acceptance 65/65
+with the synthetic production QA account. It made no D1 migration, R2 object
+deletion, Crossroads mutation, or owner-browser storage change. Every future
+release must execute the commands above again.
 
 The production command opens a new isolated Firefox Developer Edition profile
 and authenticates with the dedicated synthetic `qa-studioflow-*` member account

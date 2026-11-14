@@ -87,11 +87,13 @@ failures have confirmed application and schema-compatibility causes.
 
 ## Remaining work, ordered by impact
 
-1. **High — password storage.** `hashPassword()` in the member API uses a
-   single unsalted SHA-256 digest for passwords. Design a backward-compatible
-   slow, salted password-hash upgrade on successful login and reset, then test
-   legacy accounts and migration behavior before release. There is no evidence
-   in this audit of a password database disclosure.
+1. **Mitigated in the 2026-11-14 password-hash release.** `hashPassword()` now
+   writes salted PBKDF2-SHA-256 records with 120,000 iterations. Legacy
+   unsalted SHA-256 records remain compatible and upgrade after successful
+   login, reset, or change through a guarded compare-and-swap write. No bulk
+   production credential rewrite was performed; accounts that never use an
+   authentication path remain legacy until they do. There is no evidence in
+   this audit of a password database disclosure.
 2. **High — recovery delivery observability.** Provider failures are logged,
    while members receive the same generic response for privacy. Add an
    operational delivery-failure signal and a safe support path so a delivery
