@@ -29,6 +29,7 @@ for (let index = 0; index < indexes.length; index += 1) {
 }
 
 if (!sidebar.includes('data-nav="watch-later"') || !sidebar.includes("Saved Items")) failures.push("Saved Items must have a clear label and navigation identity");
+if (!sidebar.includes('aria-label="Manage community events"') || !sidebar.includes('aria-label="Saved Items: your saved videos, articles, and posts"') || !sidebar.includes('aria-label="Help Center: site guidance, policies, and reporting"')) failures.push("member navigation labels must explain the destination to assistive technology");
 if (!sidebar.includes('data-nav="admin-center" data-admin-only hidden')) failures.push("Administration Center must be hidden by the shared admin-only marker");
 if (!sidebar.includes('data-nav="admin-events" data-admin-only hidden')) failures.push("Manage Events must remain restricted to administrative access");
 if (!shell.includes('document.querySelectorAll("[data-admin-only]").forEach(function (element)')) failures.push("member shell must apply the server-derived admin visibility gate");
