@@ -2,12 +2,14 @@
 
 ## 2026-11-13 — Member Home navigation and Creator Studio parity repair
 
-Status: **IMPLEMENTED; GUARDED PRODUCTION RELEASE PENDING.** Fixed the signed-in
-login route to redirect directly to the shared member Home, aligned desktop and
-mobile Home navigation, and included appointed Executive leadership in the
-server and shared-navigation Creator Studio access check. Focused checks passed
-before release; local Firefox redirect acceptance and maintained release gates
-remain pending. No member data was changed. See [Member Home Navigation and
+Status: **DEPLOYED AND LIVE VERIFIED — release `rel-775f9c40e0c3-1b13f7ed1083`,
+Worker `e321a3e4-ee26-4b53-adfe-3b5799361235`, 100% traffic.** Fixed the
+signed-in login route to redirect directly to the shared member Home, aligned
+desktop and mobile Home navigation, and included appointed Executive
+leadership in the server and shared-navigation Creator Studio access check.
+Local Firefox profile/feed acceptance passed 44/44; preflight passed 30/30;
+production smoke passed 10/10; isolated live Firefox acceptance passed 65/65.
+No member data was changed. See [Member Home Navigation and
 Creator Studio Parity Repair](300-COMPLETED-WORK/2026-11-13-MEMBER-HOME-NAVIGATION-PARITY-REPAIR.md).
 
 ## 2026-11-13 — Member Home profile and isolated live acceptance recovery

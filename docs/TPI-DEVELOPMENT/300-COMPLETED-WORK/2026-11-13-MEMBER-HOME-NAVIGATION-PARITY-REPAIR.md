@@ -27,19 +27,34 @@ Studio link).
 
 ## Verification
 
-Focused checks passed before release:
+Focused checks passed:
 
 - Staff role and Creator Studio access: 16/16.
 - Shared asset cache consistency: all 238 in-scope HTML pages.
 - Administration/Settings workspace regressions: both passed.
-- Admin functional and Nova navigation checks: 16/16 each.
+- Admin functional checks: 16/16; TPI Videos navigation branding: passed.
 - ParaNews/ParaTube shared shell: 16/16.
+- Member profile/feed Firefox Developer Edition acceptance: 44/44, including
+  signed-in member and administrator redirects, the shared Home shell, visible
+  Creator Studio navigation for the administrator, and the profile/feed paths.
+- Local authentication lifecycle: 38/38 at each checkpoint; isolated Firefox
+  StudioFlow acceptance 65/65.
+- Complete guarded release preflight: 30/30 gates, including API E2E, Firefox,
+  Studio lifecycle/data-safety suites, reproducible asset staging, Cloudflare
+  target validation, and Wrangler dry-run.
+- Production anonymous smoke: 10/10; isolated production Firefox acceptance:
+  65/65.
 - `git diff --check`: passed.
 
-Local Firefox authenticated redirect acceptance and maintained release gates
-are pending. No member or production account data was changed. Haunted Location
-books and standalone Repository books were not modified.
+No member or production account data was changed. Haunted Location books and
+standalone Repository books were not modified.
 
 ## Release
 
-Pending guarded release and live acceptance.
+**DEPLOYED AND LIVE VERIFIED.** Release `rel-775f9c40e0c3-1b13f7ed1083`,
+source commit `775f9c40e0c3e823eae5a5be0511eb8dec82bbf6`, Worker version
+`e321a3e4-ee26-4b53-adfe-3b5799361235`; rollback reference
+`f4ee230f-b1d1-4f4b-bffd-630ade38cef6`. The new Worker version holds 100% of
+traffic. GitHub and the source commit matched before deployment. The remaining
+acceptance limitation is that the owner's existing browser session was not
+used; live Firefox acceptance used the isolated synthetic release account.
