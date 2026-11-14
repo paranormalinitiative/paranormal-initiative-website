@@ -179,7 +179,11 @@ async function enterStudio() {
     }
   }
   if (shellError) throw shellError;
-  if (!(await count("[data-tpi-video-organization]"))) {
+  const controlsReady = await waitFor("initial StudioFlow media controls", async () => {
+    return (await count("[data-tpi-video-organization]")) === 1 && (await count("[data-tpi-audio-soundboards]")) === 1;
+  }, 12_000).then(() => true).catch(() => false);
+  if (!controlsReady) {
+    await waitFor("StudioFlow recording setup", async () => await js("return Array.from(document.querySelectorAll('button')).some(function(button){ return (button.textContent || '').replace(/\\s+/g, ' ').trim().toLowerCase().includes('record without going live'); });"), 12_000);
     await clickButton("Record without going live");
     await sleep(400);
     await clickButton("Continue to setup");
