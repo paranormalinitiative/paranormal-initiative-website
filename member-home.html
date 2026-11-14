@@ -3352,10 +3352,11 @@
     var composerPreviewRequest = 0;
     var COMMUNITY_FILE_ACCEPT = ".pdf,.txt,.csv,.json,.rtf,.doc,.docx,.odt,.xls,.xlsx,.zip,application/pdf,text/plain,text/csv,application/json,application/rtf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.text,application/zip,application/octet-stream";
 
-    window.addEventListener("hashchange", focusPostFromHash);
+    window.addEventListener("hashchange", function() { focusPostFromHash(0); });
     init();
 
-    function focusPostFromHash() {
+    function focusPostFromHash(attempt) {
+        attempt = Number(attempt) || 0;
         var hash = window.location.hash || "";
         if (hash.indexOf("#post-") !== 0) return false;
         var encodedId = hash.substring("#post-".length);
@@ -3367,12 +3368,21 @@
         }
         if (!postId) return false;
         var card = document.getElementById("post-" + postId);
-        if (!card) return false;
+        if (!card) {
+            if (attempt < 20) window.setTimeout(function() { focusPostFromHash(attempt + 1); }, 100);
+            return false;
+        }
         document.querySelectorAll(".feed-card.is-hash-target").forEach(function(previous) {
             previous.classList.remove("is-hash-target");
         });
         card.classList.add("is-hash-target");
-        card.scrollIntoView({ block: "center", behavior: "smooth" });
+        // Feed previews and images can change the card's position after the
+        // first paint. Recheck briefly so notification links remain focused
+        // in every browser instead of landing above or below the target.
+        var rect = card.getBoundingClientRect();
+        var inView = rect.top >= 70 && rect.bottom <= window.innerHeight - 70;
+        if (!inView || attempt === 0) card.scrollIntoView({ block: "center", behavior: attempt === 0 ? "smooth" : "auto" });
+        if (attempt < 8) window.setTimeout(function() { focusPostFromHash(attempt + 1); }, 250);
         window.setTimeout(function() {
             card.classList.remove("is-hash-target");
         }, 5000);
@@ -4750,7 +4760,7 @@
         setupFeedPostTools();
         setupCommentForms();
         hydrateLinkPreviews(items);
-        window.setTimeout(focusPostFromHash, 0);
+        window.setTimeout(function() { focusPostFromHash(0); }, 0);
     }
 
     function renderFeedCard(item) {

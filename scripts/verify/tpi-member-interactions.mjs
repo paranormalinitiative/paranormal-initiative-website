@@ -25,6 +25,8 @@ check("Administration Center uses the shared effective staff-role resolver", wor
 check("Owner and server-authorized accounts keep the Administration Center visible", shell.includes("var canUseAdminPanel = serverAdminAccess") && shell.includes('role === "owner"') && shell.includes('"owner", "executive", "full_administrator", "administrator"'));
 check("New community notifications continue to carry the exact post target", api.includes("/member-home?member=1#post-${encodeURIComponent(content.postId)}") && api.includes('type: "community_post"'));
 check("Notification Open actions are normal links that do not wait on readiness", login.includes('<a class="portal-button portal-button-secondary" href="${escapeHtml(actionHref)}"') && login.includes("must never block the deep link") && !login.includes("if (!notificationHref || !await cloudflareReady()) return;"));
+check("Notification timestamps treat SQLite values as UTC", login.includes("function parseNotificationDate(value)") && login.includes("SQLite CURRENT_TIMESTAMP is UTC") && login.includes('raw.replace(sqliteUtc, "$1T$2Z")') && login.includes('title="${escapeHtml(createdAt)}"'));
+check("Notification post links retry focus after feed layout settles", home.includes("if (attempt < 20)") && home.includes("card.scrollIntoView({ block: \"center\", behavior: attempt === 0 ? \"smooth\" : \"auto\" })") && home.includes("if (attempt < 8) window.setTimeout(function() { focusPostFromHash(attempt + 1); }, 250);"));
 check("Community share opens the same in-page choices in every browser", home.includes("showShareModal(url, title);") && !home.includes("if (navigator.share) {\n            navigator.share({ title: title, url: url })"));
 
 const failed = checks.filter(row => !row.pass);

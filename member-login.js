@@ -1246,9 +1246,22 @@
     return notificationTypeMap[notification.type] || notificationTypeMap[String(notification.type || "").replace(/-/g, "_")] || { label: "Member Notice", categoryLabel: "Other", category: "other", tone: "default", href: "member-dashboard.html" };
   }
 
+  function parseNotificationDate(value) {
+    if (!value) return null;
+    const raw = String(value).trim();
+    if (!raw) return null;
+    // SQLite CURRENT_TIMESTAMP is UTC but is returned without a timezone
+    // suffix. Make that explicit before the browser parses it as local time.
+    const sqliteUtc = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(?:\.\d+)?$/;
+    const normalized = raw.replace(sqliteUtc, "$1T$2Z");
+    const date = new Date(normalized);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
   function timeAgo(value) {
-    if (!value) return "";
-    const seconds = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 1000));
+    const date = parseNotificationDate(value);
+    if (!date) return "";
+    const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
     if (seconds < 60) return "just now";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return minutes + "m ago";
@@ -1256,7 +1269,7 @@
     if (hours < 24) return hours + "h ago";
     const days = Math.floor(hours / 24);
     if (days < 7) return days + "d ago";
-    return new Date(value).toLocaleDateString();
+    return date.toLocaleDateString();
   }
 
   function renderNotificationSummary(notifications) {
@@ -1289,7 +1302,8 @@
   function renderNotificationItem(notification) {
     const meta = getNotificationTypeMeta(notification);
     const actionHref = notification.actionHref || meta.href || "member-dashboard.html";
-    const createdAt = notification.createdAt ? new Date(notification.createdAt).toLocaleString() : "";
+    const notificationDate = parseNotificationDate(notification.createdAt);
+    const createdAt = notificationDate ? notificationDate.toLocaleString() : "";
     const isChat = notification.chat || notification.type === "chat" || notification.type === "message";
     const openAction = isChat && notification.conversationId
       ? `<button type="button" class="portal-button portal-button-secondary" data-notification-chat="${escapeHtml(notification.conversationId)}">Open</button>`
@@ -1298,7 +1312,7 @@
       <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}" data-notification-type="${escapeHtml(meta.tone)}" data-notification-category="${escapeHtml(meta.category)}">
         <span class="member-notification-dot" aria-hidden="true"></span>
         <div class="member-notification-content">
-          <span class="member-notification-meta"><em>${escapeHtml(meta.label)}</em> ${createdAt ? `· ${escapeHtml(timeAgo(notification.createdAt))}` : ""}</span>
+          <span class="member-notification-meta" title="${escapeHtml(createdAt)}"><em>${escapeHtml(meta.label)}</em> ${createdAt ? `· ${escapeHtml(timeAgo(notification.createdAt))}` : ""}</span>
           <strong>${escapeHtml(notification.title || meta.label || "Notification")}</strong>
           <p>${escapeHtml(notification.body || "")}</p>
         </div>
