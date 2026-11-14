@@ -56,7 +56,12 @@ try {
   // to this feed interaction, so apply the component's existing hidden state
   // before the real Play-button click if that fixed surface is mounted.
   const messenger = await driver.findElements(By.css(".member-floating-chat"));
-  if (messenger.length) await driver.executeScript("arguments[0].classList.add('is-hidden')", messenger[0]);
+  if (messenger.length) {
+    // A member page can restore more than one chat frame from browser-local
+    // layout state. Hide every restored frame so Messenger cannot intercept
+    // the feed's Play control during this unrelated acceptance.
+    await driver.executeScript("Array.from(document.querySelectorAll('.member-floating-chat')).forEach(function(node){ node.classList.add('is-hidden'); });");
+  }
   const state = await driver.executeScript(`var card=document.getElementById('post-'+arguments[0]); return {
     previews:Array.from(card.querySelectorAll('[data-youtube-preview]')).map(function(node){return {
       id:node.getAttribute('data-youtube-preview'), title:node.querySelector('.link-preview-title')?.textContent.trim(),

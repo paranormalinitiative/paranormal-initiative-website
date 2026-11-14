@@ -28,6 +28,10 @@ article is TPI-specific and uses the existing shared six-theme palette.
   hydration when a signed-in session is available.
 - Public header and member sidebar links, plus sitemap entries for the Help
   Center home and Help Desk.
+- Hardened the existing Community YouTube Firefox acceptance fixture so all
+  browser-local Messenger frames are hidden before the unrelated feed Play
+  control is exercised; this is test isolation only and does not change
+  Messenger behavior.
 
 ## Content and authority boundary
 
@@ -44,6 +48,8 @@ Community Help Center and single-source-of-truth requirements in
 - `node --check help-center-data.js` — passed.
 - `git diff --check` — passed.
 - `npm run verify:release-safety` — passed, 30/30.
+- `npm run verify:community-youtube-preview` — passed, including 12 link-preview
+  checks and the isolated Firefox interaction suite.
 - Official local Worker at `http://127.0.0.1:8787/` — running.
 - Local Firefox-equivalent browser verification — home, category, article,
   search results, theme picker, Help Desk, and mobile navigation drawer passed.
