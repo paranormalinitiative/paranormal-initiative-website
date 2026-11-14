@@ -92,7 +92,10 @@ try {
     commentSignatureEnabled: login.user.commentSignatureEnabled !== false
   };
   await driver.get(`${base}/member-profile.html#profile-editor`);
-  await waitFor("profile editor", async () => driver.executeScript("return Boolean(document.querySelector('[data-profile-form] input[name=profilePhotoFile]')) && String(document.querySelector('[data-profile-form] input[name=correspondence]')?.value || '').includes('@')"));
+  await waitFor("profile editor", async () => driver.executeScript("return Boolean(document.querySelector('[data-profile-form] input[name=profilePhotoFile]')) && Boolean(document.querySelector('[data-profile-form] input[name=correspondence]'))"));
+  const profileEmailState = await driver.executeScript("var input=document.querySelector('[data-profile-form] input[name=correspondence]'); return {required:!!input&&input.required,valid:!!input&&input.checkValidity()};");
+  check("profile editor does not require a recovery email for media saves", profileEmailState.required === false && profileEmailState.valid === true, JSON.stringify(profileEmailState));
+  await driver.executeScript("var input=document.querySelector('[data-profile-form] input[name=correspondence]'); if (input) { input.value=''; input.dispatchEvent(new Event('input',{bubbles:true})); }");
   await driver.findElement(By.css("input[name='profilePhotoFile']")).sendKeys(profileFixture);
   await driver.findElement(By.css("input[name='profileBannerFile']")).sendKeys(profileFixture);
   const selectedMediaState = await driver.executeScript("var photo=document.querySelector('[data-profile-photo-preview] img'), banner=document.querySelector('[data-profile-banner-preview]'); return {photoPreview:!!photo&&photo.src.startsWith('blob:'),bannerPreview:!!banner&&banner.style.backgroundImage.includes('blob:')};");

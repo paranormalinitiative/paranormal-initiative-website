@@ -63,6 +63,7 @@ run("TPI-OPS-007 local foundation guard regression", process.execPath, ["scripts
 // entitlement model, All-Access union, and dual-access accumulation. This suite
 // builds its own disposable database and touches no other state.
 run("TPI-CREATOR-INCENTIVE-001 membership and entitlement regression", process.execPath, ["scripts/verify/tpi-creator-incentive-001.mjs"]);
+run("Member profile media and interaction source contracts", process.execPath, ["scripts/verify/tpi-member-interactions.mjs"]);
 
 if (e2e) {
   run(

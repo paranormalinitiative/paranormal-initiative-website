@@ -130,6 +130,9 @@ check("complete QA runs the StudioFlow request-budget guard", () => {
   assert.match(qaRunner, /StudioFlow production request-budget guard/);
   assert.match(qaRunner, /check:request-budget/);
 });
+check("complete QA runs the member profile media source contracts", () => {
+  assert.match(qaRunner, /tpi-member-interactions\.mjs/);
+});
 check("isolated E2E applies migrations through one ordered disposable D1 operation", () => {
   assert.match(isolatedWorker, /migrations_dir =/);
   assert.match(isolatedApiE2E, /d1 migrations apply TPI_DB/);

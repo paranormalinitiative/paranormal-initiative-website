@@ -132,6 +132,22 @@ authentication, upload authorization, file storage, profile save validation,
 media readability, cache freshness, and cleanup. A correct endpoint permission
 is not enough if the editor or the follow-up save blocks the same member.
 
+**Permanent protection now in place:**
+
+- The shared member-interaction contract now fails if either upload route loses
+  its `requireMember` boundary, the editor makes recovery email required again,
+  the server stops preserving an existing email, media validation is bypassed,
+  or the editor stops uploading both files before saving.
+- The official Firefox profile regression now explicitly checks that the email
+  field is optional, clears it before saving, previews both files, saves both
+  files, confirms the returned media URLs, and confirms the file inputs clear.
+- The complete local QA runner executes the member profile-media source
+  contracts on every quality-gate run, and release preflight continues to run
+  the targeted profile/browser regression whenever the relevant site surface
+  changes.
+- Production promotion remains fail-closed: a failed contract or browser
+  regression prevents the certified candidate from being deployed.
+
 **Protected-app note:** This was classified as a shared-API release. StudioFlow,
 Nova Workspace, and Creator Studio were protected by the byte-integrity guard
 and were not rebuilt or live-accepted for this unrelated member-profile repair.

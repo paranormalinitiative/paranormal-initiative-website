@@ -91,6 +91,29 @@ editor validation, upload storage, follow-up profile save, media readback,
 cache freshness, and cleanup. A correct permission on the upload route is not
 enough if the editor or the subsequent save rejects the same member.
 
+## Permanent protections added after the repair
+
+This repair is now guarded as a reusable profile-media contract rather than
+being remembered only as a manual fix:
+
+1. The source contract fails if either upload route is no longer protected by
+   `requireMember`.
+2. The source contract fails if the recovery-email field becomes required,
+   existing email preservation disappears, media validation is bypassed, or the
+   editor stops uploading both files before the profile save.
+3. The official Firefox regression clears the email field before saving and
+   verifies that both files still preview, save, return through the session, and
+   clear from the form.
+4. The complete QA runner executes the source contract on every quality-gate
+   run. Release preflight runs the targeted browser regression for profile,
+   member, login, dashboard, and shared API changes.
+5. A failed contract or browser regression blocks certification and therefore
+   blocks production promotion.
+
+This cannot promise that software will never fail, but it makes this specific
+failure mode visible before release and prevents a certified deployment from
+passing without the profile-media protections.
+
 ## Source references
 
 - [`member-profile.html`](../../../member-profile.html) — profile editor field
