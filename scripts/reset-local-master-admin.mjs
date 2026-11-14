@@ -11,6 +11,7 @@ import {
   buildTargetPasswordResetSql,
   hashPassword,
   isEligibleTargetAccount,
+  verifyPassword,
   sqlString,
 } from "./local-credential-reset.mjs";
 
@@ -190,10 +191,9 @@ async function resetExistingAccount(targetUsername) {
   const accountCountBefore = Number(firstResult(d1Json("SELECT COUNT(*) AS account_count FROM contributors;"))?.account_count || 0);
   const password = await promptNewPassword("New local account password");
   executeSensitiveBatch(buildTargetPasswordResetSql({ accountId: account.id, username: targetUsername, password }));
-  const expectedHash = hashPassword(password);
-  const verified = firstResult(d1Json(`SELECT id, username, role, active, password_hash = ${sqlString(expectedHash)} AS password_matches, (SELECT COUNT(*) FROM sessions WHERE contributor_id = ${sqlString(account.id)}) AS session_count FROM contributors WHERE id = ${sqlString(account.id)} AND username = ${sqlString(targetUsername)} LIMIT 1;`));
+  const verified = firstResult(d1Json(`SELECT id, username, role, active, password_hash, (SELECT COUNT(*) FROM sessions WHERE contributor_id = ${sqlString(account.id)}) AS session_count FROM contributors WHERE id = ${sqlString(account.id)} AND username = ${sqlString(targetUsername)} LIMIT 1;`));
   const accountCountAfter = Number(firstResult(d1Json("SELECT COUNT(*) AS account_count FROM contributors;"))?.account_count || 0);
-  if (!verified || verified.id !== account.id || verified.username !== targetUsername || verified.role !== account.role || Number(verified.active) !== Number(account.active) || Number(verified.password_matches) !== 1 || Number(verified.session_count) !== 0 || accountCountAfter !== accountCountBefore) {
+  if (!verified || verified.id !== account.id || verified.username !== targetUsername || verified.role !== account.role || Number(verified.active) !== Number(account.active) || !verifyPassword(password, verified.password_hash) || Number(verified.session_count) !== 0 || accountCountAfter !== accountCountBefore) {
     throw new Error("targeted local account postcondition verification failed; no success was reported");
   }
   if (targetUsername === "local_admin") {
@@ -212,10 +212,9 @@ function restoreProtectedLocalAdmin() {
   if (!account || !isEligibleTargetAccount(account, "local_admin")) throw new Error("local_admin must be an active local administrator or owner");
   const accountCountBefore = Number(firstResult(d1Json("SELECT COUNT(*) AS account_count FROM contributors;"))?.account_count || 0);
   executeSensitiveBatch(buildTargetPasswordResetSql({ accountId: account.id, username: "local_admin", password: stored.password }));
-  const expectedHash = hashPassword(stored.password);
-  const verified = firstResult(d1Json(`SELECT id, username, role, active, password_hash = ${sqlString(expectedHash)} AS password_matches, (SELECT COUNT(*) FROM sessions WHERE contributor_id = ${sqlString(account.id)}) AS session_count FROM contributors WHERE id = ${sqlString(account.id)} LIMIT 1;`));
+  const verified = firstResult(d1Json(`SELECT id, username, role, active, password_hash, (SELECT COUNT(*) FROM sessions WHERE contributor_id = ${sqlString(account.id)}) AS session_count FROM contributors WHERE id = ${sqlString(account.id)} LIMIT 1;`));
   const accountCountAfter = Number(firstResult(d1Json("SELECT COUNT(*) AS account_count FROM contributors;"))?.account_count || 0);
-  if (!verified || verified.username !== "local_admin" || !["admin", "owner"].includes(verified.role) || Number(verified.active) !== 1 || Number(verified.password_matches) !== 1 || Number(verified.session_count) !== 0 || accountCountAfter !== accountCountBefore) {
+  if (!verified || verified.username !== "local_admin" || !["admin", "owner"].includes(verified.role) || Number(verified.active) !== 1 || !verifyPassword(stored.password, verified.password_hash) || Number(verified.session_count) !== 0 || accountCountAfter !== accountCountBefore) {
     throw new Error("protected local_admin restore postcondition verification failed");
   }
   console.log("local_admin restored from the protected local credential store; password was not displayed and all prior sessions were invalidated.");

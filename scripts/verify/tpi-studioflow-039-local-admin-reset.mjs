@@ -6,7 +6,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { buildTargetPasswordResetSql, hashPassword, isEligibleTargetAccount } from "../local-credential-reset.mjs";
+import { buildTargetPasswordResetSql, hashPassword, isEligibleTargetAccount, verifyPassword } from "../local-credential-reset.mjs";
 
 const repoRoot = resolve(new URL("../..", import.meta.url).pathname);
 const wrangler = process.env.WRANGLER_BIN || "/opt/homebrew/bin/wrangler";
@@ -104,10 +104,11 @@ INSERT INTO studio_workspaces VALUES ('synthetic-studio', 'Synthetic Studio', 7)
   const other = query("SELECT id, username, password_hash, role, active FROM contributors WHERE id = 'synthetic-other';")[0];
   const sessions = query("SELECT token, contributor_id FROM sessions ORDER BY token;");
   const studio = query("SELECT id, title, version FROM studio_workspaces WHERE id = 'synthetic-studio';")[0];
+  const expectedTargetHash = target?.password_hash;
 
   checks.push(
     check("existing account can be targeted", target?.username === "local_admin"),
-    check("exactly one credential is updated", target?.password_hash === hashPassword(newAdminPassword) && other?.password_hash === beforeOther.password_hash),
+    check("exactly one credential is updated", verifyPassword(newAdminPassword, target?.password_hash) && other?.password_hash === beforeOther.password_hash),
     check("account ID remains unchanged", target?.id === "synthetic-admin"),
     check("account role remains unchanged", target?.role === "admin" && Number(target.active) === 1),
     check("other accounts remain unchanged", JSON.stringify(other) === JSON.stringify(beforeOther)),
@@ -124,7 +125,7 @@ INSERT INTO studio_workspaces VALUES ('synthetic-studio', 'Synthetic Studio', 7)
   const preserved = query("SELECT password_hash, username, role FROM contributors WHERE id = 'synthetic-admin';")[0];
   checks.push(
     check("failed batch is rejected", failed),
-    check("failed batch preserves prior credential", preserved?.password_hash === hashPassword(newAdminPassword) && preserved?.username === "local_admin" && preserved?.role === "admin"),
+    check("failed batch preserves prior credential", preserved?.password_hash === expectedTargetHash && preserved?.username === "local_admin" && preserved?.role === "admin"),
   );
 
   console.log(JSON.stringify({

@@ -6,7 +6,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { sessionCookieAttributes } from "../../lib/auth.js";
-import { hashPassword } from "../local-credential-reset.mjs";
+import { verifyPassword } from "../local-credential-reset.mjs";
 
 const base = process.env.TPI_LOCAL_ORIGIN || "http://127.0.0.1:8787";
 const credentialPath = ".local-dev/local-auth-credentials.json";
@@ -86,7 +86,7 @@ check("development Worker config remains isolated from production", (() => {
 })());
 const row = execFileSync("sqlite3", [databasePath, "SELECT password_hash || '|' || role || '|' || active FROM contributors WHERE username='local_admin' LIMIT 1;"], { encoding: "utf8" }).trim().split("|");
 check("persistent local_admin row matches protected credential store", row.length === 3
-  && row[0] === hashPassword(credentials.accounts.local_admin.password)
+  && verifyPassword(credentials.accounts.local_admin.password, row[0])
   && row[1] === "admin"
   && row[2] === "1");
 

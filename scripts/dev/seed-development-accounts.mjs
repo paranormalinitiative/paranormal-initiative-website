@@ -1,8 +1,9 @@
-import { randomUUID, createHash } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
+import { hashPassword } from "../local-credential-reset.mjs";
 
 const ownerPassword = process.env.TPI_DEV_OWNER_PASSWORD;
 const memberPassword = process.env.TPI_DEV_MEMBER_PASSWORD;
@@ -13,16 +14,15 @@ if (ownerPassword.length < 16 || memberPassword.length < 16) {
   throw new Error("Development passwords must be at least 16 characters.");
 }
 
-const hash = value => createHash("sha256").update(value).digest("hex");
 const sqlValue = value => `'${String(value).replaceAll("'", "''")}'`;
 const ownerId = randomUUID();
 const memberId = randomUUID();
 const sql = `
 INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, comment_signature_enabled, active)
-VALUES (${sqlValue(ownerId)}, 'tpi-dev-owner', ${sqlValue(hash(ownerPassword))}, 'TPI Development Owner', 'Development Owner', 'owner', 'tpi-dev-owner@example.invalid', 1, 1)
+VALUES (${sqlValue(ownerId)}, 'tpi-dev-owner', ${sqlValue(hashPassword(ownerPassword))}, 'TPI Development Owner', 'Development Owner', 'owner', 'tpi-dev-owner@example.invalid', 1, 1)
 ON CONFLICT(username) DO UPDATE SET password_hash = excluded.password_hash, role = 'owner', active = 1;
 INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, comment_signature_enabled, active)
-VALUES (${sqlValue(memberId)}, 'tpi-dev-member', ${sqlValue(hash(memberPassword))}, 'TPI Development Member', 'Development Member', 'member', 'tpi-dev-member@example.invalid', 1, 1)
+VALUES (${sqlValue(memberId)}, 'tpi-dev-member', ${sqlValue(hashPassword(memberPassword))}, 'TPI Development Member', 'Development Member', 'member', 'tpi-dev-member@example.invalid', 1, 1)
 ON CONFLICT(username) DO UPDATE SET password_hash = excluded.password_hash, role = 'member', active = 1;
 `;
 

@@ -11,6 +11,7 @@ import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-provi
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
 import { passwordResetEmail, randomCode, sendEmail } from "../../lib/email.js";
+import { hashPassword, hashRateLimitKey, isLegacyPasswordHash, verifyPassword } from "../../lib/passwords.js";
 import {
   CAPABILITY,
   MEMBERSHIP_CLASSES,
@@ -455,8 +456,22 @@ async function handleLogin(request, env) {
   const username = clean(data.username);
   const password = String(data.password || "");
   const user = await getUserByLoginIdentifier(env, username);
-  if (!user || !user.active || user.password_hash !== await hashPassword(password)) {
+  if (!user || !user.active || !(await verifyPassword(password, user.password_hash))) {
     return json({ error: "Username or password did not match." }, 401);
+  }
+
+  // Existing accounts use the original unsalted SHA-256 format. Upgrade that
+  // row after a successful login without making authentication depend on a
+  // best-effort migration write; a later login can retry if the write is
+  // temporarily unavailable.
+  if (isLegacyPasswordHash(user.password_hash)) {
+    try {
+      await env.TPI_DB.prepare("UPDATE contributors SET password_hash = ? WHERE id = ? AND password_hash = ?")
+        .bind(await hashPassword(password), user.id, user.password_hash)
+        .run();
+    } catch (error) {
+      console.error("password hash upgrade failed", error.message || error);
+    }
   }
 
   const token = crypto.randomUUID();
@@ -558,7 +573,7 @@ async function recoveryRateAllowed(env, category, identity) {
     return null;
   }
   try {
-    const key = await hashPassword(`${category}:${identity}`);
+    const key = await hashRateLimitKey(`${category}:${identity}`);
     const result = await env.TPI_AUTH_RATE_LIMITER.limit({ key });
     return result.success === true;
   } catch (error) {
@@ -11159,12 +11174,6 @@ async function insertCommunityAttachments(env, targetId, targetType, attachments
   } catch (error) {
     throw new Error("community_attachments is not ready yet. Apply migrations 0032 and 0033 in Cloudflare D1.");
   }
-}
-
-async function hashPassword(password) {
-  const data = new TextEncoder().encode(password);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  return [...new Uint8Array(hash)].map(byte => byte.toString(16).padStart(2, "0")).join("");
 }
 
 async function readJson(request) {
