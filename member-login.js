@@ -55,6 +55,7 @@
   const adminDetailCard = document.querySelector("[data-admin-detail-card]");
   const adminMemberDetail = document.querySelector("[data-admin-member-detail]");
   const adminSelectedTitle = document.querySelector("[data-admin-selected-title]");
+  const PROFILE_IMAGE_MAX_BYTES = 12 * 1024 * 1024;
   let currentAdminUser = null;
   let selectedAdminUsername = "";
 
@@ -62,6 +63,58 @@
     if (!status) return;
     status.textContent = message;
     status.classList.toggle("access-error", Boolean(isError));
+  }
+
+  function validateProfileImage(file, label) {
+    if (!file) return "";
+    const type = String(file.type || "").toLowerCase();
+    const extension = String(file.name || "").toLowerCase().match(/\.([a-z0-9]{2,8})$/)?.[1] || "";
+    const supportedExtension = ["jpg", "jpeg", "png", "webp", "gif", "avif"].includes(extension);
+    if (!type.startsWith("image/") && !supportedExtension) {
+      return `${label} must be an image file.`;
+    }
+    if (["image/heic", "image/heif"].includes(type) || ["heic", "heif"].includes(extension)) {
+      return `${label} must be JPG, PNG, WEBP, GIF, or AVIF. HEIC/HEIF is not supported by web browsers.`;
+    }
+    if (file.size > PROFILE_IMAGE_MAX_BYTES) {
+      return `${label} must be 12 MB or smaller.`;
+    }
+    return "";
+  }
+
+  function previewProfileImage(input, preview, label, mode) {
+    const file = input?.files?.[0];
+    if (!file || !preview) return;
+    const error = validateProfileImage(file, label);
+    if (error) {
+      input.value = "";
+      setStatus(error, true);
+      return;
+    }
+    if (input.dataset.previewUrl) URL.revokeObjectURL(input.dataset.previewUrl);
+    const url = URL.createObjectURL(file);
+    input.dataset.previewUrl = url;
+    if (mode === "banner") {
+      preview.style.backgroundImage = `url("${url}")`;
+      preview.setAttribute("aria-label", "Selected profile banner preview");
+      return;
+    }
+    preview.innerHTML = "";
+    const image = document.createElement("img");
+    image.className = "member-profile-photo";
+    image.src = url;
+    image.alt = "Selected profile photo preview";
+    preview.appendChild(image);
+  }
+
+  function clearProfileMediaInputs(form) {
+    ["profilePhotoFile", "profileBannerFile"].forEach(name => {
+      const input = form?.querySelector(`input[name="${name}"]`);
+      if (!input) return;
+      if (input.dataset.previewUrl) URL.revokeObjectURL(input.dataset.previewUrl);
+      input.value = "";
+      delete input.dataset.previewUrl;
+    });
   }
 
   function setRecoveryStatus(message, isError) {
@@ -1745,7 +1798,7 @@
       const bannerPreview = document.querySelector("[data-profile-banner-preview]");
       if (bannerPreview) {
         const bannerUrl = user.profileBannerUrl || "/assets/tpi-banner.png";
-        bannerPreview.style.backgroundImage = `url("${escapeHtml(bannerUrl)}")`;
+        bannerPreview.style.backgroundImage = `url("${bannerUrl}")`;
         bannerPreview.setAttribute("aria-label", "Profile banner preview");
       }
       profileForm.bio.value = user.bio || "";
@@ -2151,8 +2204,18 @@
     if (profileSubmitForm) {
       const uploadedPhoto = profileSubmitForm.querySelector("input[name='profilePhotoFile']")?.files?.[0];
       const uploadedBanner = profileSubmitForm.querySelector("input[name='profileBannerFile']")?.files?.[0];
+      const photoError = validateProfileImage(uploadedPhoto, "Profile photo");
+      const bannerError = validateProfileImage(uploadedBanner, "Profile banner");
+      if (photoError || bannerError) {
+        setStatus(photoError || bannerError, true);
+        return;
+      }
       let photoUrl = String(data.get("photoUrl") || "").trim();
       let profileBannerUrl = String(data.get("profileBannerUrl") || "").trim();
+      if (!String(data.get("correspondence") || "").trim().includes("@")) {
+        setStatus("A valid account email address is required before uploading profile media.", true);
+        return;
+      }
       if (uploadedPhoto) {
         if (!window.TPIApi || !await cloudflareReady()) {
           setStatus("Profile photo upload needs the Cloudflare R2 media bucket. Save an image URL for now.", true);
@@ -2217,16 +2280,10 @@
       }
       if (await cloudflareReady()) {
         try {
-          const response = await fetch("/api/contributors/me/profile", {
-            method: "POST",
-            credentials: "same-origin",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          const result = await response.json();
-          if (!response.ok) throw new Error(result.error || "Profile save failed.");
+          const result = await window.TPIApi.updateProfile(payload);
           renderDashboardProfile(result.user);
           await renderDashboardArticles(result.user);
+          clearProfileMediaInputs(profileSubmitForm);
           setStatus("Profile saved.", false);
         } catch (error) {
           setStatus(error.message, true);
@@ -2845,15 +2902,14 @@
 
   document.addEventListener("change", event => {
     const photoInput = event.target.closest("input[name='profilePhotoFile']");
-    if (!photoInput || !profilePhotoPreview || !photoInput.files?.[0]) return;
-    const file = photoInput.files[0];
-    if (!file.type.startsWith("image/")) {
-      setStatus("Profile photo must be an image file.", true);
-      photoInput.value = "";
+    if (photoInput) {
+      previewProfileImage(photoInput, profilePhotoPreview, "Profile photo", "photo");
       return;
     }
-    const previewUrl = URL.createObjectURL(file);
-    profilePhotoPreview.innerHTML = `<img class="member-profile-photo" src="${previewUrl}" alt="Selected profile photo preview">`;
+    const bannerInput = event.target.closest("input[name='profileBannerFile']");
+    if (bannerInput) {
+      previewProfileImage(bannerInput, document.querySelector("[data-profile-banner-preview]"), "Profile banner", "banner");
+    }
   });
 
   window.addEventListener("hashchange", async () => {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Firefox acceptance for the shared member profile/feed surface.
-import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { Builder, By, until } from "selenium-webdriver";
@@ -75,6 +75,40 @@ try {
   check("own profile labels the feed as Profile Feed", ownProfileState.tab === "Profile Feed", JSON.stringify(ownProfileState));
   check("My Pulse View Profile opens the member home profile", ownProfileState.pulseHref === `/member-home?username=${encodeURIComponent(account.username)}`, JSON.stringify(ownProfileState));
   check("right rail orders Honors below My Pulse and above member discovery and ParaNews", ownProfileState.recognitionShell && ownProfileState.recognitionRailOrder, JSON.stringify(ownProfileState));
+
+  const profileFixture = join(profile, "profile-media.png");
+  writeFileSync(profileFixture, Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=", "base64"));
+  const originalProfile = {
+    displayName: login.user.displayName || "",
+    title: login.user.title || "",
+    correspondence: login.user.correspondence || "",
+    affiliation: login.user.affiliation || "",
+    organization: login.user.organization || "",
+    website: login.user.website || "",
+    bio: login.user.bio || "",
+    photoUrl: login.user.photoUrl || "",
+    profileBannerUrl: login.user.profileBannerUrl || "",
+    chatColor: login.user.chatColor || "#a855f7",
+    commentSignatureEnabled: login.user.commentSignatureEnabled !== false
+  };
+  await driver.get(`${base}/member-profile.html#profile-editor`);
+  await waitFor("profile editor", async () => driver.executeScript("return Boolean(document.querySelector('[data-profile-form] input[name=profilePhotoFile]')) && String(document.querySelector('[data-profile-form] input[name=correspondence]')?.value || '').includes('@')"));
+  await driver.findElement(By.css("input[name='profilePhotoFile']")).sendKeys(profileFixture);
+  await driver.findElement(By.css("input[name='profileBannerFile']")).sendKeys(profileFixture);
+  const selectedMediaState = await driver.executeScript("var photo=document.querySelector('[data-profile-photo-preview] img'), banner=document.querySelector('[data-profile-banner-preview]'); return {photoPreview:!!photo&&photo.src.startsWith('blob:'),bannerPreview:!!banner&&banner.style.backgroundImage.includes('blob:')};");
+  check("profile editor previews both selected media files before saving", selectedMediaState.photoPreview && selectedMediaState.bannerPreview, JSON.stringify(selectedMediaState));
+  const formValidity = await driver.executeScript("var form=document.querySelector('[data-profile-form]'); return {valid:!!form&&form.checkValidity(),invalid:Array.from(form?.elements||[]).filter(function(input){return !input.checkValidity();}).map(function(input){return input.name||input.type;})};");
+  check("profile editor remains valid after selecting media", formValidity.valid, JSON.stringify(formValidity));
+  await driver.executeScript("document.querySelector('[data-profile-form]')?.requestSubmit();");
+  await sleep(1500);
+  const saveStatus = await driver.executeScript("return document.querySelector('#member-login-status')?.textContent.trim() || '';");
+  check("profile editor saves both selected media files", saveStatus === "Profile saved.", saveStatus);
+  const savedMediaState = await driver.executeAsyncScript("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(data){done({photo:data.user?.photoUrl||'',banner:data.user?.profileBannerUrl||'',photoInput:document.querySelector(\"input[name='profilePhotoFile']\")?.value||'',bannerInput:document.querySelector(\"input[name='profileBannerFile']\")?.value||''});}).catch(function(error){done({error:String(error)});});");
+  check("saved profile media returns through the authenticated session", savedMediaState.photo.includes('/api/media/profiles/') && savedMediaState.banner.includes('/api/media/profile-banners/'), JSON.stringify(savedMediaState));
+  check("profile media inputs clear after a successful save", !savedMediaState.photoInput && !savedMediaState.bannerInput, JSON.stringify(savedMediaState));
+  await driver.executeAsyncScript("var done=arguments[arguments.length-1], payload=arguments[0]; fetch('/api/contributors/me/profile',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(response){done(response.status);}).catch(function(){done(0);});", originalProfile);
+  await driver.get(`${base}/member-profile`);
+  await waitFor("own profile after editor save", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden"));
 
   const aboutToggle = await driver.findElement(By.css('[data-profile-about-toggle]'));
   await aboutToggle.click();

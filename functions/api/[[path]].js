@@ -3622,6 +3622,8 @@ async function handleUpdateProfile(request, env, user) {
   if (existingEmailUser && existingEmailUser.id !== user.id) {
     return json({ error: "That email is already connected to another account." }, 409);
   }
+  const photoUrl = Object.hasOwn(data, "photoUrl") ? clean(data.photoUrl) : clean(user.photo_url);
+  const profileBannerUrl = Object.hasOwn(data, "profileBannerUrl") ? clean(data.profileBannerUrl) : clean(user.profile_banner_url);
   await env.TPI_DB.prepare(`
     UPDATE contributors SET
       display_name = ?,
@@ -3658,8 +3660,8 @@ async function handleUpdateProfile(request, env, user) {
     clean(data.organization),
     clean(data.website),
     clean(data.bio),
-    clean(data.photoUrl || user.photo_url),
-    clean(data.profileBannerUrl || user.profile_banner_url),
+    photoUrl,
+    profileBannerUrl,
     data.commentSignatureEnabled === false ? 0 : 1,
     normalizeChatColor(data.chatColor || user.chat_color),
     user.id
@@ -3681,7 +3683,8 @@ async function handleUpdateProfile(request, env, user) {
         organization = ?,
         website = ?,
         bio = ?,
-      photo_url = ?,
+        photo_url = ?,
+        profile_banner_url = ?,
         comment_signature_enabled = ?
       WHERE id = ?
     `).bind(
@@ -3699,7 +3702,8 @@ async function handleUpdateProfile(request, env, user) {
       clean(data.organization),
       clean(data.website),
       clean(data.bio),
-      clean(data.photoUrl || user.photo_url),
+      photoUrl,
+      profileBannerUrl,
       data.commentSignatureEnabled === false ? 0 : 1,
       user.id
     ).run();
@@ -3750,7 +3754,9 @@ async function handleProfilePhotoUpload(request, env, user) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const upload = await readUploadFile(request);
   if (!upload) return json({ error: "Choose a profile photo to upload." }, 400);
-  if (!upload.type.startsWith("image/")) return json({ error: "Profile photo must be an image file." }, 400);
+  upload.type = profileImageContentType(upload);
+  if (!upload.type) return json({ error: "Profile photo must be a JPG, PNG, WEBP, GIF, or AVIF image." }, 400);
+  if (upload.size > 12 * 1024 * 1024) return json({ error: "Profile photo must be 12 MB or smaller." }, 413);
 
   const key = makeMediaKey("profiles", user.username, upload.name, upload.type);
   await env.TPI_MEDIA.put(key, upload.body, {
@@ -3768,7 +3774,9 @@ async function handleProfileBannerUpload(request, env, user) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const upload = await readUploadFile(request);
   if (!upload) return json({ error: "Choose a profile banner to upload." }, 400);
-  if (!upload.type.startsWith("image/")) return json({ error: "Profile banners must be image files." }, 400);
+  upload.type = profileImageContentType(upload);
+  if (!upload.type) return json({ error: "Profile banner must be a JPG, PNG, WEBP, GIF, or AVIF image." }, 400);
+  if (upload.size > 12 * 1024 * 1024) return json({ error: "Profile banner must be 12 MB or smaller." }, 413);
 
   const key = makeMediaKey("profile-banners", user.username, upload.name, upload.type);
   await env.TPI_MEDIA.put(key, upload.body, {
@@ -11194,6 +11202,21 @@ async function readUploadFile(request) {
     size: Number(file.size || 0),
     body: await file.arrayBuffer()
   };
+}
+
+function profileImageContentType(upload) {
+  const type = clean(upload?.type).toLowerCase();
+  const supported = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"]);
+  if (supported.has(type)) return type;
+  const extension = clean(upload?.name).toLowerCase().match(/\.([a-z0-9]{2,8})$/)?.[1] || "";
+  return {
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    webp: "image/webp",
+    gif: "image/gif",
+    avif: "image/avif"
+  }[extension] || "";
 }
 
 function sanitizeMessengerAttachments(value) {

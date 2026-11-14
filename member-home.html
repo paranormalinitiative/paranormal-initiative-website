@@ -3898,7 +3898,7 @@
         try {
             var users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
             var user = users.find(function(u) { return u.username === username && u.active !== false; });
-            if (user) return { id: user.id, username: user.username, displayName: user.displayName || user.display_name || user.username, title: user.title, role: user.role, photoUrl: user.photoUrl || user.photo_url, bio: user.bio, affiliation: user.affiliation, organization: user.organization, correspondence: user.correspondence, website: user.website };
+            if (user) return { id: user.id, username: user.username, displayName: user.displayName || user.display_name || user.username, title: user.title, role: user.role, photoUrl: user.photoUrl || user.photo_url, profileBannerUrl: user.profileBannerUrl || user.profile_banner_url || "", bio: user.bio, affiliation: user.affiliation, organization: user.organization, correspondence: user.correspondence, website: user.website };
         } catch (e) {}
         return null;
     }
