@@ -52,6 +52,11 @@ try {
 
   await driver.get(`${base}/member-home?member=1&post=${encodeURIComponent(postId)}#post-${encodeURIComponent(postId)}`);
   await driver.wait(async () => (await driver.findElements(By.css(`#post-${postId} [data-youtube-preview]`))).length === 2, 20_000);
+  // Desktop member pages may mount Messenger open by default. It is unrelated
+  // to this feed interaction, so apply the component's existing hidden state
+  // before the real Play-button click if that fixed surface is mounted.
+  const messenger = await driver.findElements(By.css(".member-floating-chat"));
+  if (messenger.length) await driver.executeScript("arguments[0].classList.add('is-hidden')", messenger[0]);
   const state = await driver.executeScript(`var card=document.getElementById('post-'+arguments[0]); return {
     previews:Array.from(card.querySelectorAll('[data-youtube-preview]')).map(function(node){return {
       id:node.getAttribute('data-youtube-preview'), title:node.querySelector('.link-preview-title')?.textContent.trim(),
