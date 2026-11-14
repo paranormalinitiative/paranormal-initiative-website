@@ -511,7 +511,7 @@ async function handlePasswordResetConfirm(request, env) {
     SELECT prt.token, prt.contributor_id AS contributorId
     FROM password_reset_tokens prt
     JOIN contributors c ON c.id = prt.contributor_id
-    WHERE prt.token = ? AND prt.used = 0 AND prt.expires_at > CURRENT_TIMESTAMP AND c.active = 1
+    WHERE prt.token = ? AND prt.used = 0 AND datetime(prt.expires_at) > CURRENT_TIMESTAMP AND c.active = 1
     LIMIT 1
   `).bind(code).first();
   if (!reset) return json({ error: "That reset code is invalid or expired." }, 400);

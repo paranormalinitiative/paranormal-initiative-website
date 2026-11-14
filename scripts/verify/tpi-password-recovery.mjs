@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { passwordResetEmail } from "../../lib/email.js";
 import { onRequest } from "../../functions/api/[[path]].js";
 
@@ -13,13 +14,21 @@ const checks = [
   ["password reset request sends through the configured email helper", api.includes("sendEmail(env") && api.includes("passwordResetEmail(token)")],
   ["password reset uses a short-lived numeric code", api.includes("randomCode()") && api.includes("1000 * 60 * 30")],
   ["password reset confirmation route is registered", api.includes('path === "/auth/password-reset/confirm"')],
-  ["confirmation rejects used or expired codes", api.includes("prt.used = 0") && api.includes("prt.expires_at > CURRENT_TIMESTAMP")],
+  ["confirmation rejects used or expired codes", api.includes("prt.used = 0") && api.includes("datetime(prt.expires_at) > CURRENT_TIMESTAMP")],
   ["confirmation invalidates existing sessions", api.includes("DELETE FROM sessions WHERE contributor_id = ?")],
   ["login card is labeled for members", login.includes("<h2>Member Login</h2>") && !login.includes("<h2>Contributor Access</h2>")],
   ["footer link is labeled Member Login", footer.includes('href="member-login.html">Member Login</a>') && !footer.includes("Contributor Login")],
   ["password recovery has separate request and always available confirmation forms", login.includes('<form data-password-reset-request>') && login.includes('<form data-password-reset-confirm>') && login.includes('<button type="submit">Save New Password</button>')],
   ["reset email has the expected subject", passwordResetEmail("12345678").subject === "Reset your password — The Paranormal Initiative"],
 ];
+
+const clockDb = new DatabaseSync(":memory:");
+const expiryQuery = clockDb.prepare("SELECT datetime(?) > CURRENT_TIMESTAMP AS valid");
+const expiredCodeTime = new Date(Date.now() - 60_000).toISOString();
+const validCodeTime = new Date(Date.now() + 30 * 60_000).toISOString();
+checks.push(["expired ISO code is rejected on the same UTC day", expiryQuery.get(expiredCodeTime).valid === 0]);
+checks.push(["unexpired ISO code remains valid", expiryQuery.get(validCodeTime).valid === 1]);
+clockDb.close();
 
 const resetUser = { id: "reset-user", username: "Todd_Wayne", correspondence: "todd@example.com", active: 1 };
 let issuedCode = "";
