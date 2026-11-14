@@ -51,6 +51,42 @@ const contributor = await login("local_contributor");
 const target = contributor.user.username;
 const targetId = contributor.user.id;
 
+const originalProfile = {
+  displayName: member.user.displayName || "",
+  title: member.user.title || "",
+  correspondence: member.user.correspondence || "",
+  affiliation: member.user.affiliation || "",
+  organization: member.user.organization || "",
+  website: member.user.website || "",
+  bio: member.user.bio || "",
+  photoUrl: member.user.photoUrl || "",
+  profileBannerUrl: member.user.profileBannerUrl || "",
+  commentSignatureEnabled: member.user.commentSignatureEnabled !== false,
+  chatColor: member.user.chatColor || "#a855f7"
+};
+
+const anonymousProfileUpload = await request("/api/uploads/profile-photo", { method: "POST", body: new FormData() });
+check("anonymous profile media upload is denied", anonymousProfileUpload.response.status === 401);
+const profileBytes = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=", "base64");
+const photoForm = new FormData();
+photoForm.append("file", new Blob([profileBytes], { type: "image/png" }), "tpi-member-profile-photo.png");
+const photoUpload = await request("/api/uploads/profile-photo", auth(member.token, { method: "POST", body: photoForm }));
+check("an authenticated member can upload a profile photo", photoUpload.response.status === 200 && photoUpload.body?.user?.photoUrl?.includes("/api/media/profiles/"));
+const bannerForm = new FormData();
+bannerForm.append("file", new Blob([profileBytes], { type: "image/png" }), "tpi-member-profile-banner.png");
+const bannerUpload = await request("/api/uploads/profile-banner", auth(member.token, { method: "POST", body: bannerForm }));
+check("an authenticated member can upload a profile banner", bannerUpload.response.status === 200 && bannerUpload.body?.user?.profileBannerUrl?.includes("/api/media/profile-banners/"));
+const uploadedPhotoMedia = await request(photoUpload.body?.url || "");
+const uploadedBannerMedia = await request(bannerUpload.body?.url || "");
+check("uploaded profile photo bytes are readable", uploadedPhotoMedia.response.status === 200 && uploadedPhotoMedia.response.headers.get("content-type") === "image/png");
+check("uploaded profile banner bytes are readable", uploadedBannerMedia.response.status === 200 && uploadedBannerMedia.response.headers.get("content-type") === "image/png");
+const restoredProfile = await request("/api/contributors/me/profile", auth(member.token, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ ...originalProfile, correspondence: "" })
+}));
+check("profile media cleanup preserves an existing account email when the form leaves it blank", restoredProfile.response.status === 200 && restoredProfile.body?.user?.correspondence === originalProfile.correspondence && restoredProfile.body?.user?.photoUrl === originalProfile.photoUrl && restoredProfile.body?.user?.profileBannerUrl === originalProfile.profileBannerUrl);
+
 const publicHome = await request("/");
 check("public home displays the shared full-width site banner", publicHome.response.status === 200 && publicHome.text.includes('class="main-website-banner"') && publicHome.text.includes('src="assets/main-website-banner.png"'));
 const memberHome = await request("/member-home.html", auth(member.token));
@@ -99,6 +135,7 @@ check("profile shell uses the larger full-banner aspect ratio and lower avatar o
 check("profile shell routes My Pulse View Profile to the member home profile", profilePage.text.includes("/member-home?username="));
 const editorPage = await request("/member-profile.html", auth(member.token));
 check("profile editor remains a separate authenticated surface", editorPage.response.status === 200 && editorPage.text.includes("Update Profile") && editorPage.text.includes("data-profile-form") && editorPage.text.includes("profileBannerFile"));
+check("profile media editing is not blocked by a required email field", editorPage.text.includes('name="correspondence" type="email" autocomplete="email">') && !editorPage.text.includes('name="correspondence" type="email" autocomplete="email" required'));
 check("profile editor explains the recommended banner dimensions", editorPage.text.includes("1600 × 500 px") && editorPage.text.includes("3.2:1"));
 
 const profile = await request(`/api/members/profile?username=${encodeURIComponent(target)}`, auth(member.token));

@@ -3652,9 +3652,11 @@ async function handleUpdateProfile(request, env, user) {
   if (isProtectedOrgTitle(data.title) && !["owner", "admin"].includes(user.role)) {
     return json({ error: "That leadership title is assigned by site leadership." }, 403);
   }
-  const correspondence = clean(data.correspondence).toLowerCase();
-  if (!correspondence || !correspondence.includes("@")) {
-    return json({ error: "A valid account email address is required." }, 400);
+  const currentCorrespondence = clean(user.correspondence).toLowerCase();
+  const submittedCorrespondence = clean(data.correspondence).toLowerCase();
+  const correspondence = submittedCorrespondence || currentCorrespondence;
+  if (submittedCorrespondence && !submittedCorrespondence.includes("@")) {
+    return json({ error: "Enter a valid account email address or leave it blank." }, 400);
   }
   const existingEmailUser = await getUserByEmail(env, correspondence);
   if (existingEmailUser && existingEmailUser.id !== user.id) {
@@ -3746,7 +3748,7 @@ async function handleUpdateProfile(request, env, user) {
       user.id
     ).run();
   });
-  if (correspondence !== clean(user.correspondence).toLowerCase()) {
+  if (correspondence !== currentCorrespondence) {
     await env.TPI_DB.prepare("UPDATE contributors SET email_verified = 0 WHERE id = ?").bind(user.id).run();
   }
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();

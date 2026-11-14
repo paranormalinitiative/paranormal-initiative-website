@@ -2226,10 +2226,6 @@
       }
       let photoUrl = String(data.get("photoUrl") || "").trim();
       let profileBannerUrl = String(data.get("profileBannerUrl") || "").trim();
-      if (!String(data.get("correspondence") || "").trim().includes("@")) {
-        setStatus("A valid account email address is required before uploading profile media.", true);
-        return;
-      }
       if (uploadedPhoto) {
         if (!window.TPIApi || !await cloudflareReady()) {
           setStatus("Profile photo upload needs the Cloudflare R2 media bucket. Save an image URL for now.", true);
@@ -2272,10 +2268,6 @@
         bio: String(data.get("bio") || "").trim(),
         commentSignatureEnabled: data.get("commentSignature") === "on"
       };
-      if (!payload.correspondence || !payload.correspondence.includes("@")) {
-        setStatus("A valid account email address is required.", true);
-        return;
-      }
       if (isProtectedOrgTitle(payload.title)) {
         let currentRole = "";
         if (await cloudflareReady()) {
