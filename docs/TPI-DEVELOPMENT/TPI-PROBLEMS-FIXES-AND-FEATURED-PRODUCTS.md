@@ -34,7 +34,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Update Profile does not open the editor or a member bio is missing from the header | [Member profile editor and short bio](#inc-2026-11-14-09--member-profile-editor-and-short-bio) | Profile route, member identity header, self-service profile API |
 | Login works, then the member is sent somewhere unexpected | [Member access](#inc-2026-11-14-03--member-access-and-home-redirect-loop) | Session identity, staff-role fallback, stale browser state |
 | Password reset appears to work but sign-in fails | [Password recovery](#inc-2026-11-14-04--password-storage-and-recovery-hardening) | Session creation, password hash compatibility, recovery code |
-| A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) | Link preview extraction, iframe boundary, overlay isolation |
+| A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) and [body-link recurrence](#inc-2026-11-14-10--community-feed-youtube-body-link-recurrence) | Link preview extraction, body URL discovery, iframe boundary |
 | Help content is visible to the wrong audience | [Two Help Centers](#inc-2026-11-14-06--member-help-center-and-internal-help-desk-confusion) | Member Help Center, internal Help Desk, Admin Center gate |
 | StudioFlow controls are missing during an automated check | [StudioFlow acceptance timing](#inc-2026-11-14-02--studioflow-acceptance-check-clicked-before-controls-were-ready) | Browser hydration, release acceptance timing |
 | A Studio opens with another Studio's scenes or media | [Studio isolation](#inc-2026-10-25-01--studio-creation-and-workspace-isolation) | Per-Studio identity, workspace hydration, local snapshots |
@@ -356,6 +356,44 @@ internal credentials guidance.
 
 - [`2026-11-14-HELP-CENTER-FOUNDATION.md`](300-COMPLETED-WORK/2026-11-14-HELP-CENTER-FOUNDATION.md)
 - [`2026-11-14-HELP-CENTER-SEPARATION.md`](300-COMPLETED-WORK/2026-11-14-HELP-CENTER-SEPARATION.md)
+
+### INC-2026-11-14-10 — Community Feed YouTube body-link recurrence
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 14:42:01 ET**, shown in the supplied Community Feed screenshot |
+| Root cause confirmed | **2026-11-14**, shared feed renderer and post-model audit |
+| Fixed in source | **2026-11-14**, commit `d3fa0d12` |
+| Certified release | `rel-d3fa0d1242a5-450b451fa7cd`, website profile |
+| Production Worker | `e2291e3f-d354-4f77-b18f-505128dd5cdd` |
+| Rollback Worker | `9113ac7d-1663-44e1-aa95-819d185ce350` |
+| Status | **Deployed and live verified** |
+
+**What happened:** A new post containing a YouTube URL displayed a generic
+external-link card instead of the YouTube preview. The existing resolver and
+the earlier two-video attachment repair were intact, but the shared feed
+renderer only asked for preview metadata from saved link attachments. A URL in
+the post body without that attachment record was skipped entirely.
+
+**How it was fixed:** The renderer now discovers HTTPS URLs from both saved
+link attachments and the post body, removes punctuation at the end of a URL,
+deduplicates the result, and hydrates every URL in original order through the
+existing resolver. Multiple YouTube videos remain supported, direct fallback
+links remain visible, and Play still opens the privacy-enhanced in-feed player.
+
+**Verification:** Link-preview regression **12/12**; member interaction source
+contracts **19/19**; Firefox Community Feed acceptance passed for both explicit
+two-attachment and body-only two-video posts; final profile/feed regression
+**53/53**; full preflight **34/34**; production smoke **10/10**.
+
+**Permanent protection:** The browser regression creates disposable posts for
+both URL-storage paths and deletes them after the run. The release-safety
+contract requires this Community YouTube gate, and the protected-application
+byte guard keeps StudioFlow, Nova Workspace, and Creator Studio unchanged for
+website-only repairs.
+
+**Completion record:**
+[`2026-11-14-COMMUNITY-FEED-YOUTUBE-BODY-LINK-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-COMMUNITY-FEED-YOUTUBE-BODY-LINK-REPAIR.md)
 
 ### INC-2026-10-25-01 — Studio creation and workspace isolation
 
