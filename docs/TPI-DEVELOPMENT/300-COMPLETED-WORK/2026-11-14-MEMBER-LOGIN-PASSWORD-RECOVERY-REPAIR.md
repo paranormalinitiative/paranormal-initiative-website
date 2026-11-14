@@ -48,3 +48,23 @@ diagnosis or deployment. The release only changed application behavior.
 - Deployed Worker version: `f7eb7aaa-c736-48bf-98a6-ebef34797245`
 - Rollback version: `36ddd245-0ba1-4747-a475-a7b62da52c65`
 - Release branch: `codex/tpi-development`
+
+## Follow-up: missing final save action
+
+The first recovery release exposed the code and password fields but omitted the
+form's final submit button. The confirmation API was present and tested, but a
+member had no visible way to invoke it. The follow-up adds **Save New Password**
+and changes the form to show that action after the reset code is requested.
+
+Verification passed **12/12** for password recovery, **38/38** for the local
+authentication lifecycle, and **65/65** for isolated Firefox acceptance. The
+full preflight passed **30/30**; live production smoke passed **10/10** and
+isolated production Firefox passed **65/65**.
+
+Follow-up source commit: `05bcb175909a5e0e52da35a052f7c07f086e31e2`
+
+Follow-up release: `rel-05bcb175909a-6417cd0fffd8`
+
+Deployed Worker version: `9552fe40-5519-41d1-b089-1582ce913c33`
+
+Rollback version: `f7eb7aaa-c736-48bf-98a6-ebef34797245`
