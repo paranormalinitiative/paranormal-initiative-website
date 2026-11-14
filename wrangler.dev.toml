@@ -31,5 +31,13 @@ database_id = "4948ecc5-35de-4782-8f6b-b07fa1782b66"
 binding = "TPI_MEDIA"
 bucket_name = "tpi-contributor-media-dev"
 
+[[ratelimits]]
+name = "TPI_AUTH_RATE_LIMITER"
+namespace_id = "604218302"
+
+  [ratelimits.simple]
+  limit = 8
+  period = 60
+
 # Development intentionally has no cron triggers. Scrapers and outbound
 # side effects must be invoked only through explicitly reviewed test paths.

@@ -21,5 +21,13 @@ database_id = "f36b9161-b517-4634-9857-bef4147cefe3"
 binding = "TPI_MEDIA"
 bucket_name = "tpi-contributor-media"
 
+[[ratelimits]]
+name = "TPI_AUTH_RATE_LIMITER"
+namespace_id = "604218301"
+
+  [ratelimits.simple]
+  limit = 8
+  period = 60
+
 [triggers]
 crons = ["0 */6 * * *"]

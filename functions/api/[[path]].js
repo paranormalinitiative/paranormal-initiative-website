@@ -475,9 +475,27 @@ async function handlePasswordResetRequest(request, env) {
   const email = clean(data.email).toLowerCase();
   if (!email || !email.includes("@")) return json({ error: "Enter the email address on the account." }, 400);
 
+  const genericResponse = () => json({
+    ok: true,
+    message: "If that email belongs to a member account, check your inbox for a reset code. Wait a few minutes before requesting another."
+  });
+  const clientIp = request.headers.get("CF-Connecting-IP") || (isLocalEnvironment(env) ? "local-test" : "");
+  if (!clientIp) return json({ error: "Password recovery is temporarily unavailable. Please try again." }, 503);
+  const ipAllowed = await recoveryRateAllowed(env, "request-ip", clientIp);
+  if (ipAllowed === null) return json({ error: "Password recovery is temporarily unavailable. Please try again." }, 503);
+  if (!ipAllowed) return genericResponse();
+  const emailAllowed = await recoveryRateAllowed(env, "request-email", email);
+  if (emailAllowed === null) return json({ error: "Password recovery is temporarily unavailable. Please try again." }, 503);
+  if (!emailAllowed) return genericResponse();
+
   const user = await getUserByEmail(env, email);
   if (user?.active && user.correspondence) {
     try {
+      const recent = await env.TPI_DB.prepare(`
+        SELECT COUNT(*) AS count FROM password_reset_tokens
+        WHERE contributor_id = ? AND created_at >= datetime('now', '-1 hour')
+      `).bind(user.id).first();
+      if (Number(recent?.count || 0) >= 6) return genericResponse();
       const token = randomCode();
       const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
       await env.TPI_DB.prepare(`
@@ -494,34 +512,36 @@ async function handlePasswordResetRequest(request, env) {
     }
   }
 
-  return json({
-    ok: true,
-    message: "If that email is on a member account, reset instructions have been sent."
-  });
+  return genericResponse();
 }
 
 async function handlePasswordResetConfirm(request, env) {
   const data = await readJson(request);
   const code = clean(data.code);
   const password = String(data.password || "");
+  const clientIp = request.headers.get("CF-Connecting-IP") || (isLocalEnvironment(env) ? "local-test" : "");
+  if (!clientIp) return json({ error: "Password recovery is temporarily unavailable. Please try again." }, 503);
+  const attemptAllowed = await recoveryRateAllowed(env, "confirm-ip", clientIp);
+  if (attemptAllowed === null) return json({ error: "Password recovery is temporarily unavailable. Please try again." }, 503);
+  if (!attemptAllowed) {
+    return json({ error: "Too many reset attempts. Wait a minute and try again." }, 429);
+  }
   if (!/^\d{8}$/.test(code)) return json({ error: "Enter the 8-digit reset code from your email." }, 400);
   if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
 
+  const passwordHash = await hashPassword(password);
   const reset = await env.TPI_DB.prepare(`
-    SELECT prt.token, prt.contributor_id AS contributorId
-    FROM password_reset_tokens prt
-    JOIN contributors c ON c.id = prt.contributor_id
-    WHERE prt.token = ? AND prt.used = 0 AND datetime(prt.expires_at) > CURRENT_TIMESTAMP AND c.active = 1
-    LIMIT 1
+    UPDATE password_reset_tokens SET used = 1
+    WHERE token = ? AND used = 0 AND datetime(expires_at) > CURRENT_TIMESTAMP
+      AND EXISTS (SELECT 1 FROM contributors c WHERE c.id = contributor_id AND c.active = 1)
+    RETURNING contributor_id AS contributorId
   `).bind(code).first();
   if (!reset) return json({ error: "That reset code is invalid or expired." }, 400);
 
-  const passwordHash = await hashPassword(password);
   const sessionToken = crypto.randomUUID();
   const sessionExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
   await env.TPI_DB.batch([
     env.TPI_DB.prepare("UPDATE contributors SET password_hash = ? WHERE id = ?").bind(passwordHash, reset.contributorId),
-    env.TPI_DB.prepare("UPDATE password_reset_tokens SET used = 1 WHERE token = ?").bind(reset.token),
     env.TPI_DB.prepare("DELETE FROM sessions WHERE contributor_id = ?").bind(reset.contributorId),
     env.TPI_DB.prepare("INSERT INTO sessions (token, contributor_id, expires_at) VALUES (?, ?, ?)").bind(sessionToken, reset.contributorId, sessionExpires)
   ]);
@@ -529,6 +549,22 @@ async function handlePasswordResetConfirm(request, env) {
   return json({ ok: true, signedIn: true, message: "Password saved. Opening Member Home." }, 200, {
     "Set-Cookie": `${SESSION_COOKIE}=${sessionToken}; ${sessionCookieAttributes(request, env, 60 * 60 * 24 * 14)}`
   });
+}
+
+async function recoveryRateAllowed(env, category, identity) {
+  if (!env.TPI_AUTH_RATE_LIMITER?.limit) {
+    if (isLocalEnvironment(env)) return true;
+    console.error("password recovery rate protection is unavailable");
+    return null;
+  }
+  try {
+    const key = await hashPassword(`${category}:${identity}`);
+    const result = await env.TPI_AUTH_RATE_LIMITER.limit({ key });
+    return result.success === true;
+  } catch (error) {
+    console.error("password recovery rate protection failed", error.message || error);
+    return null;
+  }
 }
 
 async function handleLogout(request, env) {

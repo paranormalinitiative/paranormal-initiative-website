@@ -36,3 +36,11 @@ preview_database_id = "tpi-local-foundation"
 [[r2_buckets]]
 binding = "TPI_MEDIA"
 bucket_name = "tpi-local-media"
+
+[[ratelimits]]
+name = "TPI_AUTH_RATE_LIMITER"
+namespace_id = "604218303"
+
+  [ratelimits.simple]
+  limit = 8
+  period = 60
