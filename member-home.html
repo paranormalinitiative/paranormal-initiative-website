@@ -3384,10 +3384,12 @@
         // Feed previews and images can change the card's position after the
         // first paint. Recheck briefly so notification links remain focused
         // in every browser instead of landing above or below the target.
+        var commentId = getRequestedCommentId();
         var rect = card.getBoundingClientRect();
         var inView = rect.top >= 70 && rect.bottom <= window.innerHeight - 70;
-        if (!inView || attempt === 0) card.scrollIntoView({ block: "center", behavior: attempt === 0 ? "smooth" : "auto" });
-        var commentId = getRequestedCommentId();
+        // A comment target will perform its own final scroll after the
+        // comments panel loads. Do not let the card retry move it away again.
+        if (!commentId && (!inView || attempt === 0)) card.scrollIntoView({ block: "center", behavior: attempt === 0 ? "smooth" : "auto" });
         if (commentId && !card.dataset.notificationCommentFocus) {
             card.dataset.notificationCommentFocus = "1";
             focusNotificationComment(card, commentId);
@@ -5568,9 +5570,19 @@
         }
     });
 
+    function parseMemberDate(value) {
+        if (!value) return null;
+        var raw = String(value).trim();
+        if (!raw) return null;
+        var sqliteUtc = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(?:\.\d+)?$/;
+        var normalized = raw.replace(sqliteUtc, "$1T$2Z");
+        var date = new Date(normalized);
+        return isNaN(date.getTime()) ? null : date;
+    }
+
     function formatDate(value) {
-        if (!value) return "";
-        var d = new Date(value);
+        var d = parseMemberDate(value);
+        if (!d) return "";
         if (isNaN(d.getTime())) return "";
         var now = new Date();
         var diffMs = now - d;
