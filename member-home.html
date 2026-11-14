@@ -5295,8 +5295,16 @@
             previous.classList.remove("is-notification-target");
         });
         comment.classList.add("is-notification-target");
-        comment.scrollIntoView({ block: "center", behavior: "auto" });
+        settleNotificationComment(comment, 0);
         window.setTimeout(function() { comment.classList.remove("is-notification-target"); }, 7000);
+    }
+
+    function settleNotificationComment(comment, attempt) {
+        if (!comment || !document.body.contains(comment)) return;
+        var rect = comment.getBoundingClientRect();
+        var inView = rect.top >= 70 && rect.bottom <= window.innerHeight - 70;
+        if (!inView || attempt === 0) comment.scrollIntoView({ block: "center", behavior: "auto" });
+        if (attempt < 8) window.setTimeout(function() { settleNotificationComment(comment, attempt + 1); }, 250);
     }
 
     async function toggleCommentsPanel(card) {
