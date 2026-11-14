@@ -1,5 +1,9 @@
 # TPI Current Development Status
 
+## 2026-11-14 — Member login and password recovery repair
+
+Status: **DEPLOYED AND LIVE VERIFIED — release `rel-85e59888d469-bf09e1872ef7`, Worker `f7eb7aaa-c736-48bf-98a6-ebef34797245`, 100% traffic.** Repaired the production member password-recovery flow: active members with correspondence email now receive a time-limited eight-digit reset code through the configured Resend provider; the confirmation endpoint now validates the code, updates the password, consumes the token, and invalidates existing sessions. Restored the visible page labels to **Member Login** and **Member Access**. The existing `Todd_Wayne` account was not modified during diagnosis or release. Full preflight passed 30/30 gates, live anonymous smoke passed 10/10, and isolated production Firefox acceptance passed 65/65. No production schema migration or direct password reset was performed. See [Member Login and Password Recovery Repair](300-COMPLETED-WORK/2026-11-14-MEMBER-LOGIN-PASSWORD-RECOVERY-REPAIR.md).
+
 ## 2026-11-13 — Member Home authentication redirect loop
 
 Status: **DEPLOYED AND LIVE VERIFIED — release `rel-b417fecb5a6a-d60a29a32e46`,
