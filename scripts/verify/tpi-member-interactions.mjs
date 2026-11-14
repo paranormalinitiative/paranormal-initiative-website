@@ -21,6 +21,7 @@ const login = read("member-login.js");
 const home = read("member-home.html");
 const api = read("functions/api/[[path]].js");
 const profile = read("member-profile.html");
+const productionConfig = read("wrangler.toml");
 
 check("Administration Center uses the shared effective staff-role resolver", worker.includes('import { effectiveStaffRole } from "./lib/staff-roles.js"') && worker.includes("const role = await effectiveStaffRole(env, user)") && worker.includes('["owner", "executive", "full_administrator", "administrator"].includes(role)'));
 check("Owner and server-authorized accounts keep the Administration Center visible", shell.includes("var canUseAdminPanel = serverAdminAccess") && shell.includes('role === "owner"') && shell.includes('"owner", "executive", "full_administrator", "administrator"'));
@@ -41,6 +42,7 @@ check("Legacy community posts do not render an auto-title twice", home.includes(
 check("Community previews hydrate both saved links and URLs found in post text", home.includes("function linkPreviewUrlsForPost(item)") && home.includes("item.attachments") && home.includes("String(item.body || \"\").match(/https?:\\/\\/[^\\s<>\"']+/gi)") && home.includes("var links = linkPreviewUrlsForPost(item)"));
 check("Public profiles show the short bio and the Update Profile link opens the editor", home.includes('data-member-short-bio') && home.includes('href="/member-profile.html#profile-editor"') && home.includes('profileEditLink.href = "/member-profile.html#profile-editor"') && home.includes('data-profile-option-edit'));
 check("Profile editor provides a protected 175-character short bio", profile.includes('<span>Short Bio</span>') && profile.includes('name="bio" rows="4" maxlength="175"') && profile.includes('data-bio-count') && api.includes('clean(data.bio).slice(0, 175)'));
+check("Production preserves the direct profile editor document route", productionConfig.includes('[assets]') && productionConfig.includes('html_handling = "none"') && home.includes('href="/member-profile.html#profile-editor"'));
 
 const failed = checks.filter(row => !row.pass);
 console.log(`\nMember interaction verification: ${checks.length - failed.length}/${checks.length} passed`);
