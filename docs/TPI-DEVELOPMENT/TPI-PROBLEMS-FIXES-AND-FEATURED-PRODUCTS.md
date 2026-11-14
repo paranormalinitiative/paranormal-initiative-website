@@ -29,6 +29,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | --- | --- | --- |
 | A member cannot save a profile photo or banner | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | Member Profile, R2 upload, shared profile API |
 | A new image previews but disappears after saving | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | File-input cleanup, object URL, cache version |
+| A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
 | Login works, then the member is sent somewhere unexpected | [Member access](#inc-2026-11-14-03--member-access-and-home-redirect-loop) | Session identity, staff-role fallback, stale browser state |
 | Password reset appears to work but sign-in fails | [Password recovery](#inc-2026-11-14-04--password-storage-and-recovery-hardening) | Session creation, password hash compatibility, recovery code |
 | A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) | Link preview extraction, iframe boundary, overlay isolation |
@@ -82,6 +83,67 @@ acceptance **65/65**.
 - [`member-login.js`](../../member-login.js) — shared profile editor and upload flow
 - [`functions/api/[[path]].js`](../../functions/api/[[path]].js) — upload and profile API
 - [`tpi-member-profile-feed-firefox.mjs`](../../scripts/verify/tpi-member-profile-feed-firefox.mjs) — regression coverage
+
+### INC-2026-11-14-07 — Profile media permissions and email-gate recurrence
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 14:00:56 ET**, shown in the member Community Feed report screenshot |
+| Root cause confirmed | **2026-11-14**, source audit and production member probe |
+| Fixed in source | **2026-11-14**, commit `d1cb8a5c` |
+| Certified release | `rel-d1cb8a5c5d5c-5088f9e96a85`, shared-API profile |
+| Production Worker | `fbfd467e-f231-4cc6-8769-23103a47e959` |
+| Status | **Deployed and live verified** |
+
+**What happened:** The upload endpoints correctly required a signed-in member,
+but the profile editor still marked the account email field as required. The
+client also stopped the profile-media flow when an account had no recovery
+email, and the server rejected the later profile save for that same account.
+That made a normal member appear unable to add an avatar or background banner,
+even though the member permission boundary itself was correct. Uploads could
+also be stored before the later save failed, creating confusing partial state.
+
+**How it was fixed:**
+
+- Kept profile photo and profile banner uploads authenticated with the shared
+  `requireMember` boundary: anonymous requests remain denied, while regular
+  signed-in members are allowed.
+- Removed the unnecessary required-email gate from the member profile editor.
+- Allowed an existing account with no email to save profile media and other
+  profile fields; a supplied email is still validated.
+- Preserved an existing account email when the form submits the email field
+  blank, so a save cannot accidentally erase it.
+- Bumped the shared profile script cache version from `v49` to `v50` across
+  every affected member and admin-facing page.
+- Added source, API, and browser regression coverage for anonymous denial,
+  regular-member photo/banner upload, readable stored media, and cleanup.
+
+**Verification:** Local member interaction contracts passed **10/10**;
+local profile/feed API checks passed **47/47**; isolated Firefox profile
+acceptance passed **49/49**; the guarded shared-API preflight passed **11
+gates** in about **31 seconds**; production anonymous smoke passed **10/10**;
+and the live disposable production member probe passed anonymous denial **401**,
+photo upload **200**, banner upload **200**, readable media **200/200**, and
+profile cleanup **200**. The disposable account was restored to blank media and
+blank correspondence after the check.
+
+**Lesson:** Permission checks must be validated across the whole user journey:
+authentication, upload authorization, file storage, profile save validation,
+media readability, cache freshness, and cleanup. A correct endpoint permission
+is not enough if the editor or the follow-up save blocks the same member.
+
+**Protected-app note:** This was classified as a shared-API release. StudioFlow,
+Nova Workspace, and Creator Studio were protected by the byte-integrity guard
+and were not rebuilt or live-accepted for this unrelated member-profile repair.
+
+**Useful references:**
+
+- [`member-profile.html`](../../member-profile.html) — email field and profile editor
+- [`member-login.js`](../../member-login.js) — upload/save flow and cache version
+- [`functions/api/[[path]].js`](../../functions/api/[[path]].js) — member upload and profile-save permissions
+- [`tpi-member-interactions.mjs`](../../scripts/verify/tpi-member-interactions.mjs) — permission/source contracts
+- [`tpi-member-profile-feed.mjs`](../../scripts/verify/tpi-member-profile-feed.mjs) — API/profile regression coverage
+- [`tpi-member-profile-feed-firefox.mjs`](../../scripts/verify/tpi-member-profile-feed-firefox.mjs) — browser regression coverage
 
 ### INC-2026-11-14-02 — StudioFlow acceptance clicked before controls were ready
 
