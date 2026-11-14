@@ -199,3 +199,38 @@ Release: `rel-541d8e29854a-b916ab496c03`
 Worker: `c9435aa6-59f8-486a-8aaf-2ab5819fb89b`
 
 Rollback version: `4229354b-a0fd-4aa5-bfb3-08385104b6b7`
+
+## Legacy Admin session bounce and password eye
+
+The owner then reported that the page jumped toward Member Home and returned
+to Member Login. Read-only production checks showed an active legacy Admin
+account, a recently consumed reset code, and a valid session. The production
+database did not have the optional `staff_role_appointments` table. The role
+resolver already caught that absence, but `publicStaffIdentity` queried the
+same table again without a guard. For a legacy Admin, `/api/auth/me` therefore
+failed and the Member Home shell treated the session as absent. Anonymous smoke
+and the synthetic member account had not exercised this legacy Admin path.
+
+The identity builder now falls back to the existing Admin role if the optional
+appointment table is absent. Hosted Sign In calls the live login endpoint
+directly even when the unrelated availability probe fails, verifies the session
+before redirecting, and shows any error beside the button. The password field
+has an accessible eye button that toggles visibility while typing. The reset
+success path also verifies its new session before redirecting, so a failed
+session check produces a visible message instead of a redirect loop.
+
+Verification: staff-role checks 20/20, password-recovery checks 15/15, local
+auth lifecycle 38/38, full preflight 30 gates, live anonymous smoke 10/10,
+isolated production Firefox acceptance 65/65, and targeted live Firefox PASS
+for hosted login under a failed availability probe and the password eye. Tests
+used synthetic or mocked credentials and did not access the owner's browser
+profile. No production schema migration or owner account mutation was made.
+Personal sign-in remains for the owner to verify privately.
+
+Source commit: `44c8b8658580f40f9067885004a27cd0851ef802`
+
+Release: `rel-44c8b8658580-42b7e7a720da`
+
+Worker: `d68fde11-e688-457f-bb48-bada8978868f`
+
+Rollback version: `c9435aa6-59f8-486a-8aaf-2ab5819fb89b`
