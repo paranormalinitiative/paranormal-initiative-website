@@ -111,6 +111,10 @@
     const user = await getLoginSessionUser();
     if (!user) return;
 
+    // A signed-in member should land on the shared member Home instead of
+    // being left on a separate-looking login screen with a redundant CTA.
+    window.location.replace("/member-home?member=1");
+
     if (authenticatedUserName) {
       authenticatedUserName.textContent = user.displayName || user.username || "this account";
     }

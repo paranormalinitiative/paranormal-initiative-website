@@ -40,7 +40,7 @@
   <div id="site-footer"></div>
   <script src="includes.js?v=18"></script>
   <script src="api-client.js?v=18"></script>
-  <script src="member-shell.js?v=60"></script>
+  <script src="member-shell.js?v=61"></script>
   <script>
     (function () { var form = document.querySelector('[data-bug-form]'); var status = document.querySelector('[data-bug-status]'); form.addEventListener('submit', async function (event) { event.preventDefault(); var button = form.querySelector('button'); button.disabled = true; status.textContent = 'Submitting…'; var data = Object.fromEntries(new FormData(form).entries()); data.pageUrl = window.location.href; try { var response = await fetch('/api/bug-reports', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); var body = {}; try { body = await response.json(); } catch (e) {} if (!response.ok) throw new Error(body.error || 'The bug report could not be submitted.'); form.reset(); status.textContent = 'Bug report submitted to the Administration Center.'; } catch (error) { status.textContent = error.message; } finally { button.disabled = false; } }); }());
   </script>

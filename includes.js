@@ -180,7 +180,7 @@
     if (!document.querySelector("link[data-tpi-member-shell-css]")) {
       const stylesheet = document.createElement("link");
       stylesheet.rel = "stylesheet";
-      stylesheet.href = "/member-shell.css?v=63";
+      stylesheet.href = "/member-shell.css?v=64";
       stylesheet.dataset.tpiMemberShellCss = "1";
       document.head.appendChild(stylesheet);
     }
@@ -190,7 +190,7 @@
 
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "/member-shell.js?v=60";
+      script.src = "/member-shell.js?v=61";
       script.dataset.tpiMemberShellAuto = "1";
       script.onload = resolve;
       script.onerror = reject;

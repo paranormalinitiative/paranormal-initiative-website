@@ -10,8 +10,8 @@ const shellJs = read("member-shell.js");
 const worker = read("worker.js");
 const includes = read("includes.js");
 const checks = [
-  ["ParaNews uses the shared member shell", news.includes('member-shell.css?v=62') && news.includes('data-member-content hidden') && news.includes('member-shell.js?v=57')],
-  ["ParaTube uses the shared member shell", tube.includes('member-shell.css?v=62') && tube.includes('data-member-content hidden') && tube.includes('member-shell.js?v=57')],
+  ["ParaNews uses the shared member shell", news.includes('member-shell.css?v=64') && news.includes('data-member-content hidden') && news.includes('member-shell.js?v=61')],
+  ["ParaTube uses the shared member shell", tube.includes('member-shell.css?v=64') && tube.includes('data-member-content hidden') && tube.includes('member-shell.js?v=61')],
   ["ParaNews preserves its API and article content hooks", news.includes("/api/news?limit=") && news.includes("pn-feed") && news.includes("sourceUrl") && news.includes("pn-tabs")],
   ["ParaTube preserves its API and video content hooks", tube.includes("/api/videos?limit=") && tube.includes("pn-grid") && tube.includes("sourceUrl") && tube.includes("pn-tabs")],
   ["Shared navigation exposes canonical section destinations", sidebar.includes('href="/news" data-nav="news"') && sidebar.includes('href="/paratube" data-nav="paratube"') && header.includes('href="/news"') && header.includes('href="/paratube"')],
@@ -21,7 +21,7 @@ const checks = [
   ["ParaTube keeps one content title supplied by the shared page heading", tube.includes('meta name="pp:title" content="ParaTube"') && !tube.includes("<h1>ParaTube</h1>")],
   ["ParaTube uses saved theme variables instead of a hardcoded purple accent", tube.includes("--pn-accent: var(--accent)") && !tube.includes("#a855f7")],
   ["Neither page adds legacy horizontal navigation", !news.includes('class="command-nav"') && !tube.includes('class="command-nav"')],
-  ["Existing member destinations remain distinct", read("member-sidebar.html").includes('href="/member-home"') && read("explore.html").includes("data-explore-feed")],
+  ["Existing member destinations remain distinct", read("member-sidebar.html").includes('href="/member-home?member=1"') && shellJs.includes('href="/member-home?member=1" data-nav="home"') && read("explore.html").includes("data-explore-feed")],
   ["Worker uses the authoritative session for root member routing", worker.includes('url.pathname === "/" || url.pathname === "/index.html"') && worker.includes("const user = await getSessionUser(request, env)") && worker.includes("/member-home")],
   ["Worker injects a non-white early theme surface", worker.includes("EARLY_THEME_BOOTSTRAP") && worker.includes('background:#1a221e') && worker.includes('data-tpi-theme-bootstrap')],
   ["Includes publishes a shell-ready signal", includes.includes("window.__tpiIncludesReady = true") && includes.includes('tpi:includes-ready')],

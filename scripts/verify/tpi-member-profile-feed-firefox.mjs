@@ -51,6 +51,9 @@ try {
   await driver.get(`${base}/member-login.html`);
   const login = await loginOnOrigin();
   check("Firefox authenticates the synthetic member", login?.status === 200 && Boolean(login?.user));
+  await driver.get(`${base}/member-login.html`);
+  await waitFor("signed-in member login page redirects to the shared member home", async () => driver.executeScript("return location.pathname.replace(/\\/$/,'')==='/member-home' && new URLSearchParams(location.search).get('member')==='1'"));
+  check("signed-in members bypass the separate login page and arrive at member Home", await driver.executeScript("return location.pathname.replace(/\\/$/,'')==='/member-home' && new URLSearchParams(location.search).get('member')==='1'"));
   await driver.executeAsyncScript(`var done=arguments[arguments.length-1], targetUsername=arguments[0];
     Promise.all([
       fetch('/api/friends/unfollow',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetUsername:targetUsername})}),

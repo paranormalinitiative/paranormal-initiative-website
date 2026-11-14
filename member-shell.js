@@ -464,7 +464,9 @@
     var canUseContentEditor = canUseAdminPanel || role === "contributor";
     // Match the authoritative Worker gate: owner and admin accounts have
     // Studio access even when an older session payload omits this flag.
-    var canUseCreatorStudio = role === "owner" || role === "admin" || Boolean(user && user.creatorStudioAccess);
+    var canUseCreatorStudio = role === "owner" || role === "admin"
+      || ["owner", "executive"].includes(staffRole)
+      || Boolean(user && user.creatorStudioAccess);
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
       element.hidden = !canUseAdminPanel;
     });
@@ -567,7 +569,7 @@
     nav.setAttribute("aria-label", "Mobile member navigation");
     nav.innerHTML =
       '<div class="member-mobile-nav-inner">' +
-        '<a class="mobile-nav-link" href="/member-home" data-nav="home">' +
+        '<a class="mobile-nav-link" href="/member-home?member=1" data-nav="home">' +
           '<span class="mobile-nav-icon">&#9679;</span>Home</a>' +
         '<a class="mobile-nav-link" href="tpi-videos.html?member=1" data-nav="tpi-videos">' +
           '<span class="mobile-nav-icon">&#9654;</span>Videos</a>' +

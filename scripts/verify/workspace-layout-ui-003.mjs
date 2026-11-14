@@ -15,13 +15,13 @@ const shell = read("workspace-shell.css");
 const memberShell = read("member-shell.js");
 const ordinary = read("member-home.html");
 
-for (const [name, html, bodyClass, title] of [
-  ["Administration", admin, "workspace-admin-page", "TPI Administration Center"],
-  ["Settings", settings, "workspace-settings-page", "TPI Settings Center"],
+for (const [name, html, bodyClass, title, workspaceVersion] of [
+  ["Administration", admin, "workspace-admin-page", "TPI Administration Center", "3"],
+  ["Settings", settings, "workspace-settings-page", "TPI Settings Center", "4"],
 ]) {
   check(html.includes(`class="workspace-page ${bodyClass}"`), `${name}: route scope missing`);
-  check(html.includes("workspace-shell.css?v=3"), `${name}: workspace stylesheet cache version missing`);
-  check(html.includes("member-shell.js?v=57"), `${name}: member shell cache version missing`);
+  check(html.includes(`workspace-shell.css?v=${workspaceVersion}`), `${name}: workspace stylesheet cache version missing`);
+  check(html.includes("member-shell.js?v=61"), `${name}: member shell cache version missing`);
   check(html.includes("class=\"workspace-account-slot\" data-workspace-chat-slot role=\"group\""), `${name}: reserved account slot missing`);
   check(html.includes(title), `${name}: title missing`);
   check(html.includes('class="workspace-back-link" href="/member-home">Back to TPI</a>'), `${name}: Back to TPI missing`);

@@ -1,5 +1,15 @@
 # TPI Current Development Status
 
+## 2026-11-13 — Member Home navigation and Creator Studio parity repair
+
+Status: **IMPLEMENTED; GUARDED PRODUCTION RELEASE PENDING.** Fixed the signed-in
+login route to redirect directly to the shared member Home, aligned desktop and
+mobile Home navigation, and included appointed Executive leadership in the
+server and shared-navigation Creator Studio access check. Focused checks passed
+before release; local Firefox redirect acceptance and maintained release gates
+remain pending. No member data was changed. See [Member Home Navigation and
+Creator Studio Parity Repair](300-COMPLETED-WORK/2026-11-13-MEMBER-HOME-NAVIGATION-PARITY-REPAIR.md).
+
 ## 2026-11-13 — Member Home profile and isolated live acceptance recovery
 
 Status: **DEPLOYED AND LIVE VERIFIED — release `rel-317b1a56ad82-802e3a56cca7`, Worker `80dd04d1-c1f3-4624-8b7d-02b66c63435e`.** Signed-in Home shows the current member's personal profile summary and shared Community Feed, while View Profile opens the member's own-post feed. The public home banner remains unchanged, and the visible “My Pulse” heading is removed. The Influencer medallion master is retained in the private source-assets folder for future use only.
