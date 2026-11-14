@@ -61,7 +61,7 @@ used; live Firefox acceptance used the isolated synthetic release account.
 
 ## Production follow-up — authentication redirect loop
 
-Date: 2026-11-14
+Date: 2026-11-13
 
 After release, the owner reported that Home repeatedly switched between
 `/member-home?member=1` and `/member-login`. Cloudflare Worker error logs
@@ -87,8 +87,8 @@ ParaNews/ParaTube, shared-asset, and workspace checks passed. The initial
 authentication lifecycle attempt ran while the official local Worker was
 stopped and timed out; it was rerun successfully after the documented local
 launcher confirmed the Worker was running. Release preflight was first invoked
-before committing and correctly stopped because the working tree was dirty; it
-must be rerun against the committed candidate.
+before committing and correctly stopped because the working tree was dirty;
+the required rerun against the clean, pushed candidate passed all 30 gates.
 
 ## Follow-up release evidence
 
