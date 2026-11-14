@@ -31,6 +31,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A new image previews but disappears after saving | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | File-input cleanup, object URL, cache version |
 | A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
 | A new Community Feed post shows its opening line twice | [Community post title duplication](#inc-2026-11-14-08--community-post-auto-title-duplicated-the-body) | Composer auto-title, post body, legacy rendering |
+| Update Profile does not open the editor or a member bio is missing from the header | [Member profile editor and short bio](#inc-2026-11-14-09--member-profile-editor-and-short-bio) | Profile route, member identity header, self-service profile API |
 | Login works, then the member is sent somewhere unexpected | [Member access](#inc-2026-11-14-03--member-access-and-home-redirect-loop) | Session identity, staff-role fallback, stale browser state |
 | Password reset appears to work but sign-in fails | [Password recovery](#inc-2026-11-14-04--password-storage-and-recovery-hardening) | Session creation, password hash compatibility, recovery code |
 | A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) | Link preview extraction, iframe boundary, overlay isolation |
@@ -206,6 +207,46 @@ their required checks and no unrelated application source was changed.
 older records already contain the duplication, repair the renderer safely first
 and avoid a data migration unless the owner explicitly wants historical records
 rewritten.
+
+### INC-2026-11-14-09 — Member profile editor and short bio
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 14:32:57 ET**, shown in the supplied public-profile and editor screenshots |
+| Fixed in source | **2026-11-14 14:54 ET**, commit `e59ca4d7` |
+| Product/surface | Public member profile and self-service profile editor |
+| Certified release | `rel-e59ca4d7fd10-49b1b8992c38`, shared-API profile |
+| Production Worker | `9113ac7d-1663-44e1-aa95-819d185ce350` |
+| Status | **Deployed and live verified** |
+
+**What happened:** The public profile's Update Profile action did not have an
+explicit editor anchor, the profile options menu lacked a direct Edit profile
+entry, and the editor's existing `bio` field was presented as a long biography.
+The public identity header did not display a concise bio beneath the member's
+name and handle.
+
+**How it was fixed:** The public action and profile menu now target
+`/member-profile.html#profile-editor`. The public header shows a normalized
+short bio when one exists. The editor now uses a 175-character Short Bio field
+with a live counter, Save Changes, and Cancel. The self-service API enforces the
+same 175-character limit in both its primary and compatibility save paths.
+
+**Verification:** Member interaction source contracts passed **18/18**; local
+authentication passed **38/38**; member boundary checks passed **48/48**; the
+official Firefox profile/feed regression passed **53/53**; production smoke
+passed **10/10**; and the guarded preflight completed in **30.9 seconds**.
+
+**Protected-app note:** This was a shared-API release. StudioFlow, Nova
+Workspace, and Creator Studio were protected by the byte-integrity guard and
+were not modified or unnecessarily rebuilt.
+
+**Lesson:** Profile fields need one navigation contract and one validation
+contract across the public page, editor, API, and browser regression. A stored
+field is not user-facing functionality until members can reach it, save it, and
+see the result.
+
+**Completion record:**
+[`2026-11-14-MEMBER-PROFILE-EDITOR-AND-SHORT-BIO-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MEMBER-PROFILE-EDITOR-AND-SHORT-BIO-REPAIR.md)
 
 ### INC-2026-11-14-02 — StudioFlow acceptance clicked before controls were ready
 
