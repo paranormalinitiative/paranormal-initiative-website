@@ -44,6 +44,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Nova publishing permissions look too broad or too narrow | [Nova publishing workflow](#inc-2026-11-13-02--nova-publishing-and-editorial-permissions) | Capability checks, restricted subjects, direct publishing |
 | Messenger opens as a blank or unusable surface | [Messenger navigation](#inc-2026-11-10-02--messenger-navigation-and-release-certification) | Shared member shell, route target, disposable schema |
 | Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
+| Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 
 ## Incident and fix register
 
@@ -470,6 +471,46 @@ previews without creating production data.
 
 **Completion record:**
 [`2026-11-14-MESSENGER-CHAT-LIST-TRUNCATION-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-CHAT-LIST-TRUNCATION-REPAIR.md)
+
+### INC-2026-11-14-14 — Messenger media upload and clipboard
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 15:02:18–15:02:37 ET**, shown in the supplied Chrome screenshots |
+| Root cause confirmed | **2026-11-14**, local Worker reproduction of the MP4 500/1101 |
+| Fixed in source | **2026-11-14**, commit `d6e0fc53` |
+| Certified release | `rel-d6e0fc532d0d-f12b5d924453`, full/Tier 1 profile |
+| Production Worker | `1e4d4af2-47a5-409e-8f3b-fde72193460a` |
+| Status | **Deployed and live verified** |
+
+**What happened:** Messenger MP4 attachments could be uploaded and attached to
+a message, but opening the saved media returned a Worker 500/1101. ZIP files
+were absent from Messenger's picker. Members also needed dependable copy-and-
+paste in Messenger and the Community Feed.
+
+**Confirmed cause:** The private-media access check used SQLite `LIKE` against
+the full attachment URL. The local Worker reproduced `LIKE or GLOB pattern too
+complex` before the R2 object could be returned. Chrome-specific or generic MIME
+labels were also trusted instead of being normalized from the filename.
+
+**How it was fixed:** Media access now loads attachment JSON and compares the
+URL exactly. Uploads normalize MP4 and ZIP types, Messenger accepts ZIP files,
+Community Feed file selection recognizes video extensions, and older media
+objects receive a safe content-type fallback. Plain-text paste now works in the
+Messenger composer, post composer, comments, and post editing controls.
+
+**Verification:** Source contracts **27/27**; focused Firefox Messenger
+acceptance **22/22**; local MP4/ZIP authenticated round trip **12/12**; local
+auth **38/38**; guarded full preflight **37 gates** in **6m 35s**; production
+smoke **10/10**; live isolated Firefox **65/65**.
+
+**Permanent protection:** Messenger/media changes now run the focused browser
+regression and authenticated MP4/ZIP round trip during release certification.
+The protected-application byte guard passed, and StudioFlow, Nova Workspace,
+and Creator Studio were not modified or replaced by this repair.
+
+**Completion record:**
+[`2026-11-14-MESSENGER-MEDIA-UPLOAD-AND-CLIPBOARD-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-MEDIA-UPLOAD-AND-CLIPBOARD-REPAIR.md)
 
 ### INC-2026-11-14-11 — Local Worker asset freshness
 
