@@ -35,6 +35,8 @@ check("Notification post links retry focus after feed layout settles", home.incl
 check("Notification post links open and highlight the person's comment", home.includes("function getRequestedCommentId()") && home.includes("function focusNotificationComment(card, commentId)") && home.includes("function settleNotificationComment(comment, attempt)") && home.includes('panel.hidden = false;') && home.includes('comment.classList.add("is-notification-target")'));
 check("Feed and comment dates treat SQLite values as UTC", home.includes("function parseMemberDate(value)") && home.includes('raw.replace(sqliteUtc, "$1T$2Z")') && home.includes("var d = parseMemberDate(value);"));
 check("Community share opens the same in-page choices in every browser", home.includes("showShareModal(url, title);") && !home.includes("if (navigator.share) {\n            navigator.share({ title: title, url: url })"));
+check("Community composer keeps a multi-line opening title out of the body", home.includes("var bodyForPost = body;") && home.includes("var firstBreak = body.search(/\\r?\\n/);") && home.includes("body: bodyForPost || title"));
+check("Legacy community posts do not render an auto-title twice", home.includes("function shouldRenderCommunityPostTitle(title, body)") && home.includes("!normalizedBody.startsWith(normalizedTitle)") && home.includes("var showPostTitle = shouldRenderCommunityPostTitle(item.title, item.body)"));
 
 const failed = checks.filter(row => !row.pass);
 console.log(`\nMember interaction verification: ${checks.length - failed.length}/${checks.length} passed`);

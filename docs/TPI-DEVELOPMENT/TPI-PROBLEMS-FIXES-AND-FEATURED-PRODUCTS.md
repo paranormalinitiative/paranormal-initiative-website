@@ -30,6 +30,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A member cannot save a profile photo or banner | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | Member Profile, R2 upload, shared profile API |
 | A new image previews but disappears after saving | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | File-input cleanup, object URL, cache version |
 | A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
+| A new Community Feed post shows its opening line twice | [Community post title duplication](#inc-2026-11-14-08--community-post-auto-title-duplicated-the-body) | Composer auto-title, post body, legacy rendering |
 | Login works, then the member is sent somewhere unexpected | [Member access](#inc-2026-11-14-03--member-access-and-home-redirect-loop) | Session identity, staff-role fallback, stale browser state |
 | Password reset appears to work but sign-in fails | [Password recovery](#inc-2026-11-14-04--password-storage-and-recovery-hardening) | Session creation, password hash compatibility, recovery code |
 | A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) | Link preview extraction, iframe boundary, overlay isolation |
@@ -160,6 +161,46 @@ and were not rebuilt or live-accepted for this unrelated member-profile repair.
 - [`tpi-member-interactions.mjs`](../../scripts/verify/tpi-member-interactions.mjs) — permission/source contracts
 - [`tpi-member-profile-feed.mjs`](../../scripts/verify/tpi-member-profile-feed.mjs) — API/profile regression coverage
 - [`tpi-member-profile-feed-firefox.mjs`](../../scripts/verify/tpi-member-profile-feed-firefox.mjs) — browser regression coverage
+
+### INC-2026-11-14-08 — Community post auto-title duplicated the body
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 14:24:59 ET**, shown in the Community Feed report screenshot |
+| Root cause confirmed | **2026-11-14**, composer and feed-rendering source audit |
+| Fixed in source | **2026-11-14**, current `codex/tpi-development` release candidate |
+| Product/surface | Community Feed post composer and shared post card renderer |
+| Status | **Prepared for guarded production release** |
+
+**What happened:** The composer generated a title from the first 120 characters
+of the member's full message, then sent the unchanged full message as the body.
+The feed rendered both fields, so the opening text appeared once as a large
+title and again at the beginning of the post body. In the supplied post, the
+generated title also included multiple sentences because it used a character
+limit instead of the first line.
+
+**How it was fixed:**
+
+- The composer now uses the first non-empty line as the post title, up to the
+  existing title limit.
+- For multi-line posts, that opening title line is removed from the stored body
+  before submission, leaving one headline followed by the message.
+- Single-line posts still render once, without an empty body or duplicate title.
+- Existing posts are not rewritten. The feed detects the legacy pattern where
+  the body starts with the stored auto-title and suppresses only that duplicate
+  heading at render time.
+- Added source-contract coverage for both new-post payload construction and
+  legacy duplicate-title rendering.
+
+**Verification:** Member interaction source contracts passed **16/16**;
+the official Firefox member/profile regression passed **50/50** after the
+change. The fix is classified as a website/member experience release and does
+not modify StudioFlow, Nova Workspace, or Creator Studio.
+
+**Lesson:** A generated presentation field must not repeat source content. When
+older records already contain the duplication, repair the renderer safely first
+and avoid a data migration unless the owner explicitly wants historical records
+rewritten.
 
 ### INC-2026-11-14-02 — StudioFlow acceptance clicked before controls were ready
 

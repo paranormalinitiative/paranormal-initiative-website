@@ -4631,6 +4631,14 @@
         var hasMedia = pendingAttachments.length > 0;
         if (!body && !hasMedia) return;
         var title = autoTitle(body) || (hasMedia ? "Shared media" : "");
+        var bodyForPost = body;
+        if (title && body) {
+            var firstBreak = body.search(/\r?\n/);
+            if (firstBreak >= 0 && normalizePostText(body.slice(0, firstBreak)) === normalizePostText(title)) {
+                var remainingBody = body.slice(firstBreak).replace(/^\r?\n+/, "").trim();
+                if (remainingBody) bodyForPost = remainingBody;
+            }
+        }
         if (!title) { composerStatus.textContent = "Please write something first."; return; }
 
         composerPostBtn.disabled = true;
@@ -4658,7 +4666,7 @@
             await window.TPIApi.createCommunityPost({
                 categoryId: "general",
                 title: title,
-                body: body || title,
+                body: bodyForPost || title,
                 attachments: uploadedAttachments.concat(pendingAttachments.filter(function(a) { return a.mediaType === "link"; }).map(function(a) {
                     return { url: a.url, key: "", name: a.name || a.url, contentType: "text/html", mediaType: "link" };
                 }))
@@ -4676,13 +4684,27 @@
     }
 
     function autoTitle(body) {
-        var clean = body.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+        var clean = body.replace(/<[^>]*>/g, "").trim();
         if (!clean) return "";
-        if (clean.length <= 120) return clean;
-        var truncated = clean.substring(0, 120);
+        var firstLine = clean.split(/\r?\n/).map(function(line) { return line.trim(); }).find(Boolean) || clean;
+        if (firstLine.length <= 160) return firstLine;
+        var truncated = firstLine.substring(0, 160);
         var lastSpace = truncated.lastIndexOf(" ");
-        if (lastSpace > 60) truncated = truncated.substring(0, lastSpace);
-        return truncated.replace(/[.,;:!?]+$/, "").trim() || clean.substring(0, 120);
+        if (lastSpace > 80) truncated = truncated.substring(0, lastSpace);
+        return truncated.replace(/[.,;:!?]+$/, "").trim() || firstLine.substring(0, 160);
+    }
+
+    function normalizePostText(value) {
+        return String(value || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+    }
+
+    function shouldRenderCommunityPostTitle(title, body) {
+        var normalizedTitle = normalizePostText(title);
+        var normalizedBody = normalizePostText(body);
+        // Older posts were stored with an auto-generated title and the same
+        // opening text repeated in the body. Keep the data intact, but render
+        // that legacy duplicate only once.
+        return Boolean(normalizedTitle && normalizedBody && !normalizedBody.startsWith(normalizedTitle));
     }
 
     function setupTabs() {
@@ -4829,6 +4851,7 @@
 
         var attachmentsHtml = renderFeedAttachments(item.attachments);
         var linksHtml = renderFeedLinks(item.attachments);
+        var showPostTitle = shouldRenderCommunityPostTitle(item.title, item.body);
         var liked = item.userReaction ? " is-liked" : "";
 
         // Edit / Delete: only on the signed-in member's own posts.
@@ -4854,7 +4877,7 @@
                 toolsHtml +
             '</div>' +
             '<div class="feed-card-body-wrap" data-body-wrap="' + escapeAttr(item.postId) + '">' +
-                (item.title ? '<h3 class="feed-card-post-title">' + escapeHtml(item.title) + '</h3>' : "") +
+                (showPostTitle ? '<h3 class="feed-card-post-title">' + escapeHtml(item.title) + '</h3>' : "") +
                 (bodyHtml ? '<div class="feed-card-body">' + bodyHtml + '</div>' : "") +
             '</div>' +
             attachmentsHtml +
