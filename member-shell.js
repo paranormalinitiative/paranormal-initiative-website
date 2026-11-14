@@ -535,7 +535,7 @@
       document.querySelectorAll('[data-nav="profile"]').forEach(function (element) {
         element.innerHTML = '<span class="nav-icon">&#9786;</span> Free Membership';
       });
-      document.querySelectorAll('[data-nav="settings"], [data-nav="saved"]').forEach(function (element) {
+      document.querySelectorAll('[data-nav="settings"], [data-nav="watch-later"]').forEach(function (element) {
         element.hidden = true;
       });
       document.querySelectorAll('[data-nav="member-notifications"], [data-nav="explore"], [data-nav="paper-editor"]').forEach(function (element) {

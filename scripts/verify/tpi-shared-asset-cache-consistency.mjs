@@ -15,7 +15,7 @@ const files = execFileSync('git', ['ls-files', '*.html'], { cwd: root, encoding:
   .filter((file) => !excluded.has(file) && !file.startsWith('haunted-location-directory/'));
 const expected = new Map([
   ['member-shell.css', '64'],
-  ['member-shell.js', '61'],
+  ['member-shell.js', '62'],
   ['profile-style.js', '2'],
   ['includes.js', '18'],
   ['api-client.js', '18'],
@@ -35,7 +35,7 @@ for (const file of files) {
 const includes = readFileSync(resolve(root, 'includes.js'), 'utf8');
 for (const [assignment, asset, version] of [
   ['stylesheet.href', 'member-shell.css', '64'],
-  ['script.src', 'member-shell.js', '61'],
+  ['script.src', 'member-shell.js', '62'],
 ]) {
   const match = includes.match(new RegExp(`${assignment} = "/${asset.replaceAll('.', '\\.')}(?:\\?v=([0-9]+))?"`));
   if (!match || match[1] !== version) failures.push(`includes.js: injected ${asset} has ${match?.[1] ?? 'no version'}; expected ${version}`);
@@ -45,7 +45,7 @@ for (const [file, assets] of Object.entries({
   'member-home.html': ['style.css?v=95', 'profile-style.css?v=8'],
   'member-profile.html': ['style.css?v=95', 'profile-style.css?v=8'],
   'member-dashboard.html': ['style.css?v=95', 'profile-style.css?v=8', 'workspace-shell.css?v=4'],
-  'member-login.html': ['style.css?v=95'],
+  'member-login.html': ['style.css?v=98'],
   'admin-panel.html': ['workspace-shell.css?v=3'],
 })) {
   const source = readFileSync(resolve(root, file), 'utf8');
