@@ -2797,14 +2797,17 @@ async function notifyActiveMembers(env, notification) {
 }
 
 async function createCommunityContentNotifications(env, user, content) {
-  const actionHref = `/member-home?member=1#post-${encodeURIComponent(content.postId)}`;
+  const postTarget = `post-${encodeURIComponent(content.postId)}`;
+  const actionHref = content.commentId
+    ? `/member-home?member=1&post=${encodeURIComponent(content.postId)}&comment=${encodeURIComponent(content.commentId)}#${postTarget}`
+    : `/member-home?member=1&post=${encodeURIComponent(content.postId)}#${postTarget}`;
   const kindLabel = content.isComment ? "commented on a community post" : "posted in the community";
   const authorName = user.display_name || user.username || "A member";
   await notifyActiveMembers(env, {
     title: `${authorName} ${kindLabel}`,
     body: clean(content.body).slice(0, 180),
     actionHref,
-    type: "community_post",
+    type: content.isComment ? "community_comment" : "community_post",
     createdBy: user.id,
     excludeContributorId: user.id
   });
@@ -3156,13 +3159,13 @@ async function handleMarkAllNotificationsRead(request, env, user) {
 async function handleListNotifications(env, user) {
   const prefs = parseNotificationPrefs(user.notification_prefs);
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, title, body, action_href AS actionHref, type, read_at AS readAt, created_at AS createdAt
+    SELECT id, title, body, action_href AS actionHref, type, created_by AS createdBy, read_at AS readAt, created_at AS createdAt
     FROM member_notifications
     WHERE contributor_id = ?
     ORDER BY read_at IS NOT NULL ASC, created_at DESC
     LIMIT 100
   `).bind(user.id).all();
-  const notifications = (results || []).map(notification => ({ ...notification, read: Boolean(notification.readAt) }));
+  const notifications = await enrichCommunityNotificationTargets(env, (results || []).map(notification => ({ ...notification, read: Boolean(notification.readAt) })));
 
   const chatNotifications = prefs.chat ? await getChatNotifications(env, user) : [];
   const allNotifications = notifications.concat(chatNotifications).sort((a, b) => {
@@ -3172,7 +3175,42 @@ async function handleListNotifications(env, user) {
     return bTime - aTime;
   }).slice(0, 100);
 
-  return json({ notifications: allNotifications }, 200, { "Cache-Control": "no-store" });
+  return json({ notifications: allNotifications.map(({ createdBy, ...notification }) => notification) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function enrichCommunityNotificationTargets(env, notifications) {
+  return Promise.all((notifications || []).map(async notification => {
+    const title = String(notification.title || "");
+    const isCommentNotification = notification.type === "community_comment" || /commented on a community post/i.test(title);
+    if (!isCommentNotification || !notification.createdBy || !notification.actionHref || /[?&]comment=/.test(String(notification.actionHref))) return notification;
+
+    const postMatch = String(notification.actionHref).match(/#post-([^&]+)/i);
+    if (!postMatch) return notification;
+    let postId = "";
+    try { postId = decodeURIComponent(postMatch[1]); } catch (error) { postId = postMatch[1]; }
+    if (!postId) return notification;
+
+    let comment = null;
+    try {
+      comment = await env.TPI_DB.prepare(`
+        SELECT id
+        FROM community_comments
+        WHERE post_id = ? AND author_id = ? AND body = ? AND status = 'visible'
+        ORDER BY created_at DESC
+        LIMIT 1
+      `).bind(postId, notification.createdBy, notification.body || "").first();
+    } catch (error) {
+      return notification;
+    }
+    if (!comment?.id) return notification;
+
+    const rawHref = String(notification.actionHref);
+    const hashIndex = rawHref.indexOf("#");
+    const base = hashIndex >= 0 ? rawHref.slice(0, hashIndex) : rawHref;
+    const hash = hashIndex >= 0 ? rawHref.slice(hashIndex) : `#post-${encodeURIComponent(postId)}`;
+    const separator = base.includes("?") ? "&" : "?";
+    return { ...notification, actionHref: `${base}${separator}post=${encodeURIComponent(postId)}&comment=${encodeURIComponent(comment.id)}${hash}` };
+  }));
 }
 
 async function getChatNotifications(env, user) {

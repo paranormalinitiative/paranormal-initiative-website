@@ -2036,6 +2036,11 @@
             box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
         }
 
+        .feed-comment.is-notification-target .feed-comment-main {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+        }
+
         .feed-card-header {
             display: grid;
             grid-template-columns: 38px 1fr auto;
@@ -3382,6 +3387,11 @@
         var rect = card.getBoundingClientRect();
         var inView = rect.top >= 70 && rect.bottom <= window.innerHeight - 70;
         if (!inView || attempt === 0) card.scrollIntoView({ block: "center", behavior: attempt === 0 ? "smooth" : "auto" });
+        var commentId = getRequestedCommentId();
+        if (commentId && !card.dataset.notificationCommentFocus) {
+            card.dataset.notificationCommentFocus = "1";
+            focusNotificationComment(card, commentId);
+        }
         if (attempt < 8) window.setTimeout(function() { focusPostFromHash(attempt + 1); }, 250);
         window.setTimeout(function() {
             card.classList.remove("is-hash-target");
@@ -4724,6 +4734,11 @@
         return "";
     }
 
+    function getRequestedCommentId() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get("comment") || "";
+    }
+
     function setupLoadMore() {
         if (!loadMoreBtn) return;
         loadMoreBtn.addEventListener("click", async function() {
@@ -5265,6 +5280,21 @@
         } catch (e) {
             panel.innerHTML = '<p class="feed-comments-empty">Could not load comments right now.</p>';
         }
+    }
+
+    async function focusNotificationComment(card, commentId) {
+        var panel = findCommentsPanel(card);
+        if (!panel || !commentId) return;
+        panel.hidden = false;
+        if (!panel.dataset.loaded) await loadComments(card);
+        var comment = panel.querySelector('[data-comment-id="' + cssEscape(commentId) + '"]');
+        if (!comment) return;
+        document.querySelectorAll(".feed-comment.is-notification-target").forEach(function(previous) {
+            previous.classList.remove("is-notification-target");
+        });
+        comment.classList.add("is-notification-target");
+        comment.scrollIntoView({ block: "center", behavior: "auto" });
+        window.setTimeout(function() { comment.classList.remove("is-notification-target"); }, 7000);
     }
 
     async function toggleCommentsPanel(card) {
