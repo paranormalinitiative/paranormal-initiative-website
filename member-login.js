@@ -6,6 +6,7 @@
   const VISIBLE_INVITE_MS = 5 * 60 * 1000;
   let visibleInviteTimer = null;
   const status = document.getElementById("member-login-status");
+  const loginStatus = document.querySelector("[data-login-status]");
   const recoveryStatus = document.querySelector("[data-password-recovery-status]");
   const recoveryHomeLink = document.querySelector("[data-password-recovery-home]");
   const inviteCodePanel = document.querySelector("[data-invite-code-panel]");
@@ -67,6 +68,26 @@
     recoveryStatus.textContent = message;
     recoveryStatus.classList.toggle("access-error", Boolean(isError));
   }
+
+  function setLoginStatus(message, isError) {
+    if (!loginStatus) return;
+    loginStatus.textContent = message;
+    loginStatus.classList.toggle("access-error", Boolean(isError));
+  }
+
+  document.addEventListener("click", event => {
+    const toggle = event.target.closest("[data-toggle-password]");
+    if (!toggle) return;
+    event.preventDefault();
+    const input = document.getElementById(toggle.getAttribute("aria-controls"));
+    if (!input) return;
+    const reveal = input.type === "password";
+    input.type = reveal ? "text" : "password";
+    toggle.setAttribute("aria-pressed", String(reveal));
+    toggle.setAttribute("aria-label", reveal ? "Hide password" : "Show password");
+    toggle.title = reveal ? "Hide password" : "Show password";
+    input.focus();
+  });
 
   function getUsers() {
     try {
@@ -1971,6 +1992,13 @@
         const response = await window.TPIApi.confirmPasswordReset({ code, password });
         resetConfirmForm.reset();
         if (response.signedIn) {
+          try {
+            const session = await window.TPIApi.me();
+            if (!session.user) throw new Error("Session unavailable");
+          } catch (sessionError) {
+            setRecoveryStatus("Password saved, but this browser could not confirm your sign-in. Use Sign In above with your new password.", true);
+            return;
+          }
           setRecoveryStatus("Password saved. Opening Member Home…", false);
           if (recoveryHomeLink) recoveryHomeLink.hidden = false;
           window.setTimeout(() => {
@@ -2312,15 +2340,31 @@
     if (loginForm) {
       const identifier = String(data.get("username") || "").trim();
       const password = String(data.get("password") || "");
-      if (await cloudflareReady()) {
+      if (!isLocalPreviewOrigin() || (window.TPIApi && await cloudflareReady())) {
+        if (!window.TPIApi) {
+          setLoginStatus("The live sign-in service did not load. Please refresh this page.", true);
+          return;
+        }
         try {
+          setLoginStatus("Signing in…", false);
           const result = await window.TPIApi.login(identifier, password);
-          if (result.user) saveUsers([{ ...result.user, active: true }]);
-          localStorage.setItem(ACCESS_SESSION_KEY, result.user?.username || identifier);
-          var loginUsername = result.user?.username || identifier;
+          let session;
+          try {
+            session = await window.TPIApi.me();
+            if (!session.user) throw new Error("Session unavailable");
+          } catch (sessionError) {
+            setLoginStatus("Your password was accepted, but this browser could not confirm your sign-in. Please try again.", true);
+            return;
+          }
+          try {
+            if (result.user) saveUsers([{ ...result.user, active: true }]);
+            localStorage.setItem(ACCESS_SESSION_KEY, result.user?.username || identifier);
+          } catch (storageError) {}
+          const loginUsername = result.user?.username || identifier;
+          setLoginStatus("Signed in. Opening Member Home…", false);
           window.location.href = "/member-home?username=" + encodeURIComponent(loginUsername);
         } catch (error) {
-          setStatus(error.message, true);
+          setLoginStatus(error.message || "Sign-in failed. Please try again.", true);
         }
         return;
       }
@@ -2333,7 +2377,7 @@
         return (candidate.username === identifier || usernameAlias === alias || displayAlias === alias || email === identifier.toLowerCase()) && candidate.password === password && candidate.active !== false;
       });
       if (!user) {
-        setStatus("Username or password did not match.", true);
+        setLoginStatus("Username or password did not match.", true);
         return;
       }
       localStorage.setItem(ACCESS_SESSION_KEY, user.username);

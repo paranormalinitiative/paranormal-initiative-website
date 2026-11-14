@@ -4,8 +4,9 @@
 // paths, profile recognition, and the staff-facing controls.
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { effectiveStaffRole, mayUseAdminRoute, STAFF_ROLE_CATALOG } from "../../lib/staff-roles.js";
+import { effectiveStaffRole, mayUseAdminRoute, publicStaffIdentity, STAFF_ROLE_CATALOG } from "../../lib/staff-roles.js";
 import { hasCreatorStudioAccess } from "../../lib/auth.js";
+import { onRequest } from "../../functions/api/[[path]].js";
 
 const root = resolve(import.meta.dirname, "../..");
 const read = file => readFileSync(resolve(root, file), "utf8");
@@ -36,6 +37,13 @@ check("existing Owner and Admin account roles remain mapped safely", await effec
 check("appointed Executive, Full Administrator, and Moderator resolve server-side", await effectiveStaffRole(mockDb, { id: "executive", role: "member" }) === "executive" && await effectiveStaffRole(mockDb, { id: "full", role: "member" }) === "full_administrator" && await effectiveStaffRole(mockDb, { id: "moderator", role: "member" }) === "moderator");
 const missingAppointmentTableDb = { TPI_DB: { prepare: () => { throw new Error("D1_ERROR: no such table: staff_role_appointments"); } } };
 check("missing additive appointment table preserves auth-safe legacy roles", await effectiveStaffRole(missingAppointmentTableDb, legacyAdmin) === "administrator" && await effectiveStaffRole(missingAppointmentTableDb, member) === "member" && await effectiveStaffRole(missingAppointmentTableDb, owner) === "owner");
+check("missing appointment table preserves the Admin's public session identity", (await publicStaffIdentity(missingAppointmentTableDb, legacyAdmin))?.role === "administrator");
+const legacySessionDb = { TPI_DB: { prepare(sql) {
+  if (sql.includes("staff_role_appointments")) throw new Error("D1_ERROR: no such table: staff_role_appointments");
+  return { bind() { return this; }, first: async () => sql.includes("FROM sessions s") ? { id: "legacy-admin", username: "legacy_admin", role: "admin", active: 1 } : null, all: async () => ({ results: [] }) };
+} } };
+const legacyMe = await onRequest({ request: new Request("https://example.test/api/auth/me", { headers: { Cookie: "tpi_session=synthetic" } }), env: legacySessionDb, params: { path: "auth/me" } });
+check("legacy Admin session remains readable without the appointment table", legacyMe.status === 200 && (await legacyMe.json()).user?.username === "legacy_admin");
 check("Creator Studio remains available to Owners and Executive leadership, not all staff", await hasCreatorStudioAccess(mockDb, owner) && await hasCreatorStudioAccess(mockDb, legacyAdmin) && await hasCreatorStudioAccess(mockDb, { id: "executive", role: "member" }) && !await hasCreatorStudioAccess(mockDb, { id: "full", role: "member" }) && !await hasCreatorStudioAccess(mockDb, member));
 check("admin route matrix protects high-impact controls and separates staff tiers", mayUseAdminRoute("administrator", "/admin/community/posts", "GET") && !mayUseAdminRoute("administrator", "/admin/settings", "GET") && !mayUseAdminRoute("administrator", "/admin/members/123/entitlements", "POST") && mayUseAdminRoute("full_administrator", "/admin/community/posts", "GET") && !mayUseAdminRoute("full_administrator", "/admin/founding-memberships/assign", "POST") && !mayUseAdminRoute("full_administrator", "/admin/staff-roles", "POST") && mayUseAdminRoute("executive", "/admin/staff-roles", "POST") && !mayUseAdminRoute("moderator", "/admin/community/posts", "GET"));
 check("only executive-level appointments can manage staff assignments", api.includes('path === "/admin/staff-roles"') && api.includes("requireExecutive(request, env") && api.includes("Only the Owner can appoint an Executive or Full Administrator."));

@@ -3424,6 +3424,47 @@ footer {
     justify-self: start;
 }
 
+.member-login-shell .password-entry {
+    display: grid;
+    gap: 8px;
+}
+
+.member-login-shell .password-entry-input {
+    position: relative;
+}
+
+.member-login-shell .password-entry-input input {
+    width: 100%;
+    padding-right: 50px;
+}
+
+.member-login-shell .editor-access-card .password-entry-input button {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    width: 42px;
+    min-height: 42px;
+    padding: 0;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.member-login-shell .password-entry-input button:focus-visible {
+    outline: 2px solid var(--accent-hover);
+    outline-offset: -2px;
+    border-radius: var(--radius-sm);
+}
+
+.member-login-shell [data-login-status] {
+    margin: 0;
+    text-align: left;
+}
+
 .member-login-shell .editor-access-card form:not(.account-recovery-form) {
     display: grid;
     gap: 12px;

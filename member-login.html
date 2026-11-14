@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=96">
+    <link rel="stylesheet" href="style.css?v=97">
     <link rel="stylesheet" href="member-shell.css?v=64">
 </head>
 <body class="member-login-page">
@@ -49,8 +49,15 @@
         <p>Sign in with your member, contributor, admin, or owner username/email and password.</p>
         <form data-member-login>
             <label><span>Username Or Email</span><input name="username" type="text" autocomplete="username" required spellcheck="true"></label>
-            <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+            <div class="password-entry">
+              <label for="member-login-password">Password</label>
+              <div class="password-entry-input">
+                <input id="member-login-password" name="password" type="password" autocomplete="current-password" required>
+                <button type="button" data-toggle-password aria-controls="member-login-password" aria-label="Show password" aria-pressed="false" title="Show password"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+              </div>
+            </div>
             <button type="submit">Sign In</button>
+            <p class="access-note" data-login-status role="status" aria-live="polite" aria-atomic="true"></p>
         </form>
         <button class="portal-button portal-button-secondary account-toggle-button" type="button" data-forgot-password-toggle>Forgot Password?</button>
         <div class="account-recovery-form" data-password-recovery hidden>
@@ -163,7 +170,7 @@
 <script src="includes.js?v=18"></script>
 <script src="api-client.js?v=18"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=44"></script>
+<script src="member-login.js?v=45"></script>
 <script src="member-shell.js?v=61"></script>
 </body>
 </html>
