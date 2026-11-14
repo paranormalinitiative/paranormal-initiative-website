@@ -152,10 +152,14 @@ check("production deployment verifies the certification instead of recertifying"
   assert.match(release, /else if \(mode === "preflight" \|\| mode === "certify"\) await preflight\(\);/);
   assert.match(release, /verifyCertification\(\{ repoRoot, candidateRoot \}\)/);
 });
-check("website-only deployment keeps smoke but skips StudioFlow live acceptance", () => {
+check("website and shared-api deployment keep smoke but skip StudioFlow live acceptance", () => {
   assert.match(release, /Live anonymous production smoke/);
-  assert.match(release, /manifest\.tier\.releaseProfile !== "website"/);
-  assert.match(release, /Live StudioFlow acceptance skipped for website-only profile/);
+  assert.match(release, /manifest\.tier\.releaseProfile === "full" \|\| manifest\.tier\.releaseProfile === "studioflow"/);
+  assert.match(release, /Live StudioFlow acceptance skipped for \$\{manifest\.tier\.releaseProfile\} profile/);
+});
+check("shared-api releases retain the protected-application byte guard", () => {
+  assert.match(release, /profile !== "website" && profile !== "shared-api"/);
+  assert.match(release, /protected application bytes changed during a \$\{profile\} release/);
 });
 check("production deployment deploys the certified candidate directory", () => {
   assert.match(release, /"--candidate", candidateRoot/);

@@ -4,11 +4,13 @@
 //
 // The existing release tier describes risk, but it does not decide which
 // verification gates are relevant. This module makes that decision from the
-// actual changed paths. Ambiguous or shared-platform changes escalate to the
-// full platform profile; ordinary website-only changes stay small.
+// actual changed paths. Ambiguous and security-sensitive changes escalate to
+// the full platform profile; ordinary website and shared-API changes stay
+// within their smallest safe verification boundary.
 
 export const RELEASE_PROFILES = {
   website: { name: "WEBSITE ONLY", rank: 1 },
+  "shared-api": { name: "SHARED API", rank: 2 },
   studioflow: { name: "STUDIOFLOW APPLICATION", rank: 2 },
   full: { name: "FULL PLATFORM", rank: 3 },
 };
@@ -17,8 +19,7 @@ export const PROTECTED_APPLICATION_PREFIXES = ["studio/", "nova/", "admin-center
 
 const FULL_PATTERNS = [
   /^migrations\//,
-  /^functions\//,
-  /^lib\//,
+  /^lib\/(?:auth|staff-roles)(?:\/|\.)/,
   /^worker\.js$/,
   /^wrangler\.(?:toml|jsonc)$/,
   /^package(?:-lock)?\.json$/,
@@ -32,6 +33,15 @@ const FULL_PATTERNS = [
   /^scripts\/verify\/tpi-release-/,
   /^scripts\/verify\/tpi-website-surface-smoke/,
   /^scripts\/verify\/tpi-(?:nova|admin)-/,
+];
+
+// Shared API changes need authenticated API and member-surface verification,
+// but they do not rebuild or acceptance-test protected applications unless the
+// application itself also changed. Keeping this separate from the full profile
+// is the key release-time boundary for ordinary server-backed website work.
+const SHARED_API_PATTERNS = [
+  /^functions\//,
+  /^lib\//,
 ];
 
 const STUDIOFLOW_PATTERNS = [
@@ -52,19 +62,20 @@ function matchesAny(path, patterns) {
 }
 
 /**
- * @returns {{profile:"website"|"studioflow"|"full", reasons:string[], changedFiles:string[], forced:boolean}}
+ * @returns {{profile:"website"|"shared-api"|"studioflow"|"full", reasons:string[], changedFiles:string[], forced:boolean}}
  */
 export function classifyReleaseImpact({ changedFiles = [], requestedProfile = null } = {}) {
   const files = [...new Set(changedFiles.filter(Boolean))].sort();
   const requested = requestedProfile ? String(requestedProfile).trim().toLowerCase() : null;
   if (requested && !Object.hasOwn(RELEASE_PROFILES, requested)) {
-    throw new Error(`TPI_RELEASE_PROFILE must be website, studioflow, or full; received ${requestedProfile}`);
+    throw new Error(`TPI_RELEASE_PROFILE must be website, shared-api, studioflow, or full; received ${requestedProfile}`);
   }
 
   let profile = "website";
   const reasons = [];
   const fullHits = files.filter(path => matchesAny(path, FULL_PATTERNS));
   const studioHits = files.filter(path => matchesAny(path, STUDIOFLOW_PATTERNS));
+  const sharedApiHits = files.filter(path => matchesAny(path, SHARED_API_PATTERNS));
   const websiteTestHits = files.filter(path => matchesAny(path, WEBSITE_TEST_PATTERNS));
 
   if (!files.length) {
@@ -76,6 +87,9 @@ export function classifyReleaseImpact({ changedFiles = [], requestedProfile = nu
   } else if (studioHits.length) {
     profile = "studioflow";
     reasons.push(`StudioFlow paths changed: ${studioHits.slice(0, 8).join(", ")}${studioHits.length > 8 ? `, +${studioHits.length - 8} more` : ""}`);
+  } else if (sharedApiHits.length) {
+    profile = "shared-api";
+    reasons.push(`shared API paths changed: ${sharedApiHits.slice(0, 8).join(", ")}${sharedApiHits.length > 8 ? `, +${sharedApiHits.length - 8} more` : ""}`);
   } else {
     reasons.push("only website assets or website-specific verification paths changed");
   }

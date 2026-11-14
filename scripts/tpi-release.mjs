@@ -161,15 +161,15 @@ function readPreviousCertificationManifest() {
   }
 }
 function assertProtectedApplicationIntegrity(previousManifest, stagedCandidateRoot, profile) {
-  if (profile !== "website") return;
+  if (profile !== "website" && profile !== "shared-api") return;
   if (!previousManifest?.deployable?.assets) {
-    fail("website-only release cannot be certified without a previous protected-application baseline");
+    fail(`${profile} release cannot be certified without a previous protected-application baseline`);
   }
   const changed = protectedApplicationDifferences(
     previousManifest.deployable.assets,
     hashTree(join(stagedCandidateRoot, "assets")),
   );
-  if (changed.length) fail(`protected application bytes changed during a website-only release: ${changed.slice(0, 12).join(", ")}${changed.length > 12 ? `, +${changed.length - 12} more` : ""}`);
+  if (changed.length) fail(`protected application bytes changed during a ${profile} release: ${changed.slice(0, 12).join(", ")}${changed.length > 12 ? `, +${changed.length - 12} more` : ""}`);
 }
 function hashFile(path) { return createHash("sha256").update(readFileSync(path)).digest("hex"); }
 function filesUnder(root) {
@@ -343,6 +343,24 @@ async function preflight() {
       stopIsolatedE2E();
     }
     if (JSON.stringify(adminBefore) !== JSON.stringify(localAdminFingerprint())) fail("isolated E2E changed the persistent development administrator");
+  } else if (impact.profile === "shared-api") {
+    await waitForLocalReleaseSurfaces();
+    await runLocalAuthCheck("Shared API authentication smoke");
+    run("Shared API member boundary regression", process.execPath, ["scripts/qa/tpi-ops-011-member-home.mjs"], {
+      env: { TPI_LOCAL_ORIGIN: "http://127.0.0.1:8787" },
+      timing: { bucket: "certification" },
+    });
+    if (impact.changedFiles.some(path => /functions\/|lib\/|member-(?:profile|home|login|dashboard)|notification/i.test(path))) {
+      run("Targeted member interaction source contracts", process.execPath, ["scripts/verify/tpi-member-interactions.mjs"], {
+        timing: { bucket: "certification" },
+      });
+    }
+    if (impact.changedFiles.some(path => /member-(?:profile|home|login|dashboard)|profile/i.test(path))) {
+      run("Targeted member profile and feed browser regression", process.execPath, ["scripts/verify/tpi-member-profile-feed-firefox.mjs"], {
+        env: { TPI_PROFILE_BASE_URL: "http://127.0.0.1:8787" },
+        timing: { bucket: "certification", browser: true },
+      });
+    }
   } else if (impact.profile === "website") {
     await waitForLocalReleaseSurfaces();
     await runLocalAuthCheck("Website release shared authentication smoke");
@@ -366,7 +384,7 @@ async function preflight() {
       run("Targeted Help Center separation regression", "npm", ["run", "verify:help-center-separation"], { timing: { bucket: "certification" } });
     }
   }
-  if (impact.profile !== "website") {
+  if (impact.profile === "full" || impact.profile === "studioflow") {
     run("Firefox Developer Edition release acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
       env: { TPI_FIREFOX_ACCOUNT: "test_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
       timing: { bucket: "certification", browser: true },
@@ -565,9 +583,9 @@ async function deploy() {
     fail("the approved production schema contract changed since certification; run npm run release:certify");
   }
   // TPI-STUDIOFLOW-137: a release that depends on StudioFlow schema must refuse
-  // to deploy while that schema is absent. Website-only releases preserve the
-  // already-certified StudioFlow bytes and do not need to reopen this gate.
-  if (manifest.tier.releaseProfile !== "website") {
+  // to deploy while that schema is absent. Website and shared-API releases
+  // preserve the already-certified StudioFlow bytes and do not reopen this gate.
+  if (manifest.tier.releaseProfile === "full" || manifest.tier.releaseProfile === "studioflow") {
     run("Production schema readiness (live, read-only)", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "production" } });
   }
   // Rollback metadata is live production state and is captured now, not reused
@@ -606,7 +624,7 @@ async function deploy() {
     deployedVersion = (result.stdout || "").match(/Current Version ID:\s*([0-9a-f-]{36})/)?.[1] || "";
     if (!deployedVersion) fail("deployment completed without a readable Worker version ID");
     run("Live anonymous production smoke", process.execPath, ["scripts/qa/production-smoke.mjs"], { timing: { bucket: "production" } });
-    if (manifest.tier.releaseProfile !== "website") {
+    if (manifest.tier.releaseProfile === "full" || manifest.tier.releaseProfile === "studioflow") {
       run("Live isolated Firefox Developer Edition acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
         env: {
           TPI_FIREFOX_BASE_URL: "https://paranormalinitiative.com",
@@ -618,7 +636,7 @@ async function deploy() {
         timing: { bucket: "production", browser: true },
       });
     } else {
-      mark("Live StudioFlow acceptance skipped for website-only profile", { bucket: "production" });
+      mark(`Live StudioFlow acceptance skipped for ${manifest.tier.releaseProfile} profile`, { bucket: "production" });
     }
     if (activeProductionVersion() !== deployedVersion) fail("new Worker version is not receiving 100% traffic");
     mark("Confirm new Worker version holds 100% traffic", { bucket: "production" });

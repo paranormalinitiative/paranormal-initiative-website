@@ -286,7 +286,9 @@ selects a release profile from the actual changed paths and enforces:
 - correct branch, clean tree, and exact GitHub parity;
 - the release-impact classifier regression;
 - a lightweight shared authentication and website-surface smoke for website-only changes;
-- protected-application byte integrity for website-only changes;
+- a shared-API profile for server-backed member fixes, with authentication,
+  member API-boundary, notification-contract, and affected member-page checks;
+- protected-application byte integrity for website-only and shared-API changes;
 - persistent `local_admin` lifecycle verification only for StudioFlow or full-platform changes;
 - isolated disposable D1/R2 E2E and complete QA only for full-platform changes;
 - StudioFlow build and browser acceptance only for StudioFlow or full-platform changes;
@@ -300,12 +302,18 @@ selects a release profile from the actual changed paths and enforces:
 - **Website-only** — ordinary HTML, CSS, images, member pages, Help Center, and
   targeted website verification. Stable StudioFlow, Nova, and Creator Studio
   assets must match the previous certified release byte-for-byte.
+- **Shared API** — server-backed member and community fixes in `functions/` or
+  non-security shared libraries. It verifies authentication and the affected
+  member/API boundaries, while preserving the certified StudioFlow, Nova, and
+  Creator Studio bytes without rebuilding or live-acceptance testing them. The
+  protected-application byte guard remains mandatory.
 - **StudioFlow application** — StudioFlow lifecycle, ownership, deletion,
   Notes, responsive, build, and browser acceptance. Website-only suites remain
   conditional.
-- **Full platform** — shared Worker/API/authentication/database/release-tooling
-  changes, Nova or Administration Center changes, multiple applications, or
-  any ambiguous change. This retains the complete platform certification.
+- **Full platform** — migrations, authentication/security libraries, shared
+  Worker entry/configuration, release tooling, Nova or Administration Center
+  changes, multiple applications, or any ambiguous change. This retains the
+  complete platform certification.
 
 The profile is selected automatically. To intentionally run the complete suite
 for a low-risk website change, use:
