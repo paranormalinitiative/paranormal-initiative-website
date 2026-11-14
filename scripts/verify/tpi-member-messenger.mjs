@@ -114,7 +114,22 @@ try {
   check("member selection opens a conversation", await js("var bar=document.querySelector('[data-chat-conversation-bar]'); return Boolean(bar && !bar.hidden);"));
   const textLayout = await js(`return ['.member-chat-online-person strong','.member-chat-online-person small','.member-chat-list-open strong','.member-chat-list-open .member-chat-presence','.member-chat-author-username']
     .map(function(selector){var node=document.querySelector(selector), style=node&&getComputedStyle(node); return {selector:selector,found:Boolean(node),whiteSpace:style&&style.whiteSpace,overflowWrap:style&&style.overflowWrap,wordBreak:style&&style.wordBreak,scrollWidth:node&&node.scrollWidth,clientWidth:node&&node.clientWidth};});`);
-  check("member names, usernames, labels, previews, and authors use wrap-safe layout", textLayout.filter(function(item){return item.found;}).every(function(item){return item.whiteSpace === "normal" && (item.overflowWrap === "anywhere" || item.wordBreak === "break-word") && item.scrollWidth <= item.clientWidth + 1;}), JSON.stringify(textLayout));
+  check("member names, usernames, labels, previews, and authors use wrap-safe layout", textLayout.filter(function(item){return item.found;}).every(function(item){
+    var isChatPreview = item.selector === ".member-chat-list-open .member-chat-presence";
+    return isChatPreview
+      ? item.whiteSpace === "nowrap" && item.overflowWrap === "anywhere" && item.scrollWidth >= item.clientWidth
+      : item.whiteSpace === "normal" && (item.overflowWrap === "anywhere" || item.wordBreak === "break-word") && item.scrollWidth <= item.clientWidth + 1;
+  }), JSON.stringify(textLayout));
+  const chatPreviewLayout = await js(`var list=document.querySelector('[data-chat-list]');
+    if(!list) return {found:false};
+    var previous=list.innerHTML;
+    list.innerHTML='<article class="member-chat-list-item"><button class="member-chat-list-open" type="button"><span class="member-chat-avatar"><span>B</span></span><span class="member-chat-person-copy"><strong>Bill Heiland</strong><span class="member-chat-presence">This is a deliberately long conversation preview that must remain one concise line and never paint over the Members list.</span></span><span class="member-chat-unread-badge">1</span></button></article>';
+    var item=list.querySelector('.member-chat-list-item'), preview=list.querySelector('.member-chat-list-open .member-chat-presence');
+    var itemRect=item.getBoundingClientRect(), previewRect=preview.getBoundingClientRect(), style=getComputedStyle(preview);
+    var result={found:true,itemHeight:Math.round(itemRect.height),previewHeight:Math.round(previewRect.height),previewScrollWidth:preview.scrollWidth,previewClientWidth:preview.clientWidth,whiteSpace:style.whiteSpace,overflow:style.overflow,textOverflow:style.textOverflow,listOverflow:getComputedStyle(list).overflowY};
+    list.innerHTML=previous;
+    return result;`);
+  check("long chat previews stay on one line without overflowing the Chats list", chatPreviewLayout.found && chatPreviewLayout.previewHeight <= 18 && chatPreviewLayout.previewScrollWidth >= chatPreviewLayout.previewClientWidth && chatPreviewLayout.whiteSpace === "nowrap" && chatPreviewLayout.overflow === "hidden" && chatPreviewLayout.textOverflow === "ellipsis" && chatPreviewLayout.listOverflow === "auto", JSON.stringify(chatPreviewLayout));
 
   const composer = await driver.findElement(By.css("[data-chat-input]"));
   await composer.sendKeys("Disposable Messenger composer check");

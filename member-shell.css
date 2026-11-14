@@ -687,7 +687,10 @@ body.member-mode {
 }
 
 .member-chat-contacts {
-    align-content: start;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: stretch;
     min-height: 0;
     min-width: 0;
     overflow-y: auto;
@@ -829,10 +832,22 @@ body.member-mode .member-floating-chat .member-chat-create {
 }
 
 .member-chat-online-list {
-    height: max-content;
+    flex: 0 1 min(40vh, 240px);
+    min-height: 0;
+    height: auto;
     max-height: min(40vh, 240px);
     overflow-x: hidden;
     overflow-y: auto;
+    padding-right: 2px;
+    scrollbar-gutter: stable;
+}
+
+.member-chat-list {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    align-content: start;
     padding-right: 2px;
     scrollbar-gutter: stable;
 }
@@ -872,6 +887,7 @@ body.member-mode .member-floating-chat .member-chat-create {
     border: 0;
     border-radius: var(--radius-md);
     padding: 7px;
+    overflow: hidden;
 }
 
 .member-chat-list-open {
@@ -888,6 +904,20 @@ body.member-mode .member-floating-chat .member-chat-create {
     border: 0;
     padding: 0;
     cursor: pointer;
+    overflow: hidden;
+}
+
+.member-chat-list-open .member-chat-person-copy {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.member-chat-list-open .member-chat-presence {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .member-chat-online-person:hover {
@@ -959,6 +989,12 @@ body.member-mode .member-floating-chat .member-chat-create {
 
 .member-chat-list-open .member-chat-presence {
     display: block;
+}
+
+.member-chat-list-open .member-chat-presence {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .member-chat-presence,

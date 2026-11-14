@@ -3285,7 +3285,7 @@
         var unread = Number(savedChat.unreadCount || 0);
         var title = getConversationDisplayTitle(savedChat, user);
         var time = savedChat.lastMessage && savedChat.lastMessage.createdAt ? formatChatTime(savedChat.lastMessage.createdAt) : "";
-        var preview = (savedChat.lastMessage && savedChat.lastMessage.body) ? savedChat.lastMessage.body : getChatListSubtitle(savedChat);
+        var preview = getChatListPreview(savedChat);
         var unreadBadge = unread > 0 ? '<span class="member-chat-unread-badge">' + (unread > 99 ? "99+" : String(unread)) + '</span>' : "";
         return '<article class="member-chat-list-item' + active + (unread > 0 ? ' is-unread' : '') + '">' +
           '<button class="member-chat-list-open" type="button" data-chat-open="' + escapeHtml(savedChat.id) + '">' +
@@ -4459,6 +4459,13 @@
     var count = Array.isArray(chat.members) ? chat.members.length : 0;
     if (chat.direct) return "Direct chat";
     return count + " members";
+  }
+
+  function getChatListPreview(chat) {
+    var body = chat && chat.lastMessage && chat.lastMessage.body;
+    var preview = String(body || "").replace(/\s+/g, " ").trim();
+    if (!preview) return getChatListSubtitle(chat);
+    return preview.length > 88 ? preview.slice(0, 85).trimEnd() + "..." : preview;
   }
 
   function getOtherParticipant(chat, user) {
