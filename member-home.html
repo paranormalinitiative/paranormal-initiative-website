@@ -691,6 +691,16 @@
             font-weight: 600;
         }
 
+        .member-profile-short-bio {
+            max-width: 760px;
+            margin: 10px 0 0;
+            color: #c3cfda;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .member-profile-short-bio[hidden] { display: none; }
+
         .member-profile-role {
             display: inline-flex;
             align-items: center;
@@ -2915,10 +2925,11 @@
                                 <h1 class="member-profile-name" id="member-profile-name" data-member-name>Member</h1>
                                 <p class="member-profile-username" data-member-username></p>
                                 <p class="member-profile-title-line" data-member-title></p>
+                                <p class="member-profile-short-bio" data-member-short-bio hidden></p>
                                 <p class="member-profile-role" data-member-role></p>
                             </div>
                             <div class="member-profile-actions" data-member-profile-actions>
-                                <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html">Update Profile</a>
+                                <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html#profile-editor">Update Profile</a>
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-follow hidden>Follow</button>
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-friend hidden>Add Friend</button>
                                 <a class="member-btn member-btn-primary" data-profile-chat hidden href="#messenger">Chat</a>
@@ -2926,6 +2937,7 @@
                                     <button type="button" class="member-profile-options-toggle" data-profile-options-toggle aria-expanded="false" aria-haspopup="menu" aria-label="More profile options">•••</button>
                                     <div class="member-profile-options-panel" data-profile-options-panel hidden role="menu">
                                         <p class="member-profile-options-label">Profile options</p>
+                                        <a href="/member-profile.html#profile-editor" data-profile-option-edit role="menuitem">Edit profile<span>Update your public identity</span></a>
                                         <a href="#community-feed" role="menuitem">View posts<span>Go to this profile feed</span></a>
                                         <a href="member-photos.html" role="menuitem">View photos<span>Open your photo library</span></a>
                                         <a href="member-videos.html" role="menuitem">Open videos<span>View member videos</span></a>
@@ -3321,6 +3333,7 @@
     var profileName = document.querySelector("[data-member-name]");
     var profileUsername = document.querySelector("[data-member-username]");
     var profileTitle = document.querySelector("[data-member-title]");
+    var profileShortBio = document.querySelector("[data-member-short-bio]");
     var profileRole = document.querySelector("[data-member-role]");
     var profileCover = document.querySelector(".member-profile-cover");
     var profileBio = document.querySelector("[data-member-bio]");
@@ -3947,6 +3960,11 @@
             profileTitle.textContent = showPublicTitle ? publicTitle : "";
             profileTitle.hidden = !showPublicTitle;
         }
+        if (profileShortBio) {
+            var shortBio = String(profileUser.bio || "").replace(/\s+/g, " ").trim();
+            profileShortBio.textContent = shortBio.slice(0, 175);
+            profileShortBio.hidden = !shortBio;
+        }
         if (profileRole) {
             profileRole.textContent = getRoleLabel(profileUser.role);
             profileRole.hidden = !profileRole.textContent;
@@ -4003,10 +4021,11 @@
             profileFacts.innerHTML = facts.join("");
         }
 
+        var ownProfile = String(profileUser.username || "").toLowerCase() === String(activeUser.username || "").toLowerCase();
         if (profileEditLink) {
-            profileEditLink.hidden = profileUser.username !== activeUser.username;
+            profileEditLink.href = "/member-profile.html#profile-editor";
+            profileEditLink.hidden = !ownProfile;
         }
-        var ownProfile = profileUser.username === activeUser.username;
         if (profileBannerEdit) profileBannerEdit.hidden = !ownProfile;
         if (profileAvatarEdit) profileAvatarEdit.hidden = !ownProfile;
         if (profileOptions) profileOptions.hidden = !ownProfile;

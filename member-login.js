@@ -1815,7 +1815,13 @@
         bannerPreview.style.backgroundImage = `url("${bannerUrl}")`;
         bannerPreview.setAttribute("aria-label", "Profile banner preview");
       }
-      profileForm.bio.value = user.bio || "";
+      profileForm.bio.value = String(user.bio || "").slice(0, 175);
+      const bioCount = profileForm.querySelector("[data-bio-count]");
+      if (bioCount) {
+        const updateBioCount = () => { bioCount.textContent = `${profileForm.bio.value.length}/175`; };
+        profileForm.bio.oninput = updateBioCount;
+        updateBioCount();
+      }
       profileForm.commentSignature.checked = user.commentSignatureEnabled !== false;
     }
   }

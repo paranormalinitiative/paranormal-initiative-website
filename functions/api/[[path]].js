@@ -671,7 +671,7 @@ async function handleMemberRegister(request, env) {
     clean(data.affiliation),
     clean(data.organization),
     clean(data.website),
-    clean(data.bio),
+    clean(data.bio).slice(0, 175),
     clean(data.photoUrl),
     data.commentSignatureEnabled === false ? 0 : 1
   ).run();
@@ -3637,7 +3637,7 @@ async function handleRegister(request, env) {
       clean(data.affiliation),
       clean(data.organization),
       clean(data.website),
-      clean(data.bio),
+      clean(data.bio).slice(0, 175),
       clean(data.photoUrl),
       data.commentSignatureEnabled === false ? 0 : 1
     ),
@@ -3699,7 +3699,7 @@ async function handleUpdateProfile(request, env, user) {
     clean(data.affiliation),
     clean(data.organization),
     clean(data.website),
-    clean(data.bio),
+    clean(data.bio).slice(0, 175),
     photoUrl,
     profileBannerUrl,
     data.commentSignatureEnabled === false ? 0 : 1,
@@ -3741,7 +3741,7 @@ async function handleUpdateProfile(request, env, user) {
       clean(data.affiliation),
       clean(data.organization),
       clean(data.website),
-      clean(data.bio),
+      clean(data.bio).slice(0, 175),
       photoUrl,
       profileBannerUrl,
       data.commentSignatureEnabled === false ? 0 : 1,

@@ -103,13 +103,13 @@
                     </div>
                     <p class="access-note profile-banner-dimensions"><strong>Recommended banner size: 1600 × 500 px (3.2:1).</strong> Use a wide image with important text and faces near the center so it remains clear on desktop and mobile. This banner appears across the top of your member profile. The TPI banner is used until you choose another image.</p>
                 </div>
-                <label><span>Biography</span><textarea name="bio" rows="12" placeholder="Write a professional contributor biography. This is the public biography people will see when they click your name." spellcheck="true"></textarea></label>
+                <label><span>Short Bio</span><textarea name="bio" rows="4" maxlength="175" placeholder="Tell the community who you are in 175 characters or fewer." spellcheck="true"></textarea><small class="access-note">This short bio appears below your name on your public profile. <span data-bio-count>0/175</span></small></label>
                 <label class="access-checkbox">
                     <input name="commentSignature" type="checkbox" checked>
                     <span>Use my display name and title on comments and replies.</span>
                 </label>
-                <a class="portal-button" href="#profile-editor">&#9786; Edit Profile</a>
-                <button type="submit">Save Profile</button>
+                <a class="portal-button portal-button-secondary" href="/member-home#profile-identity">Cancel</a>
+                <button type="submit">Save Changes</button>
                 <a class="portal-button portal-button-secondary" data-public-profile-link href="#">View Public Profile</a>
             </form>
         </article>
