@@ -2,7 +2,8 @@
 
 ## 2026-11-14 — Member Home authentication redirect loop
 
-Status: **FIX IMPLEMENTED; GUARDED RELEASE IN PROGRESS.** Production
+Status: **DEPLOYED AND LIVE VERIFIED — release `rel-b417fecb5a6a-d60a29a32e46`,
+Worker `36ddd245-0ba1-4747-a475-a7b62da52c65`, 100% traffic.** Production
 `/api/auth/me` returned HTTP 500 because the deployed D1 database does not have
 the additive `staff_role_appointments` table. That exception prevented
 session confirmation; the login page then reused stale browser identity and
@@ -13,8 +14,12 @@ identity when the server session cannot be confirmed. Local role checks passed
 18/18, profile/feed checks 40/40, Firefox member navigation/profile acceptance
 44/44, and local auth lifecycle 38/38 at each checkpoint. Production D1 was
 not migrated; the release runbook excludes schema changes from ordinary code
-deployments. Live production acceptance and release identifiers will be
-recorded here after the guarded release completes. See the follow-up in [Member
+deployments. The release preflight passed 30/30 gates, production smoke passed
+10/10, and isolated production Firefox release acceptance passed 65/65. A
+targeted isolated live Firefox check then confirmed login HTTP 200,
+authenticated `/api/auth/me` HTTP 200 for `qa-studioflow-prod`, and stable
+arrival at `/member-home?member=1` with `member-ready` and no redirect. No
+member data or production schema was changed. See the follow-up in [Member
 Home Navigation and Creator Studio Parity Repair](300-COMPLETED-WORK/2026-11-13-MEMBER-HOME-NAVIGATION-PARITY-REPAIR.md).
 
 ## 2026-11-13 — Member Home navigation and Creator Studio parity repair

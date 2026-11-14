@@ -90,8 +90,27 @@ launcher confirmed the Worker was running. Release preflight was first invoked
 before committing and correctly stopped because the working tree was dirty; it
 must be rerun against the committed candidate.
 
-**Release and isolated production browser acceptance: pending.** Record the
-release identifier, deployed Worker version, live `/api/auth/me` result, and
-Firefox login-to-Home result here when complete. Production D1 migration
-`0071_staff_role_appointments.sql` remains unapplied under the runbook's
-separate-migration rule.
+## Follow-up release evidence
+
+**DEPLOYED AND LIVE VERIFIED.** Release `rel-b417fecb5a6a-d60a29a32e46`, source
+commit `b417fecb5a6a51482f4d7a99543a81d38da8aec4`, Worker version
+`36ddd245-0ba1-4747-a475-a7b62da52c65`; previous/rollback version
+`e321a3e4-ee26-4b53-adfe-3b5799361235`. The new Worker holds 100% of traffic.
+The guarded preflight passed all 30 gates; production anonymous smoke passed
+10/10; isolated production Firefox acceptance passed 65/65.
+
+An additional focused isolated production Firefox check authenticated the
+synthetic `qa-studioflow-prod` account (login HTTP 200), confirmed
+`/api/auth/me` returned HTTP 200 and the same account, and verified the page
+settled at `/member-home?member=1` with `member-ready`, visible member content,
+and no redirect. The owner browser/profile was not accessed. No member data or
+production D1 schema was changed. Migration `0071_staff_role_appointments.sql`
+remains unapplied; appointment-specific roles stay unavailable until the
+separate schema change is authorized and applied through its proper migration
+workflow.
+
+The first preflight attempt without network access could not resolve GitHub;
+the network-enabled rerun completed successfully. The first auth-lifecycle
+attempt ran while the local Worker was stopped and timed out; rerunning it
+through the documented local launcher passed. These attempts did not change
+production state.
