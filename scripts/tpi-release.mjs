@@ -28,6 +28,7 @@ import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
+import { verifyPassword } from "./local-credential-reset.mjs";
 import {
   buildManifest,
   collectSourceIdentity,
@@ -147,10 +148,17 @@ function filesUnder(root) {
 function localAdminFingerprint() {
   const credentialPath = resolve(repoRoot, ".local-dev/local-auth-credentials.json");
   if (!existsSync(credentialPath) || (statSync(credentialPath).mode & 0o777) !== 0o600) fail("protected local credential file is missing or not mode 0600");
+  const credentials = JSON.parse(readFileSync(credentialPath, "utf8"));
   for (const candidate of filesUnder(resolve(repoRoot, ".local-dev/state/v3/d1")).filter(path => /\.sqlite(?:3)?$/.test(path))) {
     try {
-      const row = output("sqlite3", [candidate, "SELECT password_hash || '|' || role || '|' || active FROM contributors WHERE username='local_admin' LIMIT 1;"]);
-      if (row) return { credentialSha256: hashFile(credentialPath), databaseRowSha256: createHash("sha256").update(row).digest("hex") };
+      const row = output("sqlite3", [candidate, "SELECT password_hash || '|' || username || '|' || role || '|' || active FROM contributors WHERE username='local_admin' LIMIT 1;"]).split("|");
+      if (row.length === 4 && row[0]) {
+        return {
+          credentialSha256: hashFile(credentialPath),
+          databaseIdentitySha256: createHash("sha256").update(row.slice(1).join("|")).digest("hex"),
+          passwordMatches: verifyPassword(credentials.accounts.local_admin.password, row[0]),
+        };
+      }
     } catch { /* skip metadata and unrelated SQLite files */ }
   }
   fail("persistent local_admin row was not found; no database was changed");
