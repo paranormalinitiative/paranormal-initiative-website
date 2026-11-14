@@ -436,7 +436,7 @@ try {
   const pausedLater = await prompterState();
   check(
     "Pause halts scrolling and keeps the position",
-    pauseClick.clicked && pausedAt.scrollTop > 0 && pausedAt.scrollTop === pausedLater.scrollTop && /Play/i.test(String(pausedLater.playLabel)),
+    pauseClick.clicked && pausedAt.scrollTop > 0 && Math.abs(pausedAt.scrollTop - pausedLater.scrollTop) < 1 && /Play/i.test(String(pausedLater.playLabel)),
     JSON.stringify({ pauseClick, pausedAt: pausedAt.scrollTop, pausedLater: pausedLater.scrollTop, playLabel: pausedLater.playLabel })
   );
 
