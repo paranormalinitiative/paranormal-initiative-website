@@ -58,8 +58,15 @@ already present in the body.
 - **Release classification:** Website/member experience
 - **Protected applications:** StudioFlow, Nova Workspace, and Creator Studio
   remain outside the release scope.
-- **Production status:** Must pass the guarded website preflight and deployment
-  before being considered live.
+- **Certified release:** `rel-5b031f11b840-15bf2cb870a6`
+- **Production Worker version:** `6f1456ed-5a2b-4728-b484-daa16cb356f4`
+- **Production status:** **Deployed and live verified**.
+- **Preflight:** 37 certification gates passed in 7 minutes 6 seconds.
+- **Live verification:** Production anonymous smoke passed 10/10 and live
+  isolated Firefox acceptance passed 65/65.
+- **Release profile:** Full profile was required once because the QA/release
+  guard changed in the same commit. Future Community Feed-only changes that do
+  not modify release tooling will use the streamlined website profile.
 
 ## Reusable lesson
 

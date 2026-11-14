@@ -168,9 +168,11 @@ and were not rebuilt or live-accepted for this unrelated member-profile repair.
 | --- | --- |
 | Detected | **2026-11-14 14:24:59 ET**, shown in the Community Feed report screenshot |
 | Root cause confirmed | **2026-11-14**, composer and feed-rendering source audit |
-| Fixed in source | **2026-11-14**, current `codex/tpi-development` release candidate |
+| Fixed in source | **2026-11-14**, commit `5b031f11` |
 | Product/surface | Community Feed post composer and shared post card renderer |
-| Status | **Prepared for guarded production release** |
+| Certified release | `rel-5b031f11b840-15bf2cb870a6`, full profile |
+| Production Worker | `6f1456ed-5a2b-4728-b484-daa16cb356f4` |
+| Status | **Deployed and live verified** |
 
 **What happened:** The composer generated a title from the first 120 characters
 of the member's full message, then sent the unchanged full message as the body.
@@ -194,8 +196,11 @@ limit instead of the first line.
 
 **Verification:** Member interaction source contracts passed **16/16**;
 the official Firefox member/profile regression passed **50/50** after the
-change. The fix is classified as a website/member experience release and does
-not modify StudioFlow, Nova Workspace, or Creator Studio.
+change; the guarded release passed **37 certification gates**; production
+anonymous smoke passed **10/10**; and live isolated Firefox acceptance passed
+**65/65**. This release was escalated to the full profile because the release
+QA guard itself changed in the same commit; the protected applications passed
+their required checks and no unrelated application source was changed.
 
 **Lesson:** A generated presentation field must not repeat source content. When
 older records already contain the duplication, repair the renderer safely first
