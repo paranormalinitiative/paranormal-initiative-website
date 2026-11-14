@@ -348,6 +348,10 @@ The production acceptance runner performs authenticated checks after login. It
 must never poll a production API while waiting for manual input. StudioFlow
 production-room polling must remain non-overlapping and visibility-aware so an
 inactive browser tab cannot consume the Worker request allowance.
+Website-only releases retain live anonymous production smoke and automatic
+rollback, but do not reopen the StudioFlow schema or authenticated browser
+acceptance gates. Those remain mandatory for StudioFlow and full-platform
+profiles.
 
 Application directives are not complete until this guarded deployment and live
 acceptance pass. Documentation-only or local-tooling-only commits are pushed to

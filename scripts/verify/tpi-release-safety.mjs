@@ -152,6 +152,11 @@ check("production deployment verifies the certification instead of recertifying"
   assert.match(release, /else if \(mode === "preflight" \|\| mode === "certify"\) await preflight\(\);/);
   assert.match(release, /verifyCertification\(\{ repoRoot, candidateRoot \}\)/);
 });
+check("website-only deployment keeps smoke but skips StudioFlow live acceptance", () => {
+  assert.match(release, /Live anonymous production smoke/);
+  assert.match(release, /manifest\.tier\.releaseProfile !== "website"/);
+  assert.match(release, /Live StudioFlow acceptance skipped for website-only profile/);
+});
 check("production deployment deploys the certified candidate directory", () => {
   assert.match(release, /"--candidate", candidateRoot/);
 });

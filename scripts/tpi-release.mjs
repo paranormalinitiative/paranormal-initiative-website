@@ -564,11 +564,12 @@ async function deploy() {
   if (JSON.stringify(liveRequirement) !== JSON.stringify(manifest.schema.requiredTables)) {
     fail("the approved production schema contract changed since certification; run npm run release:certify");
   }
-  // TPI-STUDIOFLOW-137: a release that depends on database schema must refuse to
-  // deploy while that schema is absent. Deploying the Notes workspace before its
-  // tables exist would serve an interface that cannot save anything, so this gate
-  // fails closed and names the migrations that must be authorized and applied.
-  run("Production schema readiness (live, read-only)", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "production" } });
+  // TPI-STUDIOFLOW-137: a release that depends on StudioFlow schema must refuse
+  // to deploy while that schema is absent. Website-only releases preserve the
+  // already-certified StudioFlow bytes and do not need to reopen this gate.
+  if (manifest.tier.releaseProfile !== "website") {
+    run("Production schema readiness (live, read-only)", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "production" } });
+  }
   // Rollback metadata is live production state and is captured now, not reused
   // from certification (section 37).
   release.rollbackVersion = activeProductionVersion();
@@ -605,20 +606,24 @@ async function deploy() {
     deployedVersion = (result.stdout || "").match(/Current Version ID:\s*([0-9a-f-]{36})/)?.[1] || "";
     if (!deployedVersion) fail("deployment completed without a readable Worker version ID");
     run("Live anonymous production smoke", process.execPath, ["scripts/qa/production-smoke.mjs"], { timing: { bucket: "production" } });
-    run("Live isolated Firefox Developer Edition acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
-      env: {
-        TPI_FIREFOX_BASE_URL: "https://paranormalinitiative.com",
-        TPI_FIREFOX_ALLOW_PRODUCTION: "1",
-        TPI_FIREFOX_PRODUCTION_QA: "approved",
-        TPI_FIREFOX_ACCOUNT: "production_qa",
-        TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE: resolve(repoRoot, ".local-dev/qa-studioflow-prod.json"),
-      },
-      timing: { bucket: "production", browser: true },
-    });
+    if (manifest.tier.releaseProfile !== "website") {
+      run("Live isolated Firefox Developer Edition acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
+        env: {
+          TPI_FIREFOX_BASE_URL: "https://paranormalinitiative.com",
+          TPI_FIREFOX_ALLOW_PRODUCTION: "1",
+          TPI_FIREFOX_PRODUCTION_QA: "approved",
+          TPI_FIREFOX_ACCOUNT: "production_qa",
+          TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE: resolve(repoRoot, ".local-dev/qa-studioflow-prod.json"),
+        },
+        timing: { bucket: "production", browser: true },
+      });
+    } else {
+      mark("Live StudioFlow acceptance skipped for website-only profile", { bucket: "production" });
+    }
     if (activeProductionVersion() !== deployedVersion) fail("new Worker version is not receiving 100% traffic");
     mark("Confirm new Worker version holds 100% traffic", { bucket: "production" });
-    writeFileSync(deploymentRecordPath, `${JSON.stringify({ schemaVersion: 1, releaseId: manifest.releaseId, manifestDigest: manifest.manifestDigest, sourceCommit: release.sourceCommit, worker, deployedVersion, rollbackVersion: release.rollbackVersion, deployedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
-    console.log(JSON.stringify({ status: "DEPLOYED_AND_VERIFIED", releaseId: manifest.releaseId, sourceCommit: release.sourceCommit, worker, deployedVersion, rollbackVersion: release.rollbackVersion, recertified: false }, null, 2));
+    writeFileSync(deploymentRecordPath, `${JSON.stringify({ schemaVersion: 1, releaseId: manifest.releaseId, manifestDigest: manifest.manifestDigest, sourceCommit: release.sourceCommit, releaseProfile: manifest.tier.releaseProfile || "full", worker, deployedVersion, rollbackVersion: release.rollbackVersion, deployedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
+    console.log(JSON.stringify({ status: "DEPLOYED_AND_VERIFIED", releaseId: manifest.releaseId, sourceCommit: release.sourceCommit, releaseProfile: manifest.tier.releaseProfile || "full", worker, deployedVersion, rollbackVersion: release.rollbackVersion, recertified: false }, null, 2));
   } catch (error) {
     console.error(`Production acceptance failed: ${error instanceof Error ? error.message : error}`);
     console.error(`Rolling back ${worker} to ${release.rollbackVersion}.`);
