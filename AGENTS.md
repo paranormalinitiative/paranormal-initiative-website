@@ -59,10 +59,19 @@ secret disclosure require separate explicit owner approval.
 The maintained release path is:
 
 ```sh
-npm run verify:local-auth-lifecycle
 npm run release:preflight
 TPI_PRODUCTION_DEPLOY=approved npm run release:production
 ```
+
+`release:preflight` now selects an impact-aware profile from the changed
+paths. Website-only work runs targeted website and shared-boundary checks;
+StudioFlow lifecycle/build checks run only for StudioFlow or full-platform
+changes. Shared Worker/API/authentication/database/release-tooling changes,
+Nova changes, Administration Center changes, multiple applications, or an
+ambiguous diff escalate to full platform certification. To intentionally force
+the complete suite for a low-risk change, use
+`TPI_RELEASE_PROFILE=full npm run release:preflight`. The profile can never
+reduce checks required by the changed paths.
 
 Firefox Developer Edition is the default browser for both local and production
 acceptance. Use isolated disposable profiles and data unless the owner directly

@@ -5,8 +5,10 @@
 // Modes:
 //   auth-lifecycle  Verify local_admin before/after a managed Worker restart
 //                   and StudioFlow rebuild, then run isolated Firefox acceptance.
-//   certify         Run every release gate once, stage one immutable candidate,
-//                   and write a cryptographically bound certification for it.
+//   certify         Run the impact-selected release gates once, stage one
+//                   immutable candidate, and write a cryptographically bound
+//                   certification for it. Full platform certification remains
+//                   available with TPI_RELEASE_PROFILE=full.
 //   preflight       Alias for `certify`, kept because the maintained runbook and
 //                   older records name it. It now certifies; it no longer leaves
 //                   production to repeat the same suite.
@@ -27,18 +29,20 @@
 import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
-import { relative, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { verifyPassword } from "./local-credential-reset.mjs";
 import {
   buildManifest,
   collectSourceIdentity,
   computeManifestDigest,
   describeCertification,
+  hashTree,
   prepareCandidateDirectory,
   resolveCandidateRoot,
   verifyCertification,
   writeCertification,
 } from "./release-certification.mjs";
+import { classifyReleaseImpact, protectedApplicationDifferences } from "./release-impact.mjs";
 import { classifyReleaseTier, previousCertifiedCommit } from "./release-tier.mjs";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
@@ -133,6 +137,39 @@ function run(label, command, args, options = {}) {
   }
   mark(label, { kind: "gate", status: result.status === 0 ? "pass" : "fail", ...(options.timing || {}) });
   if (result.status !== 0) fail(`${label}: exit ${result.status}`);
+}
+function verifyInline(label, callback, options = {}) {
+  console.log(`\n== ${label} ==`);
+  const gateStarted = performance.now();
+  try {
+    callback();
+    const durationMs = Math.round(performance.now() - gateStarted);
+    gateRecords.push({ name: label, status: "pass", durationMs });
+    mark(label, { kind: "gate", status: "pass", ...(options.timing || {}) });
+  } catch (error) {
+    const durationMs = Math.round(performance.now() - gateStarted);
+    gateRecords.push({ name: label, status: "fail", durationMs });
+    mark(label, { kind: "gate", status: "fail", ...(options.timing || {}) });
+    throw error;
+  }
+}
+function readPreviousCertificationManifest() {
+  try {
+    return JSON.parse(readFileSync(join(candidateRoot, "release-certification.json"), "utf8"));
+  } catch {
+    return null;
+  }
+}
+function assertProtectedApplicationIntegrity(previousManifest, stagedCandidateRoot, profile) {
+  if (profile !== "website") return;
+  if (!previousManifest?.deployable?.assets) {
+    fail("website-only release cannot be certified without a previous protected-application baseline");
+  }
+  const changed = protectedApplicationDifferences(
+    previousManifest.deployable.assets,
+    hashTree(join(stagedCandidateRoot, "assets")),
+  );
+  if (changed.length) fail(`protected application bytes changed during a website-only release: ${changed.slice(0, 12).join(", ")}${changed.length > 12 ? `, +${changed.length - 12} more` : ""}`);
 }
 function hashFile(path) { return createHash("sha256").update(readFileSync(path)).digest("hex"); }
 function filesUnder(root) {
@@ -260,6 +297,12 @@ async function preflight() {
   });
   mark(`Release tier classification (Tier ${tier.level} — ${tier.label})`, { bucket: "certification", tier: tier.level });
   console.log(`   tier base: ${tier.baseCommit || "unresolved"} (${tier.baseSource}) — ${tier.reasons.join("; ")}`);
+  const impact = classifyReleaseImpact({
+    changedFiles: tier.changedFiles,
+    requestedProfile: process.env.TPI_RELEASE_PROFILE ?? null,
+  });
+  mark(`Release impact profile (${impact.profile})`, { bucket: "certification", profile: impact.profile });
+  console.log(`   profile: ${impact.profile} — ${impact.reasons.join("; ")}`);
   run("Release workflow safety contract", process.execPath, ["scripts/verify/tpi-release-safety.mjs"], { timing: { bucket: "certification" } });
   // TPI-OPS-004: the production staging copy must stay within the published
   // asset set. Copying discarded local runtime state made every dry-run and
@@ -269,39 +312,65 @@ async function preflight() {
   // TPI-OPS-005: prove the certification system itself fails closed before any
   // release is certified by it. Runs in a throwaway repository, touches nothing.
   run("Certification fail-closed regression", process.execPath, ["scripts/verify/tpi-ops-005-certification.mjs"], { timing: { bucket: "certification" } });
+  run("Release impact classification regression", process.execPath, ["scripts/verify/tpi-release-impact.mjs"], { timing: { bucket: "certification" } });
   // Build the complete local asset tree before restarting Wrangler. Replacing
   // the watched directory after startup can leave Miniflare serving the new
   // HTML with an old asset manifest, which presents as a blank StudioFlow page.
   run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"], { timing: { bucket: "staging" } });
-  await verifyAuthLifecycle();
-  run("Legacy Admin session and staff-role regression", process.execPath, ["scripts/verify/tpi-staff-roles.mjs"], { timing: { bucket: "certification" } });
-  run("Password hash compatibility and upgrade regression", process.execPath, ["scripts/verify/tpi-password-hash.mjs"], { timing: { bucket: "certification" } });
-  run("Password recovery API regression", process.execPath, ["scripts/verify/tpi-password-recovery.mjs"], { timing: { bucket: "certification" } });
-  run("Password recovery Firefox interaction", process.execPath, ["scripts/verify/tpi-password-recovery-browser.mjs"], {
-    env: { TPI_RECOVERY_BASE_URL: "http://127.0.0.1:8787" },
-    timing: { bucket: "certification", browser: true },
-  });
-  run("Community YouTube preview and in-feed playback", "npm", ["run", "verify:community-youtube-preview"], {
-    env: { TPI_COMMUNITY_BASE_URL: "http://127.0.0.1:8787" },
-    timing: { bucket: "certification", browser: true },
-  });
-  const adminBefore = localAdminFingerprint();
-  mark("Persistent local_admin fingerprint (before isolated E2E)", { bucket: "certification" });
-    await runLocalAuthCheck("Persistent development authentication");
-  startIsolatedE2E();
-  try {
-    await waitFor("http://127.0.0.1:8789/api/community/categories");
-    run("Complete isolated QA and API E2E", process.execPath, ["scripts/qa/run-qa.mjs", "--e2e", "--studioflow-root", studioFlowRoot, "--production-smoke"], {
-      env: { TPI_E2E_ISOLATED: "1", TPI_WRANGLER_BIN: wrangler, WRANGLER_BIN: wrangler },
+  if (impact.profile === "full" || impact.profile === "studioflow") await verifyAuthLifecycle();
+  if (impact.profile === "full") {
+    run("Legacy Admin session and staff-role regression", process.execPath, ["scripts/verify/tpi-staff-roles.mjs"], { timing: { bucket: "certification" } });
+    run("Password hash compatibility and upgrade regression", process.execPath, ["scripts/verify/tpi-password-hash.mjs"], { timing: { bucket: "certification" } });
+    run("Password recovery API regression", process.execPath, ["scripts/verify/tpi-password-recovery.mjs"], { timing: { bucket: "certification" } });
+    run("Password recovery Firefox interaction", process.execPath, ["scripts/verify/tpi-password-recovery-browser.mjs"], {
+      env: { TPI_RECOVERY_BASE_URL: "http://127.0.0.1:8787" },
+      timing: { bucket: "certification", browser: true },
     });
-  } finally {
-    stopIsolatedE2E();
+    run("Community YouTube preview and in-feed playback", "npm", ["run", "verify:community-youtube-preview"], {
+      env: { TPI_COMMUNITY_BASE_URL: "http://127.0.0.1:8787" },
+      timing: { bucket: "certification", browser: true },
+    });
+    const adminBefore = localAdminFingerprint();
+    mark("Persistent local_admin fingerprint (before isolated E2E)", { bucket: "certification" });
+    await runLocalAuthCheck("Persistent development authentication");
+    startIsolatedE2E();
+    try {
+      await waitFor("http://127.0.0.1:8789/api/community/categories");
+      run("Complete isolated QA and API E2E", process.execPath, ["scripts/qa/run-qa.mjs", "--e2e", "--studioflow-root", studioFlowRoot, "--production-smoke"], {
+        env: { TPI_E2E_ISOLATED: "1", TPI_WRANGLER_BIN: wrangler, WRANGLER_BIN: wrangler },
+      });
+    } finally {
+      stopIsolatedE2E();
+    }
+    if (JSON.stringify(adminBefore) !== JSON.stringify(localAdminFingerprint())) fail("isolated E2E changed the persistent development administrator");
+  } else if (impact.profile === "website") {
+    await waitForLocalReleaseSurfaces();
+    await runLocalAuthCheck("Website release shared authentication smoke");
+    run("Website public surfaces and protected-route smoke", process.execPath, ["scripts/verify/tpi-website-surface-smoke.mjs"], {
+      env: { TPI_WEBSITE_BASE_URL: "http://127.0.0.1:8787" },
+      timing: { bucket: "certification" },
+    });
+    if (impact.changedFiles.some(path => /community|youtube|feed/i.test(path))) {
+      run("Targeted Community YouTube preview and in-feed playback", "npm", ["run", "verify:community-youtube-preview"], {
+        env: { TPI_COMMUNITY_BASE_URL: "http://127.0.0.1:8787" },
+        timing: { bucket: "certification", browser: true },
+      });
+    }
+    if (impact.changedFiles.some(path => /member-(?:profile|home|login|dashboard)|profile/i.test(path))) {
+      run("Targeted member profile and feed browser regression", process.execPath, ["scripts/verify/tpi-member-profile-feed-firefox.mjs"], {
+        env: { TPI_PROFILE_BASE_URL: "http://127.0.0.1:8787" },
+        timing: { bucket: "certification", browser: true },
+      });
+    }
+    if (impact.changedFiles.some(path => /help-center/i.test(path))) {
+      run("Targeted Help Center separation regression", "npm", ["run", "verify:help-center-separation"], { timing: { bucket: "certification" } });
+    }
   }
-  if (JSON.stringify(adminBefore) !== JSON.stringify(localAdminFingerprint())) fail("isolated E2E changed the persistent development administrator");
-  run("Firefox Developer Edition release acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
-    env: { TPI_FIREFOX_ACCOUNT: "test_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
-    timing: { bucket: "certification", browser: true },
-  });
+  if (impact.profile !== "website") {
+    run("Firefox Developer Edition release acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
+      env: { TPI_FIREFOX_ACCOUNT: "test_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
+      timing: { bucket: "certification", browser: true },
+    });
   // Studio Management lifecycle regression (Directive Tests 1-10 plus owner
   // workflow checks H1-H2). Required in the maintained release verification so
   // a Studio creation, switching, isolation, or persistence regression blocks
@@ -405,7 +474,8 @@ async function preflight() {
   // contain the approved Notes entry points and bundle markers. This is the
   // check that would have failed at TPI-STUDIOFLOW-130 instead of silently
   // removing the workspace from production.
-  run("Approved feature continuity and release lineage guard", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-continuity.mjs"]);
+    run("Approved feature continuity and release lineage guard", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-continuity.mjs"]);
+  }
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
   mark("Post-staging Git cleanliness and parity recheck", { bucket: "certification" });
@@ -414,9 +484,11 @@ async function preflight() {
   mark("Cloudflare account, active version and rollback-version prechecks", { bucket: "cloudflare-account" });
   // TPI-OPS-005: stage the release candidate exactly once and prove that it
   // bundles. This directory - never a rebuild - is what production uploads.
+  const previousManifest = readPreviousCertificationManifest();
   prepareCandidateDirectory(candidateRoot);
   run("Stage immutable release candidate and Wrangler dry-run", process.execPath, ["scripts/deploy-production-guarded.mjs", "--stage-out", candidateRoot, "--dry-run"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "staging" } });
   mark("Release candidate staged", { bucket: "staging" });
+  verifyInline("Protected application integrity guard", () => assertProtectedApplicationIntegrity(previousManifest, candidateRoot, impact.profile), { timing: { bucket: "certification" } });
 
   const certificationStarted = performance.now();
   const certifiedSource = collectSourceIdentity(repoRoot, { branch, studioFlowRoot });
@@ -428,7 +500,7 @@ async function preflight() {
   const manifest = buildManifest({
     candidateRoot,
     source: certifiedSource,
-    tier: { level: tier.level, label: tier.label, reasons: tier.reasons, baseCommit: tier.baseCommit, baseSource: tier.baseSource, requiredGateSet: tier.requiredGateSet },
+    tier: { level: tier.level, label: tier.label, reasons: tier.reasons, baseCommit: tier.baseCommit, baseSource: tier.baseSource, requiredGateSet: impact.profile, releaseProfile: impact.profile },
     gates: gateRecords.slice(),
     schema: {
       database: "tpi_contributor_portal",
@@ -454,7 +526,7 @@ async function preflight() {
   writeCertification(candidateRoot, manifest);
   mark("Write certification manifest", { bucket: "certification" });
   mkdirSync(resolve(releaseStatePath, ".."), { recursive: true });
-  writeFileSync(releaseStatePath, `${JSON.stringify({ schemaVersion: 1, sourceCommit, branch, worker, rollbackVersion, releaseId: manifest.releaseId, manifestDigest: manifest.manifestDigest, tier: tier.level, verifiedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
+  writeFileSync(releaseStatePath, `${JSON.stringify({ schemaVersion: 1, sourceCommit, branch, worker, rollbackVersion, releaseId: manifest.releaseId, manifestDigest: manifest.manifestDigest, tier: tier.level, releaseProfile: impact.profile, verifiedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
   mark("Write certification release state", { bucket: "staging" });
   mark("Certification complete", { bucket: "certification", preflightMs: Math.round(performance.now() - preflightStarted) });
 
@@ -464,7 +536,7 @@ async function preflight() {
   console.log(`\nCERTIFIED RELEASE CANDIDATE: ${manifest.releaseId}`);
   console.log(`This exact candidate may now be deployed without recertification, provided no protected input changes.`);
   console.log(`   next: TPI_PRODUCTION_DEPLOY=approved npm run release:production`);
-  console.log(JSON.stringify({ status: "CERTIFIED", readyForProduction: true, releaseId: manifest.releaseId, sourceCommit, tier: tier.level, worker, rollbackVersion, manifestDigest: manifest.manifestDigest, certificationPath: relative(repoRoot, resolve(candidateRoot, "release-certification.json")), releaseStatePath: ".local-dev/release-preflight.json" }, null, 2));
+  console.log(JSON.stringify({ status: "CERTIFIED", readyForProduction: true, releaseId: manifest.releaseId, sourceCommit, tier: tier.level, releaseProfile: impact.profile, worker, rollbackVersion, manifestDigest: manifest.manifestDigest, certificationPath: relative(repoRoot, resolve(candidateRoot, "release-certification.json")), releaseStatePath: ".local-dev/release-preflight.json" }, null, 2));
   return { sourceCommit, rollbackVersion, manifest };
 }
 async function deploy() {

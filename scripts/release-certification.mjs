@@ -48,6 +48,7 @@ const RELEASE_TOOLING_FILES = [
   "scripts/deploy-production-guarded.mjs",
   "scripts/release-certification.mjs",
   "scripts/release-tier.mjs",
+  "scripts/release-impact.mjs",
   "scripts/studioflow-release-baseline.json",
   "package.json",
   ".assetsignore",

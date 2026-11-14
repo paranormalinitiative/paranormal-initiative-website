@@ -45,20 +45,15 @@ git rev-parse HEAD
 git fetch origin codex/tpi-development
 git rev-list --left-right --count HEAD...origin/codex/tpi-development
 
-# 2. Prove permanent local development authentication survives a managed
-#    Worker restart and a StudioFlow source build.
-npm run verify:local-auth-lifecycle
-
-# 3. Run the complete clean-tree, GitHub-parity, isolated D1/R2, 225-API-E2E,
-#    Firefox, reproducible-build, Cloudflare, rollback, and dry-run gates.
+# 2. Run the impact-aware clean-tree, GitHub-parity, targeted verification,
+#    protected-application, candidate, and dry-run gates. Shared-platform and
+#    application changes automatically escalate to their broader profile.
 npm run release:preflight
 
-# 4. Only after preflight prints READY, deploy that exact commit. This repeats
-#    every gate, records the active version, deploys, verifies live, and rolls
-#    back automatically if critical acceptance fails.
+# 3. Only after preflight prints READY, deploy that exact certified candidate.
 TPI_PRODUCTION_DEPLOY=approved npm run release:production
 
-# 5. After DEPLOYED_AND_VERIFIED, prove the tree and GitHub remain identical.
+# 4. After DEPLOYED_AND_VERIFIED, prove the tree and GitHub remain identical.
 git status --short --untracked-files=all
 git rev-parse HEAD
 git rev-parse origin/codex/tpi-development
@@ -279,25 +274,50 @@ git rev-parse origin/codex/tpi-development
 
 Status must be empty and both commit hashes must match exactly.
 
-## 6. Run the complete release preflight
+## 6. Run the impact-aware release preflight
 
 ```sh
 npm run release:preflight
 ```
 
 Do not reproduce its steps with ad hoc commands. The maintained preflight
-enforces:
+selects a release profile from the actual changed paths and enforces:
 
 - correct branch, clean tree, and exact GitHub parity;
-- persistent `local_admin` lifecycle verification;
-- isolated disposable D1/R2 E2E;
-- complete QA and API E2E;
-- StudioFlow build and reproducible asset integration;
-- isolated Firefox Developer Edition acceptance;
+- the release-impact classifier regression;
+- a lightweight shared authentication and website-surface smoke for website-only changes;
+- protected-application byte integrity for website-only changes;
+- persistent `local_admin` lifecycle verification only for StudioFlow or full-platform changes;
+- isolated disposable D1/R2 E2E and complete QA only for full-platform changes;
+- StudioFlow build and browser acceptance only for StudioFlow or full-platform changes;
 - Cloudflare account, Worker, binding, and rollback checks;
 - current production version capture;
 - guarded Wrangler dry-run;
 - a final Git cleanliness/parity check after staging and verification.
+
+### Impact-aware release profiles
+
+- **Website-only** — ordinary HTML, CSS, images, member pages, Help Center, and
+  targeted website verification. Stable StudioFlow, Nova, and Creator Studio
+  assets must match the previous certified release byte-for-byte.
+- **StudioFlow application** — StudioFlow lifecycle, ownership, deletion,
+  Notes, responsive, build, and browser acceptance. Website-only suites remain
+  conditional.
+- **Full platform** — shared Worker/API/authentication/database/release-tooling
+  changes, Nova or Administration Center changes, multiple applications, or
+  any ambiguous change. This retains the complete platform certification.
+
+The profile is selected automatically. To intentionally run the complete suite
+for a low-risk website change, use:
+
+```sh
+TPI_RELEASE_PROFILE=full npm run release:preflight
+```
+
+The profile cannot reduce the checks required by the changed paths. If any
+protected application bytes differ during a website-only candidate, the
+release stops and requires application classification instead of silently
+publishing the change.
 
 The final output must be `READY`. If any gate fails, repair the cause, commit
 and push the repair, and rerun preflight. Do not weaken or skip the gate.
@@ -376,6 +396,8 @@ instead of guessing. Timing is best-effort and can never fail a release.
 Measured on 2026-11-02: the whole preflight is about 6m40s, of which the Firefox
 regression suites are about 74%, the isolated API E2E about 18%, and Cloudflare's
 own upload and activation about 8 seconds. Cloudflare is not the slow part.
+That is the expected full-platform baseline; website-only releases no longer
+invoke those application suites unless their changed paths require them.
 
 **The production staging copy must stay within the published asset set.**
 `scripts/deploy-production-guarded.mjs` copies the repository into a disposable

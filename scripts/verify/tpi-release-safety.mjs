@@ -6,6 +6,7 @@ import { readFileSync } from "node:fs";
 const read = path => readFileSync(path, "utf8");
 const runbook = read("docs/TPI-DEVELOPMENT/TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md");
 const release = read("scripts/tpi-release.mjs");
+const releaseImpact = read("scripts/release-impact.mjs");
 const deployGuard = read("scripts/deploy-production-guarded.mjs");
 const agents = read("AGENTS.md");
 const packageSource = read("package.json");
@@ -38,8 +39,16 @@ check("runbook requires commit, push, preflight and guarded deployment", () => {
   assert.match(runbook, /npm run release:preflight/);
   assert.match(runbook, /TPI_PRODUCTION_DEPLOY=approved npm run release:production/);
 });
-check("release preflight includes the full local_admin lifecycle", () => {
+check("release preflight makes the local_admin lifecycle impact-aware", () => {
   assert.match(release, /await verifyAuthLifecycle\(\)/);
+  assert.match(release, /impact\.profile === "full" \|\| impact\.profile === "studioflow"/);
+  assert.match(release, /Website release shared authentication smoke/);
+  assert.match(release, /tpi-website-surface-smoke\.mjs/);
+});
+check("release preflight protects unchanged application bytes", () => {
+  assert.match(release, /Protected application integrity guard/);
+  assert.match(release, /protectedApplicationDifferences/);
+  assert.match(releaseImpact, /PROTECTED_APPLICATION_PREFIXES/);
 });
 check("release preflight blocks legacy Admin and password recovery regressions", () => {
   assert.match(release, /Legacy Admin session and staff-role regression/);
@@ -157,6 +166,7 @@ check("certification regression suite is wired into the package", () => {
   const pkg = JSON.parse(packageSource);
   assert.equal(pkg.scripts["release:certify"], "node scripts/tpi-release.mjs certify");
   assert.equal(pkg.scripts["verify:release-certification"], "node scripts/verify/tpi-ops-005-certification.mjs");
+  assert.equal(pkg.scripts["verify:release-impact"], "node scripts/verify/tpi-release-impact.mjs");
 });
 check("package exposes credential and safety commands", () => {
   const pkg = JSON.parse(packageSource);
