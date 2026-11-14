@@ -3548,6 +3548,15 @@ footer {
     display: none;
 }
 
+.account-recovery-form [hidden] {
+    display: none;
+}
+
+.account-recovery-form [data-password-recovery-status] {
+    margin: 0;
+    text-align: left;
+}
+
 .account-identity-card div {
     display: grid;
     gap: 3px;

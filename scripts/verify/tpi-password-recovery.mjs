@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { passwordResetEmail } from "../../lib/email.js";
+import { SESSION_COOKIE } from "../../lib/auth.js";
 import { onRequest } from "../../functions/api/[[path]].js";
 
 const root = resolve(import.meta.dirname, "../..");
@@ -38,6 +39,8 @@ const mockDb = {
     return {
       bind(...args) {
         return {
+          sql,
+          args,
           async first() {
             if (sql.includes("lower(correspondence)")) return resetUser;
             if (sql.includes("FROM password_reset_tokens")) {
@@ -75,7 +78,8 @@ checks.push(["reset request returns a generic success response", requestResponse
 
 const confirmResponse = await onRequest(requestContext("/auth/password-reset/confirm", { code: issuedCode, password: "new-password-123" }));
 const confirmBody = await confirmResponse.json();
-checks.push(["reset confirmation updates the password and clears sessions", confirmResponse.status === 200 && confirmBody.ok === true && batchStatements.length === 3]);
+checks.push(["reset confirmation updates the password and clears old sessions", confirmResponse.status === 200 && confirmBody.ok === true && batchStatements[2]?.sql === "DELETE FROM sessions WHERE contributor_id = ?"]);
+checks.push(["reset confirmation signs in with a fresh session cookie", confirmBody.signedIn === true && batchStatements.length === 4 && batchStatements[3]?.sql.startsWith("INSERT INTO sessions") && confirmResponse.headers.get("set-cookie")?.startsWith(`${SESSION_COOKIE}=${batchStatements[3].args[0]};`)]);
 
 const invalidResponse = await onRequest(requestContext("/auth/password-reset/confirm", { code: "00000000", password: "new-password-123" }));
 checks.push(["invalid reset codes are rejected", invalidResponse.status === 400]);

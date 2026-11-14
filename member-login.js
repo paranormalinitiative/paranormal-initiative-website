@@ -6,6 +6,8 @@
   const VISIBLE_INVITE_MS = 5 * 60 * 1000;
   let visibleInviteTimer = null;
   const status = document.getElementById("member-login-status");
+  const recoveryStatus = document.querySelector("[data-password-recovery-status]");
+  const recoveryHomeLink = document.querySelector("[data-password-recovery-home]");
   const inviteCodePanel = document.querySelector("[data-invite-code-panel]");
   const inviteSetupPanel = document.querySelector("[data-invite-setup-panel]");
   const inviteOwnerTools = document.querySelector("[data-invite-owner-tools]");
@@ -58,6 +60,12 @@
     if (!status) return;
     status.textContent = message;
     status.classList.toggle("access-error", Boolean(isError));
+  }
+
+  function setRecoveryStatus(message, isError) {
+    if (!recoveryStatus) return;
+    recoveryStatus.textContent = message;
+    recoveryStatus.classList.toggle("access-error", Boolean(isError));
   }
 
   function getUsers() {
@@ -1935,16 +1943,17 @@
     if (resetRequestForm) {
       const email = String(data.get("email") || "").trim();
       if (!email || !email.includes("@")) {
-        setStatus("Enter the email address on the account.", true);
+        setRecoveryStatus("Enter the email address on the account.", true);
         return;
       }
       try {
+        setRecoveryStatus("Requesting a reset code…", false);
         const response = await window.TPIApi.requestPasswordReset({ email });
         const codeInput = document.querySelector("[data-password-reset-confirm] input[name='code']");
         if (codeInput) codeInput.focus();
-        setStatus(response.message || "If that email is on an account, check your inbox for a reset code.", false);
+        setRecoveryStatus(response.message || "If that email is on an account, check your inbox for a reset code.", false);
       } catch (error) {
-        setStatus(error.message || "Could not request a reset code. Please try again.", true);
+        setRecoveryStatus(error.message || "Could not request a reset code. Please try again.", true);
       }
       return;
     }
@@ -1954,15 +1963,24 @@
       const password = String(data.get("password") || "");
       const confirmPassword = String(data.get("confirmPassword") || "");
       if (password !== confirmPassword) {
-        setStatus("Passwords do not match.", true);
+        setRecoveryStatus("Passwords do not match.", true);
         return;
       }
       try {
-        await window.TPIApi.confirmPasswordReset({ code, password });
+        setRecoveryStatus("Saving your new password…", false);
+        const response = await window.TPIApi.confirmPasswordReset({ code, password });
         resetConfirmForm.reset();
-        setStatus("Password updated. You can sign in with your new password now.", false);
+        if (response.signedIn) {
+          setRecoveryStatus("Password saved. Opening Member Home…", false);
+          if (recoveryHomeLink) recoveryHomeLink.hidden = false;
+          window.setTimeout(() => {
+            window.location.href = "/member-home?member=1";
+          }, 1500);
+        } else {
+          setRecoveryStatus("Password saved. Sign in with your new password.", false);
+        }
       } catch (error) {
-        setStatus(error.message || "Password could not be updated.", true);
+        setRecoveryStatus(error.message || "Password could not be updated.", true);
       }
       return;
     }

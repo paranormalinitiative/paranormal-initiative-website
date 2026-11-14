@@ -517,13 +517,18 @@ async function handlePasswordResetConfirm(request, env) {
   if (!reset) return json({ error: "That reset code is invalid or expired." }, 400);
 
   const passwordHash = await hashPassword(password);
+  const sessionToken = crypto.randomUUID();
+  const sessionExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
   await env.TPI_DB.batch([
     env.TPI_DB.prepare("UPDATE contributors SET password_hash = ? WHERE id = ?").bind(passwordHash, reset.contributorId),
     env.TPI_DB.prepare("UPDATE password_reset_tokens SET used = 1 WHERE token = ?").bind(reset.token),
-    env.TPI_DB.prepare("DELETE FROM sessions WHERE contributor_id = ?").bind(reset.contributorId)
+    env.TPI_DB.prepare("DELETE FROM sessions WHERE contributor_id = ?").bind(reset.contributorId),
+    env.TPI_DB.prepare("INSERT INTO sessions (token, contributor_id, expires_at) VALUES (?, ?, ?)").bind(sessionToken, reset.contributorId, sessionExpires)
   ]);
 
-  return json({ ok: true, message: "Password updated. You can sign in with your new password now." });
+  return json({ ok: true, signedIn: true, message: "Password saved. Opening Member Home." }, 200, {
+    "Set-Cookie": `${SESSION_COOKIE}=${sessionToken}; ${sessionCookieAttributes(request, env, 60 * 60 * 24 * 14)}`
+  });
 }
 
 async function handleLogout(request, env) {

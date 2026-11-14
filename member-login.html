@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=95">
+    <link rel="stylesheet" href="style.css?v=96">
     <link rel="stylesheet" href="member-shell.css?v=64">
 </head>
 <body class="member-login-page">
@@ -65,6 +65,8 @@
             <label class="account-recovery-step"><span>Confirm New Password</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required></label>
             <button type="submit">Save New Password</button>
           </form>
+          <p class="access-note" data-password-recovery-status role="status" aria-live="polite" aria-atomic="true"></p>
+          <a class="portal-button" data-password-recovery-home href="/member-home?member=1" hidden>Open Member Home</a>
         </div>
         <p class="access-note">Members can join discussions. Contributors can also use the Nova Editorial Workspace after approval.</p>
     </div>
@@ -161,7 +163,7 @@
 <script src="includes.js?v=18"></script>
 <script src="api-client.js?v=18"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=43"></script>
+<script src="member-login.js?v=44"></script>
 <script src="member-shell.js?v=61"></script>
 </body>
 </html>

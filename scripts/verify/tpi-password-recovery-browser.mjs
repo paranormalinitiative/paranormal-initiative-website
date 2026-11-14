@@ -32,7 +32,19 @@ try {
     window.__recoveryCalls = [];
     window.TPIApi.isAvailable = async () => false;
     window.TPIApi.requestPasswordReset = async data => { window.__recoveryCalls.push({ type: "request", data }); return { message: "Code requested" }; };
-    window.TPIApi.confirmPasswordReset = async data => { window.__recoveryCalls.push({ type: "confirm", data }); return { ok: true }; };
+    window.TPIApi.confirmPasswordReset = async data => {
+      window.__recoveryCalls.push({ type: "confirm", data });
+      if (data.code === "00000000") throw new Error("That reset code is invalid or expired.");
+      return { ok: true, signedIn: true };
+    };
+    const originalSetTimeout = window.setTimeout;
+    window.setTimeout = (fn, delay, ...args) => {
+      if (delay === 1500) {
+        window.__recoveryRedirect = { fn, delay };
+        return 1;
+      }
+      return originalSetTimeout(fn, delay, ...args);
+    };
   });
   const fill = async (name, value, form) => driver.findElement(By.css(`${form} input[name="${name}"]`)).sendKeys(value);
   await fill("email", "example@example.com", "[data-password-reset-request]");
@@ -40,14 +52,23 @@ try {
   await driver.wait(async () => (await driver.executeScript(() => window.__recoveryCalls.length)) === 1, 10000);
   assert.deepEqual(await driver.executeScript(() => window.__recoveryCalls[0]), { type: "request", data: { email: "example@example.com" } });
   await driver.findElement(By.css('[data-password-reset-request] input[name="email"]')).clear();
-  await fill("code", "12345678", "[data-password-reset-confirm]");
+  await fill("code", "00000000", "[data-password-reset-confirm]");
   await fill("password", "sample-password-123", "[data-password-reset-confirm]");
   await fill("confirmPassword", "sample-password-123", "[data-password-reset-confirm]");
   await driver.findElement(By.css('[data-password-reset-confirm] button[type="submit"]')).click();
   await driver.wait(async () => (await driver.executeScript(() => window.__recoveryCalls.length)) === 2, 10000);
-  assert.deepEqual(await driver.executeScript(() => window.__recoveryCalls[1]), { type: "confirm", data: { code: "12345678", password: "sample-password-123" } });
-  assert.match(await driver.findElement(By.css("#member-login-status")).getText(), /Password updated/);
-  console.log("PASS: Firefox requests and confirms a code even when the unrelated availability probe fails");
+  await driver.wait(async () => /invalid or expired/.test(await driver.findElement(By.css("[data-password-recovery-status]")).getText()), 10000);
+  assert.equal(await driver.findElement(By.css("[data-password-recovery-home]")).isDisplayed(), false);
+  const codeInput = driver.findElement(By.css('[data-password-reset-confirm] input[name="code"]'));
+  await codeInput.clear();
+  await codeInput.sendKeys("12345678");
+  await driver.findElement(By.css('[data-password-reset-confirm] button[type="submit"]')).click();
+  await driver.wait(async () => (await driver.executeScript(() => window.__recoveryCalls.length)) === 3, 10000);
+  assert.deepEqual(await driver.executeScript(() => window.__recoveryCalls[2]), { type: "confirm", data: { code: "12345678", password: "sample-password-123" } });
+  await driver.wait(async () => /Password saved. Opening Member Home/.test(await driver.findElement(By.css("[data-password-recovery-status]")).getText()), 10000);
+  assert.equal(await driver.findElement(By.css("[data-password-recovery-home]")).isDisplayed(), true);
+  assert.equal(await driver.executeScript(() => window.__recoveryRedirect?.delay), 1500);
+  console.log("PASS: Firefox shows recovery errors beside the form and confirms successful sign-in and Member Home navigation");
 } finally {
   await driver.quit();
 }
