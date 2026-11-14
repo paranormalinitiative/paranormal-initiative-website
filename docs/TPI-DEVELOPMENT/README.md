@@ -16,6 +16,7 @@ This directory is the authoritative index for The Paranormal Initiative developm
 10. [Administration Center](008-ADMINISTRATION-CENTER.md)
 11. [Testing and verification](009-TESTING-AND-VERIFICATION.md)
 12. [Directive index](100-DIRECTIVES/DIRECTIVE-INDEX.md)
+13. [Problems, fixes, and featured products reference](TPI-PROBLEMS-FIXES-AND-FEATURED-PRODUCTS.md)
 
 ## Official locations
 
@@ -32,16 +33,18 @@ and must not be synchronized, overwritten, or used for Cloudflare deployment.
 
 ## Latest verified production application release — 2026-11-14
 
-Password storage modernization is deployed and live verified from website
-source `710b6c9126f5d387a09632bc1263af2ea40375d7` and StudioFlow source
+The site-wide member profile media repair is deployed and live verified from
+website source `c1b48003e881ade5c536b712c44e433fc4fbb9df` and StudioFlow source
 `2c7c651f34839b0115596d632f1009214e4cd63d`. Release
-`rel-710b6c9126f5-dedd127c76c8` deployed Worker
-`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` at 100% traffic; rollback is
-`aabd3b01-6769-4402-b05a-b06cbe964c1c`. The release passed the password-hash
-regression 9/9, full preflight 35 gates, production smoke 10/10, and isolated
-production Firefox 65/65. New/changed credentials use salted PBKDF2-SHA-256;
-legacy SHA-256 records upgrade after successful login without a bulk rewrite.
-See [the completion record](300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md).
+`rel-c1b48003e881-d58b26b58013` deployed Worker
+`9be0c066-9991-49b4-82a4-e1768aab42c4` at 100% traffic; rollback is
+`00d59d5c-d007-4de0-99ae-e2d15884068d`. The release passed the profile-media
+Firefox flow, full preflight 35 gates, production smoke 10/10, and isolated
+production Firefox 65/65. The profile photo and banner upload paths now share
+validation, previews, persistence, cleanup, and cache-busting behavior. See
+the [problems, fixes, and featured products reference](TPI-PROBLEMS-FIXES-AND-FEATURED-PRODUCTS.md)
+and the [password modernization completion record](300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md)
+for the related security release.
 
 ## Environment status
 
