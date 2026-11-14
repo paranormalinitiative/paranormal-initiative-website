@@ -48,6 +48,8 @@
     "verify:creator-incentive-browser": "node scripts/verify/tpi-creator-incentive-001-browser.mjs",
     "local:creator-incentive-review": "node scripts/local-creator-incentive-review.mjs --local-only",
     "verify:release-safety": "node scripts/verify/tpi-release-safety.mjs",
+    "verify:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs --check",
+    "update:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs",
     "verify:leadership-distinctions": "node scripts/verify/tpi-governance-004-leadership-distinctions.mjs",
     "verify:leadership-local": "node scripts/verify/tpi-governance-004-local.mjs",
     "verify:board-members": "node scripts/verify/tpi-governance-005-board-members.mjs",
