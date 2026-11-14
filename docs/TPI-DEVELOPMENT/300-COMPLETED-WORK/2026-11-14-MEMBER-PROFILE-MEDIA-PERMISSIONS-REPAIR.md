@@ -114,6 +114,18 @@ This cannot promise that software will never fail, but it makes this specific
 failure mode visible before release and prevents a certified deployment from
 passing without the profile-media protections.
 
+## Follow-up recurrence: production editor route
+
+The later sitewide report revealed a separate production-only failure in the
+same journey: `/member-profile.html#profile-editor` was being redirected to the
+public `/member-profile` route before the editor form could load. The upload
+permissions and storage handlers remained correct; the member simply could not
+reach them. Cloudflare HTML canonicalization was disabled in production with
+`html_handling = "none"`, and the live avatar/banner round trip was rechecked
+after deployment. See the dedicated route repair record:
+
+[`2026-11-14-MEMBER-PROFILE-EDITOR-ROUTE-REPAIR.md`](2026-11-14-MEMBER-PROFILE-EDITOR-ROUTE-REPAIR.md)
+
 ## Source references
 
 - [`member-profile.html`](../../../member-profile.html) — profile editor field

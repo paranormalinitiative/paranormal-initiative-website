@@ -32,6 +32,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
 | A new Community Feed post shows its opening line twice | [Community post title duplication](#inc-2026-11-14-08--community-post-auto-title-duplicated-the-body) | Composer auto-title, post body, legacy rendering |
 | Update Profile does not open the editor or a member bio is missing from the header | [Member profile editor and short bio](#inc-2026-11-14-09--member-profile-editor-and-short-bio) | Profile route, member identity header, self-service profile API |
+| Update Profile opens the public profile instead of the editor, or avatars/backgrounds still do not load | [Production profile editor route](#inc-2026-11-14-12--production-profile-editor-route-redirect) | Cloudflare HTML handling, editor route, profile media render |
 | Login works, then the member is sent somewhere unexpected | [Member access](#inc-2026-11-14-03--member-access-and-home-redirect-loop) | Session identity, staff-role fallback, stale browser state |
 | Password reset appears to work but sign-in fails | [Password recovery](#inc-2026-11-14-04--password-storage-and-recovery-hardening) | Session creation, password hash compatibility, recovery code |
 | A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) and [body-link recurrence](#inc-2026-11-14-10--community-feed-youtube-body-link-recurrence) | Link preview extraction, body URL discovery, iframe boundary |
@@ -248,6 +249,46 @@ see the result.
 
 **Completion record:**
 [`2026-11-14-MEMBER-PROFILE-EDITOR-AND-SHORT-BIO-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MEMBER-PROFILE-EDITOR-AND-SHORT-BIO-REPAIR.md)
+
+### INC-2026-11-14-12 — Production profile editor route redirect
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 14:51:38 ET**, shown in the supplied Messenger report screenshot |
+| Root cause confirmed | **2026-11-14 15:30:51 ET**, production route comparison and Worker configuration audit |
+| Fixed in source | **2026-11-14 15:30:51 ET**, commit `de293dae` |
+| Certified release | `rel-de293dae52fa-8172f58c5e28`, Tier 1 full/shared routing |
+| Production Worker | `4049b58d-9410-42cc-b649-7d3a117f5010` |
+| Status | **Deployed and live verified** |
+
+**What happened:** Members still saw missing avatars or backgrounds because the
+production Update Profile link redirected `/member-profile.html` to
+`/member-profile`, the public profile route. The editor form never loaded, so
+the member could not reliably reach the upload controls.
+
+**Confirmed cause:** Production Cloudflare Assets was still applying automatic
+HTML canonicalization. Local configuration had already disabled it, which hid
+the production-only mismatch during local acceptance.
+
+**How it was fixed:** Production `wrangler.toml` now sets
+`html_handling = "none"`. The Worker continues to own extensionless clean-URL
+fallback, while direct `.html` editor documents remain available. A source
+contract now requires this route configuration alongside the editor anchor.
+
+**Verification:** Full preflight **37 gates passed in 7m 22s**; production
+anonymous smoke **10/10**; live Firefox **65/65**; direct editor route **200**;
+and a disposable production member round trip uploaded and rendered both an
+avatar and banner with **200 image/png** readback before restoring the original
+profile values.
+
+**Permanent protection:** After website updates, the maintained local Worker
+asset refresh is `npm run dev:local:refresh`; it refreshes only general-site
+assets and leaves StudioFlow/Nova application directories protected. Release
+preflight now checks the production route configuration, and the live post-
+deployment acceptance checks the actual profile surface.
+
+**Completion record:**
+[`2026-11-14-MEMBER-PROFILE-EDITOR-ROUTE-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MEMBER-PROFILE-EDITOR-ROUTE-REPAIR.md)
 
 ### INC-2026-11-14-02 — StudioFlow acceptance clicked before controls were ready
 
