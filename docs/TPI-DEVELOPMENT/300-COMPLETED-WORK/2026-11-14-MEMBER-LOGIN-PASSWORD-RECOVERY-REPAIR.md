@@ -137,12 +137,12 @@ Worker: `ec81be70-cdf1-4c61-96fa-aea079c70509`
 
 Rollback version: `d71984cf-a52d-4d65-af82-c28b066b51e1`
 
-### Remaining recovery audit items
+### Recovery audit items
 
 - The confirmation SQL compares ISO `expires_at` text with SQLite's
   `CURRENT_TIMESTAMP` text. This can accept a code beyond its intended
-  30-minute lifetime on the same UTC day. Use a normalized timestamp comparison
-  and test the expiration boundary.
+  30-minute lifetime on the same UTC day. **Resolved in the follow-up release
+  below.**
 - The confirmation endpoint has no attempt limit. Add a server-side limit before
   broad member onboarding.
 - A failed email send is logged while the request still returns the same
@@ -150,3 +150,21 @@ Rollback version: `d71984cf-a52d-4d65-af82-c28b066b51e1`
   while making delivery failures operationally visible.
 - The owner's successful password change and subsequent login still require
   the owner to complete the flow privately.
+
+## Reset-code expiration correction
+
+The confirmation query now compares `datetime(prt.expires_at)` with
+`CURRENT_TIMESTAMP`, so ISO text and SQLite's clock are normalized to the same
+format. The focused check exercises expired and unexpired values in SQLite;
+password recovery passed 14/14. The local auth lifecycle passed 38/38, full
+preflight passed 30 gates, live anonymous smoke passed 10/10, and isolated
+production Firefox acceptance passed 65/65. No member record or schema was
+changed.
+
+Source commit: `32673265c10c79962c26869f67a377781ccf0d55`
+
+Release: `rel-32673265c10c-c70252d5602e`
+
+Worker: `4229354b-a0fd-4aa5-bfb3-08385104b6b7`
+
+Rollback version: `ec81be70-cdf1-4c61-96fa-aea079c70509`

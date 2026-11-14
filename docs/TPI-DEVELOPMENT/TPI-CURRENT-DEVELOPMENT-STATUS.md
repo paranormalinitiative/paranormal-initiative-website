@@ -1,5 +1,9 @@
 # TPI Current Development Status
 
+## 2026-11-14 — Reset-code expiration boundary correction
+
+Status: **DEPLOYED AND LIVE VERIFIED — release `rel-32673265c10c-c70252d5602e`, Worker `4229354b-a0fd-4aa5-bfb3-08385104b6b7`, 100% traffic.** Reset-code confirmation now normalizes ISO expiration text before comparing it with the database clock. The previous text comparison could accept a code past its stated 30-minute life on the same UTC day. The focused verification passed 14/14 with expired and valid code boundary checks; local auth lifecycle passed 38/38, full preflight passed 30 gates, production smoke passed 10/10, and isolated production Firefox acceptance passed 65/65. No member record or schema was changed. See [Member Login and Password Recovery Repair](300-COMPLETED-WORK/2026-11-14-MEMBER-LOGIN-PASSWORD-RECOVERY-REPAIR.md).
+
 ## 2026-11-14 — Live password recovery availability gate repair
 
 Status: **DEPLOYED AND LIVE VERIFIED — release `rel-e5d9f57a0b0c-c10bb753c43e`, Worker `ec81be70-cdf1-4c61-96fa-aea079c70509`, 100% traffic.** The owner saw “Password recovery needs the live member service.” The page was using an unrelated `/api/auth/me` availability probe to block both reset actions before calling the recovery API. Both actions now call their recovery endpoints directly and display the actual error if a request fails. A Firefox interaction forced the availability probe to fail and still confirmed that both recovery actions reached their mocked API calls on the local and live pages. Local auth lifecycle passed 38/38, full preflight passed 30 gates, production smoke passed 10/10, and live Firefox acceptance passed 65/65. Owner completion with a private code and password remains unverified. See [Member Login and Password Recovery Repair](300-COMPLETED-WORK/2026-11-14-MEMBER-LOGIN-PASSWORD-RECOVERY-REPAIR.md).
