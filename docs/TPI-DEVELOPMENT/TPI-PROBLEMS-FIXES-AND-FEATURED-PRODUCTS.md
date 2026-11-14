@@ -43,6 +43,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Restoring a Nova document creates an unexpected extra version | [Nova restore autosave](#inc-2026-11-13-01--nova-restore-created-an-extra-autosave-version) | Snapshot hydration, editor update events, versioning |
 | Nova publishing permissions look too broad or too narrow | [Nova publishing workflow](#inc-2026-11-13-02--nova-publishing-and-editorial-permissions) | Capability checks, restricted subjects, direct publishing |
 | Messenger opens as a blank or unusable surface | [Messenger navigation](#inc-2026-11-10-02--messenger-navigation-and-release-certification) | Shared member shell, route target, disposable schema |
+| Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
 
 ## Incident and fix register
 
@@ -436,6 +437,39 @@ website-only repairs.
 
 **Completion record:**
 [`2026-11-14-COMMUNITY-FEED-YOUTUBE-BODY-LINK-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-COMMUNITY-FEED-YOUTUBE-BODY-LINK-REPAIR.md)
+
+### INC-2026-11-14-13 — Messenger chat-list truncation and layout
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 15:00:11 ET**, shown in the supplied Messenger screenshot |
+| Root cause confirmed | **2026-11-14**, chat-list renderer and shared Messenger CSS audit |
+| Fixed in source | **2026-11-14**, commit `29cc0582` |
+| Certified release | `rel-29cc0582b4d6-dbb9db88ce25`, website profile |
+| Production Worker | `48af4946-75e1-4624-a522-b6202928ba27` |
+| Status | **Deployed and live verified** |
+
+**What happened:** Continuing a conversation caused the left Chats section to
+show too much of the latest message. The long preview expanded into the
+Members roster and made the Messenger layout look truncated or overlapped.
+
+**Confirmed cause:** The renderer used the complete latest message body as the
+chat-list preview, and the contacts column did not give Members and Chats
+independent flex/overflow boundaries.
+
+**How it was fixed:** Chat-list previews now collapse whitespace and cap the
+visible text at 88 characters, then use a one-line ellipsis. The Members and
+Chats regions now have separate bounded scrolling, and rows cannot overflow
+their own column. The full conversation remains only in the thread pane.
+
+**Verification:** Source contracts **21/21**; focused Firefox Messenger
+acceptance **19/19**; local auth lifecycle **38/38**; targeted profile/feed
+Firefox **53/53**; production smoke **10/10**; and a read-only live Firefox
+Messenger probe confirmed separate bounds, non-overlapping rows, and ellipsis
+previews without creating production data.
+
+**Completion record:**
+[`2026-11-14-MESSENGER-CHAT-LIST-TRUNCATION-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-CHAT-LIST-TRUNCATION-REPAIR.md)
 
 ### INC-2026-11-14-11 — Local Worker asset freshness
 
