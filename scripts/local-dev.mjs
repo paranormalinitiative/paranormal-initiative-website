@@ -39,6 +39,11 @@ const studioAssetWatchTargets = [
 // rules as full staging, so a promoted build can never copy installed
 // dependencies, local state, or repository internals into static assets.
 const servedAssetWatchTargets = [
+  // The Administration Center is part of the general site workflow. Watch its
+  // entry document and generated assets so a rebuilt preview reaches the
+  // already-running local Worker without a manual restart or stale bundle.
+  { directory: resolve(repoRoot, "admin-center-preview"), relative: "admin-center-preview" },
+  { directory: resolve(repoRoot, "admin-center-preview/assets"), relative: "admin-center-preview" },
   { directory: resolve(repoRoot, "content-editor-nova"), relative: "content-editor-nova" },
   { directory: resolve(repoRoot, "content-editor-nova/assets"), relative: "content-editor-nova" },
   { directory: resolve(repoRoot, "nova"), relative: "nova" },

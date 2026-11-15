@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 const source = readFileSync(new URL("../../admin-center-app/src/app.tsx", import.meta.url), "utf8");
 const main = readFileSync(new URL("../../admin-center-app/src/main.tsx", import.meta.url), "utf8");
 const theme = readFileSync(new URL("../../admin-center-app/src/index.css", import.meta.url), "utf8");
+const localDev = readFileSync(new URL("../../scripts/local-dev.mjs", import.meta.url), "utf8");
 const worker = readFileSync(new URL("../../worker.js", import.meta.url), "utf8");
 const legacy = readFileSync(new URL("../../admin-panel.html", import.meta.url), "utf8");
 const legacyScript = readFileSync(new URL("../../admin-center.js", import.meta.url), "utf8");
@@ -16,6 +17,7 @@ const checks = [
   ["complete navigation groups", ["Dashboard", "Members", "Community", "Creators", "Content & Publishing", "System"].every((value) => source.includes(`label: \"${value}\"`)) && source.includes('id: "community-content"')],
   ["server member filters", ["search", "status", "role", "pageSize", "direction"].every((value) => main.includes(value))],
   ["protected preview route", worker.includes("/admin-center-preview") && worker.includes("hasAdminAccess")],
+  ["local Worker refreshes rebuilt preview assets", localDev.includes('directory: resolve(repoRoot, "admin-center-preview")') && localDev.includes('relative: "admin-center-preview"')],
   ["canonical production route serves the same protected package", worker.includes("serveCanonicalAdminCenter") && worker.includes('url.pathname === "/admin-panel"') && worker.includes('url.pathname === "/admin-panel.html"')],
   ["saved personalization is loaded by the canonical app", main.includes("/api/auth/me") && main.includes("/api/me/personalization") && main.includes("dataset.profileFont")],
   ["real dashboard API", source.includes("/admin/overview?range=")],

@@ -1,5 +1,20 @@
 # Administration Center
 
+## 2026-11-15 command-center audit
+
+The preview now has a streamlined Command Center layer on top of the existing
+protected overview contract. It shows the live administrative data-source
+state, relative operational queues, NOVA readiness gates, and protected
+application boundaries before the detailed metric cards. It uses only
+authoritative overview values and explicitly shows unavailable sources; it does
+not claim complete site uptime or invent health numbers.
+
+The complete audit and next-phase roadmap are in
+[TPI Administration Center Command Center Audit](200-AUDITS/2026-11-15-ADMIN-CENTER-COMMAND-CENTER-AUDIT.md).
+The dashboard is a preview improvement only. It does not promote the preview,
+connect NOVA, change staff authority, or modify StudioFlow, Creator Studio,
+Nova Editor Workspace, private media, D1, or R2.
+
 ## Applications
 
 The installed Refine + shadcn/ui application remains in admin-center-app/ and is previewed at /admin-center-preview/. The existing legacy administration application remains at /admin-panel.

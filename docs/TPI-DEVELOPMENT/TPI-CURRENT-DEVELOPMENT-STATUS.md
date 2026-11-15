@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center command-center audit and preview improvement
+
+Status: **AUDITED; PREVIEW IMPROVED; PRODUCTION PROMOTION NOT CLAIMED.** The
+Administration Center preview already had reactive authoritative metric cards,
+analytics charts, and a read-only Platform Health view. The command-center
+dashboard now adds a clear administrative data-source signal, relative workload
+bars for content/moderation/creator/report queues, NOVA readiness gates, and
+explicit protected-application boundaries. The implementation uses existing
+protected overview data only; it does not fabricate uptime, connect NOVA to
+internal content, alter staff permissions, replace `/admin-panel`, or touch
+StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, or R2.
+The policy/Help Desk inventory, complete staff capability model, report triage,
+appeals, restriction workflows, authenticated owner acceptance, and preview
+parity review remain open. See [TPI Administration Center Command Center
+Audit](200-AUDITS/2026-11-15-ADMIN-CENTER-COMMAND-CENTER-AUDIT.md) and
+[Administration Center](008-ADMINISTRATION-CENTER.md).
+
 ## 2026-11-15 — Mystic public AI Search and site-wide knowledge audit
 
 Status: **DEPLOYED, CRAWLED, AUDITED, AND LIVE VERIFIED** — release

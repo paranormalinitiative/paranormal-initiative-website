@@ -95,9 +95,9 @@ try {
       await page.waitForTimeout(1000);
       check("administrator Administration Center renders", response?.status() === 200 && /Administration Center/i.test(await page.locator("body").innerText()), `HTTP ${response?.status() ?? "unknown"}`);
       check("administrator local banner absent", !/TPI\s*[—-]\s*LOCAL DEVELOPMENT/i.test(await page.locator("body").innerText()) && await page.locator('[data-tpi-local-development-environment]').count() === 0);
-      const navItems = page.locator('nav[aria-label="Administration navigation"] button');
+      const navItems = page.locator('nav[aria-label="Administration navigation"] button.nav-item');
       const count = await navItems.count();
-      check("administrator navigation exposes all menu items", count === 26, `count=${count}`);
+      check("administrator navigation exposes all resource items", count === 31, `count=${count}`);
       for (let index = 0; index < count; index += 1) {
         const item = navItems.nth(index);
         const label = (await item.innerText()).trim();

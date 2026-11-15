@@ -468,7 +468,11 @@ export default {
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return serveAssets(request, env);
+      // The hosted asset handler serves the directory entry consistently, but
+      // the local Wrangler asset handler can return 404 for the trailing-slash
+      // form. Use the maintained clean-URL fallback so the protected preview
+      // is reachable in both runtimes.
+      return servePageAsset(request, env);
     }
 
     // Canonical Administration Center entry point. The old HTML admin panel
@@ -521,7 +525,7 @@ export default {
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return serveAssets(request, env);
+      return servePageAsset(request, env);
     }
 
     // Contributor management pages contain authoring and creator controls.
