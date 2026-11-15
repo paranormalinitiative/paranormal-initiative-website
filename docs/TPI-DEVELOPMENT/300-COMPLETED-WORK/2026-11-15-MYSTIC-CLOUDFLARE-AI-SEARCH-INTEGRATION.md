@@ -50,9 +50,8 @@ content.
 
 ## Retrieval evidence
 
-Cloudflare's first public crawl discovered the maintained public sitemap with
-250 URLs. At the last source check it reported 228 completed items, 1,360
-vectors, and 11 individual Workers AI embedding timeouts. The command-line
+The completed public refresh collected 250 sitemap URLs, finished with zero
+errors and zero skipped items, and produced 1,744 vectors. The command-line
 retrieval test returned real Ghostology 101 chunks from
 `https://paranormalinitiative.com/ghostology-101.html`.
 

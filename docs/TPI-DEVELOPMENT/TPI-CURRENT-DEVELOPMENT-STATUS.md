@@ -1,5 +1,25 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Mystic public AI Search and site-wide knowledge audit
+
+Status: **DEPLOYED, CRAWLED, AUDITED, AND LIVE VERIFIED** — release
+`rel-afbcac6a73f3-8480846ec919`, Worker
+`7d6b3674-5396-463d-a4ef-247858b0c849`, 100% traffic. Mystic now uses the
+Cloudflare AI Search instance `tpi-mystic-public` for broad public TPI
+questions while retaining curated Help Center answers for member workflows.
+The maintained public sitemap collected 250 unique URLs, and a read-only
+HTTP audit returned 200 for all 250. The final refresh job completed with
+zero queued, running, error, or skipped items and 1,744 vectors; Cloudflare's
+completion counter reports 249 indexed files after the 250-URL collection,
+with no remaining error record. Live retrieval was verified for TPI basics,
+Ghostology 101, investigation methods, EVP/ITC research, Education Center
+content, and haunted-location research. The live Help Center also verified the
+direct ghost definition, curated member guidance, and the protected refusal of
+internal ban procedures. Internal Help Desk/Admin content and protected
+applications remain outside the public assistant. See [Mystic Public Knowledge
+and Site Audit](200-AUDITS/2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-AND-SITE-AUDIT.md)
+and [Mystic Cloudflare AI Search Integration](300-COMPLETED-WORK/2026-11-15-MYSTIC-CLOUDFLARE-AI-SEARCH-INTEGRATION.md).
+
 ## 2026-11-14 — Password hash modernization and compatibility upgrade
 
 Status: **DEPLOYED AND LIVE VERIFIED — release `rel-710b6c9126f5-dedd127c76c8`, Worker `6c84d19b-6e50-4d5d-a6d7-75da5152cf12`, 100% traffic.** The member API no longer writes unsalted SHA-256 passwords. New and changed credentials use salted PBKDF2-SHA-256 with 120,000 iterations. Existing legacy records remain compatible and upgrade after a successful login through a guarded compare-and-swap write; no bulk production credential rewrite was performed. The release permanently runs the compatibility/upgrade regression. Password hashing passed 9/9, local authentication lifecycle passed 38/38 at each stage with Firefox 65/65, full preflight passed 35 gates, production smoke passed 10/10, and production Firefox passed 65/65 using only the protected synthetic QA account. See [Password Hash Modernization and Login Compatibility](300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md).

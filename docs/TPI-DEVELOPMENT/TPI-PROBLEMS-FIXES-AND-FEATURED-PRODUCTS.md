@@ -231,9 +231,9 @@ returning source links. NOVA is not created or connected in this public phase.
 
 **Verification:** JavaScript syntax checks passed; the Help Center separation
 contract passed **21/21**; Cloudflare retrieval returned real Ghostology 101
-chunks from `ghostology-101.html`; the first crawl collected **250 sitemap
-URLs**, with **228 completed**, **1,360 vectors**, and **11** individual
-embedding timeouts at the last source check. Full Tier 1 certification passed
+chunks from `ghostology-101.html`; the final public refresh collected **250
+sitemap URLs**, finished with **0 errors** and **0 skipped items**, and
+produced **1,744 vectors** after two recovery retries. Full Tier 1 certification passed
 **38/38 gates** in **6m 43s**. Production smoke passed **10/10**, and isolated
 Firefox production acceptance passed **65/65**. Live Help Center interaction
 verified the direct ghost definition, public Ghostology guidance, and the
