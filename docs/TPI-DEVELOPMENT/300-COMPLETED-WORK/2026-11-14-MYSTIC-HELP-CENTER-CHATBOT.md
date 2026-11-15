@@ -96,6 +96,17 @@ but was not being loaded when Mystic was attached by the shared member shell.
 
 The shared shell now loads the public `help-center-data.js` catalog before
 mounting Mystic, while keeping that work asynchronous so it cannot block the
-member UI. The Firefox member regression now opens Mystic, asks the exact
-profile question, verifies the “Your profile” guide link, and passed **54/54**
+member UI. The Firefox member regression opened Mystic, asked the exact
+profile question, verified the “Your profile” guide link, and passed **54/54**
 checks locally. Internal Help Desk data remains excluded.
+
+This repair was deployed through the guarded release path in
+`rel-352d51d095c5-cc8260b67af6` as Worker version
+`cbe3f95c-59ae-4ef6-86ee-f4bca5b6eebf`. The certified candidate passed all 38
+gates, production smoke passed **10/10**, and isolated production Firefox
+acceptance passed **65/65**.
+
+The release runner was also protected against the stale-local-asset condition
+that exposed this bug: after staging, it now invokes the maintained in-place
+general-site refresh before browser gates. Stable application directories remain
+excluded from that refresh.

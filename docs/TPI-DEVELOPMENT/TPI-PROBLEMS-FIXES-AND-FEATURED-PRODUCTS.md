@@ -107,11 +107,18 @@ playback checks, owner/admin authentication, and 10/10 production smoke checks.
 | Scope | **Sitewide shared member/community shell and public Help Center** |
 | Verification | Firefox member/profile regression passed **54/54**, including opening Mystic and finding the “Your profile” guide from “How do I update my profile?”; Help Center separation passed **19/19**. |
 | Protection | The public catalog is the only knowledge source; internal Help Desk data is never loaded into Mystic. |
-| Status | **Fixed locally; guarded production release pending** |
+| Status | **Deployed and live verified** — release `rel-352d51d095c5-cc8260b67af6`; Worker version `cbe3f95c-59ae-4ef6-86ee-f4bca5b6eebf` |
 
 **Source alignment:** The website adapter reflects the Mystic identity and
 knowledge/guardrail intent in the TPI Research and Investigation program's
 `ASSISTANT.md` and `MYSTIC_KNOWLEDGE.md` without modifying that separate program.
+
+**Release-pipeline protection:** The maintained release runner now performs the
+same in-place general-site asset refresh as `npm run dev:local:refresh` after
+staging and before browser gates. This prevents a running local Worker from
+serving mixed HTML and stale staged assets while leaving protected application
+directories untouched. The certified release passed all 38 gates, live smoke
+passed 10/10, and isolated production Firefox acceptance passed 65/65.
 
 ### INC-2026-11-14-01 — Profile photo or banner would not update
 
