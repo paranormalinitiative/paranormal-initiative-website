@@ -112,7 +112,9 @@ try {
   // this regression tests the shared preview handler rather than WebDriver's
   // picker-event timing.
   await driver.executeScript("document.querySelector(\"input[name='profilePhotoFile']\")?.dispatchEvent(new Event('change',{bubbles:true})); document.querySelector(\"input[name='profileBannerFile']\")?.dispatchEvent(new Event('change',{bubbles:true}));");
-  await driver.executeScript("var bio=document.querySelector('[data-profile-form] textarea[name=bio]'); if (bio) { bio.value='A short profile bio for the member header.'; bio.dispatchEvent(new Event('input',{bubbles:true})); }");
+  const bioInput = await driver.findElement(By.css("[data-profile-form] textarea[name='bio']"));
+  await bioInput.clear();
+  await bioInput.sendKeys("A short profile bio for the member header.");
   await waitFor("profile editor media previews", async () => driver.executeScript("var photo=document.querySelector('[data-profile-photo-preview] img'), banner=document.querySelector('[data-profile-banner-preview]'); return Boolean(photo && photo.src.startsWith('blob:') && banner && banner.style.backgroundImage.includes('blob:'));"));
   const selectedMediaState = await driver.executeScript("var photo=document.querySelector('[data-profile-photo-preview] img'), banner=document.querySelector('[data-profile-banner-preview]'); return {photoPreview:!!photo&&photo.src.startsWith('blob:'),bannerPreview:!!banner&&banner.style.backgroundImage.includes('blob:')};");
   check("profile editor previews both selected media files before saving", selectedMediaState.photoPreview && selectedMediaState.bannerPreview, JSON.stringify(selectedMediaState));
@@ -208,7 +210,7 @@ try {
   await waitFor("Mystic answers the profile prompt", async () => driver.executeScript(`var panel=document.querySelector('.hc-mystic-panel'); return Boolean(panel && panel.textContent.includes('Your profile') && panel.querySelector("a[href*='manage-profile-theme']"))`));
   check("Mystic finds the public profile guide from the shared member shell", await driver.executeScript(`var panel=document.querySelector('.hc-mystic-panel'); return Boolean(panel && panel.querySelector("a[href*='manage-profile-theme']"))`));
   const mysticQuestion = driver.findElement(By.css("[data-mystic-form] input[name='question']"));
-  await mysticQuestion.sendKeys("Where can I learn investigation methods?");
+  await mysticQuestion.sendKeys("Open the Investigation Compendium");
   await driver.findElement(By.css("[data-mystic-form] button[type='submit']")).click();
   await waitFor("Mystic answers the public research source question", async () => driver.executeScript(`var panel=document.querySelector('.hc-mystic-panel'); return Boolean(panel && panel.textContent.includes('Investigation Compendium') && panel.querySelector("a[href*='TPI_Investigation_Compendium.html']"))`));
   check("Mystic finds a verified public research source from the shared member shell", await driver.executeScript(`var panel=document.querySelector('.hc-mystic-panel'); return Boolean(panel && panel.querySelector("a[href*='TPI_Investigation_Compendium.html']"))`));
