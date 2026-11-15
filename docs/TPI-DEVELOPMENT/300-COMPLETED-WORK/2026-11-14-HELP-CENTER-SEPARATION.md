@@ -13,6 +13,13 @@ TPI now has two distinct support experiences:
   moderation, member blocking and restoration, staff appointments, publishing,
   Creator Studio/Nova operations, security, and audit practices.
 
+The maintained Markdown references are intentionally separate:
+
+- [`TPI-MEMBER-HELP-CENTER.md`](../TPI-MEMBER-HELP-CENTER.md) — member and
+  public guidance.
+- [`TPI-INTERNAL-HELP-DESK.md`](../TPI-INTERNAL-HELP-DESK.md) — protected
+  internal operations guidance.
+
 The information architecture uses Facebook Help Center as a usability reference:
 expandable topic groups, article counts, and nested guide links keep a large
 support library scannable without copying Facebook content. All labels, routes,

@@ -435,6 +435,11 @@ internal credentials guidance.
 
 **Reference:** [`2026-11-14-HELP-CENTER-MEMBER-GUIDE-EXPANSION.md`](300-COMPLETED-WORK/2026-11-14-HELP-CENTER-MEMBER-GUIDE-EXPANSION.md)
 
+**Audience references:**
+
+- [`TPI-MEMBER-HELP-CENTER.md`](TPI-MEMBER-HELP-CENTER.md)
+- [`TPI-INTERNAL-HELP-DESK.md`](TPI-INTERNAL-HELP-DESK.md)
+
 **Release evidence:** Source commit `3b8669dc87ae5dce6d9c0e09a705998df33016b6`,
 release candidate `rel-3b8669dc87ae-4b2f91c483dc`, production Worker
 `4ffc57d6-006f-4553-86f9-e0ab77bb667d`, rollback Worker
