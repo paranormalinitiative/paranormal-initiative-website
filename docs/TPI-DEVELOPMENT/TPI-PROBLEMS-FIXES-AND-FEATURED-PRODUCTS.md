@@ -52,6 +52,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
 | A member asks Mystic a question anywhere in the community | [Mystic community assistant](#inc-2026-11-14-20--mystic-community-assistant) | Shared member shell, public article search, bug-report handoff, internal-content boundary |
 | Mystic opens but returns “I don’t have a verified member Help Center answer” for a documented question | [Mystic knowledge catalog loading](#inc-2026-11-14-21--mystic-knowledge-catalog-loading) | Shared shell dependency loading, public article catalog, profile-question regression |
+| Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
 
 ## Incident and fix register
 
@@ -119,6 +120,46 @@ staging and before browser gates. This prevents a running local Worker from
 serving mixed HTML and stale staged assets while leaving protected application
 directories untouched. The certified release passed all 38 gates, live smoke
 passed 10/10, and isolated production Firefox acceptance passed 65/65.
+
+### INC-2026-11-15-22 — Mystic public knowledge expansion
+
+| Field | Record |
+| --- | --- |
+| Requested | **2026-11-15**, owner approved continuing Mystic on the public/member side first |
+| Implemented in source | **2026-11-15 00:21 EST**, public source index and shared-shell loading path |
+| Sitewide scope | **Public Help Center and shared member/community shell** |
+| Status | **Source implemented; guarded release verification in progress** |
+
+**What was needed:** Mystic could answer verified member Help Center questions,
+but it did not yet have a safe way to direct members toward the broader public
+TPI knowledge base: repository books and guides, education material, haunted
+locations, public articles, apps, and videos.
+
+**How it was fixed:** Added `mystic-public-knowledge.js` as a public-only,
+deterministic source catalog. Mystic continues to search Help Center articles
+first; when there is no strong article match, it searches the source catalog and
+returns a verified public source link with a concise description. Unknown
+questions still receive a clear fallback.
+
+**Public sources included:** Educational Repository, Repository Pathways, Field
+Encyclopedia, Terminology Reference, Investigation Compendium, Forensic Analysis
+Compendium, Evidence Compendium, Education Center, Haunted Locations Directory,
+Published Articles, public Apps and Workspaces, and TPI Videos.
+
+**Protection:** The catalog is explicitly marked `public-member`. Mystic does
+not load internal Help Desk data, Administration Center procedures, staff or
+moderator instructions, private records, credentials, or protected routes.
+Internal Help Desk pages are checked to load neither Mystic nor the public
+catalog. The Firefox regression now asks for investigation methods and requires
+the public Investigation Compendium link.
+
+**Verification so far:** JavaScript syntax checks and `git diff --check` passed;
+Help Center separation passed **20/20**, including anonymous public access and
+denied anonymous internal access. The focused Firefox suite timed out in its
+pre-existing owner-profile setup twice before reaching the Mystic checks, so
+the maintained release gate remains required before this is marked deployed.
+
+**Reference:** [`2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md`](300-COMPLETED-WORK/2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md)
 
 ### INC-2026-11-14-01 — Profile photo or banner would not update
 

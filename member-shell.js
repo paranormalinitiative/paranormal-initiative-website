@@ -361,21 +361,28 @@
       document.head.appendChild(css);
     }
 
-    function loadPublicHelpData() {
-      if (window.TPI_HELP_CENTER) return Promise.resolve();
+    function loadPublicScript(selector, src, attribute, globalName) {
+      if (globalName && window[globalName]) return Promise.resolve();
       return new Promise(function(resolve) {
-        var dataScript = document.querySelector('script[data-tpi-help-center-data]');
-        if (!dataScript) {
-          dataScript = document.createElement("script");
-          dataScript.src = "help-center-data.js?v=4";
-          dataScript.async = false;
-          dataScript.setAttribute("data-tpi-help-center-data", "1");
-          document.head.appendChild(dataScript);
+        var script = document.querySelector(selector);
+        if (!script) {
+          script = document.createElement("script");
+          script.src = src;
+          script.async = false;
+          script.setAttribute(attribute, "1");
+          document.head.appendChild(script);
         }
-        dataScript.addEventListener("load", resolve, { once: true });
-        dataScript.addEventListener("error", resolve, { once: true });
-        if (window.TPI_HELP_CENTER) resolve();
+        script.addEventListener("load", resolve, { once: true });
+        script.addEventListener("error", resolve, { once: true });
+        if (globalName && window[globalName]) resolve();
       });
+    }
+
+    function loadPublicHelpData() {
+      return loadPublicScript('script[data-tpi-help-center-data]', "help-center-data.js?v=4", "data-tpi-help-center-data", "TPI_HELP_CENTER")
+        .then(function() {
+          return loadPublicScript('script[data-tpi-mystic-public-knowledge]', "mystic-public-knowledge.js?v=1", "data-tpi-mystic-public-knowledge", "TPI_MYSTIC_PUBLIC_KNOWLEDGE");
+        });
     }
 
     function loadMystic() {
@@ -385,7 +392,7 @@
       }
       return new Promise(function(resolve) {
         var script = document.createElement("script");
-        script.src = "mystic-help-center.js?v=2";
+        script.src = "mystic-help-center.js?v=3";
         script.async = false;
         script.onload = function() {
           if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();

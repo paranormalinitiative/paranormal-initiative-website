@@ -110,3 +110,26 @@ The release runner was also protected against the stale-local-asset condition
 that exposed this bug: after staging, it now invokes the maintained in-place
 general-site refresh before browser gates. Stable application directories remain
 excluded from that refresh.
+
+## Follow-up — public knowledge expansion
+
+On **2026-11-15**, Mystic's public knowledge boundary was expanded beyond the
+Help Center article catalog. The shared member shell and public Help Center now
+load `mystic-public-knowledge.js`, a deterministic index of published TPI
+sources: the Educational Repository and Pathways, Field Encyclopedia,
+Terminology Reference, Investigation Compendium, Forensic Analysis Compendium,
+Evidence Compendium, Education Center, Haunted Locations Directory, Published
+Articles, public Apps and Workspaces, and TPI Videos.
+
+Mystic still searches verified Help Center articles first, then falls back to a
+matching public source. It does not load internal Help Desk data, Administration
+Center procedures, moderator instructions, private records, credentials, or
+protected routes. Internal Help Desk pages are explicitly checked to load
+neither Mystic nor this public catalog.
+
+The Help Center separation regression passed **20/20** locally, including the
+public-versus-internal access probe. A new Firefox regression asks Mystic for
+investigation methods and requires the public Investigation Compendium link.
+The maintained release gate must complete before this source expansion is
+called deployed; the source record is tracked separately in
+[`2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md`](2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md).

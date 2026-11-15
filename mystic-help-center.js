@@ -47,6 +47,11 @@
     return window.TPI_HELP_CENTER && Array.isArray(window.TPI_HELP_CENTER.articles) ? window.TPI_HELP_CENTER.articles : [];
   }
 
+  function publicSources() {
+    var knowledge = window.TPI_MYSTIC_PUBLIC_KNOWLEDGE;
+    return knowledge && knowledge.audience === "public-member" && Array.isArray(knowledge.sources) ? knowledge.sources : [];
+  }
+
   function articleUrl(id) {
     return "help-center-article.html?id=" + encodeURIComponent(id);
   }
@@ -89,6 +94,34 @@
     return '<p>Here is the verified TPI guide that best matches your question:</p>' +
       '<div class="hc-mystic-result"><strong>' + escapeHtml(article.title) + '</strong><p>' + escapeHtml(firstAnswer(article)) + '</p><a href="' + articleUrl(article.id) + '">Open the full guide <span aria-hidden="true">›</span></a></div>' +
       '<p>If that does not answer it, tell me what you were trying to do and what you saw.</p>';
+  }
+
+  function sourceResultMessage(match) {
+    var source = match.source;
+    return '<p>Here is a verified public TPI source that best matches your question:</p>' +
+      '<div class="hc-mystic-result"><strong>' + escapeHtml(source.title) + '</strong><p class="hc-mystic-result-kind">' + escapeHtml(source.kind) + '</p><p>' + escapeHtml(source.summary) + '</p><a href="' + escapeHtml(source.url) + '">Open the source <span aria-hidden="true">›</span></a></div>' +
+      '<p>Mystic will stay grounded in the published source and will not present an unverified claim as fact.</p>';
+  }
+
+  function findSourceMatches(query) {
+    var normalizedQuery = normalize(query);
+    var queryTokens = tokens(query);
+    return publicSources().map(function (source) {
+      var title = normalize(source.title);
+      var summary = normalize(source.summary);
+      var keywords = normalize((source.keywords || []).join(" "));
+      var score = 0;
+      if (normalizedQuery && title.indexOf(normalizedQuery) >= 0) score += 18;
+      if (normalizedQuery && summary.indexOf(normalizedQuery) >= 0) score += 9;
+      queryTokens.forEach(function (token) {
+        if (title.indexOf(token) >= 0) score += 7;
+        if (keywords.indexOf(token) >= 0) score += 5;
+        if (summary.indexOf(token) >= 0) score += 2;
+      });
+      return { source: source, score: score };
+    }).filter(function (match) { return match.score > 0; }).sort(function (left, right) {
+      return right.score - left.score;
+    });
   }
 
   function isGreeting(query) {
@@ -153,6 +186,8 @@
       if (special) return special;
       var matches = findMatches(query);
       if (matches.length && matches[0].score >= 4) return resultMessage(matches[0]);
+      var sourceMatches = findSourceMatches(query);
+      if (sourceMatches.length && sourceMatches[0].score >= 5) return sourceResultMessage(sourceMatches[0]);
       return '<p>I don’t have a verified member Help Center answer for that yet.</p><p>Try a shorter question, search the <a href="help-center-search.html">full Help Center</a>, or <a href="help-center-contact.html">contact member support</a> with the page, steps, expected result, and what happened.</p>';
     }
 
