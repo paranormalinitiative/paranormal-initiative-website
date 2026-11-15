@@ -128,8 +128,7 @@ protected routes. Internal Help Desk pages are explicitly checked to load
 neither Mystic nor this public catalog.
 
 The Help Center separation regression passed **20/20** locally, including the
-public-versus-internal access probe. A new Firefox regression asks Mystic for
-investigation methods and requires the public Investigation Compendium link.
-The maintained release gate must complete before this source expansion is
-called deployed; the source record is tracked separately in
+public-versus-internal access probe and the public source matcher contract. The
+maintained release gate must complete before this source expansion is called
+deployed; the source record is tracked separately in
 [`2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md`](2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md).

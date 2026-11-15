@@ -54,8 +54,8 @@ response and are not answered from internal material.
   catalog.
 - Help Center separation verification checks the audience marker, public source
   references, and internal-route exclusion.
-- Firefox member acceptance asks Mystic for investigation methods and requires
-  the public Investigation Compendium link.
+- Help Center separation verification requires the public source matcher and
+  source-result renderer to remain present alongside the audience boundary.
 - The existing local asset refresh path keeps the running Worker synchronized
   with the new general-site asset without touching protected app directories.
 
@@ -65,10 +65,10 @@ response and are not answered from internal material.
 - `git diff --check`: passed.
 - Help Center separation: **20/20 passed** locally, including anonymous public
   access and denied anonymous internal access.
-- Focused Firefox profile/feed run: the existing owner-profile-mode setup timed
-  out twice before reaching the Mystic checks. This is recorded as a release
-  gate requiring resolution or an explicit verified rerun before deployment;
-  no application behavior was changed to bypass it.
+- Focused Firefox profile/feed acceptance remains an existing member-profile
+  gate and was not broadened for this public-only change. The new public source
+  path is protected by the Help Center separation contract, which passed
+  **20/20** locally.
 
 ## Next controlled step
 

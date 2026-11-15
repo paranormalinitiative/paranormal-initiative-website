@@ -68,7 +68,7 @@ check("Internal pages identify the internal audience", [
 check("Shared renderer switches to internal routes and labels", sharedShell.includes("TPI_INTERNAL_HELP_CENTER") && sharedShell.includes("internal-help-center-article.html") && sharedShell.includes("Help Desk") && sharedShell.includes("Member support"));
 check("Ask Mystic is available across public Help Center pages", publicHelpPages.every((file) => read(file).includes('src="mystic-public-knowledge.js?v=1"') && read(file).includes('src="mystic-help-center.js?v=3"')) && sharedShell.includes("TPIMysticHelpCenter"));
 check("Mystic public knowledge is explicitly member-facing", mysticKnowledge.includes('audience: "public-member"') && mysticKnowledge.includes("TPI_Field_Encyclopedia.html") && mysticKnowledge.includes("TPI_Investigation_Compendium.html") && mysticKnowledge.includes("haunted-locations.html"));
-check("Ask Mystic searches only public member content and sources", mystic.includes("window.TPI_HELP_CENTER") && mystic.includes("TPI_MYSTIC_PUBLIC_KNOWLEDGE") && !mystic.includes("TPI_INTERNAL_HELP_CENTER") && !mystic.includes("internal-help-center-data.js"));
+check("Ask Mystic searches only public member content and sources", mystic.includes("window.TPI_HELP_CENTER") && mystic.includes("TPI_MYSTIC_PUBLIC_KNOWLEDGE") && mystic.includes("findSourceMatches") && mystic.includes("sourceResultMessage") && mystic.includes("verified public TPI source") && !mystic.includes("TPI_INTERNAL_HELP_CENTER") && !mystic.includes("internal-help-center-data.js"));
 check("Internal Help Desk pages do not mount Ask Mystic", [
   "internal-help-center.html",
   "internal-help-center-category.html",

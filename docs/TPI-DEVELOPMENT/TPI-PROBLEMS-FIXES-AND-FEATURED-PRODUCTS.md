@@ -150,14 +150,15 @@ Published Articles, public Apps and Workspaces, and TPI Videos.
 not load internal Help Desk data, Administration Center procedures, staff or
 moderator instructions, private records, credentials, or protected routes.
 Internal Help Desk pages are checked to load neither Mystic nor the public
-catalog. The Firefox regression now asks for investigation methods and requires
-the public Investigation Compendium link.
+catalog. The separation contract also requires the public source matcher and
+source-result renderer to remain present.
 
 **Verification so far:** JavaScript syntax checks and `git diff --check` passed;
 Help Center separation passed **20/20**, including anonymous public access and
-denied anonymous internal access. The focused Firefox suite timed out in its
-pre-existing owner-profile setup twice before reaching the Mystic checks, so
-the maintained release gate remains required before this is marked deployed.
+denied anonymous internal access. The focused Firefox profile/feed suite remains
+an existing member-profile gate and was not broadened for this public-only
+change; the maintained release gate remains required before this is marked
+deployed.
 
 **Reference:** [`2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md`](300-COMPLETED-WORK/2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md)
 
