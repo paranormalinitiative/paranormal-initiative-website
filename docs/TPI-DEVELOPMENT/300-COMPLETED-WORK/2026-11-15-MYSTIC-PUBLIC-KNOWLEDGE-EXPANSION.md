@@ -23,15 +23,18 @@ The new `mystic-public-knowledge.js` catalog includes these published sources:
 - Forensic Analysis Compendium
 - Evidence Compendium
 - TPI Education Center
+- Ghostology 101
 - Haunted Locations Directory
 - TPI Published Articles
 - TPI Apps and Workspaces
 - TPI Videos
 
-Mystic searches the existing public Help Center articles first. When no strong
-article match is available, it searches this public source index and returns a
-verified source link with a short description. Unknown questions still receive
-the honest fallback instead of an invented answer.
+Mystic searches the existing public Help Center articles first for task
+guidance. Direct definition intents use a source-grounded answer when TPI has a
+precise published definition; otherwise, when no strong article match is
+available, Mystic searches this public source index and returns a verified
+source link with a short description. Unknown questions still receive the
+honest fallback instead of an invented answer.
 
 ## Audience and safety boundary
 
@@ -93,5 +96,7 @@ The public catalog now contains a protected `ghost-definition` intent. Mystic
 answers the common definition forms directly, explains that “ghost” is a
 working description rather than a proven conclusion, and links to the complete
 Terminology Reference. Ghostology 101 is also indexed as a public source for
-related learning. This follow-up is covered by the same public-only boundary
-and is pending the guarded production release.
+related learning. The repair was deployed in release
+`rel-ca4350b09f14-71249913e23a` as Worker version
+`01ae8fc8-df88-48cf-bbe7-61689245b549`; production smoke passed **10/10**, and
+the live Help Center returned the expected TPI definition and source link.

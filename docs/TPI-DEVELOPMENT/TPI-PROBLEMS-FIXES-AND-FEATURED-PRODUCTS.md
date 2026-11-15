@@ -171,7 +171,7 @@ Workspace, and Creator Studio bytes remained unchanged.
 | Detected | **2026-11-15**, owner asked “What is a ghost?” and Mystic routed the question to the broad Education Center guide |
 | Fixed in source | **2026-11-15**, direct public knowledge answer and cache-version update |
 | Sitewide scope | **Public Help Center and shared member/community Mystic** |
-| Status | **Source fixed; guarded release verification in progress** |
+| Status | **Deployed and live verified** — release `rel-ca4350b09f14-71249913e23a`; Worker version `01ae8fc8-df88-48cf-bbe7-61689245b549` |
 
 **What happened:** Mystic’s article matcher treated a broad Education Center
 article as the best match because the word “ghost” appeared throughout its
@@ -192,8 +192,11 @@ it does not load internal Help Desk material or invent an unsupported claim.
 The public source index now also includes Ghostology 101, and the separation
 regression requires the direct-answer matcher to remain present.
 
-**Verification:** JavaScript syntax checks, local asset refresh, and the
-Help Center separation contract passed **20/20** before the guarded release.
+**Verification:** JavaScript syntax checks, local asset refresh, and the Help
+Center separation contract passed **20/20** before the guarded release.
+Production smoke passed **10/10**. Live Mystic answered “What is a ghost?”
+with the TPI definition and linked to
+`TPI_Terminology_Reference_Unified.html`.
 
 ### INC-2026-11-14-01 — Profile photo or banner would not update
 
