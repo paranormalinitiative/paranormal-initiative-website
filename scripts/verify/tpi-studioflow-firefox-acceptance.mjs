@@ -173,7 +173,12 @@ async function enterStudio() {
       const body = await driver.findElement(By.css("body")).getText().catch(() => "");
       const url = new URL(await driver.getCurrentUrl());
       const redirectedToLogin = /\/member-login(?:\.html)?\/?$/.test(url.pathname);
-      if ((!redirectedToLogin && body.trim()) || attempt === 4) throw error;
+      const redirectedToMemberHome = url.pathname === "/member-home" || url.pathname === "/member-home.html";
+      // The login page can finish its browser redirect just after the direct
+      // Studio navigation begins. A Member Home landing is the one known
+      // transient state here; retry it, but keep real non-empty error pages
+      // fail-closed and never turn an access denial into a retry loop.
+      if ((!redirectedToLogin && !redirectedToMemberHome && body.trim()) || attempt === 4) throw error;
       shellError = error;
       await sleep(750 * attempt);
     }

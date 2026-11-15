@@ -127,7 +127,8 @@ check("production Firefox release acceptance uses the synthetic QA account", () 
 check("Firefox acceptance retries only a transient empty StudioFlow shell", () => {
   assert.match(firefoxAcceptance, /for \(let attempt = 1; attempt <= 4; attempt \+= 1\)/);
   assert.match(firefoxAcceptance, /redirectedToLogin/);
-  assert.match(firefoxAcceptance, /if \(\(!redirectedToLogin && body\.trim\(\)\) \|\| attempt === 4\) throw error/);
+  assert.match(firefoxAcceptance, /redirectedToMemberHome/);
+  assert.match(firefoxAcceptance, /if \(\(!redirectedToLogin && !redirectedToMemberHome && body\.trim\(\)\) \|\| attempt === 4\) throw error/);
 });
 check("StudioFlow staging preserves maintained media bridges", () => {
   assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v13&tpi-panels=exclusive-v3&tpi034=dom-stability-v1/);
