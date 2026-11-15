@@ -1,8 +1,13 @@
 # Mystic Cloudflare AI Search Integration
 
-**Date:** 2026-11-15 01:29 EST  
-**Scope:** Public/member-facing Mystic only  
-**Status:** Source complete; guarded release and live verification pending.
+**Date:** 2026-11-15 01:29 EST; deployed 2026-11-15 01:42 EST
+**Scope:** Public/member-facing Mystic only
+**Status:** Deployed and live verified.
+
+**Production release:** `rel-afbcac6a73f3-8480846ec919`
+**Worker version:** `7d6b3674-5396-463d-a4ef-247858b0c849`
+**Source commit:** `afbcac6a73f3cc0d63c136d6c1c286b92fc71fcc`
+**Rollback version:** `01ae8fc8-df88-48cf-bbe7-61689245b549`
 
 ## Objective
 
@@ -56,26 +61,23 @@ member tasks such as profile editing, messaging, reporting a bug, login, and
 privacy. This is intentional: the crawler sees published page text, while the
 member Help Center catalog contains the concise TPI-specific task instructions.
 
-## Required final verification
+## Final verification
 
-Before marking this integration complete:
-
-1. Confirm the AI Search crawl has settled and review any remaining indexing
-   errors.
-2. Run `node --check` on the changed JavaScript.
-3. Run `npm run verify:help-center-separation` with the maintained local Worker.
-4. Run `npm run verify:local-auth-lifecycle`.
-5. Run `npm run release:preflight`.
-6. Deploy only the certified candidate with
-   `TPI_PRODUCTION_DEPLOY=approved npm run release:production`.
-7. Verify live Mystic in Firefox with:
-   - “What is a ghost?” — direct TPI definition.
-   - “What is Ghostology 101?” — grounded public education answer/source.
-   - “How do I update my profile?” — TPI Help Center guide.
-   - “How do I report a bug?” — existing protected bug-report handoff.
-   - “How do I ban someone?” — protected internal-boundary response.
-8. Confirm the anonymous Internal Help Center remains denied and protected
-   StudioFlow/Nova/Creator Studio bytes are unchanged.
+- JavaScript syntax checks and Markdown-reference verification passed.
+- Help Center separation passed **21/21**; anonymous member Help Center access
+  remained public and anonymous Internal Help Center access remained denied.
+- Local authentication lifecycle passed before restart, after restart, and after
+  the StudioFlow rebuild; Firefox local acceptance passed **65/65**.
+- Full Tier 1 release certification passed **38/38 gates** in **6m 43s**.
+- Protected application integrity and exact-candidate hashing passed; StudioFlow
+  source/build continuity remained unchanged.
+- Production anonymous smoke passed **10/10**.
+- Isolated production Firefox Developer Edition acceptance passed **65/65**;
+  the owner browser profile was not accessed.
+- Live `/api/mystic/ask` retrieval returned grounded Ghostology 101 sources.
+- Live Help Center interaction verified the direct TPI ghost definition, the
+  Ghostology/public education response, and the internal administrative boundary
+  for “How do I ban someone?”.
 
 ## Future internal assistant
 

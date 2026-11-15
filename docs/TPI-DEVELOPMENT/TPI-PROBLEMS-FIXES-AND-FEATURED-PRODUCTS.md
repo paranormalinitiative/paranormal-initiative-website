@@ -207,7 +207,7 @@ with the TPI definition and linked to
 | Fixed in source | **2026-11-15 01:29 EST**, public AI Search binding, server route, and retrieval fallback |
 | Sitewide scope | **Public Help Center and shared member/community Mystic only**; NOVA/internal knowledge remains deferred |
 | External resource | Cloudflare AI Search instance `tpi-mystic-public` in the account’s `default` namespace |
-| Status | **Source complete; guarded production release and live browser verification pending** |
+| Status | **Deployed and live verified** — release `rel-afbcac6a73f3-8480846ec919`; Worker `7d6b3674-5396-463d-a4ef-247858b0c849` |
 
 **What happened:** The deterministic Mystic catalog could answer known Help
 Center questions and selected public source questions, but it could not yet
@@ -229,16 +229,20 @@ and exclusions for internal Help Center, Admin Center, API, member, moderation,
 Studio, Paper Editor, and Nova paths. The Worker repeats the boundary before
 returning source links. NOVA is not created or connected in this public phase.
 
-**Verification so far:** JavaScript syntax checks passed; the Help Center
-separation contract passed **19/19 static checks**; Cloudflare retrieval
-returned real Ghostology 101 chunks from `ghostology-101.html`; the first
-crawl collected **250 sitemap URLs**, with **228 completed** and **1,360
-vectors** at the last check. Eleven individual embedding timeouts were
-reported by Cloudflare, so the crawl will be checked again during release
-verification. The official owner-managed local Worker was intentionally not
-restarted by a generic command; a disposable port test was attempted and
-failed with an environment-level `spawn EBADF`, without changing the official
-runtime.
+**Verification:** JavaScript syntax checks passed; the Help Center separation
+contract passed **21/21**; Cloudflare retrieval returned real Ghostology 101
+chunks from `ghostology-101.html`; the first crawl collected **250 sitemap
+URLs**, with **228 completed**, **1,360 vectors**, and **11** individual
+embedding timeouts at the last source check. Full Tier 1 certification passed
+**38/38 gates** in **6m 43s**. Production smoke passed **10/10**, and isolated
+Firefox production acceptance passed **65/65**. Live Help Center interaction
+verified the direct ghost definition, public Ghostology guidance, and the
+internal-procedure refusal for “How do I ban someone?”.
+
+The exact certified candidate was deployed without recertification in **45.5s**
+and confirmed at 100% traffic. The official owner-managed local Worker remains
+deterministic-only by policy; its lack of the remote AI Search binding is
+intentional and does not affect the production binding.
 
 **Protection:** The AI Search binding is represented in `wrangler.toml`, the
 public-only route and private-path exclusions are covered by the Help Center
