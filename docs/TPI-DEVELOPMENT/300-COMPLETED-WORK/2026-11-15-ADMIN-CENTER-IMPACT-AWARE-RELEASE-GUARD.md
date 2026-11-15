@@ -3,8 +3,8 @@
 **Date:** 2026-11-15 16:31 EST
 **Scope:** TPI release classification, protected-application integrity, and
 Administration Center verification
-**Status:** Implementation complete locally; repository verification and release
-record are the remaining gates
+**Status:** Implemented, fully verified, committed, and pushed; no Worker
+deployment required for this tooling/documentation-only release
 
 ## Problem
 
@@ -57,9 +57,15 @@ commit are expected to change during staging.
 
 ## Verification target
 
-The change is not complete until the repository passes the release-impact and
-release-safety contracts, the normal local checks, a clean commit/push, and the
-maintained release preflight. This release-tooling change does not itself
-require a no-op Worker deployment; the next real Administration Center
-application release will use the new profile and still receive anonymous
-production smoke plus automatic rollback protection.
+The release-impact and release-safety contracts passed **15/15** and **37/37**.
+The local authentication lifecycle passed **38/38** at each checkpoint,
+StudioFlow build verification passed, isolated Firefox acceptance passed
+**65/65**, the full preflight passed **38/38** in **6m33s**, and the protected
+application integrity guard passed. The exact certified candidate was
+`rel-b27f94967cf0-75b101e0c54f` from commit
+`b27f94967cf0d1417a6edb54495bc4e2123d4635`.
+
+This release-tooling change does not require a no-op Worker deployment. The
+next real Administration Center application release will use the new profile
+and still receive anonymous production smoke plus automatic rollback
+protection.

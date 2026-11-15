@@ -111,7 +111,7 @@ StudioFlow repair loop; no bypass or weakened certification is authorized.
 | Fix | Added an `admin-center` profile with local authentication, Administration Center source/route, and local browser acceptance. Shared Worker, authentication, migration, dependency, release-tool, or ambiguous changes still escalate to full platform |
 | Safeguards | Every profile now compares protected application bytes with the previous certified candidate. Only an application explicitly represented by changed source paths may vary; unexpected StudioFlow, Nova, or Administration Center asset changes fail closed |
 | Production impact | No Worker deployment was made for this release-tool/documentation change. The previously rolled-back production Worker remains the known-good version |
-| Status | **Implemented locally; verification and guarded repository release required before use** |
+| Status | **Implemented, fully verified, committed, and pushed; ready for the next admin-only application release** |
 
 This change does not weaken StudioFlow protection. It removes unrelated StudioFlow
 work only for a genuinely admin-confined change. A change to `worker.js`, shared
