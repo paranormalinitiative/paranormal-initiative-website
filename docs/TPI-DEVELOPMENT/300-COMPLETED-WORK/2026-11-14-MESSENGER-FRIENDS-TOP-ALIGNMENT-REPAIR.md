@@ -4,7 +4,7 @@
 
 - **Date:** 2026-11-14
 - **Time reported:** 21:37:46 ET, shown in the supplied Messenger screenshot
-- **Time documented:** 21:39 ET
+- **Time documented:** 21:41 ET
 - **Reported by:** Todd Wayne, Owner/Founder/CEO
 - **Area:** Site-wide Messenger contacts column
 - **Scope:** Desktop and mobile Messenger layouts
@@ -39,10 +39,13 @@ in the middle of the Messenger column instead of at the top.
 ## Release record
 
 - **Source branch:** `codex/tpi-development`
-- **Source commit:** pending guarded commit
-- **Certified release:** pending guarded preflight
-- **Production Worker version:** pending guarded deployment
-- **Production status:** **Local verification passed; production release pending**.
+- **Source commit:** `c83bedab898590d3b551e6422be8e50003913815`
+- **Certified release:** `rel-c83bedab8985-f9f2fc14c24b`
+- **Production Worker version:** `59cf78af-f9d1-4bc8-b7ef-4fd2d2294b00`
+- **Rollback version:** `d1d8b5ee-f195-4ca9-ab86-ccaa8925e2cb`
+- **Production status:** **Deployed and live verified**.
+- **Deployment duration:** **18.3 seconds**, including production smoke.
+- **Release profile:** Website / Tier 1 because verification tooling changed alongside the shared Messenger stylesheet.
 
 ## Permanent protection
 

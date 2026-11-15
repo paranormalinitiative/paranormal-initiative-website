@@ -639,9 +639,11 @@ Nova Workspace, and Creator Studio are outside this change.
 | --- | --- |
 | Detected | **2026-11-14 21:37:46 ET**, shown in the supplied Messenger screenshot |
 | Root cause confirmed | **2026-11-14 21:39 ET**, shared Messenger CSS layout audit |
-| Fixed in source | **2026-11-14 21:39 ET**, pending guarded release commit |
+| Fixed in source | **2026-11-14 21:39 ET**, commit `c83bedab` |
+| Certified release | `rel-c83bedab8985-f9f2fc14c24b`, website profile |
+| Production Worker | `59cf78af-f9d1-4bc8-b7ef-4fd2d2294b00` |
 | Scope | Site-wide Messenger contacts column, desktop and mobile |
-| Status | **Implemented and locally verified; production release pending** |
+| Status | **Deployed and live verified** |
 
 **What happened:** The Friends region reserved its full maximum-height grid
 area even when only a small number of friends existed. The grid's default row
