@@ -45,6 +45,14 @@ check("release preflight makes the local_admin lifecycle impact-aware", () => {
   assert.match(release, /Website release shared authentication smoke/);
   assert.match(release, /tpi-website-surface-smoke\.mjs/);
 });
+check("Administration Center has a dedicated impact-aware release boundary", () => {
+  assert.match(releaseImpact, /admin-center/);
+  assert.match(release, /impact\.profile === "admin-center"/);
+  assert.match(release, /tpi-admin-006-preview\.mjs/);
+  assert.match(release, /tpi-ops-015-local-browser\.mjs/);
+  assert.match(release, /TPI_OPS015_REQUIRE_EXECUTION: "1"/);
+  assert.match(runbook, /Administration Center changes/);
+});
 check("release preflight protects unchanged application bytes", () => {
   assert.match(release, /Protected application integrity guard/);
   assert.match(release, /protectedApplicationDifferences/);
@@ -167,8 +175,13 @@ check("website and shared-api deployment keep smoke but skip StudioFlow live acc
   assert.match(release, /Live StudioFlow acceptance skipped for \$\{manifest\.tier\.releaseProfile\} profile/);
 });
 check("shared-api releases retain the protected-application byte guard", () => {
-  assert.match(release, /profile !== "website" && profile !== "shared-api"/);
+  assert.match(release, /allowedProtectedApplicationPrefixes/);
+  assert.match(release, /changedFiles/);
   assert.match(release, /protected application bytes changed during a \$\{profile\} release/);
+});
+check("admin-center deployment keeps anonymous smoke but skips StudioFlow live acceptance", () => {
+  assert.match(release, /manifest\.tier\.releaseProfile === "full" \|\| manifest\.tier\.releaseProfile === "studioflow"/);
+  assert.match(release, /Live StudioFlow acceptance skipped for \$\{manifest\.tier\.releaseProfile\} profile/);
 });
 check("production deployment deploys the certified candidate directory", () => {
   assert.match(release, /"--candidate", candidateRoot/);

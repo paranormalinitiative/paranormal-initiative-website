@@ -160,14 +160,23 @@ function readPreviousCertificationManifest() {
     return null;
   }
 }
-function assertProtectedApplicationIntegrity(previousManifest, stagedCandidateRoot, profile) {
-  if (profile !== "website" && profile !== "shared-api") return;
+function allowedProtectedApplicationPrefixes(changedFiles = []) {
+  const allowed = [];
+  if (changedFiles.some(path => path.startsWith("studio/"))) allowed.push("studio/");
+  if (changedFiles.some(path => path.startsWith("nova/") || path.startsWith("nova-app/"))) allowed.push("nova/");
+  if (changedFiles.some(path => path.startsWith("admin-center-app/") || path.startsWith("admin-center-preview/") || path === "admin-center.js" || path === "admin-center.css" || path === "admin-panel.html" || path === "admin-advanced-settings.html" || path === "admin-events.html" || path === "teams/admin.html")) {
+    allowed.push("admin-center-preview/");
+  }
+  return allowed;
+}
+function assertProtectedApplicationIntegrity(previousManifest, stagedCandidateRoot, profile, changedFiles = []) {
   if (!previousManifest?.deployable?.assets) {
     fail(`${profile} release cannot be certified without a previous protected-application baseline`);
   }
   const changed = protectedApplicationDifferences(
     previousManifest.deployable.assets,
     hashTree(join(stagedCandidateRoot, "assets")),
+    { allowedPrefixes: allowedProtectedApplicationPrefixes(changedFiles) },
   );
   if (changed.length) fail(`protected application bytes changed during a ${profile} release: ${changed.slice(0, 12).join(", ")}${changed.length > 12 ? `, +${changed.length - 12} more` : ""}`);
 }
@@ -348,6 +357,16 @@ async function preflight() {
       stopIsolatedE2E();
     }
     if (JSON.stringify(adminBefore) !== JSON.stringify(localAdminFingerprint())) fail("isolated E2E changed the persistent development administrator");
+  } else if (impact.profile === "admin-center") {
+    await waitForLocalReleaseSurfaces();
+    await runLocalAuthCheck("Administration Center authentication smoke");
+    run("Administration Center source and route contract", process.execPath, ["scripts/qa/tpi-admin-006-preview.mjs"], {
+      timing: { bucket: "certification" },
+    });
+    run("Administration Center local browser acceptance", process.execPath, ["scripts/e2e/tpi-ops-015-local-browser.mjs"], {
+      env: { TPI_OPS015_BASE_URL: "http://127.0.0.1:8787", TPI_OPS015_REQUIRE_EXECUTION: "1" },
+      timing: { bucket: "certification", browser: true },
+    });
   } else if (impact.profile === "shared-api") {
     await waitForLocalReleaseSurfaces();
     await runLocalAuthCheck("Shared API authentication smoke");
@@ -521,7 +540,7 @@ async function preflight() {
   prepareCandidateDirectory(candidateRoot);
   run("Stage immutable release candidate and Wrangler dry-run", process.execPath, ["scripts/deploy-production-guarded.mjs", "--stage-out", candidateRoot, "--dry-run"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "staging" } });
   mark("Release candidate staged", { bucket: "staging" });
-  verifyInline("Protected application integrity guard", () => assertProtectedApplicationIntegrity(previousManifest, candidateRoot, impact.profile), { timing: { bucket: "certification" } });
+  verifyInline("Protected application integrity guard", () => assertProtectedApplicationIntegrity(previousManifest, candidateRoot, impact.profile, impact.changedFiles), { timing: { bucket: "certification" } });
 
   const certificationStarted = performance.now();
   const certifiedSource = collectSourceIdentity(repoRoot, { branch, studioFlowRoot });

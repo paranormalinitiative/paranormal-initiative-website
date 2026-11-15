@@ -79,6 +79,12 @@ The preview currently contains most of these resources but still presents some a
 - Every mutation must have an explicit server contract, confirmation where appropriate, actor identity, reason, and append-only audit record.
 - Preserve private message bodies, private evidence, recordings, stream keys, and protected application data boundaries.
 - Keep StudioFlow, Creator Studio, Nova Editor Workspace, and other stable applications outside unrelated Administration Center changes.
+- Classify an Administration Center-only change separately from a full release;
+  a shared `worker.js`, authentication, migration, dependency, release-tool, or
+  ambiguous change must still escalate to full certification.
+- Compare protected application bytes for every release profile and fail closed
+  when generated StudioFlow, Nova, or Administration Center assets change
+  without matching source paths.
 - Keep the preview separate from `/admin-panel` until feature parity, role-matrix testing, authenticated owner acceptance, and rollback verification pass.
 - Do not connect NOVA to internal sources until the Help Desk and policy inventory are complete and the internal retrieval boundary is tested.
 

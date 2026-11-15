@@ -56,6 +56,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
 | Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
 | An Administration Center release deploys, then rolls back during an unrelated StudioFlow live gate | [Administration Center command center and release-gate finding](#inc-2026-11-15-25--administration-center-command-center-and-release-gate-finding) | Full release certification, live Firefox acceptance, protected application boundary |
+| A small Administration Center change starts the full StudioFlow release suite | [Administration Center impact-aware release guard](#inc-2026-11-15-26--administration-center-impact-aware-release-guard) | Release-impact classifier, admin-only verification, protected application byte guard |
 
 ## Incident and fix register
 
@@ -99,6 +100,26 @@ the release gate so a safe admin-only change does not enter an unrelated
 StudioFlow repair loop; no bypass or weakened certification is authorized.
 
 **Documentation:** [TPI Administration Center Command Center Audit](200-AUDITS/2026-11-15-ADMIN-CENTER-COMMAND-CENTER-AUDIT.md).
+
+### INC-2026-11-15-26 — Administration Center impact-aware release guard
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15 16:31 EST**, during the owner-requested release-streamlining follow-up |
+| Symptom | An Administration Center preview change was classified as a full-platform release, so the release spent time rebuilding and browser-testing StudioFlow; an unrelated StudioFlow live gate then caused an automatic rollback |
+| Root cause | The impact classifier treated Administration Center source, generated preview assets, and admin-only verification as full-platform paths. The release runner also had no dedicated admin-center profile |
+| Fix | Added an `admin-center` profile with local authentication, Administration Center source/route, and local browser acceptance. Shared Worker, authentication, migration, dependency, release-tool, or ambiguous changes still escalate to full platform |
+| Safeguards | Every profile now compares protected application bytes with the previous certified candidate. Only an application explicitly represented by changed source paths may vary; unexpected StudioFlow, Nova, or Administration Center asset changes fail closed |
+| Production impact | No Worker deployment was made for this release-tool/documentation change. The previously rolled-back production Worker remains the known-good version |
+| Status | **Implemented locally; verification and guarded repository release required before use** |
+
+This change does not weaken StudioFlow protection. It removes unrelated StudioFlow
+work only for a genuinely admin-confined change. A change to `worker.js`, shared
+authentication, bindings, migrations, dependencies, release tooling, or another
+protected application remains full-platform and keeps the broad certification
+suite.
+
+**Documentation:** [Administration Center impact-aware release guard](300-COMPLETED-WORK/2026-11-15-ADMIN-CENTER-IMPACT-AWARE-RELEASE-GUARD.md).
 
 ### INC-2026-11-14-20 — Mystic community assistant
 

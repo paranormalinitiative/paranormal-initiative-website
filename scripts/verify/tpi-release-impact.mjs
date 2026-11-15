@@ -13,6 +13,9 @@ const cases = [
   ["authentication library escalates to full platform", ["lib/auth.js"], "full"],
   ["Nova source escalates to full platform", ["nova-app/src/App.tsx"], "full"],
   ["release tooling escalates to full platform", ["scripts/tpi-release.mjs"], "full"],
+  ["Administration Center source selects the admin-center profile", ["admin-center-app/src/app.tsx", "admin-center-preview/index.html"], "admin-center"],
+  ["Administration Center browser verification selects the admin-center profile", ["scripts/e2e/tpi-ops-015-local-browser.mjs"], "admin-center"],
+  ["Administration Center plus shared Worker code escalates to full platform", ["admin-center-app/src/app.tsx", "worker.js"], "full"],
   ["explicit full profile raises website-only work", ["index.html"], "full", "full"],
 ];
 
@@ -62,6 +65,13 @@ if (!protectedChanged.includes("studio/index.html")) {
   console.error("FAIL protected app guard detects changed StudioFlow bytes");
 } else {
   console.log("PASS protected app guard detects changed StudioFlow bytes");
+}
+const allowedAdminChange = protectedApplicationDifferences(protectedBaseline, protectedBaseline.map(entry => entry.path === "admin-center-preview/index.html" ? { ...entry, sha256: "admin-new" } : entry), { allowedPrefixes: ["admin-center-preview/"] });
+if (allowedAdminChange.length) {
+  failures += 1;
+  console.error(`FAIL admin-center guard permits its explicitly changed preview bytes: ${allowedAdminChange.join(", ")}`);
+} else {
+  console.log("PASS admin-center guard permits only its explicitly changed preview bytes");
 }
 
 if (failures) process.exit(1);

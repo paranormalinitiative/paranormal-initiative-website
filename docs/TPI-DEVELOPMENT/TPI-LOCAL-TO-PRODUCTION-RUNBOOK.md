@@ -300,9 +300,12 @@ selects a release profile from the actual changed paths and enforces:
 - a lightweight shared authentication and website-surface smoke for website-only changes;
 - a shared-API profile for server-backed member fixes, with authentication,
   member API-boundary, notification-contract, and affected member-page checks;
-- protected-application byte integrity for website-only and shared-API changes;
+- protected-application byte integrity for every release profile, allowing only
+  the application explicitly represented in the changed source paths to vary;
 - persistent `local_admin` lifecycle verification only for StudioFlow or full-platform changes;
 - isolated disposable D1/R2 E2E and complete QA only for full-platform changes;
+- Administration Center source and local-browser acceptance only for
+  Administration Center changes;
 - StudioFlow build and browser acceptance only for StudioFlow or full-platform changes;
 - Cloudflare account, Worker, binding, and rollback checks;
 - current production version capture;
@@ -319,25 +322,40 @@ selects a release profile from the actual changed paths and enforces:
   member/API boundaries, while preserving the certified StudioFlow, Nova, and
   Creator Studio bytes without rebuilding or live-acceptance testing them. The
   protected-application byte guard remains mandatory.
+- **Administration Center** — changes confined to the Administration Center
+  application, its generated preview, legacy admin entry documents, or its
+  dedicated local verification. It runs the local authentication smoke, admin
+  source/route contract, and authenticated local admin browser acceptance. It
+  preserves StudioFlow, Nova, Creator Studio, private media, and the legacy
+  production route unless those paths are explicitly changed. It does not run
+  StudioFlow build or live-room acceptance. A shared `worker.js`,
+  authentication, migration, dependency, or release-tool change still
+  escalates to the full platform profile.
 - **StudioFlow application** — StudioFlow lifecycle, ownership, deletion,
   Notes, responsive, build, and browser acceptance. Website-only suites remain
   conditional.
 - **Full platform** — migrations, authentication/security libraries, shared
-  Worker entry/configuration, release tooling, Nova or Administration Center
-  changes, multiple applications, or any ambiguous change. This retains the
-  complete platform certification.
+  Worker entry/configuration, release tooling, Nova changes, multiple
+  applications, or any ambiguous change. This retains the complete platform
+  certification.
 
-The profile is selected automatically. To intentionally run the complete suite
-for a low-risk website change, use:
+The profile is selected automatically. Administration Center work is only
+classified as its own profile when every changed path is confined to the admin
+surface and dedicated admin verification. A shared `worker.js` change remains
+full because the Worker owns routes and bindings used by the protected
+applications. To intentionally run the complete suite for a low-risk website
+change, use:
 
 ```sh
 TPI_RELEASE_PROFILE=full npm run release:preflight
 ```
 
-The profile cannot reduce the checks required by the changed paths. If any
-protected application bytes differ during a website-only candidate, the
-release stops and requires application classification instead of silently
-publishing the change.
+The profile cannot reduce the checks required by the changed paths. Every
+profile compares the candidate's protected application bytes with the previous
+certified release. Only the application whose source paths are explicitly in
+the candidate may differ; an unexpected StudioFlow, Nova, Creator Studio, or
+Administration Center asset change stops the release instead of silently
+publishing it.
 
 The final output must be `READY`. If any gate fails, repair the cause, commit
 and push the repair, and rerun preflight. Do not weaken or skip the gate.

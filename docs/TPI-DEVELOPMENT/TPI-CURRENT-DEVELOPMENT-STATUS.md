@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center impact-aware release guard
+
+Status: **IMPLEMENTED LOCALLY; FULL RELEASE-TOOLING VERIFICATION REQUIRED.** The
+release workflow now distinguishes Administration Center-only changes from
+StudioFlow, shared Worker, authentication, migration, dependency, and release
+tool changes. An admin-confined change runs the local authentication smoke,
+Administration Center source/route contract, and authenticated local admin
+browser acceptance without rebuilding or live-acceptance testing StudioFlow.
+Every profile still compares protected application bytes against the previous
+certified candidate and fails closed if an unexpected application asset
+changes. The current repository change itself modifies release tooling, so it
+correctly escalates to the full certification profile before it can be used.
+See [Administration Center Impact-Aware Release Guard](300-COMPLETED-WORK/2026-11-15-ADMIN-CENTER-IMPACT-AWARE-RELEASE-GUARD.md) and [TPI Problems, Fixes, and Featured Products](TPI-PROBLEMS-FIXES-AND-FEATURED-PRODUCTS.md).
+
 ## 2026-11-15 — Administration Center command-center audit and preview improvement
 
 Status: **AUDITED; PREVIEW IMPROVED; GUARDED PRODUCTION ATTEMPT ROLLED BACK.** The

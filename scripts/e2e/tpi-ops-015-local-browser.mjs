@@ -6,9 +6,15 @@ import { createRequire } from "node:module";
 import { readFileSync, statSync } from "node:fs";
 
 const base = (process.env.TPI_OPS015_BASE_URL || "http://127.0.0.1:8787").replace(/\/$/, "");
+const block = reason => {
+  console.log(JSON.stringify({ status: "BLOCKED", reason }));
+  // Release certification must never count an unavailable browser as a pass.
+  // Standalone inventory use retains the historical non-failing BLOCKED result
+  // unless the maintained release runner explicitly requires execution.
+  process.exit(process.env.TPI_OPS015_REQUIRE_EXECUTION === "1" ? 1 : 0);
+};
 if (!/^http:\/\/(127\.0\.0\.1|localhost):8787$/.test(base)) {
-  console.log(JSON.stringify({ status: "BLOCKED", reason: "OPS-015 browser test requires the approved loopback Worker origin" }));
-  process.exit(0);
+  block("OPS-015 browser test requires the approved loopback Worker origin");
 }
 const credentialsPath = process.env.TPI_OPS015_CREDENTIALS_FILE || ".local-dev/local-auth-credentials.json";
 const browserPath = process.env.TPI_OPS015_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -21,8 +27,7 @@ try {
   if ((statSync(credentialsPath).mode & 0o777) !== 0o600) throw new Error("credential file permissions must be 0600");
   credentials = JSON.parse(readFileSync(credentialsPath, "utf8"));
 } catch (error) {
-  console.log(JSON.stringify({ status: "BLOCKED", reason: `local credential store unavailable: ${safe(error)}` }));
-  process.exit(0);
+  block(`local credential store unavailable: ${safe(error)}`);
 }
 
 let chromium;
@@ -30,16 +35,14 @@ try {
   const require = createRequire(import.meta.url);
   ({ chromium } = require(process.env.TPI_OPS015_PLAYWRIGHT || "playwright"));
 } catch (error) {
-  console.log(JSON.stringify({ status: "BLOCKED", reason: `Playwright unavailable: ${safe(error)}` }));
-  process.exit(0);
+  block(`Playwright unavailable: ${safe(error)}`);
 }
 
 let browser;
 try {
   browser = await chromium.launch({ executablePath: browserPath, headless: process.env.TPI_OPS015_HEADLESS !== "0" });
 } catch {
-  console.log(JSON.stringify({ status: "BLOCKED", reason: "Chrome could not launch in this execution environment" }));
-  process.exit(0);
+  block("Chrome could not launch in this execution environment");
 }
 
 const accounts = credentials.accounts || {};
