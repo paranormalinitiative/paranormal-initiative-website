@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-15 00:21 EST
 **Scope:** Public/member-facing Mystic only
-**Status:** Implemented in source; guarded release verification in progress.
+**Status:** Deployed and live verified.
 
 ## Objective
 
@@ -69,11 +69,16 @@ response and are not answered from internal material.
   gate and was not broadened for this public-only change. The new public source
   path is protected by the Help Center separation contract, which passed
   **20/20** locally.
+- Guarded production release: `rel-260b8781abc0-c67020fbdaea`.
+- Deployed Worker version: `2612594e-18ab-444e-addb-f40ca98ef890`.
+- Production anonymous smoke: **10/10 passed**.
+- Live public Help Center check: Mystic answered `Encyclopedia` with the
+  Official Field Encyclopedia source link.
+- Live boundary check: public knowledge asset returned HTTP 200; anonymous
+  Internal Help Desk returned HTTP 403.
+- Protected StudioFlow, Nova Workspace, and Creator Studio bytes remained
+  unchanged by the website release.
 
-## Next controlled step
-
-Complete the maintained release preflight, resolve any unrelated local browser
-gate issue without weakening the new Mystic regression, deploy only the exact
-certified candidate, and verify the public Mystic source answer live. StudioFlow,
-Nova Workspace, Creator Studio, and internal Help Desk content remain outside
-this change.
+The public Mystic expansion is complete. Internal Help Desk/Admin/Moderator
+knowledge remains intentionally out of scope until the public experience is
+finished and separately authorized.

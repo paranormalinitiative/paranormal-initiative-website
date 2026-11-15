@@ -128,7 +128,7 @@ passed 10/10, and isolated production Firefox acceptance passed 65/65.
 | Requested | **2026-11-15**, owner approved continuing Mystic on the public/member side first |
 | Implemented in source | **2026-11-15 00:21 EST**, public source index and shared-shell loading path |
 | Sitewide scope | **Public Help Center and shared member/community shell** |
-| Status | **Source implemented; guarded release verification in progress** |
+| Status | **Deployed and live verified** — release `rel-260b8781abc0-c67020fbdaea`; Worker version `2612594e-18ab-444e-addb-f40ca98ef890` |
 
 **What was needed:** Mystic could answer verified member Help Center questions,
 but it did not yet have a safe way to direct members toward the broader public
@@ -153,12 +153,13 @@ Internal Help Desk pages are checked to load neither Mystic nor the public
 catalog. The separation contract also requires the public source matcher and
 source-result renderer to remain present.
 
-**Verification so far:** JavaScript syntax checks and `git diff --check` passed;
-Help Center separation passed **20/20**, including anonymous public access and
-denied anonymous internal access. The focused Firefox profile/feed suite remains
-an existing member-profile gate and was not broadened for this public-only
-change; the maintained release gate remains required before this is marked
-deployed.
+**Verification:** JavaScript syntax checks and `git diff --check` passed; Help
+Center separation passed **20/20**, including anonymous public access and denied
+anonymous internal access; the focused member/profile/feed gate passed **54/54**;
+production smoke passed **10/10**; the live public Help Center answered
+`Encyclopedia` with the Official Field Encyclopedia source link; and the
+anonymous Internal Help Desk remained HTTP 403. Protected StudioFlow, Nova
+Workspace, and Creator Studio bytes remained unchanged.
 
 **Reference:** [`2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md`](300-COMPLETED-WORK/2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md)
 

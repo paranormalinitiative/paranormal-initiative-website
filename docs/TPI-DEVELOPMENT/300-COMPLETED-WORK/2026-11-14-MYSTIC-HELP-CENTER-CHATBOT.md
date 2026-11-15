@@ -129,6 +129,10 @@ neither Mystic nor this public catalog.
 
 The Help Center separation regression passed **20/20** locally, including the
 public-versus-internal access probe and the public source matcher contract. The
-maintained release gate must complete before this source expansion is called
-deployed; the source record is tracked separately in
+public source expansion was then deployed and live verified in
+`rel-260b8781abc0-c67020fbdaea` as Worker version
+`2612594e-18ab-444e-addb-f40ca98ef890`. Production smoke passed **10/10**;
+Mystic answered a live `Encyclopedia` question with the Official Field
+Encyclopedia source link, and anonymous access to the Internal Help Desk
+remained HTTP 403. The source record is tracked separately in
 [`2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md`](2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md).
