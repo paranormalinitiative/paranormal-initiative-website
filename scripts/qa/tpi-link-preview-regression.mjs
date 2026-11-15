@@ -63,6 +63,14 @@ check("marks JavaScript-rendered research pages as interactive external pages", 
   assert.equal(result.interactive, true);
 });
 
+check("marks ordinary JavaScript-rendered external links as interactive pages", () => {
+  const result = parsePreviewHtml(`<!doctype html><title>TPI Research Article</title><meta name="description" content="A field report"><script src="site.js"></script><article>Article content</article>`, "https://example.com/research/article");
+  assert.equal(result.title, "TPI Research Article");
+  assert.equal(result.description, "A field report");
+  assert.equal(result.provider, "external-page");
+  assert.equal(result.interactive, true);
+});
+
 check("recognizes supported YouTube URL forms", () => {
   assert.equal(youtubeVideoId("https://youtu.be/qB3dMpROEdE"), "qB3dMpROEdE");
   assert.equal(youtubeVideoId("https://www.youtube.com/watch?v=qB3dMpROEdE"), "qB3dMpROEdE");

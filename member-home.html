@@ -1668,12 +1668,39 @@
         }
 
         .external-page-preview-media {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 180px;
             padding: 24px;
             background: radial-gradient(circle at 50% 35%, rgba(247, 2, 2, 0.16), transparent 58%), #071017;
+        }
+
+        .external-page-preview-media img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.42;
+        }
+
+        .external-page-preview-media::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(7, 16, 23, 0.1), rgba(7, 16, 23, 0.82));
+        }
+
+        .external-page-preview-action {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-align: center;
         }
 
         .external-page-preview-media button {
@@ -5101,7 +5128,8 @@
                 '</video></div>';
         } else if (externalPageUrl) {
             media = '<div class="link-preview-media external-page-preview-media" data-external-page-media>' +
-                '<button type="button" data-external-page-play="' + escapeAttr(externalPageUrl) + '">Open interactive preview</button>' +
+                (meta.image ? '<img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.remove();">' : '') +
+                '<div class="external-page-preview-action"><button type="button" data-external-page-play="' + escapeAttr(externalPageUrl) + '">Open interactive preview</button></div>' +
             '</div>';
         } else if (meta.image) {
             media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();"></div>';
@@ -5142,7 +5170,7 @@
                 '<div class="link-preview-info">' +
                     (host ? '<span class="link-preview-host">' + escapeHtml(host) + '</span>' : "") +
                     '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
-                    '<span class="link-preview-desc">Interactive external page. Playback depends on the source site allowing embedded content.</span>' +
+                    (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : '<span class="link-preview-desc">Interactive external link. The source page will open here when embedding is allowed.</span>') +
                     '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open source</a>' +
                 '</div>' +
             '</div>';
@@ -5165,7 +5193,7 @@
             if (!/^https?:\/\//i.test(externalUrl)) return;
             var media = externalPage.closest("[data-external-page-media]");
             if (!media) return;
-            media.innerHTML = '<iframe class="external-page-preview-frame" src="' + escapeAttr(externalUrl) + '" title="Interactive external video page" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts" allow="autoplay; fullscreen; picture-in-picture"></iframe>';
+            media.innerHTML = '<iframe class="external-page-preview-frame" src="' + escapeAttr(externalUrl) + '" title="Interactive external link preview" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts" allow="autoplay; fullscreen; picture-in-picture"></iframe>';
             return;
         }
         var play = event.target.closest("[data-youtube-play]");
