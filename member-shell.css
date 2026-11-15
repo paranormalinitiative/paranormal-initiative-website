@@ -832,10 +832,12 @@ body.member-mode .member-floating-chat .member-chat-create {
 }
 
 .member-chat-online-list {
-    flex: 0 1 min(40vh, 240px);
+    flex: 0 1 auto;
     min-height: 0;
     height: auto;
     max-height: min(40vh, 240px);
+    align-content: start;
+    grid-auto-rows: max-content;
     overflow-x: hidden;
     overflow-y: auto;
     padding-right: 2px;

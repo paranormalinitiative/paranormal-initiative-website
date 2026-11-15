@@ -105,8 +105,9 @@ try {
   const afterDrag = await state();
   check("desktop Messenger remains movable by its header", afterDrag.left !== beforeDrag.left || afterDrag.top !== beforeDrag.top, JSON.stringify({ beforeDrag, afterDrag }));
 
-  const defaultRosterState = await js("return {label:document.querySelector('.member-chat-section-label')?.textContent.trim()||'', buttons:Array.from(document.querySelectorAll('[data-online-member]')).map(function(node){return node.getAttribute('data-chat-friend');})};");
+  const defaultRosterState = await js("var list=document.querySelector('[data-chat-online]'), style=list&&getComputedStyle(list), first=list&&list.querySelector('[data-online-member]'), listRect=list&&list.getBoundingClientRect(), firstRect=first&&first.getBoundingClientRect(); return {label:document.querySelector('.member-chat-section-label')?.textContent.trim()||'', buttons:Array.from(document.querySelectorAll('[data-online-member]')).map(function(node){return node.getAttribute('data-chat-friend');}), alignContent:style&&style.alignContent, gridAutoRows:style&&style.gridAutoRows, firstTop:firstRect&&Math.round(firstRect.top), listTop:listRect&&Math.round(listRect.top)};");
   check("Messenger default roster is limited to friends", defaultRosterState.label === "Friends" && defaultRosterState.buttons.every(value => value === "true"), JSON.stringify(defaultRosterState));
+  check("Messenger friends begin at the top of the contacts column", (defaultRosterState.alignContent === "start" || defaultRosterState.alignContent === "flex-start") && defaultRosterState.gridAutoRows === "max-content" && (!defaultRosterState.firstTop || defaultRosterState.firstTop <= defaultRosterState.listTop + 12), JSON.stringify(defaultRosterState));
   let memberButton = (await driver.findElements(By.css("[data-online-member]")))[0] || null;
   if (!memberButton) {
     const searchInput = await driver.findElement(By.css("[data-chat-member-search]"));

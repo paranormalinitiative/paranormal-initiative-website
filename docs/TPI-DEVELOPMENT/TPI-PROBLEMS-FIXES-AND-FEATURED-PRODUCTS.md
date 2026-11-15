@@ -45,6 +45,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger opens as a blank or unusable surface | [Messenger navigation](#inc-2026-11-10-02--messenger-navigation-and-release-certification) | Shared member shell, route target, disposable schema |
 | Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
 | Messenger lists every member instead of friends, or a direct chat with a non-friend cannot be revisited | [Messenger friends roster and searchable direct chat](#inc-2026-11-14-17--messenger-friends-roster-and-searchable-direct-chat) | Accepted-friend roster, member search, persistent Chats list |
+| Messenger Friends appear vertically centered or leave a large empty gap above Chats | [Messenger Friends top alignment](#inc-2026-11-14-18--messenger-friends-top-alignment) | Contacts-column sizing, grid row alignment, bounded Friends scrolling |
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 | An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
@@ -631,6 +632,42 @@ Nova Workspace, and Creator Studio are outside this change.
 
 **Completion record:**
 [`2026-11-14-MESSENGER-FRIENDS-ROSTER-AND-DIRECT-CHAT-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-FRIENDS-ROSTER-AND-DIRECT-CHAT-REPAIR.md)
+
+### INC-2026-11-14-18 — Messenger Friends top alignment
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 21:37:46 ET**, shown in the supplied Messenger screenshot |
+| Root cause confirmed | **2026-11-14 21:39 ET**, shared Messenger CSS layout audit |
+| Fixed in source | **2026-11-14 21:39 ET**, pending guarded release commit |
+| Scope | Site-wide Messenger contacts column, desktop and mobile |
+| Status | **Implemented and locally verified; production release pending** |
+
+**What happened:** The Friends region reserved its full maximum-height grid
+area even when only a small number of friends existed. The grid's default row
+stretching then centered the friend button inside that reserved space, making
+Friends appear in the middle of the column and pushing Chats lower than
+necessary.
+
+**How it was fixed:** The Friends list now sizes to its actual content, pins
+its grid rows to the start of the region, and only grows into a bounded
+scrolling area when the friend list needs more room. Chats keeps its own
+independent scrolling region below Friends.
+
+**Verification:** Source contracts **29/29**; focused Firefox Messenger
+acceptance **25/25**, including the Friends-only default roster, top alignment
+metrics, non-friend search, existing Chats rendering, desktop layout, and
+mobile layout.
+
+**Permanent protection:** The source contract requires the Friends list to use
+content-sized rows, start alignment, and natural flex sizing. The focused
+Firefox Messenger regression checks the computed alignment and verifies that a
+friend button, when present, begins at the top of its list rather than in the
+middle. StudioFlow, Nova Workspace, and Creator Studio remain outside this
+change.
+
+**Completion record:**
+[`2026-11-14-MESSENGER-FRIENDS-TOP-ALIGNMENT-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-FRIENDS-TOP-ALIGNMENT-REPAIR.md)
 
 ### INC-2026-11-14-11 — Local Worker asset freshness
 
