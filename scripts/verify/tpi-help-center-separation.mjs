@@ -23,7 +23,26 @@ const sharedShell = read("help-center.js");
 const memberSidebar = read("member-sidebar.html");
 const adminCenter = read("admin-center-app/src/app.tsx");
 
-check("member Help Center keeps public support content", publicData.includes("Policies, privacy, safety & reporting") && publicData.includes("report-bug-community-issue") && publicData.toLowerCase().includes("member support"));
+check("member Help Center keeps public support content", publicData.includes("Privacy, safety, policies & reporting") && publicData.includes("report-bug-community-issue") && publicData.toLowerCase().includes("member support"));
+check("member Help Center covers the core member guide topics", [
+  "Creating an account",
+  "Your profile",
+  "Friending",
+  "Home Page and Member Home",
+  "Messaging",
+  "Reels",
+  "Stories",
+  "Photos",
+  "Videos",
+  "Accessibility",
+  "Login, recovery & security",
+  "Managing your account",
+  "Privacy and safety",
+  "Policies and community standards",
+  "Reporting a bug or community issue",
+  "Report abuse, harmful content, or a privacy concern"
+].every((topic) => publicData.includes(`title: "${topic}"`)));
+check("Pages and Groups remain intentionally deferred", !publicData.includes('id: "pages"') && !publicData.includes('id: "groups"'));
 check("member Help Center does not publish internal procedures", !publicData.includes("administration-center-overview") && !publicData.includes("block-or-restore-member") && !publicData.includes("staff-roles-and-appointments"));
 check("Internal Help Desk contains staff procedures", internalData.includes("block-or-restore-member") && internalData.includes("review-abuse-report") && internalData.includes("staff-roles-and-appointments") && internalData.includes("security-incident-first-response"));
 check("Help Center navigation exposes expandable guide lists", sharedShell.includes("hc-sidebar-group") && sharedShell.includes("hc-sidebar-subitem") && sharedShell.includes("<details"));

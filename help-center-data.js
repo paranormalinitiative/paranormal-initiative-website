@@ -22,15 +22,15 @@
       {
         id: "account-access",
         icon: "⌁",
-        label: "Member account, login & recovery",
-        shortLabel: "Account & access",
+        label: "Creating an account, login & security",
+        shortLabel: "Account & security",
         description: "Sign in, create your member identity, recover access, and manage your preferences.",
         tone: "blue"
       },
       {
         id: "community",
         icon: "◌",
-        label: "Community & messaging",
+        label: "Home, friends & messaging",
         shortLabel: "Community",
         description: "Use the Community Feed, Messenger, Friends, notifications, and member profiles.",
         tone: "gold"
@@ -54,16 +54,16 @@
       {
         id: "privacy-safety",
         icon: "◇",
-        label: "Policies, privacy, safety & reporting",
-        shortLabel: "Policies & safety",
+        label: "Privacy, safety, policies & reporting",
+        shortLabel: "Privacy & safety",
         description: "Understand TPI policies, privacy boundaries, community standards, abuse reporting, and safety-first escalation.",
         tone: "slate"
       },
       {
         id: "media-events",
         icon: "▶",
-        label: "Videos, Reels, ParaTube & events",
-        shortLabel: "Media & events",
+        label: "Photos, videos, Reels, Stories & events",
+        shortLabel: "Photos & video",
         description: "Watch, save, share, and troubleshoot TPI video, creator media, livestream, and event experiences.",
         tone: "cyan"
       },
@@ -78,7 +78,7 @@
       {
         id: "accessibility-help",
         icon: "◎",
-        label: "Accessibility & troubleshooting",
+        label: "Accessibility & supported browsers",
         shortLabel: "Accessibility & help",
         description: "Use TPI with assistive technology, smaller screens, supported browsers, and clear troubleshooting steps.",
         tone: "blue"
@@ -111,6 +111,8 @@
           { type: "p", text: "The public site is organized around learning, research, media, community discovery, and responsible participation." },
           { type: "h2", text: "The main destinations" },
           { type: "ul", items: ["Education Center: lessons, field guides, Ghostology 101, and EVP/ITC study material.", "Repository: reference books, terminology, evidence, and investigation resources.", "Community: the member Feed, Messenger, Friends, profiles, and events.", "Our Apps: TPI tools, StudioFlow, and the Nova editorial workspace.", "Standards & Ethics: the conduct and evidence principles that guide TPI work."] },
+          { type: "h2", text: "What is coming later" },
+          { type: "p", text: "TPI Pages and Groups are planned for a later phase. They are intentionally not presented as available member features until their permissions, publishing rules, and support guides are ready." },
           { type: "h2", text: "When you need a person" },
           { type: "p", text: "Use the member support path when you cannot resolve an issue from an article. Include the page, feature, device, and what you expected to happen. Do not send a password or private recovery code." }
         ]
@@ -118,8 +120,8 @@
       {
         id: "create-member-account",
         category: "account-access",
-        title: "Create a member account or sign in",
-        excerpt: "Use the member login page to join the TPI community or return to your existing member area.",
+        title: "Creating an account",
+        excerpt: "Join the TPI member community, understand what an account unlocks, and sign in safely.",
         updated: "November 14, 2026",
         popular: true,
         body: [
@@ -133,11 +135,13 @@
       {
         id: "recover-account",
         category: "account-access",
-        title: "Recover access to your member account",
-        excerpt: "What to do when you forget your password or cannot complete a normal sign-in.",
+        title: "Login, recovery & security",
+        excerpt: "Sign in, recover access, and protect your TPI account when something does not look right.",
         updated: "November 14, 2026",
         body: [
-          { type: "p", text: "Start at Member Login and use the password recovery option. The recovery flow is designed to avoid revealing whether an account exists to an unauthenticated visitor." },
+          { type: "p", text: "Start at Member Login for ordinary sign-in, password recovery, and account access help. The recovery flow is designed to avoid revealing whether an account exists to an unauthenticated visitor." },
+          { type: "h2", text: "Keep the account secure" },
+          { type: "ul", items: ["Use a unique password and never share it with another member or anyone claiming to be support.", "Review the browser address before entering credentials and sign out on shared devices.", "Treat unexpected password, recovery, or access messages as suspicious until verified through the TPI site."] },
           { type: "h2", text: "If recovery does not work" },
           { type: "p", text: "Open a member support request and include the username or email you used, the approximate time of the last successful sign-in, and the exact message you see. Never include your password, a recovery token, or a screenshot containing private credentials." },
           { type: "callout", tone: "warning", title: "Account safety", text: "TPI support will not ask you to send a password. If a message asks for one, treat it as suspicious and report it." }
@@ -146,8 +150,8 @@
       {
         id: "manage-profile-theme",
         category: "account-access",
-        title: "Manage your profile and site theme",
-        excerpt: "Update your member identity, profile details, and the visual theme used across TPI.",
+        title: "Your profile",
+        excerpt: "Update your public member identity, short bio, avatar, background, and TPI theme settings.",
         updated: "November 14, 2026",
         body: [
           { type: "p", text: "Your Profile is where your member identity and public profile details live. Settings holds login preferences and the saved color theme used across the site." },
@@ -257,7 +261,7 @@
       {
         id: "report-bug-community-issue",
         category: "privacy-safety",
-        title: "Report a bug or community issue",
+        title: "Reporting a bug or community issue",
         excerpt: "Choose the right route for a broken feature, harmful content, privacy concern, or account problem.",
         updated: "November 14, 2026",
         popular: true,
@@ -271,8 +275,8 @@
       {
         id: "member-home-dashboard",
         category: "getting-started",
-        title: "Use Member Home as your starting point",
-        excerpt: "A simple map of your member home, activity, profile, saved content, settings, and community shortcuts.",
+        title: "Home Page and Member Home",
+        excerpt: "Use your TPI home page to reach the feed, activity, profile, saved content, settings, and community shortcuts.",
         updated: "November 14, 2026",
         body: [
           { type: "p", text: "Member Home is the signed-in starting point for your TPI activity. It keeps your community feed, recent activity, member identity, saved items, and key shortcuts in one place." },
@@ -387,7 +391,7 @@
       {
         id: "privacy-policy-and-community-standards",
         category: "privacy-safety",
-        title: "Read TPI privacy policy and community standards together",
+        title: "Policies and community standards",
         excerpt: "How privacy, consent, evidence standards, and community conduct work together across TPI spaces.",
         updated: "November 14, 2026",
         body: [
@@ -462,8 +466,8 @@
       {
         id: "accessibility-and-supported-browsers",
         category: "accessibility-help",
-        title: "Use TPI with accessibility settings and supported browsers",
-        excerpt: "Practical tips for keyboard navigation, zoom, contrast, mobile layouts, screen readers, and browser updates.",
+        title: "Accessibility",
+        excerpt: "Use TPI with keyboard navigation, zoom, contrast, mobile layouts, screen readers, and supported browsers.",
         updated: "November 14, 2026",
         body: [
           { type: "p", text: "TPI pages are designed to remain usable across desktop, tablet, and mobile layouts. Use your browser and operating-system accessibility settings first; they are often more reliable than page-specific workarounds." },
@@ -481,6 +485,117 @@
           { type: "p", text: "Troubleshooting should preserve drafts, recordings, saved preferences, and other member data. Do not clear all browser storage as a first step." },
           { type: "h2", text: "Use this order" },
           { type: "ol", items: ["Record the page URL, visible message, and the action that led to the problem.", "Refresh once and check the same page in a private window if no private draft or recording is at risk.", "Sign out and back in only when the issue is clearly session-related.", "Back up important Creator Studio data before any browser reset.", "Contact member support with the safe evidence and stop if the next suggested step could delete data."] }
+        ]
+      },
+      {
+        id: "friending-on-tpi",
+        category: "community",
+        title: "Friending",
+        excerpt: "Send, accept, decline, and manage friend connections while keeping member boundaries clear.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Friends are member connections you have intentionally accepted. TPI uses that relationship to make community interaction and Messenger easier to understand." },
+          { type: "h2", text: "Manage a friend request" },
+          { type: "ol", items: ["Open the member’s profile or the Friends area from the member navigation.", "Send a request only when you have a legitimate reason to connect.", "Accept a request when you recognize the member and are comfortable connecting.", "Decline or remove a request when you do not want the connection."] },
+          { type: "h2", text: "If a connection becomes unsafe" },
+          { type: "p", text: "Remove the connection, use the member block control when needed, and report harassment, threats, impersonation, or privacy violations. You never owe another member a reply or a friendship." }
+        ]
+      },
+      {
+        id: "manage-account",
+        category: "account-access",
+        title: "Managing your account",
+        excerpt: "Keep your username, password, profile preferences, theme, and sessions under your control.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Your account settings are for managing your own member identity and preferences. They do not grant access to staff tools, Creator Studio, Nova, or the Administration Center." },
+          { type: "h2", text: "Account tasks" },
+          { type: "ul", items: ["Use Profile for your public name, short bio, avatar, background, and member-facing details.", "Use Settings for your password, theme, Messenger blocks, and account preferences.", "Use Help Center for policies, reporting, and troubleshooting.", "Sign out when using a shared device and do not save credentials in a public browser."] },
+          { type: "callout", tone: "info", title: "Access is intentional", text: "If a staff or creator control is missing, do not try to bypass the gate. Confirm the account you are using and contact member support." }
+        ]
+      },
+      {
+        id: "messaging-in-tpi",
+        category: "community",
+        title: "Messaging",
+        excerpt: "Use Messenger for friend conversations, intentional direct chats, attachments, and respectful follow-up.",
+        updated: "November 14, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "Messenger is TPI’s private conversation space. The Friends list is the starting point, while a direct chat you intentionally begin with another member remains available in Chats so you can return to it later." },
+          { type: "h2", text: "Start and revisit a conversation" },
+          { type: "ol", items: ["Open Messenger from the member shell.", "Choose a friend, or search for a member when you have a specific reason to start a direct chat.", "Send the message and use the Chats area to return to that conversation later.", "Use the person’s avatar and name to confirm you are in the intended thread."] },
+          { type: "h2", text: "Share safely" },
+          { type: "p", text: "Messenger supports text and approved media attachments. Do not send passwords, recovery codes, private client material, or files you do not have permission to share. Use the block and report controls when a conversation crosses a boundary." }
+        ]
+      },
+      {
+        id: "tpi-reels",
+        category: "media-events",
+        title: "Reels",
+        excerpt: "Watch short-form TPI video, understand the Reels experience, and report a problem with playback or context.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Reels are short-form video moments in the TPI media experience. They may be educational, investigative, community-focused, or a preview of longer work." },
+          { type: "h2", text: "Use Reels responsibly" },
+          { type: "ul", items: ["Read the title and description before treating a short clip as a complete account.", "Use Saved or Watch History when you want to return to a Reel.", "Share a Reel with the same privacy and consent expectations as any other TPI media.", "Report a broken player, misleading context, harassment, or privacy concern through the appropriate route."] },
+          { type: "p", text: "Creator Studio is the production workspace; Reels is the member-facing viewing experience. A viewer does not need Creator Studio access to watch an available Reel." }
+        ]
+      },
+      {
+        id: "tpi-stories",
+        category: "media-events",
+        title: "Stories",
+        excerpt: "Understand short-lived story updates, visibility, and what to do when Stories are not available to your account.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Stories are designed for brief updates that complement, rather than replace, a full Community Feed post. Treat every story as member content with its own privacy and consent considerations." },
+          { type: "h2", text: "Before sharing" },
+          { type: "ul", items: ["Do not include private addresses, client details, or another person’s image or voice without permission.", "Use a full post when the information needs lasting context, sources, or a detailed correction.", "Remember that a short-lived format is not a private format; share only what you are comfortable placing in the intended audience’s view."] },
+          { type: "p", text: "If Stories are not visible in your current TPI account, the feature may be staged for a later release or limited by the current member experience. Do not treat that as permission to bypass an access control; check the Help Center or report the missing control." }
+        ]
+      },
+      {
+        id: "photos-on-tpi",
+        category: "media-events",
+        title: "Photos",
+        excerpt: "Upload and share profile or community photos while protecting people, locations, and original evidence.",
+        updated: "November 14, 2026",
+        body: [
+          { type: "p", text: "Photos can appear in your profile, Community Feed posts, comments, Messenger, and other TPI surfaces. Choose the destination deliberately because each surface has a different audience and purpose." },
+          { type: "h2", text: "Before uploading" },
+          { type: "ul", items: ["Use a supported image format and keep the file within the limit shown by the uploader.", "Check the image for addresses, license plates, documents, private messages, or people who did not consent.", "Keep an original evidence file separate from any cropped, compressed, or annotated sharing copy.", "If an upload previews but does not save, record the page, browser, file type, and visible message and report it."] },
+          { type: "callout", tone: "warning", title: "Permission matters", text: "Having a photo does not automatically give you permission to publish it. When a real person or private location is recognizable, get consent or remove identifying detail." }
+        ]
+      },
+      {
+        id: "videos-and-external-links",
+        category: "media-events",
+        title: "Videos",
+        excerpt: "Watch TPI, YouTube, and external videos with previews, direct links, and safe fallbacks when a source does not embed.",
+        updated: "November 14, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "TPI can present video from several sources: TPI-hosted media, YouTube, and direct or external links. A preview card helps you identify the source, but it does not guarantee that the source permits in-page playback." },
+          { type: "h2", text: "When a video will not play" },
+          { type: "ol", items: ["Open the preview details and confirm the source title and link.", "Use the direct fallback link when the external host blocks embedding or requires its own player.", "Refresh once, confirm the browser is current, and try another supported browser if the player remains blank.", "Report the post URL, source URL, browser, time, and visible error instead of repeatedly refreshing a failing player."] },
+          { type: "h2", text: "External links" },
+          { type: "p", text: "External link previews are convenience features, not endorsements. Check the destination before downloading anything, entering credentials, or sharing personal information." }
+        ]
+      },
+      {
+        id: "privacy-and-safety",
+        category: "privacy-safety",
+        title: "Privacy and safety",
+        excerpt: "Protect your account, your community, and the real people behind paranormal stories and investigations.",
+        updated: "November 14, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "TPI brings together real people, unusual experiences, research, and public conversation. Privacy and safety are part of good investigation, not an optional extra." },
+          { type: "h2", text: "Protect yourself" },
+          { type: "ul", items: ["Use a unique password and keep recovery information private.", "Review the audience before posting, messaging, or uploading media.", "Block or report members who harass, threaten, impersonate, or repeatedly ignore a boundary.", "Do not meet someone in person or enter a location because of pressure from an online conversation."] },
+          { type: "h2", text: "Protect other people" },
+          { type: "p", text: "Do not publish exact addresses, private contact information, medical or mental-health claims, private recordings, or identifying client details without clear permission. TPI is not an emergency service; contact qualified local help when someone is in immediate danger." }
         ]
       },
     ]

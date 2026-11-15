@@ -38,6 +38,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) and [body-link recurrence](#inc-2026-11-14-10--community-feed-youtube-body-link-recurrence) | Link preview extraction, body URL discovery, iframe boundary |
 | Firefox acceptance cannot see markup that is present in source | [Local Worker asset freshness](#inc-2026-11-14-11--local-worker-asset-freshness) | Local staged assets, Worker reuse, browser acceptance |
 | Help content is visible to the wrong audience | [Two Help Centers](#inc-2026-11-14-06--member-help-center-and-internal-help-desk-confusion) | Member Help Center, internal Help Desk, Admin Center gate |
+| A member cannot find guidance for a common site feature | [Member Help Center guide expansion](#inc-2026-11-14-19--member-help-center-guide-expansion) | Expandable member topics, TPI-specific articles, deferred Pages/Groups |
 | StudioFlow controls are missing during an automated check | [StudioFlow acceptance timing](#inc-2026-11-14-02--studioflow-acceptance-check-clicked-before-controls-were-ready) | Browser hydration, release acceptance timing |
 | A Studio opens with another Studio's scenes or media | [Studio isolation](#inc-2026-10-25-01--studio-creation-and-workspace-isolation) | Per-Studio identity, workspace hydration, local snapshots |
 | Restoring a Nova document creates an unexpected extra version | [Nova restore autosave](#inc-2026-11-13-01--nova-restore-created-an-extra-autosave-version) | Snapshot hydration, editor update events, versioning |
@@ -408,6 +409,31 @@ internal credentials guidance.
 
 - [`2026-11-14-HELP-CENTER-FOUNDATION.md`](300-COMPLETED-WORK/2026-11-14-HELP-CENTER-FOUNDATION.md)
 - [`2026-11-14-HELP-CENTER-SEPARATION.md`](300-COMPLETED-WORK/2026-11-14-HELP-CENTER-SEPARATION.md)
+
+### INC-2026-11-14-19 — Member Help Center guide expansion
+
+| Field | Record |
+| --- | --- |
+| Recorded | **2026-11-14 22:11 ET** |
+| Problem | The member Help Center had the expandable shell but not enough clearly named guides for the everyday account, community, media, safety, and reporting questions members will have |
+| Reference | Facebook Help Center topic grouping, rewritten for TPI; direct Facebook access was rate-limited during research, so the public structure was used only as an information-architecture reference |
+| Fix | Added TPI-specific member guides for account creation, profiles, friending, Home Page, messaging, Reels, Stories, photos, videos, accessibility, login/recovery/security, account management, privacy/safety, policies, and reporting |
+| Deferred | Pages and Groups remain intentionally staged for a later phase |
+| Audience rule | Member guidance stays in the public/member Help Center; internal Help Desk procedures remain protected inside Administration Center |
+| Status | **Source implemented; release verification pending** |
+
+**How it was fixed:**
+
+- Kept the existing `<details>` dropdown navigation and populated it with the
+  larger article inventory instead of creating a second confusing navigation.
+- Reused TPI’s existing categories, theme system, search, article pages, and
+  member-support escalation route.
+- Added a Help Center data-version bump so the maintained local Worker and
+  browsers request the updated member article inventory.
+- Added a regression contract for the required topic names and the deferred
+  Pages/Groups boundary.
+
+**Reference:** [`2026-11-14-HELP-CENTER-MEMBER-GUIDE-EXPANSION.md`](300-COMPLETED-WORK/2026-11-14-HELP-CENTER-MEMBER-GUIDE-EXPANSION.md)
 
 ### INC-2026-11-14-10 — Community Feed YouTube body-link recurrence
 
