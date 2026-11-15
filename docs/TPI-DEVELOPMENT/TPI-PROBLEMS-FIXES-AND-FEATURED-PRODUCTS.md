@@ -167,7 +167,7 @@ rendering acceptance.
 | Fix | Added `TPI-INTERNAL-POLICIES.md` and five protected Help Desk articles covering policy sources, staff access checks, report/appeal limitations, complete bug/repair records, and stable-application release boundaries |
 | Audience boundary | Internal Help Desk and policies remain protected inside Administration Center; public Member Help Center and Mystic remain public-only |
 | Protected products | StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, R2, and NOVA retrieval were not changed or connected |
-| Status | **Implemented in source; focused verification and guarded release pending** |
+| Status | **Deployed and verified** — Help Desk data release `rel-7c74d0dc4a11-f661dedeb823`; final Admin Center readiness release `rel-e50e6e338ae6-213689cdd014`; Worker `b3e839e6-3c46-422f-b5f8-76471e228ef3` |
 
 **What the policy foundation establishes:** server-side authority remains the
 final gate; staff use the smallest capability; member data is minimized;
@@ -184,6 +184,11 @@ available until the corresponding server and UI workflows exist.
 **References:** [`TPI-INTERNAL-POLICIES.md`](TPI-INTERNAL-POLICIES.md),
 [`TPI-INTERNAL-HELP-DESK.md`](TPI-INTERNAL-HELP-DESK.md), and the protected
 Help Desk data in `internal-help-center-data.js`.
+
+**Verification:** Help Center separation passed **21/21**; the local
+authenticated Admin Center browser suite passed **56/56**; the Admin Center
+source/route contract passed **82/82**; protected application bytes were
+unchanged; and production anonymous smoke passed **10/10**.
 
 ### INC-2026-11-14-20 — Mystic community assistant
 

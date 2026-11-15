@@ -3,7 +3,7 @@
 **Date:** 2026-11-15  
 **Scope:** Protected Administration Center Help Desk and internal policy
 reference  
-**Status:** Implemented in source; release verification pending
+**Status:** Deployed and verified
 
 ## Request
 
@@ -66,6 +66,28 @@ npm run verify:markdown-reference
 The guarded release must preserve the existing internal audience gate and
 protected application byte guard. The public Mystic knowledge boundary must
 remain public-only.
+
+## Release evidence
+
+- Source commit for the Help Desk/policy data: `7c74d0dc4a11d874f9e1b04959cad4810cc3987c`.
+- Help Desk data release: `rel-7c74d0dc4a11-f661dedeb823`; Worker
+  `ae44fe80-641d-4db5-9139-0dae32136809`; website profile preflight completed
+  in **17.4 seconds**.
+- Command Center readiness-label source commit:
+  `e50e6e338ae6d6c2e9a74175b0b508939f47373d`.
+- Final admin-only release: `rel-e50e6e338ae6-213689cdd014`; Worker
+  `b3e839e6-3c46-422f-b5f8-76471e228ef3`; admin-center preflight completed in
+  **28.4 seconds**.
+- Source and route contract: **82/82** passed.
+- Local authenticated Administration Center browser acceptance: **56/56**
+  passed, including Help Desk navigation and protected member/contributor
+  denial.
+- Help Center separation: **21/21** passed; anonymous public Help Center
+  remained HTTP 200 and anonymous internal Help Desk remained HTTP 403.
+- Production anonymous smoke: **10/10** passed; the admin-only release skipped
+  unrelated StudioFlow live acceptance by design.
+- Protected application integrity guard passed; StudioFlow, Nova, and Creator
+  Studio bytes were unchanged.
 
 ## Remaining work after item 1
 
