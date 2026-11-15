@@ -392,7 +392,7 @@
       }
       return new Promise(function(resolve) {
         var script = document.createElement("script");
-        script.src = "mystic-help-center.js?v=4";
+        script.src = "mystic-help-center.js?v=5";
         script.async = false;
         script.onload = function() {
           if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();

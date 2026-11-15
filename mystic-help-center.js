@@ -117,6 +117,17 @@
       '<p>Mystic will separate a reported experience from a proven conclusion.</p>';
   }
 
+  function aiResultMessage(result) {
+    var answer = escapeHtml(result.answer || "").replace(/\r?\n/g, "<br>");
+    var sources = Array.isArray(result.sources) ? result.sources : [];
+    var sourceMarkup = sources.length ? '<p><strong>Public TPI sources</strong></p><ul>' + sources.map(function (source) {
+      return '<li><a href="' + escapeHtml(source.url) + '">' + escapeHtml(source.title) + '</a></li>';
+    }).join("") + '</ul>' : "";
+    return '<p>Here is what I found in TPI’s verified public knowledge base:</p>' +
+      '<div class="hc-mystic-result"><p>' + answer + '</p>' + sourceMarkup + '</div>' +
+      '<p>If that does not answer it, tell me what you were trying to do and what you saw.</p>';
+  }
+
   function findDirectAnswer(query) {
     var normalizedQuery = normalize(query);
     return publicAnswers().map(function (answer) {
@@ -205,9 +216,10 @@
       message.innerHTML = markup;
       messages.appendChild(message);
       messages.scrollTop = messages.scrollHeight;
+      return message;
     }
 
-    function answer(query) {
+    function localAnswer(query) {
       var special = specialAnswer(query);
       if (special) return special;
       var direct = findDirectAnswer(query);
@@ -219,11 +231,43 @@
       return '<p>I don’t have a verified member Help Center answer for that yet.</p><p>Try a shorter question, search the <a href="help-center-search.html">full Help Center</a>, or <a href="help-center-contact.html">contact member support</a> with the page, steps, expected result, and what happened.</p>';
     }
 
-    function ask(query) {
+    async function ask(query) {
       var clean = String(query || "").trim();
       if (!clean) return;
       addMessage("<p>" + escapeHtml(clean) + "</p>", "user");
-      addMessage(answer(clean), "mystic");
+      var special = specialAnswer(clean);
+      var direct = findDirectAnswer(clean);
+      if (special || direct) {
+        addMessage(special || directAnswerMessage(direct), "mystic");
+        input.value = "";
+        return;
+      }
+      var matches = findMatches(clean);
+      if (matches.length && matches[0].score >= 4) {
+        addMessage(resultMessage(matches[0]), "mystic");
+        input.value = "";
+        return;
+      }
+      var sourceMatches = findSourceMatches(clean);
+      if (sourceMatches.length && sourceMatches[0].score >= 5) {
+        addMessage(sourceResultMessage(sourceMatches[0]), "mystic");
+        input.value = "";
+        return;
+      }
+      var loading = addMessage("<p>Mystic is searching TPI’s public knowledge base…</p>", "mystic");
+      try {
+        var response = await fetch("/api/mystic/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: clean })
+        });
+        var result = await response.json();
+        if (loading && loading.parentNode) loading.parentNode.removeChild(loading);
+        addMessage(result && result.ok && result.answer ? aiResultMessage(result) : localAnswer(clean), "mystic");
+      } catch (error) {
+        if (loading && loading.parentNode) loading.parentNode.removeChild(loading);
+        addMessage(localAnswer(clean), "mystic");
+      }
       input.value = "";
     }
 

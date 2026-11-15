@@ -50,6 +50,14 @@ export async function onRequest(context) {
   const routePath = Array.isArray(params.path) ? params.path.join("/") : params.path || "";
   const path = `/${routePath}`;
 
+  // Mystic's public assistant is intentionally unauthenticated so signed-out
+  // Help Center visitors can use it. The AI Search instance is separately
+  // constrained to public website paths and this handler adds a second
+  // fail-closed audience boundary before returning any source links.
+  if (request.method === "POST" && path === "/mystic/ask") {
+    return handleMysticAsk(request, env);
+  }
+
   if (!env.TPI_DB) {
     return json({ error: "D1 database binding TPI_DB is not configured." }, 500);
   }
@@ -402,6 +410,87 @@ export async function onRequest(context) {
     return json({ error: "Not found." }, 404);
   } catch (error) {
     return json({ error: error.message || "Request failed." }, 500);
+  }
+}
+
+const MYSTIC_PUBLIC_INSTANCE = "tpi-mystic-public";
+const MYSTIC_PUBLIC_ORIGIN = "https://paranormalinitiative.com";
+const MYSTIC_GENERATION_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+const MYSTIC_PUBLIC_SYSTEM_PROMPT = [
+  "You are Mystic, the public member assistant for The Paranormal Initiative (TPI).",
+  "Answer only from the retrieved public TPI website context provided by AI Search.",
+  "Be warm, clear, concise, and practical. Use TPI's own terminology and guidance.",
+  "Never invent a policy, feature, person, location, book, or instruction.",
+  "If the retrieved context does not answer the question, say that you do not have a verified public answer yet and direct the member to the public Help Center or member support.",
+  "Never reveal or summarize internal Help Desk, Administration Center, moderator, staff, owner, credential, or private member information.",
+  "If a question asks for internal procedures, explain that those instructions are protected and available only to authorized internal staff.",
+  "When the context supports it, name the relevant public TPI page or resource. Do not claim that a source says something it does not say."
+].join(" ");
+
+const MYSTIC_PRIVATE_PATHS = [
+  /^\/internal-help-center/i,
+  /^\/admin(?:[-/]|$)/i,
+  /^\/api(?:\/|$)/i,
+  /^\/member-/i,
+  /^\/moderation(?:[-/]|$)/i,
+  /^\/studio(?:\/|$)/i,
+  /^\/paper-editor/i,
+  /^\/nova[-/]/i
+];
+
+function mysticPublicSource(key, metadata = {}) {
+  let url;
+  try {
+    url = new URL(String(key || ""));
+  } catch {
+    return null;
+  }
+  if (url.origin !== MYSTIC_PUBLIC_ORIGIN || MYSTIC_PRIVATE_PATHS.some(pattern => pattern.test(url.pathname))) return null;
+  return {
+    title: String(metadata.title || url.pathname.split("/").pop() || "TPI public source").replace(/[-_]+/g, " "),
+    url: `${url.pathname}${url.search}${url.hash}`
+  };
+}
+
+async function handleMysticAsk(request, env) {
+  const data = await readJson(request);
+  const question = typeof data?.question === "string" ? data.question.trim() : "";
+  if (!question || question.length > 240) return json({ error: "Ask Mystic a question up to 240 characters long." }, 400);
+  if (!env.AI_SEARCH || typeof env.AI_SEARCH.get !== "function") {
+    return json({ ok: false, error: "Mystic's public knowledge service is not configured." }, 503);
+  }
+  try {
+    const response = await env.AI_SEARCH.get(MYSTIC_PUBLIC_INSTANCE).chatCompletions({
+      messages: [
+        { role: "system", content: MYSTIC_PUBLIC_SYSTEM_PROMPT },
+        { role: "user", content: question }
+      ],
+      model: MYSTIC_GENERATION_MODEL,
+      ai_search_options: {
+        retrieval: {
+          retrieval_type: "hybrid",
+          max_num_results: 6,
+          match_threshold: 0.45,
+          context_expansion: 1,
+          keyword_match_mode: "or"
+        },
+        query_rewrite: { enabled: true },
+        reranking: { enabled: true, match_threshold: 0.35 }
+      }
+    });
+    const answer = String(response?.choices?.[0]?.message?.content || "").trim();
+    const sources = [];
+    for (const chunk of Array.isArray(response?.chunks) ? response.chunks : []) {
+      const source = mysticPublicSource(chunk?.item?.key, chunk?.item?.metadata || {});
+      if (!source || sources.some(item => item.url === source.url)) continue;
+      sources.push(source);
+      if (sources.length === 3) break;
+    }
+    if (!answer) return json({ ok: false, error: "Mystic did not receive a verified answer from the public knowledge base." }, 503);
+    return json({ ok: true, answer, sources }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    console.error("Mystic public AI Search request failed", error);
+    return json({ ok: false, error: "Mystic's public knowledge service is temporarily unavailable." }, 503);
   }
 }
 

@@ -54,6 +54,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic opens but returns “I don’t have a verified member Help Center answer” for a documented question | [Mystic knowledge catalog loading](#inc-2026-11-14-21--mystic-knowledge-catalog-loading) | Shared shell dependency loading, public article catalog, profile-question regression |
 | Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
 | Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
+| Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
 
 ## Incident and fix register
 
@@ -197,6 +198,54 @@ Center separation contract passed **20/20** before the guarded release.
 Production smoke passed **10/10**. Live Mystic answered “What is a ghost?”
 with the TPI definition and linked to
 `TPI_Terminology_Reference_Unified.html`.
+
+### INC-2026-11-15-24 — Mystic Cloudflare AI Search integration
+
+| Field | Record |
+| --- | --- |
+| Requested | **2026-11-15**, owner approved trying Cloudflare AI Search for the public Mystic assistant and provided the account token through Cloudflare rather than chat |
+| Fixed in source | **2026-11-15 01:29 EST**, public AI Search binding, server route, and retrieval fallback |
+| Sitewide scope | **Public Help Center and shared member/community Mystic only**; NOVA/internal knowledge remains deferred |
+| External resource | Cloudflare AI Search instance `tpi-mystic-public` in the account’s `default` namespace |
+| Status | **Source complete; guarded production release and live browser verification pending** |
+
+**What happened:** The deterministic Mystic catalog could answer known Help
+Center questions and selected public source questions, but it could not yet
+retrieve broader answers from the published TPI website. The first AI Search
+crawl discovered the public sitemap and began indexing the public site, but
+the running owner-managed local Worker was still serving its older staged
+configuration and did not yet have the new binding.
+
+**How it was fixed:** Connected the Worker to Cloudflare’s remote AI Search
+namespace and added a public `/api/mystic/ask` route. Mystic now preserves its
+existing direct answers and Help Center article matching first, then asks the
+`tpi-mystic-public` instance for broader public questions. The server uses a
+strict public-only prompt, returns only same-origin public source links, and
+fails closed to the existing deterministic Help Center answer when AI Search
+is unavailable or has no usable answer.
+
+**Public boundary:** The crawler is configured with public website inclusion
+and exclusions for internal Help Center, Admin Center, API, member, moderation,
+Studio, Paper Editor, and Nova paths. The Worker repeats the boundary before
+returning source links. NOVA is not created or connected in this public phase.
+
+**Verification so far:** JavaScript syntax checks passed; the Help Center
+separation contract passed **19/19 static checks**; Cloudflare retrieval
+returned real Ghostology 101 chunks from `ghostology-101.html`; the first
+crawl collected **250 sitemap URLs**, with **228 completed** and **1,360
+vectors** at the last check. Eleven individual embedding timeouts were
+reported by Cloudflare, so the crawl will be checked again during release
+verification. The official owner-managed local Worker was intentionally not
+restarted by a generic command; a disposable port test was attempted and
+failed with an environment-level `spawn EBADF`, without changing the official
+runtime.
+
+**Protection:** The AI Search binding is represented in `wrangler.toml`, the
+public-only route and private-path exclusions are covered by the Help Center
+separation regression, and internal content remains outside Mystic’s loaded
+browser catalog. The deterministic Help Center and direct ghost-definition
+answers remain the user-facing fallback, so a temporary Cloudflare failure
+cannot make Mystic invent or expose internal guidance.
 
 ### INC-2026-11-14-01 — Profile photo or banner would not update
 

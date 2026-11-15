@@ -24,6 +24,8 @@
 .hc-mystic-result strong { display: block; margin-bottom: 5px; color: var(--text-primary); font-size: 12px; }
 .hc-mystic-result p { margin: 0 0 8px; }
 .hc-mystic-result a { font-size: 11px; }
+.hc-mystic-result ul { margin: 6px 0 0; padding-left: 18px; }
+.hc-mystic-result li + li { margin-top: 3px; }
 .hc-mystic-quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 11px; }
 .hc-mystic-quick button { padding: 7px 9px; color: var(--text-secondary); background: transparent; border: 1px solid var(--border-default); border-radius: 999px; font: inherit; font-size: 10px; font-weight: 750; cursor: pointer; }
 .hc-mystic-quick button:hover { color: var(--text-primary); background: var(--accent-muted); border-color: var(--accent-border); }
