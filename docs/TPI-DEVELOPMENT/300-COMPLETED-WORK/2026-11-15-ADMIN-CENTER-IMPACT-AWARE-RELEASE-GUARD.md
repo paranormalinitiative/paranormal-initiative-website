@@ -3,8 +3,8 @@
 **Date:** 2026-11-15 16:31 EST
 **Scope:** TPI release classification, protected-application integrity, and
 Administration Center verification
-**Status:** Implemented, fully verified, committed, and pushed; no Worker
-deployment required for this tooling/documentation-only release
+**Status:** Implemented, fully verified, committed, pushed, and promoted through
+the guarded production path; owner-authenticated acceptance remains
 
 ## Problem
 
@@ -69,3 +69,13 @@ This release-tooling change does not require a no-op Worker deployment. The
 next real Administration Center application release will use the new profile
 and still receive anonymous production smoke plus automatic rollback
 protection.
+
+## Guarded promotion result
+
+The certified candidate was promoted as release
+`rel-e5ada60ef448-6f27f390f5ab` to Worker
+`5bd6d0c9-53cd-4d4d-9021-a57804512b7a`. Production smoke passed **10/10** and
+the new Worker received 100% traffic. Anonymous checks returned **403** for
+`/admin-panel`, `/admin-center-preview/`, and `/api/admin/members`. The
+Administration Center is protected from anonymous access, while Todd still
+needs to complete private Owner/Founder/CEO browser acceptance.

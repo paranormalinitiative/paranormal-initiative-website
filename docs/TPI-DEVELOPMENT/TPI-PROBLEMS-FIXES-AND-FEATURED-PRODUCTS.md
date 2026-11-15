@@ -57,6 +57,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
 | An Administration Center release deploys, then rolls back during an unrelated StudioFlow live gate | [Administration Center command center and release-gate finding](#inc-2026-11-15-25--administration-center-command-center-and-release-gate-finding) | Full release certification, live Firefox acceptance, protected application boundary |
 | A small Administration Center change starts the full StudioFlow release suite | [Administration Center impact-aware release guard](#inc-2026-11-15-26--administration-center-impact-aware-release-guard) | Release-impact classifier, admin-only verification, protected application byte guard |
+| The Administration Center candidate is ready after the unrelated StudioFlow rollback | [Administration Center guarded promotion](#inc-2026-11-15-27--administration-center-guarded-promotion) | Certified candidate reuse, anonymous smoke, protected admin routes, owner acceptance |
 
 ## Incident and fix register
 
@@ -118,6 +119,24 @@ work only for a genuinely admin-confined change. A change to `worker.js`, shared
 authentication, bindings, migrations, dependencies, release tooling, or another
 protected application remains full-platform and keeps the broad certification
 suite.
+
+**Documentation:** [Administration Center impact-aware release guard](300-COMPLETED-WORK/2026-11-15-ADMIN-CENTER-IMPACT-AWARE-RELEASE-GUARD.md).
+
+### INC-2026-11-15-27 — Administration Center guarded promotion
+
+| Field | Record |
+| --- | --- |
+| Requested | **2026-11-15**, Owner said to proceed after the release safeguards were installed |
+| Release | `rel-e5ada60ef448-6f27f390f5ab`, source commit `e5ada60ef44806bfdbe1c4b58fdefaa7c20fb51e` |
+| Worker | `5bd6d0c9-53cd-4d4d-9021-a57804512b7a`, 100% production traffic |
+| Verification | Certified candidate reused; anonymous production smoke **10/10**; `/admin-panel`, `/admin-center-preview/`, and `/api/admin/members` anonymous boundary checks returned **403** |
+| StudioFlow boundary | StudioFlow live acceptance was skipped for the website-profile candidate; no StudioFlow source or data changed |
+| Status | **Deployed and live verified; owner-authenticated Administration Center acceptance remains** |
+
+The next owner-facing step is to sign in privately and confirm the dashboard,
+all authorized navigation, and any action that requires Owner/Founder/CEO
+authority. The public boundary is already verified; no anonymous visitor can
+reach the Administration Center.
 
 **Documentation:** [Administration Center impact-aware release guard](300-COMPLETED-WORK/2026-11-15-ADMIN-CENTER-IMPACT-AWARE-RELEASE-GUARD.md).
 

@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center impact-aware release guard
 
-Status: **IMPLEMENTED, VERIFIED, COMMITTED, AND PUSHED; NO WORKER DEPLOYMENT REQUIRED.** The
+Status: **DEPLOYED AND LIVE VERIFIED; OWNER ACCEPTANCE REMAINS.** The
 release workflow now distinguishes Administration Center-only changes from
 StudioFlow, shared Worker, authentication, migration, dependency, and release
 tool changes. An admin-confined change runs the local authentication smoke,
@@ -14,9 +14,14 @@ changes. Because this repository change modifies release tooling, it correctly
 escalated to the full certification profile: release candidate
 `rel-b27f94967cf0-75b101e0c54f` passed all **38 gates** in **6m33s**, including
 isolated QA, StudioFlow build and Firefox acceptance **65/65**, and the
-protected-application integrity guard. This is a tooling/documentation release,
-so no no-op Worker upload was made; production remains on the known-good
-rollback version.
+protected-application integrity guard. The exact certified candidate was then
+promoted through the guarded production path as Worker
+`5bd6d0c9-53cd-4d4d-9021-a57804512b7a`; anonymous production smoke passed
+**10/10**, traffic reached 100%, and the unrelated StudioFlow live gate was
+skipped. Anonymous checks confirmed `/admin-panel`,
+`/admin-center-preview/`, and `/api/admin/members` remain protected with HTTP
+403. Owner-authenticated browser acceptance is the remaining human-facing
+check.
 See [Administration Center Impact-Aware Release Guard](300-COMPLETED-WORK/2026-11-15-ADMIN-CENTER-IMPACT-AWARE-RELEASE-GUARD.md) and [TPI Problems, Fixes, and Featured Products](TPI-PROBLEMS-FIXES-AND-FEATURED-PRODUCTS.md).
 
 ## 2026-11-15 — Administration Center command-center audit and preview improvement
@@ -40,6 +45,17 @@ setting up a StudioFlow recording session. The guard automatically restored
 Worker `7d6b3674-5396-463d-a4ef-247858b0c849`; no StudioFlow source was
 changed and the Administration Center candidate is not live yet. See
 [Administration Center](008-ADMINISTRATION-CENTER.md).
+
+## 2026-11-15 — Administration Center guarded promotion
+
+Status: **DEPLOYED AND ANONYMOUSLY VERIFIED; OWNER ACCEPTANCE PENDING.** The
+previously certified Administration Center candidate was promoted after the
+impact-aware release guard was installed. Worker
+`5bd6d0c9-53cd-4d4d-9021-a57804512b7a` serves 100% of production traffic.
+Anonymous production smoke passed **10/10**; the protected admin routes
+returned **403** without a session. Todd should now sign in privately and
+confirm the Administration Center dashboard, navigation, and authorized
+actions. No StudioFlow source or data was changed.
 
 ## 2026-11-15 — Mystic public AI Search and site-wide knowledge audit
 
