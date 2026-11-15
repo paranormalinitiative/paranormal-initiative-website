@@ -7,6 +7,7 @@
 - **Reported by:** Todd Wayne, Owner/Founder/CEO
 - **Area:** Public member profile and profile editor
 - **Scope:** Site-wide member profile experience
+- **Sitewide marker:** **YES — all public member profiles and signed-in self-service editors use this navigation and validation contract.**
 - **Protected applications changed:** None. StudioFlow, Nova Editorial Workspace,
   and Creator Studio were not modified.
 

@@ -60,6 +60,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Fixed in source | **2026-11-14 10:49:39 ET**, commit `ac3cf199` |
 | Final release source | **2026-11-14 11:08:18 ET**, commit `c1b48003` |
 | Production Worker | `9be0c066-9991-49b4-82a4-e1768aab42c4` |
+| Sitewide scope | **Yes — shared member profile editor, profile API, avatar, and banner surfaces** |
 | Status | **Deployed and live verified** |
 
 **What happened:** A member could not reliably update a profile photo or
@@ -103,6 +104,7 @@ acceptance **65/65**.
 | Fixed in source | **2026-11-14**, commit `d1cb8a5c` |
 | Certified release | `rel-d1cb8a5c5d5c-5088f9e96a85`, shared-API profile |
 | Production Worker | `fbfd467e-f231-4cc6-8769-23103a47e959` |
+| Sitewide scope | **Yes — every signed-in member's profile-media journey** |
 | Status | **Deployed and live verified** |
 
 **What happened:** The upload endpoints correctly required a signed-in member,
@@ -225,6 +227,7 @@ rewritten.
 | Product/surface | Public member profile and self-service profile editor |
 | Certified release | `rel-e59ca4d7fd10-49b1b8992c38`, shared-API profile |
 | Production Worker | `9113ac7d-1663-44e1-aa95-819d185ce350` |
+| Sitewide scope | **Yes — all public member profiles and self-service profile editors** |
 | Status | **Deployed and live verified** |
 
 **What happened:** The public profile's Update Profile action did not have an
@@ -265,6 +268,7 @@ see the result.
 | Fixed in source | **2026-11-14 15:30:51 ET**, commit `de293dae` |
 | Certified release | `rel-de293dae52fa-8172f58c5e28`, Tier 1 full/shared routing |
 | Production Worker | `4049b58d-9410-42cc-b649-7d3a117f5010` |
+| Sitewide scope | **Yes — every member-facing profile editor route** |
 | Status | **Deployed and live verified** |
 
 **What happened:** Members still saw missing avatars or backgrounds because the

@@ -97,6 +97,7 @@ try {
   check("own profile exposes an Update Profile link to the editor", updateLinkState.href === "/member-profile.html#profile-editor" && updateLinkState.hidden === false, JSON.stringify(updateLinkState));
   await driver.executeScript("var minimize=document.querySelector('[data-chat-minimize]'); if (minimize) minimize.click();");
   await waitFor("Messenger hide before Update Profile navigation", async () => driver.executeScript("var chat=document.querySelector('[data-member-floating-chat]'); return !chat || chat.classList.contains('is-hidden')"));
+  await waitFor("Messenger remains hidden before profile navigation", async () => driver.executeScript("var chat=document.querySelector('[data-member-floating-chat]'); if (!chat || chat.classList.contains('is-hidden')) return true; var minimize=chat.querySelector('[data-chat-minimize]'); if (minimize) minimize.click(); return false;"));
   await driver.findElement(By.css("[data-profile-edit]")).click();
   await waitFor("Update Profile navigation", async () => driver.executeScript("return location.pathname.endsWith('/member-profile.html') && location.hash === '#profile-editor'"));
   check("Update Profile opens the editable profile form", await driver.executeScript("return location.pathname.endsWith('/member-profile.html') && location.hash === '#profile-editor' && Boolean(document.querySelector('[data-profile-form]'))"));
@@ -105,7 +106,13 @@ try {
   await driver.executeScript("var input=document.querySelector('[data-profile-form] input[name=correspondence]'); if (input) { input.value=''; input.dispatchEvent(new Event('input',{bubbles:true})); }");
   await driver.findElement(By.css("input[name='profilePhotoFile']")).sendKeys(profileFixture);
   await driver.findElement(By.css("input[name='profileBannerFile']")).sendKeys(profileFixture);
+  // Firefox WebDriver attaches the files but can defer the native change event
+  // until the picker loses focus; dispatch the same browser event explicitly so
+  // this regression tests the shared preview handler rather than WebDriver's
+  // picker-event timing.
+  await driver.executeScript("document.querySelector(\"input[name='profilePhotoFile']\")?.dispatchEvent(new Event('change',{bubbles:true})); document.querySelector(\"input[name='profileBannerFile']\")?.dispatchEvent(new Event('change',{bubbles:true}));");
   await driver.executeScript("var bio=document.querySelector('[data-profile-form] textarea[name=bio]'); if (bio) { bio.value='A short profile bio for the member header.'; bio.dispatchEvent(new Event('input',{bubbles:true})); }");
+  await waitFor("profile editor media previews", async () => driver.executeScript("var photo=document.querySelector('[data-profile-photo-preview] img'), banner=document.querySelector('[data-profile-banner-preview]'); return Boolean(photo && photo.src.startsWith('blob:') && banner && banner.style.backgroundImage.includes('blob:'));"));
   const selectedMediaState = await driver.executeScript("var photo=document.querySelector('[data-profile-photo-preview] img'), banner=document.querySelector('[data-profile-banner-preview]'); return {photoPreview:!!photo&&photo.src.startsWith('blob:'),bannerPreview:!!banner&&banner.style.backgroundImage.includes('blob:')};");
   check("profile editor previews both selected media files before saving", selectedMediaState.photoPreview && selectedMediaState.bannerPreview, JSON.stringify(selectedMediaState));
   const formValidity = await driver.executeScript("var form=document.querySelector('[data-profile-form]'); return {valid:!!form&&form.checkValidity(),invalid:Array.from(form?.elements||[]).filter(function(input){return !input.checkValidity();}).map(function(input){return input.name||input.type;})};");

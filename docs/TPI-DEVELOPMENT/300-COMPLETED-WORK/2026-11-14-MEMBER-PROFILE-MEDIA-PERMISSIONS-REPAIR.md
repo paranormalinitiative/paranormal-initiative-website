@@ -7,6 +7,7 @@
 - **Reported by:** Todd Wayne, Owner/Founder/CEO
 - **Area:** Member Profile, Community Feed, shared profile API, profile media storage
 - **Scope:** Site-wide member experience; applies to regular signed-in members
+- **Sitewide marker:** **YES — this repair applies to every signed-in member's avatar, banner, and profile-save journey.**
 - **Protected applications changed:** None. StudioFlow, Nova Editorial Workspace,
   and Creator Studio were not modified, rebuilt, or live-accepted.
 
@@ -92,6 +93,9 @@ cache freshness, and cleanup. A correct permission on the upload route is not
 enough if the editor or the subsequent save rejects the same member.
 
 ## Permanent protections added after the repair
+
+**Sitewide protection status: ACTIVE.** These safeguards are shared contracts
+and release checks, not owner-only or page-local behavior.
 
 This repair is now guarded as a reusable profile-media contract rather than
 being remembered only as a manual fix:

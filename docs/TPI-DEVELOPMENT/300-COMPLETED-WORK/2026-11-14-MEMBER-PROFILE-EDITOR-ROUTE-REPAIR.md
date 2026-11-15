@@ -7,6 +7,7 @@
 - **Reported by:** Todd Wayne, Owner/Founder/CEO
 - **Area:** Member Profile, avatar upload, background/banner upload, production routing
 - **Scope:** Site-wide member experience; applies to every signed-in member
+- **Sitewide marker:** **YES — the direct editor route and profile-media path are shared production behavior.**
 - **Protected applications changed:** None. StudioFlow, Nova Workspace, and
   Creator Studio were not modified.
 
