@@ -58,10 +58,10 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 
 | Field | Record |
 | --- | --- |
-| Requested | **2026-11-14**, owner request to bring Mystic into the public Help Center |
+| Requested | **2026-11-14**, owner request to make Mystic available for community questions and Help Center support |
 | Implemented | **2026-11-14**, website integration on `codex/tpi-development` |
 | Sitewide scope | **Shared member/community shell and public Member Help Center pages**; the Internal Help Desk remains separate and protected |
-| Status | **Implemented locally; release verification and production deployment pending** |
+| Status | **Deployed and live verified** — Worker version `cae55a18-0feb-49dd-88d9-14cab035862e`; release `rel-6dfad17eb153-4b2ce0fbf307` |
 
 **What was needed:** Members needed to be able to reach Mystic whenever they
 are using the TPI community, not only after navigating to the Help Center. The
@@ -89,6 +89,12 @@ The public article catalog remains the source of truth; updating a guide also
 updates what Mystic can retrieve. The approved Mystic ghost image is reused
 from the TPI Research and Investigation program and has a reduced-motion
 fallback for members who disable animation.
+
+The assistant script loads asynchronously so it cannot hold the shared member
+shell hostage while it loads. The exact production candidate was certified
+with the protected-application integrity guard, and the release passed 53/53
+profile/feed checks, 19/19 Help Center separation checks, YouTube preview and
+playback checks, owner/admin authentication, and 10/10 production smoke checks.
 
 **Source alignment:** The website adapter reflects the Mystic identity and
 knowledge/guardrail intent in the TPI Research and Investigation program's

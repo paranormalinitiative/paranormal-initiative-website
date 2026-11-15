@@ -2,8 +2,7 @@
 
 **Date:** 2026-11-14  
 **Scope:** Shared member/community shell and public Member Help Center
-**Status:** Implemented locally; guarded release verification and production
-acceptance remain required.
+**Status:** Implemented, deployed, and live verified.
 
 ## Request
 
@@ -69,6 +68,21 @@ review. The current assistant is intentionally useful without them.
 - [x] Unknown questions do not receive invented answers.
 - [x] Internal-procedure prompts are redirected to the protected boundary.
 - [x] Sensitive credential prompts receive a safe warning.
-- [ ] Run the repository release preflight.
-- [ ] Deploy through the guarded production path.
-- [ ] Verify live behavior in Firefox and at least one Chromium browser.
+- [x] Run the repository release preflight: certified release `rel-6dfad17eb153-4b2ce0fbf307`, including 53/53 profile checks, 19/19 Help Center separation checks, YouTube preview/playback checks, owner/admin authentication, and protected-application integrity.
+- [x] Deploy through the guarded production path: Worker version `cae55a18-0feb-49dd-88d9-14cab035862e`.
+- [x] Verify live behavior: production smoke passed 10/10; the public Help Center returned 200 with Mystic assets; internal Help Desk separation remained protected.
+
+## Protection record
+
+- Mystic is loaded asynchronously from the shared member shell so the member
+  profile, feed, Messenger, and navigation are ready even if the assistant
+  asset is still loading.
+- The approved pulsing ghost asset is stored at `assets/mystic-ghost.png` and
+  is covered by the Help Center separation regression.
+- Mystic reads only the public member article catalog. Internal Help Desk
+  content is not loaded into the public assistant.
+- Bug questions link to `bug-report.html`; submissions continue through the
+  authenticated `/api/bug-reports` endpoint into the protected Administration
+  Center queue.
+- The exact certified candidate was deployed without recertification drift;
+  the protected StudioFlow/Nova/Creator application bytes were preserved.
