@@ -41,7 +41,11 @@ The following items are not represented as complete merely because a navigation 
 - Staff suspension, warning, temporary restriction, appeals, and complete report triage workflows.
 - Complete member administration and entitlement lifecycle from the preview.
 - Complete creator, Founding Membership, Studio access, event, settings, and publishing mutations in one surface.
-- A finished internal Help Desk knowledge base and policy inventory.
+- The first internal Help Desk and policy foundation is now complete in source:
+  policy hierarchy, access/privacy/moderation rules, report and appeal
+  limitations, bug/repair records, and protected-application release rules.
+  Remaining operational workflows are listed separately below and are not
+  represented as implemented by the new articles.
 - An authenticated NOVA retrieval boundary that can safely read internal Help Desk material.
 - Final parity review between the preview and the legacy production Administration Center.
 - Final parity review between the preview and the legacy production Administration Center remains a future product-completeness review; the live legacy route is owner-authorized and operational.
@@ -92,12 +96,11 @@ The preview currently contains most of these resources but still presents some a
 
 The next phase should complete the public-facing Administration Center foundation in this order:
 
-1. Inventory and finish the member-facing Help Center, internal Help Desk, policy, bug/repair, and operational Markdown sources.
-2. Reconcile the server role/capability matrix with every proposed Administration Center action.
-3. Complete the Command Center with recent audit activity and real alert/queue links using existing protected APIs.
-4. Finish report triage, appeals, restrictions, and staff directory contracts before exposing mutation controls.
-5. Run authenticated owner acceptance on the approved development runtime, then compare parity with `/admin-panel`.
-6. Only after those gates pass, define NOVA's internal sources and separate authorization boundary.
+1. Reconcile the server role/capability matrix with every proposed Administration Center action.
+2. Complete the Command Center with recent audit activity and real alert/queue links using existing protected APIs.
+3. Finish report triage, appeals, restrictions, and staff directory contracts before exposing mutation controls.
+4. Run authenticated owner acceptance on the approved development runtime, then compare parity with `/admin-panel`.
+5. Only after those gates pass, define NOVA's internal sources and separate authorization boundary.
 
 ## Verification record
 

@@ -371,6 +371,80 @@
           { type: "h2", text: "Recommended order" },
           { type: "ol", items: ["Read Start here and the role and authorization guides.", "Practice navigation with read-only dashboard, health, and audit views.", "Review moderation and privacy examples with an authorized mentor.", "Learn the exact Member Directory and Help Desk handoff procedures.", "Only then perform a live action that your appointment explicitly permits, with a second-person review when required."] }
         ]
+      },
+      {
+        id: "internal-policy-index",
+        category: "security-audit",
+        title: "Internal policy index and source-of-truth rules",
+        excerpt: "Know which source answers what is allowed, which source explains how, and when to stop and escalate.",
+        updated: "November 15, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "The Internal Help Desk explains the current interface. TPI's Internal Policies reference explains authority, privacy, moderation, reports, protected applications, incident response, and documentation rules. Server-side authorization and current production behavior remain the final authority." },
+          { type: "h2", text: "Use sources in this order" },
+          { type: "ol", items: ["Server-side authorization and safety boundary.", "Current approved interface and supported workflow.", "Active Internal Policies and Help Desk guidance.", "Dated audits, completion records, and bug/repair records for history.", "Future-work proposals only as planning, never as permission to act."] },
+          { type: "h2", text: "When sources disagree" },
+          { type: "p", text: "Stop the action, preserve safe evidence, and escalate. Do not choose the most permissive interpretation, try another account, or use a direct URL to bypass a missing control." },
+          { type: "callout", tone: "warning", title: "NOVA boundary", text: "NOVA is not connected to internal Help Desk or policy sources yet. Do not represent a future retrieval design as an available internal assistant." }
+        ]
+      },
+      {
+        id: "staff-access-quick-check",
+        category: "administration-center",
+        title: "Check staff access before troubleshooting an Admin page",
+        excerpt: "A safe access checklist for Owner, Executive, Administrator, Moderator, and other protected staff surfaces.",
+        updated: "November 15, 2026",
+        body: [
+          { type: "p", text: "A missing Administration Center page can be an intentional role boundary, a signed-in identity problem, or a real application defect. Check the authority path before changing data or roles." },
+          { type: "h2", text: "Check in order" },
+          { type: "ol", items: ["Confirm the signed-in username without sharing the password or session material.", "Confirm the server-side staff appointment or supported legacy role.", "Confirm the exact route and visible access message.", "Check the supported identity and authorization response through the normal interface.", "If the account should have access but does not, record time, route, browser, role source, and safe screenshot, then escalate."] },
+          { type: "h2", text: "Do not work around the boundary" },
+          { type: "p", text: "A profile title, badge, membership, copied browser storage value, direct URL, or another person's account does not grant access. Never lower a role check to make a page load." }
+        ]
+      },
+      {
+        id: "reports-status-and-appeals",
+        category: "moderation-reports",
+        title: "Handle report status and appeal questions",
+        excerpt: "What staff can document today, and what must remain clearly marked as unfinished until the workflow exists.",
+        updated: "November 15, 2026",
+        body: [
+          { type: "p", text: "The current system supports the implemented report and moderation actions described in the Help Desk. A complete report-triage queue, warning and temporary-restriction workflow, staff-suspension workflow, and formal appeals surface are not yet available as a complete product." },
+          { type: "h2", text: "When an appeal or unresolved restriction question arrives" },
+          { type: "ol", items: ["Keep the safe report or moderation reference.", "Record the date, time, concern, current visible status, and next owner.", "Do not promise a deadline, appeal status, or restriction type the interface does not show.", "Do not invent a database status or use an unrelated account action as a substitute.", "Escalate the decision to the authorized owner or designated decision-maker."] },
+          { type: "callout", tone: "info", title: "Do not overclaim", text: "If the surface is not implemented and verified, say that it is not yet available. Preserve the member's concern and route it to an authorized decision-maker." }
+        ]
+      },
+      {
+        id: "bug-repair-and-release-records",
+        category: "operations-workflow",
+        title: "Create a complete bug, repair, and release record",
+        excerpt: "Capture the date, time, symptom, fix, verification, deployment result, and safeguard so the next incident is easier to recognize.",
+        updated: "November 15, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "A meaningful repair belongs in the maintained Bug / Repair reference and, when appropriate, a dated completion record. A short note that says only 'fixed' is not enough for safe future diagnosis." },
+          { type: "h2", text: "Required fields" },
+          { type: "ul", items: ["Date, time, and time zone.", "Reporter and affected audience, without unnecessary private data.", "Environment, browser/device, route, and visible symptom.", "Scope, checks performed, confirmed cause or clearly labeled hypothesis.", "Exact fix and any intentional behavior change.", "Focused and regression verification evidence.", "Deployment or rollback result, if applicable.", "Safeguard that prevents recurrence and any remaining limitation."] },
+          { type: "h2", text: "Release note language" },
+          { type: "p", text: "Use precise status such as deployed and live verified, local only, blocked, rolled back, or not yet implemented. Never include passwords, cookies, tokens, private member records, or secret-bearing URLs." }
+        ]
+      },
+      {
+        id: "protected-application-release-boundary",
+        category: "apps-operations",
+        title: "Protect stable applications during unrelated releases",
+        excerpt: "Keep StudioFlow, Nova Editor Workspace, Creator Studio, and other stable applications out of ordinary website changes.",
+        updated: "November 15, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "StudioFlow, Nova Editor Workspace, Creator Studio, and other explicitly stable applications are protected from unrelated Help Desk, policy, navigation, profile, feed, and ordinary Administration Center work." },
+          { type: "h2", text: "What the release boundary means" },
+          { type: "ul", items: ["Unrelated work must not modify, rebuild unnecessarily, or replace protected application bytes.", "An application change requires an explicit application scope and its source-to-live workflow.", "Shared Worker, authentication, binding, migration, dependency, or release-tool changes may require broader verification.", "The release process must classify impact, run the smallest safe relevant checks, compare protected bytes, and fail closed on unexpected changes."] },
+          { type: "h2", text: "If an unrelated application check fails" },
+          { type: "p", text: "Do not edit the stable application or its acceptance test merely to finish an unrelated release. Record the failure, identify the dependency, and use the protected application workflow or an explicitly authorized follow-up." },
+          { type: "callout", tone: "warning", title: "Freshness rule", text: "Use the maintained local refresh and staging workflow. Never manually copy an old generated bundle or edit a hashed application asset to make a check pass." }
+        ]
       }
     ]
   };

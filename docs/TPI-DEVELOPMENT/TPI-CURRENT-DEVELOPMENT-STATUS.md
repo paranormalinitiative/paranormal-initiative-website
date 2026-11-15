@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Internal Help Desk and policy foundation
+
+Status: **IMPLEMENTED IN SOURCE; PROTECTED BOUNDARY PRESERVED.** Item 1 of the
+Administration Center roadmap is complete in the canonical repository. Added a
+dedicated [`TPI-INTERNAL-POLICIES.md`](TPI-INTERNAL-POLICIES.md) reference and
+expanded the protected Help Desk with a policy index, staff-access checklist,
+report/appeal limitations, complete bug/repair and release-record guidance, and
+protected-application release boundaries. The source remains separate from the
+public Member Help Center and Mystic; no internal content was added to the
+public assistant. This change does not connect NOVA, change staff permissions,
+modify StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1,
+or R2. Focused syntax, separation, and Markdown-reference verification must
+pass before this documentation-backed Help Desk update is released.
+
 ## 2026-11-15 — Administration Center impact-aware release guard
 
 Status: **DEPLOYED AND LIVE VERIFIED; OWNER ACCEPTANCE PASSED.** The

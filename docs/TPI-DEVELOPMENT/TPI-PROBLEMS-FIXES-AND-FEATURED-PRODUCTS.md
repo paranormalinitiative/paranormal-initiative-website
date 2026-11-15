@@ -59,6 +59,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A small Administration Center change starts the full StudioFlow release suite | [Administration Center impact-aware release guard](#inc-2026-11-15-26--administration-center-impact-aware-release-guard) | Release-impact classifier, admin-only verification, protected application byte guard |
 | The Administration Center candidate is ready after the unrelated StudioFlow rollback | [Administration Center guarded promotion](#inc-2026-11-15-27--administration-center-guarded-promotion) | Certified candidate reuse, anonymous smoke, protected admin routes, owner acceptance |
 | The live Administration Center needed owner verification after promotion | [Administration Center owner acceptance](#inc-2026-11-15-28--administration-center-owner-acceptance) | Owner session, Command Center, read-only navigation, protected boundaries |
+| Staff need a single policy source and complete repair-record format | [Internal Help Desk and policy foundation](#inc-2026-11-15-29--internal-help-desk-and-policy-foundation) | Internal Help Desk, policy reference, Bug / Repair record, protected application boundary |
 
 ## Incident and fix register
 
@@ -156,6 +157,33 @@ The Administration Center is now verified for the live Owner/Founder/CEO
 session. Product-completeness work remains for the unfinished internal
 workflows called out by the dashboard; that is separate from this access and
 rendering acceptance.
+
+### INC-2026-11-15-29 — Internal Help Desk and policy foundation
+
+| Field | Record |
+| --- | --- |
+| Requested | **2026-11-15**, owner said to start with item 1: Help Desk and policies, then work through the Administration Center roadmap |
+| What was missing | The protected Help Desk had a working expandable shell and core procedures, but there was no dedicated policy source, no single source-of-truth hierarchy, and no complete standard for Bug / Repair and release records |
+| Fix | Added `TPI-INTERNAL-POLICIES.md` and five protected Help Desk articles covering policy sources, staff access checks, report/appeal limitations, complete bug/repair records, and stable-application release boundaries |
+| Audience boundary | Internal Help Desk and policies remain protected inside Administration Center; public Member Help Center and Mystic remain public-only |
+| Protected products | StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, R2, and NOVA retrieval were not changed or connected |
+| Status | **Implemented in source; focused verification and guarded release pending** |
+
+**What the policy foundation establishes:** server-side authority remains the
+final gate; staff use the smallest capability; member data is minimized;
+moderation, reports, appeals, account actions, publishing, security, and
+incident response have explicit boundaries; protected applications stay out of
+unrelated releases; and every meaningful repair records its date/time, scope,
+cause, fix, verification, deployment result, and safeguard.
+
+**What it does not claim:** report triage, appeals, warnings, temporary
+restrictions, staff suspension, a full staff directory, or NOVA are not newly
+implemented by documentation. The Help Desk labels those boundaries as not yet
+available until the corresponding server and UI workflows exist.
+
+**References:** [`TPI-INTERNAL-POLICIES.md`](TPI-INTERNAL-POLICIES.md),
+[`TPI-INTERNAL-HELP-DESK.md`](TPI-INTERNAL-HELP-DESK.md), and the protected
+Help Desk data in `internal-help-center-data.js`.
 
 ### INC-2026-11-14-20 — Mystic community assistant
 

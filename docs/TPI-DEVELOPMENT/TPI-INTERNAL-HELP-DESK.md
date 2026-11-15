@@ -4,7 +4,7 @@
 other credentialed staff with an active server-side appointment
 **Owner:** The Paranormal Initiative
 **Status:** Protected internal operations reference
-**Last updated:** 2026-11-14
+**Last updated:** 2026-11-15
 
 ## Relationship to Mystic
 
@@ -91,6 +91,7 @@ scannable without putting every procedure in one long menu.
 
 ### Security, privacy, and audit
 
+- Internal policy index and source-of-truth rules
 - Security and audit practices for internal work
 - Run a privacy review before sharing or publishing
 - Keep credentials, recovery data, session material, and private member data
@@ -100,6 +101,7 @@ scannable without putting every procedure in one long menu.
 
 - Use the daily operations checklist
 - Hand off an internal task cleanly
+- Create a complete bug/repair and release record
 - Record owner, target, action, result, and next step
 
 ### Incidents, outages, and continuity
@@ -107,6 +109,15 @@ scannable without putting every procedure in one long menu.
 - Respond to a suspected security incident
 - Handle an outage or degraded service
 - Preserve evidence and escalate instead of improvising destructive changes
+
+### Policy source of truth
+
+The active policy companion is [`TPI-INTERNAL-POLICIES.md`](TPI-INTERNAL-POLICIES.md).
+Use it for authority, privacy, moderation, reports, account actions, content,
+protected applications, security, incident response, and documentation rules.
+Use this Help Desk for the current interface procedure. If the policy, current
+server response, and interface disagree, stop and escalate; do not select the
+most permissive interpretation.
 
 ### Staff reference and training
 
@@ -157,6 +168,16 @@ log in or post. Restoration uses `Unblock / Restore Member`.
   application files during unrelated website work.
 - If a stable application appears to be involved, stop scope expansion,
   document the dependency, and use the protected application workflow.
+
+### Bug, repair, and release records
+
+For a meaningful incident or repair, record the date, time zone, reporter,
+audience, environment, route, visible symptom, scope, checks performed,
+confirmed cause, exact fix, verification, release/rollback result, and the
+safeguard that prevents recurrence. Use the maintained
+`TPI-PROBLEMS-FIXES-AND-FEATURED-PRODUCTS.md` reference and a dated completion
+record when the work changes user-facing behavior. Never include passwords,
+tokens, cookies, private member data, or secret-bearing URLs.
 
 ## Security and incident response
 
@@ -209,6 +230,9 @@ itself.
 6. Run the Help Center separation regression after changes.
 7. Treat Administration Center, authentication, moderation, security, and
    application changes as higher-impact than ordinary public documentation.
+8. Update [`TPI-INTERNAL-POLICIES.md`](TPI-INTERNAL-POLICIES.md), the relevant
+   Help Desk article, and the bug/repair record together when a policy or
+   operational behavior changes.
 
 The internal UI data currently lives in `internal-help-center-data.js` and is
 rendered by the shared Help Center shell only after the internal audience gate
