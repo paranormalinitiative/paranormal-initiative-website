@@ -113,6 +113,7 @@ try {
   // picker-event timing.
   await driver.executeScript("document.querySelector(\"input[name='profilePhotoFile']\")?.dispatchEvent(new Event('change',{bubbles:true})); document.querySelector(\"input[name='profileBannerFile']\")?.dispatchEvent(new Event('change',{bubbles:true}));");
   const bioInput = await driver.findElement(By.css("[data-profile-form] textarea[name='bio']"));
+  await driver.executeScript("arguments[0].scrollIntoView({block:'center'});", bioInput);
   await bioInput.clear();
   await bioInput.sendKeys("A short profile bio for the member header.");
   await waitFor("profile editor media previews", async () => driver.executeScript("var photo=document.querySelector('[data-profile-photo-preview] img'), banner=document.querySelector('[data-profile-banner-preview]'); return Boolean(photo && photo.src.startsWith('blob:') && banner && banner.style.backgroundImage.includes('blob:'));"));
