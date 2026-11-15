@@ -1269,14 +1269,14 @@ columns are compatibility inputs, not the complete authority model.
 | Field | Record |
 | --- | --- |
 | Detected | **2026-11-15**, during the first operational moderation workflow implementation |
-| Fixed in source | **2026-11-15**, current `codex/tpi-development` source; release pending |
+| Fixed in source | **2026-11-15**, commit `33a090f8a72c2918836bf6a5387f1fca833cb32c`; guarded production release completed |
 | Product/surface | Protected Administration Center Reports & Moderation queue |
-| Environment | Source and local verification; no production data or private evidence changed |
+| Environment | Source, local verification, and guarded production release; no production data or private evidence changed |
 | Symptom | Video and messenger reports had protected status controls, but member bug-report detail/status handlers still rejected the route pattern. Terminal status changes also accepted an empty reason, so the queue could not guarantee a documented triage decision. |
 | Root cause | The queue had grown around the original video/messenger sources while member bug reports were added later; the status API recorded an optional audit reason instead of enforcing a required decision note. |
 | Fix | Extended the detail and status route contracts to `bug`, added the member bug type to the Admin Center, and required a server-validated triage note for reviewed, dismissed, and actioned outcomes. The UI now confirms the decision and shows the note in protected moderation history. |
-| Verification | Admin Center preview/source contract **82/82**; Admin Center TypeScript/Vite build passed; Worker/API syntax passed; private-evidence boundary preserved in source checks |
-| Production status | Pending guarded preflight, deployment, anonymous smoke, and live Firefox acceptance |
+| Verification | Admin Center preview/source contract **82/82**; Admin Center TypeScript/Vite build passed; Worker/API syntax passed; local authentication **38/38**; Help Center separation **21/21**; shared-API preflight **13/13**; production smoke **10/10**; private-evidence boundary preserved |
+| Production status | **Deployed and live verified** in release `rel-33a090f8a72c-497b729bbec3`; Worker `771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad` serves 100% of traffic |
 | References | [`2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE-AUDIT.md`](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE-AUDIT.md), [`2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE.md), `functions/api/[[path]].js`, `admin-center-app/src/app.tsx`, `scripts/qa/tpi-admin-006-preview.mjs` |
 
 **Lesson:** A report queue is not a complete triage workflow until every

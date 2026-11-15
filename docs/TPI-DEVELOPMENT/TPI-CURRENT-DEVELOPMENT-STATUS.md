@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center report intake and triage
 
-Status: **IMPLEMENTED IN SOURCE; PENDING GUARDED RELEASE.** The first
+Status: **DEPLOYED AND LIVE VERIFIED; PROTECTED EVIDENCE BOUNDARY PRESERVED.** The first
 operational moderation workflow is complete for video reports, messenger
 reports, and member bug reports. Authorized staff can search and filter one
 bounded metadata queue, open protected detail, choose a supported review
@@ -10,9 +10,13 @@ outcome, and record a required triage note for reviewed, dismissed, or actioned
 decisions. The server refuses terminal decisions without a note and writes the
 decision to the existing audit log. Private messenger bodies, conversation IDs,
 recordings, credentials, automatic member restrictions, and content deletion
-remain outside this phase. Admin Center source checks passed **82/82** and the
-TypeScript/Vite build passed. The guarded release is the next gate; protected
-application bytes must remain unchanged. See [Administration Center Report Intake and Triage](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE.md).
+remain outside this phase. Admin Center source checks passed **82/82**, the
+TypeScript/Vite build passed, local authentication passed **38/38**, and Help
+Center separation passed **21/21**. Release
+`rel-33a090f8a72c-497b729bbec3` deployed Worker
+`771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad` to 100% traffic; production anonymous
+smoke passed **10/10**. The shared-API profile passed **13/13** certified gates
+and the protected-application byte guard remained clean. See [Administration Center Report Intake and Triage](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE.md).
 
 ## 2026-11-15 — Administration Center role and action matrix reconciliation
 

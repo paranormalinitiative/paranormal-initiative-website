@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-15  
 **Scope:** Reports & Moderation queue for video, messenger, and member bug reports  
-**Status:** Source implementation complete; guarded release pending
+**Status:** Deployed and live verified; protected evidence boundary preserved
 
 ## What changed
 
@@ -32,8 +32,11 @@ appeals, and staff actions remain separate future workflows.
 - Worker/API syntax check: passed.
 - No database migration or production data mutation was performed during the
   source phase.
-- Production deployment and live acceptance remain required before this record
-  is marked deployed.
+- Guarded production release `rel-33a090f8a72c-497b729bbec3` deployed Worker
+  `771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad` to 100% traffic.
+- Production anonymous smoke passed **10/10**.
+- The shared-API release profile passed **13/13** certified gates and retained
+  the protected-application byte guard.
 
 ## Protected applications
 

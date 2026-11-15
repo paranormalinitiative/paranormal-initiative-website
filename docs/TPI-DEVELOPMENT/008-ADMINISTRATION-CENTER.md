@@ -74,6 +74,12 @@ and expanded per-capability inspection. Moderators currently manage Community
 Feed posts and comments only. Do not describe the remaining future tools as
 available.
 
+This report-triage slice is deployed and live verified in release
+`rel-33a090f8a72c-497b729bbec3` (Worker
+`771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad`). Anonymous production smoke passed
+**10/10**; no report data, migration, private evidence, or protected
+application was changed by the release.
+
 That record, as amended by TPI-GOVERNANCE-003B1, also fixes the conduct standard staff
 must support: viewpoint-neutral moderation, protection for criticism of TPI and its
 leadership, recusal and escalation, documented fair process, equal application

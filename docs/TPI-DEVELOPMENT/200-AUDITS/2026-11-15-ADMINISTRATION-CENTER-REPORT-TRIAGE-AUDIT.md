@@ -2,7 +2,7 @@
 
 Date: 2026-11-15  
 Scope: Protected Administration Center Reports & Moderation queue  
-Status: Source implementation complete; guarded release pending
+Status: Deployed and live verified; protected evidence boundary preserved
 
 ## Objective
 
@@ -73,6 +73,17 @@ every request.
 - Live anonymous smoke must continue to deny admin APIs.
 - Live Firefox acceptance must pass using the disposable synthetic account;
   no owner browser storage or private data is used.
+
+## Release evidence
+
+The exact certified candidate `rel-33a090f8a72c-497b729bbec3` was deployed as
+Worker version `771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad` at 100% production
+traffic. The shared-API release profile passed its **13/13** certified gates;
+production anonymous smoke passed **10/10**. The local authentication
+lifecycle passed **38/38**, the Admin Center contract passed **82/82**, the
+Help Center separation check passed **21/21**, and the protected-application
+integrity guard remained clean. No production migration or report-data rewrite
+was performed.
 
 ## Not included in this phase
 
