@@ -3,7 +3,7 @@
 **Date:** 2026-11-15  
 **Scope:** Server-side staff roles, Administration Center access probes, and
 internal role/action documentation  
-**Status:** Source implementation complete; guarded release pending
+**Status:** Deployed and live verified; protected boundary preserved
 
 ## Request
 
@@ -51,15 +51,27 @@ Unknown, or public Mystic knowledge.
 - `node scripts/qa/tpi-admin-006-preview.mjs`: **82/82**.
 - `node scripts/verify/tpi-release-impact.mjs`: **15/15**.
 - `node --check worker.js` and `node --check functions/api/[[path]].js`: passed.
-- `npm run verify:markdown-reference`: passed; **1,077** Markdown files indexed.
+- `npm run verify:release-safety`: **37/37**.
+- Full guarded preflight: **38/38** gates passed in **6m44s**.
+- Production anonymous smoke: **10/10**.
+- Live isolated Firefox Developer Edition acceptance: **65/65**.
+- `npm run verify:markdown-reference`: passed; **1,078** Markdown files indexed.
 - Help Center source separation: **19/19** source checks passed. The local
   HTTP probe could not connect because the maintained Worker service was not
   available in this execution environment.
 
+The exact certified candidate `rel-0cb07bb0ba42-24c5cfb8e77e` was deployed as
+Worker version `53382ceb-b9d1-46c0-ab94-0bd039a3611f` and confirmed at 100% of
+production traffic. The protected-application integrity guard remained clean.
+
 ## Release state
 
-No production deployment was claimed in this source phase. The exact next
-steps are the maintained clean-tree and parity checks, local authentication
-lifecycle, `npm run release:preflight`, guarded production deployment, and
-live Firefox owner/staff role acceptance. Protected application byte checks
-must remain clean throughout.
+The release used the maintained clean-tree and parity checks, local
+authentication lifecycle, certified preflight candidate, guarded production
+deployment, anonymous smoke, and live Firefox acceptance. A release-runner
+stabilization was included because the first two production attempts exposed a
+transient login-to-Member-Home redirect race while entering StudioFlow. The
+runner now waits for the settled identity and retries only that known
+Member-Home redirect; other access-denied or unexpected pages still fail
+closed. StudioFlow application source and protected application bytes were not
+changed.

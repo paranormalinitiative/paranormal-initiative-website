@@ -2,8 +2,11 @@
 
 ## 2026-11-15 — Administration Center role and action matrix reconciliation
 
-Status: **IMPLEMENTED IN SOURCE; PENDING GUARDED RELEASE.** Item 2 of the
-Administration Center roadmap is complete in the canonical repository. The
+Status: **DEPLOYED AND LIVE VERIFIED; PROTECTED BOUNDARY PRESERVED.** Item 2 of
+the Administration Center roadmap is complete in the canonical repository and
+live production path. Release
+`rel-0cb07bb0ba42-24c5cfb8e77e` deployed Worker
+`53382ceb-b9d1-46c0-ab94-0bd039a3611f` to 100% of traffic. The
 server-side role resolver, Administration Center HTML gate, `/api/auth/me`, and
 `/api/editorial/access` now share one centralized full-Center eligibility
 decision. This repaired a real mismatch where an explicitly appointed
@@ -13,12 +16,14 @@ role/action matrix audit and an internal Help Desk article covering every
 current Center area, the separate Moderator surface, protected entitlement
 boundaries, and unfinished future workflows. Staff-role regression passed
 **22/22**, Admin Center source/route contracts passed **82/82**, release-impact
-classification passed **15/15**, and the Markdown reference passed with
-**1,077** files. No StudioFlow, Creator Studio, Nova Editor Workspace, private
-media, D1, R2, or Crossroads data was changed. The local HTTP Help Center probe
-could not connect because the maintained local Worker service was unavailable
-in this execution environment; source-level separation checks passed **19/19**.
-The guarded release and live owner/staff acceptance remain the next gates.
+classification passed **15/15**, full preflight passed **38/38** gates, and the
+Markdown reference passed with **1,078** files. Production anonymous smoke
+passed **10/10** and live isolated Firefox Developer Edition acceptance passed
+**65/65**. No StudioFlow, Creator Studio, Nova Editor Workspace, private
+media, D1, R2, or Crossroads data was changed. The release harness also now
+waits for post-login identity settlement and retries only the known transient
+Member Home redirect before entering StudioFlow; fail-closed access checks and
+protected-application byte checks remain in force.
 See [Administration Center Role and Action Matrix Audit](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md).
 
 ## 2026-11-15 — Internal Help Desk and policy foundation
