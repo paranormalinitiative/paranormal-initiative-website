@@ -57,6 +57,12 @@ check("extracts video files linked from older page scripts", () => {
   assert.equal(result.videoContentType, "video/mp4");
 });
 
+check("marks JavaScript-rendered research pages as interactive external pages", () => {
+  const result = parsePreviewHtml(`<!doctype html><title>Battery Drain Experiment</title><script src="player.js"></script><main>Research experiment video</main>`, "http://example.com/bde/Battery%20Drain%20Experiment.html");
+  assert.equal(result.provider, "external-page");
+  assert.equal(result.interactive, true);
+});
+
 check("recognizes supported YouTube URL forms", () => {
   assert.equal(youtubeVideoId("https://youtu.be/qB3dMpROEdE"), "qB3dMpROEdE");
   assert.equal(youtubeVideoId("https://www.youtube.com/watch?v=qB3dMpROEdE"), "qB3dMpROEdE");

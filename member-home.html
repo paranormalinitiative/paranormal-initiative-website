@@ -1667,6 +1667,40 @@
             border-top: 1px solid #1e2935;
         }
 
+        .external-page-preview-media {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+            padding: 24px;
+            background: radial-gradient(circle at 50% 35%, rgba(247, 2, 2, 0.16), transparent 58%), #071017;
+        }
+
+        .external-page-preview-media button {
+            border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
+            border-radius: 999px;
+            padding: 12px 18px;
+            background: color-mix(in srgb, var(--accent) 18%, #071017);
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .external-page-preview-media button:hover,
+        .external-page-preview-media button:focus-visible {
+            background: color-mix(in srgb, var(--accent) 30%, #071017);
+        }
+
+        .external-page-preview-frame {
+            display: block;
+            width: 100%;
+            min-height: 320px;
+            height: 320px;
+            border: 0;
+            background: #000;
+        }
+
         .youtube-preview-play {
             position: absolute;
             inset: 0;
@@ -5043,6 +5077,12 @@
         return /^https?:\/\//i.test(url) ? url : "";
     }
 
+    function safeExternalPageUrl(meta) {
+        if (!meta || meta.provider !== "external-page" || meta.interactive !== true) return "";
+        var url = String(meta.url || "");
+        return /^https?:\/\//i.test(url) ? url : "";
+    }
+
     function renderLinkPreviewCard(meta) {
         if (!meta || (!meta.title && !meta.image && !meta.description)) return "";
         var host = meta.host || "";
@@ -5050,6 +5090,7 @@
         var desc = meta.description || "";
         var youtubeId = safeYouTubeVideoId(meta);
         var externalVideoUrl = safeExternalVideoUrl(meta);
+        var externalPageUrl = safeExternalPageUrl(meta);
         var media;
         if (externalVideoUrl) {
             var sourceType = String(meta.videoContentType || "").trim();
@@ -5058,6 +5099,10 @@
                     '<source src="' + escapeAttr(externalVideoUrl) + '"' + (sourceType ? ' type="' + escapeAttr(sourceType) + '"' : '') + '>' +
                     'Your browser could not load this video. <a href="' + escapeAttr(externalVideoUrl) + '" target="_blank" rel="noopener noreferrer ugc">Open the video</a>.' +
                 '</video></div>';
+        } else if (externalPageUrl) {
+            media = '<div class="link-preview-media external-page-preview-media" data-external-page-media>' +
+                '<button type="button" data-external-page-play="' + escapeAttr(externalPageUrl) + '">Open interactive preview</button>' +
+            '</div>';
         } else if (meta.image) {
             media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();"></div>';
         } else {
@@ -5091,6 +5136,17 @@
                 '</div>' +
             '</div>';
         }
+        if (externalPageUrl) {
+            return '<div class="link-preview-card external-page-preview-card" data-external-page-preview="true">' +
+                media +
+                '<div class="link-preview-info">' +
+                    (host ? '<span class="link-preview-host">' + escapeHtml(host) + '</span>' : "") +
+                    '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
+                    '<span class="link-preview-desc">Interactive external page. Playback depends on the source site allowing embedded content.</span>' +
+                    '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open source</a>' +
+                '</div>' +
+            '</div>';
+        }
         return '<a class="link-preview-card" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">' +
             media +
             '<div class="link-preview-info">' +
@@ -5102,6 +5158,16 @@
     }
 
     document.addEventListener("click", function(event) {
+        var externalPage = event.target.closest("[data-external-page-play]");
+        if (externalPage) {
+            event.preventDefault();
+            var externalUrl = String(externalPage.getAttribute("data-external-page-play") || "");
+            if (!/^https?:\/\//i.test(externalUrl)) return;
+            var media = externalPage.closest("[data-external-page-media]");
+            if (!media) return;
+            media.innerHTML = '<iframe class="external-page-preview-frame" src="' + escapeAttr(externalUrl) + '" title="Interactive external video page" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts" allow="autoplay; fullscreen; picture-in-picture"></iframe>';
+            return;
+        }
         var play = event.target.closest("[data-youtube-play]");
         if (!play) return;
         event.preventDefault();
