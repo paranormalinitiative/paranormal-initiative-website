@@ -291,7 +291,10 @@
     // Mystic is available throughout the shared member/community experience,
     // not only inside the public Help Center. The assistant remains grounded
     // in public member guidance and never loads the internal Help Desk data.
-    await initMysticAssistant();
+    // Do not make the member shell wait for a decorative/help asset. The
+    // community UI must become ready even if Mystic's script is still loading;
+    // Mystic attaches independently as soon as the asset is available.
+    initMysticAssistant();
 
     // Mark ready
     document.body.classList.add("member-ready");
