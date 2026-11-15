@@ -320,7 +320,7 @@ export type AdminEventRecord = {
 
 export type AdminReport = {
   id: string;
-  reportType: "video" | "messenger" | string;
+  reportType: "video" | "messenger" | "bug" | string;
   contentType?: string;
   contentId?: string;
   contentLabel?: string;

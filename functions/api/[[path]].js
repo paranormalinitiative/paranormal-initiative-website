@@ -2254,7 +2254,7 @@ async function handleAdminReports(request, env) {
 }
 
 async function handleAdminReportDetail(path, env) {
-  const match = path.match(/^\/admin\/reports\/(video|messenger)\/([^/]+)$/);
+  const match = path.match(/^\/admin\/reports\/(video|messenger|bug)\/([^/]+)$/);
   const reportType = match?.[1] || "";
   const reportId = clean(decodeURIComponent(match?.[2] || ""));
   if (!reportId) return json({ error: "Report id is required." }, 400);
@@ -2323,7 +2323,7 @@ async function handleAdminReportDetail(path, env) {
 }
 
 async function handleAdminReportStatus(path, request, env, actingUser) {
-  const match = path.match(/^\/admin\/reports\/(video|messenger)\/([^/]+)\/status$/);
+  const match = path.match(/^\/admin\/reports\/(video|messenger|bug)\/([^/]+)\/status$/);
   const reportType = match?.[1] || "";
   const reportId = clean(decodeURIComponent(match?.[2] || ""));
   const data = await readJson(request);
@@ -2332,8 +2332,12 @@ async function handleAdminReportStatus(path, request, env, actingUser) {
   const allowedStatuses = reportType === "messenger"
     ? ["pending", "reviewed", "dismissed", "actioned"]
     : ["open", "reviewed", "dismissed", "actioned"];
+  const terminalStatuses = ["reviewed", "dismissed", "actioned"];
   if (!reportId) return json({ error: "Report id is required." }, 400);
   if (!allowedStatuses.includes(status)) return json({ error: "Report status was not recognized." }, 400);
+  if (terminalStatuses.includes(status) && reason.length < 3) {
+    return json({ error: "A triage note is required when closing or actioning a report." }, 400);
+  }
   const table = reportType === "video" ? "video_reports" : reportType === "messenger" ? "messenger_reports" : "member_bug_reports";
   const current = await env.TPI_DB.prepare(`SELECT id, status FROM ${table} WHERE id = ?`).bind(reportId).first();
   if (!current) return json({ error: "Report was not found." }, 404);

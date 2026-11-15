@@ -63,10 +63,15 @@ The completed 2026-11-15 role/action reconciliation is recorded in
 It is the quick reference for matching the Center’s proposed areas to the
 effective server-side role, route allowlist, and separate product capabilities.
 
-Not yet implemented: staff suspension, member report intake and triage, warning
-and temporary restriction actions, appeals, a full staff directory, and an
-expanded per-capability inspection interface. Moderators currently manage
-Community Feed posts and comments only. Do not describe these future tools as
+The first report-intake and triage workflow is now implemented for video,
+messenger, and member bug reports: authorized staff can filter the safe queue,
+open protected metadata detail, choose a supported review outcome, and record
+a required triage note for reviewed, dismissed, or actioned decisions. Private
+message evidence remains outside the surface, and no member restriction is
+applied by report triage. The remaining future work is staff suspension,
+warning and temporary restriction actions, appeals, a full staff directory,
+and expanded per-capability inspection. Moderators currently manage Community
+Feed posts and comments only. Do not describe the remaining future tools as
 available.
 
 That record, as amended by TPI-GOVERNANCE-003B1, also fixes the conduct standard staff

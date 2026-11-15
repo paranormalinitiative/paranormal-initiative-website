@@ -100,7 +100,7 @@
         category: "staff-start",
         title: "Start here: how internal TPI work is organized",
         excerpt: "The operating map for admins, moderators, contributors, reviewers, and other credentialed staff.",
-        updated: "November 14, 2026",
+        updated: "November 15, 2026",
         popular: true,
         body: [
           { type: "p", text: "The internal Help Desk is for people with an active server-side staff appointment or another explicitly approved internal access path. It explains how the existing TPI tools work; it does not grant a role or bypass a server gate." },
@@ -148,9 +148,9 @@
         updated: "November 14, 2026",
         popular: true,
         body: [
-          { type: "p", text: "Reports are a protected operational queue. Treat the report as an allegation or signal to review, not as proof that the reported person or content violated a rule." },
+          { type: "p", text: "Reports are a protected operational queue. Treat the report as an allegation or signal to review, not as proof that the reported person or content violated a rule. The current Administration Center triage queue supports video reports, Messenger reports, and member bug reports." },
           { type: "h2", text: "Review sequence" },
-          { type: "ol", items: ["Open Reports & Moderation and identify the report type, target, reason, status, and time.", "Open the protected detail only when your role permits it and only review the information needed for the decision.", "Compare the content with the applicable TPI policy or community standard; do not moderate disagreement merely because it is unpopular.", "Choose the supported status action, record a concise reason, and confirm the audit entry.", "Escalate threats, doxxing, credible immediate danger, or matters outside TPI’s role to the appropriate safety or emergency channel."] },
+          { type: "ol", items: ["Open Reports & Moderation and identify the report type, target, reason, status, and time.", "Open the protected detail only when your role permits it and only review the information needed for the decision.", "Compare the content with the applicable TPI policy or community standard; do not moderate disagreement merely because it is unpopular.", "Choose reviewed, dismissed, or actioned only after entering a concise triage note; reopening to open or pending is available when more review is needed.", "Confirm that the decision appears in moderation history, then escalate threats, doxxing, credible immediate danger, or matters outside TPI’s role to the appropriate safety or emergency channel."] },
           { type: "h2", text: "Privacy boundary" },
           { type: "p", text: "Do not copy private message bodies, residential addresses, recovery information, or sensitive media into a report note. Link to the protected record or describe the minimum necessary fact." }
         ]
@@ -427,7 +427,7 @@
         excerpt: "What staff can document today, and what must remain clearly marked as unfinished until the workflow exists.",
         updated: "November 15, 2026",
         body: [
-          { type: "p", text: "The current system supports the implemented report and moderation actions described in the Help Desk. A complete report-triage queue, warning and temporary-restriction workflow, staff-suspension workflow, and formal appeals surface are not yet available as a complete product." },
+          { type: "p", text: "The current system now provides a protected metadata triage queue for video reports, Messenger reports, and member bug reports. A warning and temporary-restriction workflow, staff-suspension workflow, and formal appeals surface are not yet available as a complete product." },
           { type: "h2", text: "When an appeal or unresolved restriction question arrives" },
           { type: "ol", items: ["Keep the safe report or moderation reference.", "Record the date, time, concern, current visible status, and next owner.", "Do not promise a deadline, appeal status, or restriction type the interface does not show.", "Do not invent a database status or use an unrelated account action as a substitute.", "Escalate the decision to the authorized owner or designated decision-maker."] },
           { type: "callout", tone: "info", title: "Do not overclaim", text: "If the surface is not implemented and verified, say that it is not yet available. Preserve the member's concern and route it to an authorized decision-maker." }

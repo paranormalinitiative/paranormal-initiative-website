@@ -61,6 +61,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | The live Administration Center needed owner verification after promotion | [Administration Center owner acceptance](#inc-2026-11-15-28--administration-center-owner-acceptance) | Owner session, Command Center, read-only navigation, protected boundaries |
 | Staff need a single policy source and complete repair-record format | [Internal Help Desk and policy foundation](#inc-2026-11-15-29--internal-help-desk-and-policy-foundation) | Internal Help Desk, policy reference, Bug / Repair record, protected application boundary |
 | An appointed staff member can open the Admin Center but sees the wrong limited interface | [Administration Center role matrix](#inc-2026-11-15-30--administration-center-role-probe-mismatch) | Effective staff appointment, legacy role mapping, Admin Center access probe |
+| A member bug report appears in the queue but cannot be opened or documented with a triage decision | [Administration Center report triage](#inc-2026-11-15-31--administration-center-report-triage-contract) | Bug-report route coverage, required triage note, metadata-only evidence, audit history |
 
 ## Incident and fix register
 
@@ -1262,6 +1263,25 @@ through an explicit, permission-aware bridge.
 **Lesson:** Every protected HTML gate, API response, and client navigation hint
 must derive from the same effective server-side role resolver. Legacy account
 columns are compatibility inputs, not the complete authority model.
+
+### INC-2026-11-15-31 — Administration Center report triage contract
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15**, during the first operational moderation workflow implementation |
+| Fixed in source | **2026-11-15**, current `codex/tpi-development` source; release pending |
+| Product/surface | Protected Administration Center Reports & Moderation queue |
+| Environment | Source and local verification; no production data or private evidence changed |
+| Symptom | Video and messenger reports had protected status controls, but member bug-report detail/status handlers still rejected the route pattern. Terminal status changes also accepted an empty reason, so the queue could not guarantee a documented triage decision. |
+| Root cause | The queue had grown around the original video/messenger sources while member bug reports were added later; the status API recorded an optional audit reason instead of enforcing a required decision note. |
+| Fix | Extended the detail and status route contracts to `bug`, added the member bug type to the Admin Center, and required a server-validated triage note for reviewed, dismissed, and actioned outcomes. The UI now confirms the decision and shows the note in protected moderation history. |
+| Verification | Admin Center preview/source contract **82/82**; Admin Center TypeScript/Vite build passed; Worker/API syntax passed; private-evidence boundary preserved in source checks |
+| Production status | Pending guarded preflight, deployment, anonymous smoke, and live Firefox acceptance |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE-AUDIT.md`](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE-AUDIT.md), [`2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE.md), `functions/api/[[path]].js`, `admin-center-app/src/app.tsx`, `scripts/qa/tpi-admin-006-preview.mjs` |
+
+**Lesson:** A report queue is not a complete triage workflow until every
+supported source can be opened, every terminal decision is documented by the
+server, and private evidence stays outside the administrative response.
 
 ## New-entry template
 

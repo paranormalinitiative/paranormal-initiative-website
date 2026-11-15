@@ -66,6 +66,9 @@ scannable without putting every procedure in one long menu.
 ### Moderation, abuse, and reports
 
 - Review an abuse or community report
+- Use the protected Reports & Moderation queue to triage video, messenger, and member bug reports
+- Record a concise factual triage note before marking a report reviewed, dismissed, or actioned
+- Remember that the queue exposes metadata only; private conversation evidence remains protected
 - Hide or remove a community post or comment
 - Use the moderation decision checklist
 - Escalate threats, doxxing, or immediate safety concerns

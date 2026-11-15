@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center report intake and triage
+
+Status: **IMPLEMENTED IN SOURCE; PENDING GUARDED RELEASE.** The first
+operational moderation workflow is complete for video reports, messenger
+reports, and member bug reports. Authorized staff can search and filter one
+bounded metadata queue, open protected detail, choose a supported review
+outcome, and record a required triage note for reviewed, dismissed, or actioned
+decisions. The server refuses terminal decisions without a note and writes the
+decision to the existing audit log. Private messenger bodies, conversation IDs,
+recordings, credentials, automatic member restrictions, and content deletion
+remain outside this phase. Admin Center source checks passed **82/82** and the
+TypeScript/Vite build passed. The guarded release is the next gate; protected
+application bytes must remain unchanged. See [Administration Center Report Intake and Triage](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-REPORT-TRIAGE.md).
+
 ## 2026-11-15 — Administration Center role and action matrix reconciliation
 
 Status: **DEPLOYED AND LIVE VERIFIED; PROTECTED BOUNDARY PRESERVED.** Item 2 of

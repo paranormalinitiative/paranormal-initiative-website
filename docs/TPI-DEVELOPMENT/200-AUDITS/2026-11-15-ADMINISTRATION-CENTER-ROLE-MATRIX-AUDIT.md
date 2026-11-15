@@ -97,7 +97,7 @@ These are intentionally not inferred from the staff role:
 The following remain future work and must not be presented as available:
 
 - staff suspension;
-- member report intake and triage redesign;
+- appeals and member report follow-up beyond the supported metadata triage queue;
 - moderator warnings and temporary restrictions;
 - appeals;
 - a complete staff directory;
