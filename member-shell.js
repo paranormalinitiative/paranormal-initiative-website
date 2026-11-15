@@ -2658,9 +2658,9 @@
         '<div role="menu"></div>' +
       '</div>' +
       '<div class="member-floating-chat-content">' +
-        '<aside class="member-chat-contacts" aria-label="Members">' +
-          '<span class="member-chat-section-label">Members</span>' +
-          '<input type="search" class="member-chat-member-search" data-chat-member-search placeholder="Search members" aria-label="Search members">' +
+        '<aside class="member-chat-contacts" aria-label="Friends and chats">' +
+          '<span class="member-chat-section-label">Friends</span>' +
+          '<input type="search" class="member-chat-member-search" data-chat-member-search placeholder="Search friends or members" aria-label="Search friends or members">' +
           '<div class="member-chat-online-list" data-chat-online></div>' +
           '<div class="member-chat-section-label member-chat-list-label"><span>Chats</span></div>' +
           '<div class="member-chat-list" data-chat-list></div>' +
@@ -2671,7 +2671,7 @@
               '<div><span class="member-chat-kicker">Messenger rooms</span><strong id="messenger-room-builder-title" data-chat-create-title>Create Room</strong></div>' +
               '<button type="button" data-chat-create-close aria-label="Close room builder">Close</button>' +
             '</header>' +
-            '<p data-chat-create-description>Name the room, then add at least one member from the left. You are included automatically.</p>' +
+            '<p data-chat-create-description>Name the room, then add at least one friend from the left. You are included automatically.</p>' +
             '<label class="member-chat-create-name"><span>Room name</span><input type="text" data-chat-name maxlength="160" placeholder="Example: Investigation Team"></label>' +
             '<span class="member-chat-create-count" data-chat-create-count>0 members selected</span>' +
             '<div class="member-chat-member-list" data-chat-members aria-label="Selected room members"></div>' +
@@ -2768,6 +2768,7 @@
     var conversationBuilderMode = "room";
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
     var memberSearchQuery = "";
+    var memberSearchRequestId = 0;
     var activeSearchIndex = -1;
     var activeSearchMatches = [];
     var activeMessageSyncTimer = null;
@@ -3205,13 +3206,13 @@
         var selectedForRoom = selectingForRoom && selectedMembers.has(member.username);
         var presenceText = online ? "Online" : "Offline";
         var presenceClass = online ? "is-online" : "is-offline";
-        return '<button class="member-chat-online-person' + (selectedForRoom ? ' is-room-selected' : '') + '" type="button" data-online-member="' + escapeHtml(member.username) + '"' +
+        return '<button class="member-chat-online-person' + (selectedForRoom ? ' is-room-selected' : '') + '" type="button" data-online-member="' + escapeHtml(member.username) + '" data-chat-friend="' + (member.friendStatus === "friends" ? "true" : "false") + '"' +
           (selectingForRoom ? ' aria-pressed="' + (selectedForRoom ? 'true' : 'false') + '"' : '') + '>' +
           renderChatAvatar(member) +
           '<span class="member-chat-person-copy"><strong>' + escapeHtml(chatMemberName(member)) + '</strong><small>' + escapeHtml(chatMemberUsername(member)) + '</small>' +
           '<span class="member-chat-presence ' + presenceClass + '">' + escapeHtml(selectedForRoom ? "Added to room" : presenceText) + '</span></span>' +
         '</button>';
-      }).join("") : '<p class="member-chat-list-empty">No members found.</p>';
+      }).join("") : '<p class="member-chat-list-empty">' + (query ? 'No members found.' : 'No friends yet. Search for a member to start a chat.') + '</p>';
     }
 
     onlineEl.addEventListener("click", async function(event) {
@@ -3236,7 +3237,18 @@
     if (memberSearchEl) {
       memberSearchEl.addEventListener("input", function() {
         memberSearchQuery = memberSearchEl.value;
-        renderOnline();
+        var requestId = ++memberSearchRequestId;
+        loadChatRoster(user, memberSearchQuery).then(function(nextRoster) {
+          if (requestId !== memberSearchRequestId) return;
+          roster = nextRoster;
+          renderOnline();
+          renderMemberPicker();
+        }).catch(function() {
+          if (requestId !== memberSearchRequestId) return;
+          roster = [];
+          renderOnline();
+          renderMemberPicker();
+        });
       });
     }
 
@@ -3363,10 +3375,10 @@
       if (chatNameLabelEl) chatNameLabelEl.hidden = conversationBuilderMode === "manage";
       if (createTitleEl) createTitleEl.textContent = conversationBuilderMode === "manage" ? "Manage People" : (conversationBuilderMode === "room" ? "Create Room" : "Start a Chat");
       if (createDescriptionEl) createDescriptionEl.textContent = conversationBuilderMode === "manage"
-        ? "Click members in the left column to add or remove them from this room. Then save your changes."
+          ? "Click friends in the left column to add or remove them from this room. Then save your changes."
         : (conversationBuilderMode === "room"
-          ? "Name the room, then add at least one member from the left. You are included automatically."
-          : "Click one member in the left column for a direct chat, or select several people and name the room.");
+          ? "Name the room, then add at least one friend from the left. You are included automatically."
+          : "Click one friend in the left column, or search for another member to start a direct chat.");
       if (createSubmitEl) {
         createSubmitEl.textContent = conversationBuilderMode === "manage" ? "Save People" : (conversationBuilderMode === "room" ? "Create Room" : "Start Chat");
         createSubmitEl.disabled = false;
@@ -4235,28 +4247,20 @@
 
   }
 
-  async function loadChatRoster(user) {
+  async function loadChatRoster(user, searchQuery) {
     var members = [];
-    var loadedRemoteDirectory = false;
     try {
-      var directoryResp = await fetch("/api/members/directory", { credentials: "same-origin", cache: "no-store" });
-      if (directoryResp.ok) {
-        var directoryData = await directoryResp.json();
-        (directoryData.members || []).forEach(function(member) {
+      var endpoint = "/api/messenger/roster";
+      var query = String(searchQuery || "").trim();
+      if (query) endpoint += "?search=" + encodeURIComponent(query);
+      var rosterResp = await fetch(endpoint, { credentials: "same-origin", cache: "no-store" });
+      if (rosterResp.ok) {
+        var rosterData = await rosterResp.json();
+        (rosterData.members || []).forEach(function(member) {
           members.push(normalizeChatMember(member, Boolean(member.online)));
         });
-        loadedRemoteDirectory = true;
       }
     } catch (e) {}
-    if (!loadedRemoteDirectory) {
-      try {
-        var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
-        local.forEach(function(member) {
-          if (member.developerOwner) return;
-          members.push(normalizeChatMember(member, false));
-        });
-      } catch (e) {}
-    }
     var currentUsername = normalizeChatUsername(user && user.username);
     return dedupeChatMembers(members).filter(function(member) {
       return normalizeChatUsername(member.username) !== currentUsername;
@@ -4276,6 +4280,7 @@
       role: member.role || "",
       photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
       chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || defaultChatBubbleColor()),
+      friendStatus: member.friendStatus || member.friend_status || "none",
       online: typeof online === "boolean" ? online : Boolean(member.online),
       lastSeenAt: member.lastSeenAt || member.last_seen_at || null,
       status: member.status || (online ? "online" : "offline")

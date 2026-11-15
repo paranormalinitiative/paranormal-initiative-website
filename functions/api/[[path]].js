@@ -177,6 +177,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/friends/request/cancel") return requireMember(request, env, user => handleFriendRequestDecision(request, env, user, "cancelled"));
     if (request.method === "POST" && path === "/bug-reports") return requireMember(request, env, user => handleCreateBugReport(request, env, user));
     if (request.method === "POST" && path === "/messenger/presence") return requireMember(request, env, user => handlePresenceHeartbeat(request, env, user));
+    if (request.method === "GET" && path === "/messenger/roster") return requireMember(request, env, user => handleMessengerRoster(request, env, user));
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
     if (request.method === "POST" && path === "/conversations") return requireMember(request, env, user => handleCreateConversation(request, env, user));
     if (request.method === "GET" && path === "/conversations/unread-count") return requireMember(request, env, user => handleConversationUnreadCount(env, user));
@@ -9822,6 +9823,41 @@ function directoryMember(user) {
     lastSeenAt: user.last_seen_at || null,
     status: isOnline ? 'online' : 'offline'
   };
+}
+
+async function handleMessengerRoster(request, env, user) {
+  const search = clean(new URL(request.url).searchParams.get("search")).slice(0, 80).toLowerCase();
+  const like = `%${search}%`;
+  const friendExpression = `EXISTS (
+    SELECT 1 FROM member_friend_requests fr
+    WHERE fr.status = 'accepted'
+      AND ((fr.requester_id = ? AND fr.recipient_id = c.id)
+        OR (fr.requester_id = c.id AND fr.recipient_id = ?))
+  )`;
+  const searchFilter = search ? `AND (lower(c.username) LIKE ? OR lower(c.display_name) LIKE ?)` : `AND ${friendExpression}`;
+  const statement = env.TPI_DB.prepare(`
+    SELECT c.id, c.username, c.display_name, c.title, c.role, c.photo_url, c.chat_color,
+           c.can_message, c.active,
+           ${friendExpression} AS isFriend,
+           mp.last_seen_at, mp.status
+    FROM contributors c
+    LEFT JOIN member_presence mp ON mp.contributor_id = c.id
+    WHERE c.active = 1 AND c.id != ?
+      ${searchFilter}
+    ORDER BY (c.photo_url IS NOT NULL) DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
+    LIMIT 200
+  `);
+  const binds = [user.id, user.id, user.id];
+  if (search) binds.push(like, like);
+  else binds.push(user.id, user.id);
+  const { results } = await statement.bind(...binds).all();
+  return json({
+    members: (results || []).map(member => ({
+      ...directoryMember(member),
+      friendStatus: member.isFriend ? "friends" : "none"
+    })),
+    mode: search ? "search" : "friends"
+  }, 200, { "Cache-Control": "no-store" });
 }
 
 async function getMemberRelationship(env, viewer, target) {

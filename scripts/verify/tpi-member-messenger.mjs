@@ -105,10 +105,19 @@ try {
   const afterDrag = await state();
   check("desktop Messenger remains movable by its header", afterDrag.left !== beforeDrag.left || afterDrag.top !== beforeDrag.top, JSON.stringify({ beforeDrag, afterDrag }));
 
-  const memberButton = await waitFor("member roster", async () => {
-    const nodes = await driver.findElements(By.css("[data-online-member]"));
-    return nodes[0] || null;
-  });
+  const defaultRosterState = await js("return {label:document.querySelector('.member-chat-section-label')?.textContent.trim()||'', buttons:Array.from(document.querySelectorAll('[data-online-member]')).map(function(node){return node.getAttribute('data-chat-friend');})};");
+  check("Messenger default roster is limited to friends", defaultRosterState.label === "Friends" && defaultRosterState.buttons.every(value => value === "true"), JSON.stringify(defaultRosterState));
+  let memberButton = (await driver.findElements(By.css("[data-online-member]")))[0] || null;
+  if (!memberButton) {
+    const searchInput = await driver.findElement(By.css("[data-chat-member-search]"));
+    const searchSeed = await js(`return fetch('/api/messenger/roster?search=a',{credentials:'same-origin'}).then(function(response){return response.json();}).then(function(body){var member=(body.members||[])[0]; return member ? String(member.displayName||member.username||'').slice(0,4) : '';}).catch(function(){return '';});`);
+    await searchInput.sendKeys(searchSeed || "a");
+    memberButton = await waitFor("searchable Messenger member", async () => {
+      const nodes = await driver.findElements(By.css("[data-online-member]"));
+      return nodes[0] || null;
+    });
+    check("Messenger search can find a non-friend for a new chat", await js("var node=document.querySelector('[data-online-member]'); return Boolean(node) && node.getAttribute('data-chat-friend') !== 'true';"));
+  }
   await memberButton.click();
   await waitFor("selected Messenger conversation", async () => await js("var bar=document.querySelector('[data-chat-conversation-bar]'); return Boolean(bar && !bar.hidden);"));
   check("member selection opens a conversation", await js("var bar=document.querySelector('[data-chat-conversation-bar]'); return Boolean(bar && !bar.hidden);"));

@@ -44,6 +44,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Nova publishing permissions look too broad or too narrow | [Nova publishing workflow](#inc-2026-11-13-02--nova-publishing-and-editorial-permissions) | Capability checks, restricted subjects, direct publishing |
 | Messenger opens as a blank or unusable surface | [Messenger navigation](#inc-2026-11-10-02--messenger-navigation-and-release-certification) | Shared member shell, route target, disposable schema |
 | Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
+| Messenger lists every member instead of friends, or a direct chat with a non-friend cannot be revisited | [Messenger friends roster and searchable direct chat](#inc-2026-11-14-17--messenger-friends-roster-and-searchable-direct-chat) | Accepted-friend roster, member search, persistent Chats list |
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 | An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
@@ -588,6 +589,46 @@ Memberships API returned **200**; and the live Admin Center opened
 
 **Completion record:**
 [`2026-11-14-OWNER-ADMIN-AUTHORIZATION-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-OWNER-ADMIN-AUTHORIZATION-REPAIR.md)
+
+### INC-2026-11-14-17 — Messenger friends roster and searchable direct chat
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14**, owner request to remove the full member directory from Messenger |
+| Root cause confirmed | **2026-11-14 21:20 ET**, Messenger roster route and shared shell audit |
+| Fixed in source | **2026-11-14 21:33 ET**, pending guarded release commit |
+| Scope | Site-wide Messenger member picker and existing Chats list |
+| Status | **Implemented and locally verified; production release pending** |
+
+**What happened:** Messenger presented a directory of all members as the default
+starting list. That exposed more people than needed for routine messaging and
+made the distinction between friends and existing conversations unclear. A
+member also needed a safe way to start a direct chat with someone who was not
+yet a friend, then return to that conversation later.
+
+**How it was fixed:** The default Messenger roster now contains only accounts
+with an accepted friend request in either direction. The search field can still
+find an active member outside the friend list when someone intentionally wants
+to begin a direct chat. Once that conversation exists, the existing remote
+conversation list keeps it in **Chats** with the member's avatar, regardless of
+friend status. Existing chat history is not removed or hidden by the new
+default roster.
+
+**Verification:** Source contracts **28/28**; focused Firefox Messenger
+acceptance **24/24**, including an empty-friends state, non-friend search, chat
+selection, existing-chat persistence, layout bounds, MP4/ZIP controls, and
+clipboard behavior. The local test fixture correctly showed **Friends** with no
+accepted friends, then found a non-friend through intentional search.
+
+**Permanent protection:** The shared Messenger browser regression now checks
+that the default roster is friend-only and that search can start a non-friend
+direct chat. The source contract checks the `/api/messenger/roster` boundary,
+the friend-only default mode, the search affordance, and the rendered friend
+classification. The protected-application guard remains in force; StudioFlow,
+Nova Workspace, and Creator Studio are outside this change.
+
+**Completion record:**
+[`2026-11-14-MESSENGER-FRIENDS-ROSTER-AND-DIRECT-CHAT-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-FRIENDS-ROSTER-AND-DIRECT-CHAT-REPAIR.md)
 
 ### INC-2026-11-14-11 — Local Worker asset freshness
 
