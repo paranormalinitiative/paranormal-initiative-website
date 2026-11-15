@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center command-center audit and preview improvement
 
-Status: **AUDITED; PREVIEW IMPROVED; PRODUCTION PROMOTION NOT CLAIMED.** The
+Status: **AUDITED; PREVIEW IMPROVED; GUARDED PRODUCTION ATTEMPT ROLLED BACK.** The
 Administration Center preview already had reactive authoritative metric cards,
 analytics charts, and a read-only Platform Health view. The command-center
 dashboard now adds a clear administrative data-source signal, relative workload
@@ -14,7 +14,12 @@ StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, or R2.
 The policy/Help Desk inventory, complete staff capability model, report triage,
 appeals, restriction workflows, authenticated owner acceptance, and preview
 parity review remain open. See [TPI Administration Center Command Center
-Audit](200-AUDITS/2026-11-15-ADMIN-CENTER-COMMAND-CENTER-AUDIT.md) and
+Audit](200-AUDITS/2026-11-15-ADMIN-CENTER-COMMAND-CENTER-AUDIT.md). The exact
+candidate `rel-86907c5696de-6323c630311d` passed certification and anonymous
+production smoke, but the existing full live Firefox gate timed out while
+setting up a StudioFlow recording session. The guard automatically restored
+Worker `7d6b3674-5396-463d-a4ef-247858b0c849`; no StudioFlow source was
+changed and the Administration Center candidate is not live yet. See
 [Administration Center](008-ADMINISTRATION-CENTER.md).
 
 ## 2026-11-15 — Mystic public AI Search and site-wide knowledge audit

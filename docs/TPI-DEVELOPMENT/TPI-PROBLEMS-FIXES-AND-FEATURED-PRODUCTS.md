@@ -55,8 +55,50 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
 | Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
 | Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
+| An Administration Center release deploys, then rolls back during an unrelated StudioFlow live gate | [Administration Center command center and release-gate finding](#inc-2026-11-15-25--administration-center-command-center-and-release-gate-finding) | Full release certification, live Firefox acceptance, protected application boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-15-25 — Administration Center command center and release-gate finding
+
+| Field | Record |
+| --- | --- |
+| Requested | **2026-11-15 15:54 EST**, Owner requested a streamlined Reactive UI Administration Center with site-health signals, graphs, statistics, and a future NOVA boundary |
+| Implemented | **2026-11-15**, preview command-center presentation, collapsible administration navigation, local asset freshness, and clean-URL route repair |
+| Sitewide scope | **Protected Administration Center and maintained local/release workflow**; StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, and R2 were not changed |
+| Status | **Preview verified; production candidate automatically rolled back** |
+
+**What was needed:** The preview already had real overview metrics, analytics
+charts, and read-only Platform Health, but the first screen did not make
+operational queues, readiness blockers, or protected boundaries obvious. The
+local Worker also needed to refresh the Administration Center bundle reliably
+after a rebuild.
+
+**How it was fixed:** Added a Command Center summary with an explicit
+administrative-data health signal, relative queue bars for content review,
+moderation, creator review, and reports, NOVA readiness gates, and protected
+application boundaries. Added collapsible navigation groups while retaining all
+31 resource views. The local launcher now watches the Administration Center
+entry and generated assets, and protected admin clean URLs use the maintained
+fallback in both local and hosted runtimes.
+
+**Verification:** The admin preview source contract passed **82/82**. Isolated
+local browser acceptance passed **56/56**, including all 31 resource items and
+member/contributor denial. The required local authentication lifecycle passed
+**38/38** at each checkpoint and isolated Firefox StudioFlow acceptance passed
+**65/65**. The exact production candidate `rel-86907c5696de-6323c630311d`
+passed the full 38-gate certification and 10/10 anonymous production smoke.
+
+**Release finding:** The existing full Tier 1 live Firefox gate timed out while
+setting up a StudioFlow recording session after the candidate was deployed.
+Because this was unrelated to the Administration Center change, StudioFlow
+was not edited and the release runner automatically rolled production back to
+Worker `7d6b3674-5396-463d-a4ef-247858b0c849`. The new Administration Center
+candidate is therefore not live yet. The next step is to audit and streamline
+the release gate so a safe admin-only change does not enter an unrelated
+StudioFlow repair loop; no bypass or weakened certification is authorized.
+
+**Documentation:** [TPI Administration Center Command Center Audit](200-AUDITS/2026-11-15-ADMIN-CENTER-COMMAND-CENTER-AUDIT.md).
 
 ### INC-2026-11-14-20 — Mystic community assistant
 
