@@ -45,7 +45,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger opens as a blank or unusable surface | [Messenger navigation](#inc-2026-11-10-02--messenger-navigation-and-release-certification) | Shared member shell, route target, disposable schema |
 | Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
-| A non-YouTube video link shows only a chain icon or will not play | [External video preview](#inc-2026-11-14-15--external-non-youtube-video-preview) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
+| An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
 
 ## Incident and fix register
@@ -520,10 +520,10 @@ and Creator Studio were not modified or replaced by this repair.
 | --- | --- |
 | Detected | **2026-11-14 15:08:50 ET**, shown in the supplied Community Feed screenshot |
 | Root cause confirmed | **2026-11-14**, link-preview source inspection and live API check |
-| Fixed in source | **2026-11-14 20:27 ET**, commits `70f386c1`, `2d5c8e6e`, and `7e4a4049` |
-| Certified release | `rel-7e4a4049181d-d19476c2386d`, shared-api profile |
-| Production Worker | `ce91ea28-cc8a-4542-81c5-58165b80f754` |
-| Status | **External-video support and interactive fallback deployed; live verified** |
+| Fixed in source | **2026-11-14 20:32 ET**, commits `70f386c1`, `2d5c8e6e`, `7e4a4049`, and `826e1cde` |
+| Certified release | `rel-826e1cde50e9-29e6a23c7e13`, shared-api profile |
+| Production Worker | `c914a5a5-6cfd-460a-8856-3a0397a87498` |
+| Status | **External-link/video previews and interactive fallback deployed; live verified** |
 
 **What happened:** A non-YouTube research link rendered as a generic chain-icon
 card instead of a playable video preview.
@@ -535,7 +535,10 @@ renders a native HTML5 player with controls and a source fallback. When a page
 is JavaScript-rendered and appears to be a media/research page but does not
 expose a direct playable source, the resolver returns `external-page` with
 `interactive: true`. The feed then offers **Open interactive preview** in a
-sandboxed iframe plus **Open source**.
+sandboxed iframe plus **Open source**. This now applies to ordinary external
+links as well as external video/research pages. When a source provides Open
+Graph or standard metadata, the title, description, and image remain visible
+in the card.
 
 **Remaining source limitation:** The supplied page is JavaScript-rendered and
 does not publish a safe direct video source in its initial HTML. It is also
@@ -546,12 +549,14 @@ playback when the external host blocks framing, HTTP navigation, or its own
 player. A direct HTTPS video URL, standard `og:video` metadata, or an MP4
 uploaded to TPI is still required for guaranteed native in-feed playback.
 
-**Verification:** Link-preview regression **17/17**; member interactions
+**Verification:** Link-preview regression **18/18**; member interactions
 **27/27**; focused Firefox profile/feed **53/53**; focused Firefox Messenger
 **22/22**; authenticated Messenger media round trip **12/12**; release safety
 **35/35**; release impact **12/12**; preflight **CERTIFIED** with **13** gates
-in **34.6 seconds**; production smoke **10/10**. The live preview API returned
-`provider: external-page` and `interactive: true` for the exact supplied URL.
+in **33.5 seconds**; production smoke **10/10**. The live preview API returned
+`provider: external-page` and `interactive: true` for the exact supplied URL
+and for a normal MDN article, including the article's title, description, and
+image metadata.
 
 **Completion record:**
 [`2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md)
