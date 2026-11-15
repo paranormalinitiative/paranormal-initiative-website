@@ -514,16 +514,16 @@ and Creator Studio were not modified or replaced by this repair.
 **Completion record:**
 [`2026-11-14-MESSENGER-MEDIA-UPLOAD-AND-CLIPBOARD-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-MESSENGER-MEDIA-UPLOAD-AND-CLIPBOARD-REPAIR.md)
 
-### INC-2026-11-14-15 — External non-YouTube video preview
+### INC-2026-11-14-15 — External non-YouTube video preview and interactive fallback
 
 | Field | Record |
 | --- | --- |
 | Detected | **2026-11-14 15:08:50 ET**, shown in the supplied Community Feed screenshot |
 | Root cause confirmed | **2026-11-14**, link-preview source inspection and live API check |
-| Fixed in source | **2026-11-14**, commits `70f386c1` and `2d5c8e6e` |
-| Certified release | `rel-2d5c8e6e2f65-844575167462`, shared-api profile |
-| Production Worker | `6d5d40e2-5fba-49c8-a890-dd9d89106148` |
-| Status | **External-video support deployed; supplied HTTP/JavaScript page remains source-limited** |
+| Fixed in source | **2026-11-14 20:27 ET**, commits `70f386c1`, `2d5c8e6e`, and `7e4a4049` |
+| Certified release | `rel-7e4a4049181d-d19476c2386d`, shared-api profile |
+| Production Worker | `ce91ea28-cc8a-4542-81c5-58165b80f754` |
+| Status | **External-video support and interactive fallback deployed; live verified** |
 
 **What happened:** A non-YouTube research link rendered as a generic chain-icon
 card instead of a playable video preview.
@@ -531,18 +531,27 @@ card instead of a playable video preview.
 **How it was fixed:** The shared preview service now recognizes direct external
 video responses, standard video metadata, `<video>/<source>` tags, and older
 pages that expose MP4/WebM/MOV/OGV files through links or scripts. The feed
-renders a native HTML5 player with controls and a source fallback.
+renders a native HTML5 player with controls and a source fallback. When a page
+is JavaScript-rendered and appears to be a media/research page but does not
+expose a direct playable source, the resolver returns `external-page` with
+`interactive: true`. The feed then offers **Open interactive preview** in a
+sandboxed iframe plus **Open source**.
 
 **Remaining source limitation:** The supplied page is JavaScript-rendered and
 does not publish a safe direct video source in its initial HTML. It is also
 HTTP-only; its HTTPS endpoint fails TLS negotiation and the browser blocks the
-HTTP page in the current environment. TPI cannot safely bypass those external
-host restrictions. A direct HTTPS video URL, standard `og:video` metadata, or
-an MP4 uploaded to TPI is required for guaranteed in-feed playback.
+HTTP page in the current environment. The new interactive fallback gives the
+member an in-feed attempt to view the external page, but TPI cannot guarantee
+playback when the external host blocks framing, HTTP navigation, or its own
+player. A direct HTTPS video URL, standard `og:video` metadata, or an MP4
+uploaded to TPI is still required for guaranteed native in-feed playback.
 
-**Verification:** Link-preview regression **16/16**; member interactions
-**27/27**; release safety **35/35**; release impact **12/12**; preflight
-**CERTIFIED** with **10** gates; production smoke **10/10**.
+**Verification:** Link-preview regression **17/17**; member interactions
+**27/27**; focused Firefox profile/feed **53/53**; focused Firefox Messenger
+**22/22**; authenticated Messenger media round trip **12/12**; release safety
+**35/35**; release impact **12/12**; preflight **CERTIFIED** with **13** gates
+in **34.6 seconds**; production smoke **10/10**. The live preview API returned
+`provider: external-page` and `interactive: true` for the exact supplied URL.
 
 **Completion record:**
 [`2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md)
