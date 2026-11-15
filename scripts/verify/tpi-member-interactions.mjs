@@ -23,7 +23,7 @@ const api = read("functions/api/[[path]].js");
 const profile = read("member-profile.html");
 const productionConfig = read("wrangler.toml");
 
-check("Administration Center uses the shared effective staff-role resolver", worker.includes('import { effectiveStaffRole } from "./lib/staff-roles.js"') && worker.includes("const role = await effectiveStaffRole(env, user)") && worker.includes('["owner", "executive", "full_administrator", "administrator"].includes(role)'));
+check("Administration Center uses the shared effective staff-role resolver", worker.includes('effectiveStaffRole, hasAdministrationCenterRole') && worker.includes("const role = await effectiveStaffRole(env, user)") && worker.includes("hasAdministrationCenterRole(role)"));
 check("Owner and server-authorized accounts keep the Administration Center visible", shell.includes("var canUseAdminPanel = serverAdminAccess") && shell.includes('role === "owner"') && shell.includes('"owner", "executive", "full_administrator", "administrator"'));
 check("Community notifications carry exact post and comment targets", api.includes("&post=${encodeURIComponent(content.postId)}&comment=${encodeURIComponent(content.commentId)}#${postTarget}") && api.includes('type: content.isComment ? "community_comment" : "community_post"') && api.includes("enrichCommunityNotificationTargets"));
 check("Authenticated members can use the profile photo and banner upload routes", api.includes('path === "/uploads/profile-photo"') && api.includes('path === "/uploads/profile-banner"') && api.includes("requireMember(request, env, user => handleProfilePhotoUpload") && api.includes("requireMember(request, env, user => handleProfileBannerUpload"));
