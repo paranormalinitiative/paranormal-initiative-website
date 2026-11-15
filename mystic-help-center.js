@@ -52,6 +52,11 @@
     return knowledge && knowledge.audience === "public-member" && Array.isArray(knowledge.sources) ? knowledge.sources : [];
   }
 
+  function publicAnswers() {
+    var knowledge = window.TPI_MYSTIC_PUBLIC_KNOWLEDGE;
+    return knowledge && knowledge.audience === "public-member" && Array.isArray(knowledge.answers) ? knowledge.answers : [];
+  }
+
   function articleUrl(id) {
     return "help-center-article.html?id=" + encodeURIComponent(id);
   }
@@ -101,6 +106,27 @@
     return '<p>Here is a verified public TPI source that best matches your question:</p>' +
       '<div class="hc-mystic-result"><strong>' + escapeHtml(source.title) + '</strong><p class="hc-mystic-result-kind">' + escapeHtml(source.kind) + '</p><p>' + escapeHtml(source.summary) + '</p><a href="' + escapeHtml(source.url) + '">Open the source <span aria-hidden="true">›</span></a></div>' +
       '<p>Mystic will stay grounded in the published source and will not present an unverified claim as fact.</p>';
+  }
+
+  function directAnswerMessage(match) {
+    var answer = match.answer;
+    var source = publicSources().find(function (item) { return item.id === answer.sourceId; });
+    if (!source) return "";
+    return '<p>Here is a verified public TPI answer:</p>' +
+      '<div class="hc-mystic-result"><strong>' + escapeHtml(answer.title) + '</strong><p>' + escapeHtml(answer.answer) + '</p><a href="' + escapeHtml(source.url) + '">Open the full source: ' + escapeHtml(source.title) + ' <span aria-hidden="true">›</span></a></div>' +
+      '<p>Mystic will separate a reported experience from a proven conclusion.</p>';
+  }
+
+  function findDirectAnswer(query) {
+    var normalizedQuery = normalize(query);
+    return publicAnswers().map(function (answer) {
+      var score = (answer.patterns || []).some(function (pattern) {
+        return normalizedQuery.indexOf(normalize(pattern)) >= 0;
+      }) ? 1 : 0;
+      return { answer: answer, score: score };
+    }).filter(function (match) { return match.score > 0; }).sort(function (left, right) {
+      return right.score - left.score;
+    })[0] || null;
   }
 
   function findSourceMatches(query) {
@@ -184,6 +210,8 @@
     function answer(query) {
       var special = specialAnswer(query);
       if (special) return special;
+      var direct = findDirectAnswer(query);
+      if (direct) return directAnswerMessage(direct);
       var matches = findMatches(query);
       if (matches.length && matches[0].score >= 4) return resultMessage(matches[0]);
       var sourceMatches = findSourceMatches(query);

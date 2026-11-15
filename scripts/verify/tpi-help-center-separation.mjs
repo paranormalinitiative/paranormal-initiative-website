@@ -66,9 +66,9 @@ check("Internal pages identify the internal audience", [
   "internal-help-center-contact.html"
 ].every((file) => read(file).includes('data-hc-audience="internal"')));
 check("Shared renderer switches to internal routes and labels", sharedShell.includes("TPI_INTERNAL_HELP_CENTER") && sharedShell.includes("internal-help-center-article.html") && sharedShell.includes("Help Desk") && sharedShell.includes("Member support"));
-check("Ask Mystic is available across public Help Center pages", publicHelpPages.every((file) => read(file).includes('src="mystic-public-knowledge.js?v=1"') && read(file).includes('src="mystic-help-center.js?v=3"')) && sharedShell.includes("TPIMysticHelpCenter"));
-check("Mystic public knowledge is explicitly member-facing", mysticKnowledge.includes('audience: "public-member"') && mysticKnowledge.includes("TPI_Field_Encyclopedia.html") && mysticKnowledge.includes("TPI_Investigation_Compendium.html") && mysticKnowledge.includes("haunted-locations.html"));
-check("Ask Mystic searches only public member content and sources", mystic.includes("window.TPI_HELP_CENTER") && mystic.includes("TPI_MYSTIC_PUBLIC_KNOWLEDGE") && mystic.includes("findSourceMatches") && mystic.includes("sourceResultMessage") && mystic.includes("verified public TPI source") && !mystic.includes("TPI_INTERNAL_HELP_CENTER") && !mystic.includes("internal-help-center-data.js"));
+check("Ask Mystic is available across public Help Center pages", publicHelpPages.every((file) => read(file).includes('src="mystic-public-knowledge.js?v=2"') && read(file).includes('src="mystic-help-center.js?v=4"')) && sharedShell.includes("TPIMysticHelpCenter"));
+check("Mystic public knowledge is explicitly member-facing", mysticKnowledge.includes('audience: "public-member"') && mysticKnowledge.includes('id: "ghost-definition"') && mysticKnowledge.includes("TPI_Field_Encyclopedia.html") && mysticKnowledge.includes("TPI_Investigation_Compendium.html") && mysticKnowledge.includes("ghostology-101.html") && mysticKnowledge.includes("haunted-locations.html"));
+check("Ask Mystic searches only public member content and sources", mystic.includes("window.TPI_HELP_CENTER") && mystic.includes("TPI_MYSTIC_PUBLIC_KNOWLEDGE") && mystic.includes("findDirectAnswer") && mystic.includes("directAnswerMessage") && mystic.includes("findSourceMatches") && mystic.includes("sourceResultMessage") && mystic.includes("verified public TPI source") && !mystic.includes("TPI_INTERNAL_HELP_CENTER") && !mystic.includes("internal-help-center-data.js"));
 check("Internal Help Desk pages do not mount Ask Mystic", [
   "internal-help-center.html",
   "internal-help-center-category.html",
@@ -76,7 +76,7 @@ check("Internal Help Desk pages do not mount Ask Mystic", [
   "internal-help-center-search.html",
   "internal-help-center-contact.html"
 ].every((file) => !read(file).includes("mystic-help-center.js") && !read(file).includes("mystic-public-knowledge.js")) && sharedShell.includes("!INTERNAL"));
-check("Mystic is available from the shared member/community shell", memberShell.includes("initMysticAssistant") && memberShell.includes('mystic-help-center.js?v=3') && memberShell.includes('mystic-help-center.css?v=1') && memberShell.includes('help-center-data.js?v=4') && memberShell.includes('mystic-public-knowledge.js?v=1'));
+check("Mystic is available from the shared member/community shell", memberShell.includes("initMysticAssistant") && memberShell.includes('mystic-help-center.js?v=4') && memberShell.includes('mystic-help-center.css?v=1') && memberShell.includes('help-center-data.js?v=4') && memberShell.includes('mystic-public-knowledge.js?v=2'));
 check("Mystic uses the approved image asset and pulse treatment", existsSync(join(root, "assets/mystic-ghost.png")) && mystic.includes("assets/mystic-ghost.png") && mysticCss.includes("mystic-pulse"));
 check("Mystic sends bug reports through the existing Administration Center path", mystic.includes("bug-report.html") && mystic.includes("Administration Center") && api.includes('path === "/bug-reports"') && api.includes('path === "/admin/reports'));
 const helpIndex = memberSidebar.indexOf('data-nav="help-center"');

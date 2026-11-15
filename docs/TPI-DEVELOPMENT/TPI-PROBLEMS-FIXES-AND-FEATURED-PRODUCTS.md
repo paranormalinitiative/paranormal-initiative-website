@@ -53,6 +53,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A member asks Mystic a question anywhere in the community | [Mystic community assistant](#inc-2026-11-14-20--mystic-community-assistant) | Shared member shell, public article search, bug-report handoff, internal-content boundary |
 | Mystic opens but returns “I don’t have a verified member Help Center answer” for a documented question | [Mystic knowledge catalog loading](#inc-2026-11-14-21--mystic-knowledge-catalog-loading) | Shared shell dependency loading, public article catalog, profile-question regression |
 | Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
+| Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
 
 ## Incident and fix register
 
@@ -162,6 +163,37 @@ anonymous Internal Help Desk remained HTTP 403. Protected StudioFlow, Nova
 Workspace, and Creator Studio bytes remained unchanged.
 
 **Reference:** [`2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md`](300-COMPLETED-WORK/2026-11-15-MYSTIC-PUBLIC-KNOWLEDGE-EXPANSION.md)
+
+### INC-2026-11-15-23 — Mystic definition answer ranking
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15**, owner asked “What is a ghost?” and Mystic routed the question to the broad Education Center guide |
+| Fixed in source | **2026-11-15**, direct public knowledge answer and cache-version update |
+| Sitewide scope | **Public Help Center and shared member/community Mystic** |
+| Status | **Source fixed; guarded release verification in progress** |
+
+**What happened:** Mystic’s article matcher treated a broad Education Center
+article as the best match because the word “ghost” appeared throughout its
+content. The answer did not use the more precise definition already published
+in TPI’s Terminology Reference.
+
+**How it was fixed:** Added a direct, source-grounded `ghost-definition` intent
+to the public Mystic knowledge catalog. Mystic now answers the common forms
+“What is a ghost?”, “Define ghost,” and similar questions with TPI’s published
+definition: a perceived manifestation, presence, or appearance believed to be
+associated with a deceased individual, treated as a working description rather
+than a proven conclusion. The response also preserves TPI’s instruction to
+check environmental explanations, witness contamination, suggestion, folklore
+influence, and perceptual error before assigning the label.
+
+**Protection:** The answer is tied to the public Terminology Reference source;
+it does not load internal Help Desk material or invent an unsupported claim.
+The public source index now also includes Ghostology 101, and the separation
+regression requires the direct-answer matcher to remain present.
+
+**Verification:** JavaScript syntax checks, local asset refresh, and the
+Help Center separation contract passed **20/20** before the guarded release.
 
 ### INC-2026-11-14-01 — Profile photo or banner would not update
 

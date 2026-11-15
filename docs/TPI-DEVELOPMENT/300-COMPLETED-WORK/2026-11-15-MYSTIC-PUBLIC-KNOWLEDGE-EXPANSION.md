@@ -82,3 +82,16 @@ response and are not answered from internal material.
 The public Mystic expansion is complete. Internal Help Desk/Admin/Moderator
 knowledge remains intentionally out of scope until the public experience is
 finished and separately authorized.
+
+## Follow-up repair — direct definition answers
+
+On **2026-11-15**, the owner tested “What is a ghost?” and Mystic selected a
+broad Education Center guide instead of answering from the precise public
+definition already present in TPI’s Terminology Reference.
+
+The public catalog now contains a protected `ghost-definition` intent. Mystic
+answers the common definition forms directly, explains that “ghost” is a
+working description rather than a proven conclusion, and links to the complete
+Terminology Reference. Ghostology 101 is also indexed as a public source for
+related learning. This follow-up is covered by the same public-only boundary
+and is pending the guarded production release.

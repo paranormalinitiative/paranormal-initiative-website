@@ -6,6 +6,22 @@
   window.TPI_MYSTIC_PUBLIC_KNOWLEDGE = {
     version: 1,
     audience: "public-member",
+    answers: [
+      {
+        id: "ghost-definition",
+        sourceId: "terminology-reference",
+        title: "What TPI means by ghost",
+        patterns: [
+          "what is a ghost",
+          "what are ghosts",
+          "define ghost",
+          "ghost definition",
+          "what does ghost mean",
+          "tell me about ghosts"
+        ],
+        answer: "At TPI, a ghost is a perceived manifestation, presence, or appearance believed to be associated with a deceased individual. We treat ghost as a working description of a report, not as a proven conclusion. A careful investigation documents what was observed and checks environmental explanations, witness contamination, suggestion, folklore influence, and perceptual error before assigning the label."
+      }
+    ],
     sources: [
       {
         id: "repository",
@@ -37,7 +53,7 @@
         title: "Complete Paranormal Terminology",
         url: "TPI_Terminology_Reference_Unified.html",
         summary: "An A-Z reference for paranormal research language, evidence classification, field methodology, entity theory, psychology, and analysis.",
-        keywords: ["terminology", "definition", "term", "what does", "glossary", "language"]
+        keywords: ["terminology", "definition", "term", "what does", "glossary", "language", "ghost", "ghosts", "spirit", "apparition"]
       },
       {
         id: "investigation-compendium",
@@ -70,6 +86,14 @@
         url: "education-center.html",
         summary: "Start with public lessons covering Ghostology 101, research methods, equipment, documentation, field safety, ethics, and responsible investigation.",
         keywords: ["education", "lessons", "ghostology", "learn", "training", "course"]
+      },
+      {
+        id: "ghostology-101",
+        kind: "Public education series",
+        title: "Ghostology 101",
+        url: "ghostology-101.html",
+        summary: "A public TPI foundation for ghost reports, hauntings, terminology, investigation methods, evidence review, history, ethics, and responsible field work.",
+        keywords: ["ghost", "ghosts", "ghostology", "haunting", "apparition", "spirit", "ghost hunting", "paranormal investigation"]
       },
       {
         id: "haunted-locations",

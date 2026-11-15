@@ -381,7 +381,7 @@
     function loadPublicHelpData() {
       return loadPublicScript('script[data-tpi-help-center-data]', "help-center-data.js?v=4", "data-tpi-help-center-data", "TPI_HELP_CENTER")
         .then(function() {
-          return loadPublicScript('script[data-tpi-mystic-public-knowledge]', "mystic-public-knowledge.js?v=1", "data-tpi-mystic-public-knowledge", "TPI_MYSTIC_PUBLIC_KNOWLEDGE");
+          return loadPublicScript('script[data-tpi-mystic-public-knowledge]', "mystic-public-knowledge.js?v=2", "data-tpi-mystic-public-knowledge", "TPI_MYSTIC_PUBLIC_KNOWLEDGE");
         });
     }
 
@@ -392,7 +392,7 @@
       }
       return new Promise(function(resolve) {
         var script = document.createElement("script");
-        script.src = "mystic-help-center.js?v=3";
+        script.src = "mystic-help-center.js?v=4";
         script.async = false;
         script.onload = function() {
           if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
