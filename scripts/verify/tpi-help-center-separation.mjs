@@ -74,7 +74,7 @@ check("Internal Help Desk pages do not mount Ask Mystic", [
   "internal-help-center-search.html",
   "internal-help-center-contact.html"
 ].every((file) => !read(file).includes("mystic-help-center.js")) && sharedShell.includes("!INTERNAL"));
-check("Mystic is available from the shared member/community shell", memberShell.includes("initMysticAssistant") && memberShell.includes('mystic-help-center.js?v=2') && memberShell.includes('mystic-help-center.css?v=1'));
+check("Mystic is available from the shared member/community shell", memberShell.includes("initMysticAssistant") && memberShell.includes('mystic-help-center.js?v=2') && memberShell.includes('mystic-help-center.css?v=1') && memberShell.includes('help-center-data.js?v=4'));
 check("Mystic uses the approved image asset and pulse treatment", existsSync(join(root, "assets/mystic-ghost.png")) && mystic.includes("assets/mystic-ghost.png") && mysticCss.includes("mystic-pulse"));
 check("Mystic sends bug reports through the existing Administration Center path", mystic.includes("bug-report.html") && mystic.includes("Administration Center") && api.includes('path === "/bug-reports"') && api.includes('path === "/admin/reports'));
 const helpIndex = memberSidebar.indexOf('data-nav="help-center"');

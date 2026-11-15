@@ -51,6 +51,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
 | A member asks Mystic a question anywhere in the community | [Mystic community assistant](#inc-2026-11-14-20--mystic-community-assistant) | Shared member shell, public article search, bug-report handoff, internal-content boundary |
+| Mystic opens but returns “I don’t have a verified member Help Center answer” for a documented question | [Mystic knowledge catalog loading](#inc-2026-11-14-21--mystic-knowledge-catalog-loading) | Shared shell dependency loading, public article catalog, profile-question regression |
 
 ## Incident and fix register
 
@@ -95,6 +96,18 @@ shell hostage while it loads. The exact production candidate was certified
 with the protected-application integrity guard, and the release passed 53/53
 profile/feed checks, 19/19 Help Center separation checks, YouTube preview and
 playback checks, owner/admin authentication, and 10/10 production smoke checks.
+
+### INC-2026-11-14-21 — Mystic knowledge catalog loading
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-14 23:09:01 EST**, owner reported that Mystic opened but did not answer the documented profile question |
+| What happened | Mystic loaded on shared member pages, but those pages had not loaded the public Help Center article catalog. Mystic therefore had no searchable articles and returned its honest fallback. |
+| Fix | The shared member shell now loads `help-center-data.js` before mounting Mystic. The load remains asynchronous and does not delay member-shell readiness. |
+| Scope | **Sitewide shared member/community shell and public Help Center** |
+| Verification | Firefox member/profile regression passed **54/54**, including opening Mystic and finding the “Your profile” guide from “How do I update my profile?”; Help Center separation passed **19/19**. |
+| Protection | The public catalog is the only knowledge source; internal Help Desk data is never loaded into Mystic. |
+| Status | **Fixed locally; guarded production release pending** |
 
 **Source alignment:** The website adapter reflects the Mystic identity and
 knowledge/guardrail intent in the TPI Research and Investigation program's

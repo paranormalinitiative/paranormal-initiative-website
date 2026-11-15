@@ -360,21 +360,43 @@
       css.setAttribute("data-tpi-mystic-css", "1");
       document.head.appendChild(css);
     }
-    if (window.TPIMysticHelpCenter) {
-      window.TPIMysticHelpCenter.mount();
-      return Promise.resolve();
+
+    function loadPublicHelpData() {
+      if (window.TPI_HELP_CENTER) return Promise.resolve();
+      return new Promise(function(resolve) {
+        var dataScript = document.querySelector('script[data-tpi-help-center-data]');
+        if (!dataScript) {
+          dataScript = document.createElement("script");
+          dataScript.src = "help-center-data.js?v=4";
+          dataScript.async = false;
+          dataScript.setAttribute("data-tpi-help-center-data", "1");
+          document.head.appendChild(dataScript);
+        }
+        dataScript.addEventListener("load", resolve, { once: true });
+        dataScript.addEventListener("error", resolve, { once: true });
+        if (window.TPI_HELP_CENTER) resolve();
+      });
     }
-    return new Promise(function(resolve) {
-      var script = document.createElement("script");
-      script.src = "mystic-help-center.js?v=2";
-      script.async = false;
-      script.onload = function() {
-        if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
-        resolve();
-      };
-      script.onerror = function() { resolve(); };
-      document.head.appendChild(script);
-    });
+
+    function loadMystic() {
+      if (window.TPIMysticHelpCenter) {
+        window.TPIMysticHelpCenter.mount();
+        return Promise.resolve();
+      }
+      return new Promise(function(resolve) {
+        var script = document.createElement("script");
+        script.src = "mystic-help-center.js?v=2";
+        script.async = false;
+        script.onload = function() {
+          if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
+          resolve();
+        };
+        script.onerror = function() { resolve(); };
+        document.head.appendChild(script);
+      });
+    }
+
+    return loadPublicHelpData().then(loadMystic);
   }
 
   function syncMessengerNavigationState(open) {

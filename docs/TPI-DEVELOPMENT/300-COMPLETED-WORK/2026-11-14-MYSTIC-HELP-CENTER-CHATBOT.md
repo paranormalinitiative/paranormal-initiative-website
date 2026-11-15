@@ -86,3 +86,16 @@ review. The current assistant is intentionally useful without them.
   Center queue.
 - The exact certified candidate was deployed without recertification drift;
   the protected StudioFlow/Nova/Creator application bytes were preserved.
+
+## Follow-up repair — shared member knowledge loading
+
+On **2026-11-14 at 23:09 EST**, the Ask Mystic panel opened correctly on a
+member page but returned its fallback for the built-in “How do I update my
+profile?” prompt. The public article catalog was present on Help Center pages
+but was not being loaded when Mystic was attached by the shared member shell.
+
+The shared shell now loads the public `help-center-data.js` catalog before
+mounting Mystic, while keeping that work asynchronous so it cannot block the
+member UI. The Firefox member regression now opens Mystic, asks the exact
+profile question, verifies the “Your profile” guide link, and passed **54/54**
+checks locally. Internal Help Desk data remains excluded.
