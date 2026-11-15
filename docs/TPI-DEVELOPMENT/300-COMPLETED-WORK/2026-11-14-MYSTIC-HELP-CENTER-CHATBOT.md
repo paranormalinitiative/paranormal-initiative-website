@@ -1,7 +1,7 @@
 # Mystic Help Center Chatbot
 
 **Date:** 2026-11-14  
-**Scope:** Public Member Help Center  
+**Scope:** Shared member/community shell and public Member Help Center
 **Status:** Implemented locally; guarded release verification and production
 acceptance remain required.
 
@@ -14,8 +14,12 @@ separate.
 
 ## What was implemented
 
-- Added an **Ask Mystic** launcher and chat panel to all public Member Help
-  Center pages: home, category, article, search, and contact.
+- Added an **Ask Mystic** launcher and chat panel to the shared member/community
+  shell, plus all public Member Help Center pages: home, category, article,
+  search, and contact.
+- Reused the approved Mystic ghost image from the separate TPI Research and
+  Investigation program and added a gentle pulse with a reduced-motion
+  fallback.
 - Used Mystic's established identity: **Spirit Guide, Researcher, and Shadow
   Seeker**.
 - Kept the voice friendly, calm, curious, concise, grounded, and evidence-first.
@@ -24,8 +28,10 @@ separate.
   reels, stories, privacy, and safety.
 - Linked every verified answer to the matching public Help Center article.
 - Added honest fallback behavior when no verified member answer is available.
-- Added safe handoffs to the full Help Center, member support, and bug
-  reporting.
+- Added safe handoffs to the full Help Center, member support, and the existing
+  bug-report form.
+- Kept bug reporting on the existing authenticated `/api/bug-reports` path,
+  which feeds the protected Administration Center report queue.
 - Added a clear boundary for questions about Administration Center, staff
   roles, moderation procedures, or the internal Help Desk.
 - Added a reminder not to submit passwords, recovery codes, session cookies,
@@ -57,6 +63,7 @@ review. The current assistant is intentionally useful without them.
 ## Verification checklist
 
 - [x] Public pages load the Mystic script.
+- [x] Shared member/community pages load Mystic and the approved image asset.
 - [x] Internal Help Desk pages do not load or mount Mystic.
 - [x] Article matching reads only the member article inventory.
 - [x] Unknown questions do not receive invented answers.

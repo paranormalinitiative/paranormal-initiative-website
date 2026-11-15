@@ -188,40 +188,6 @@ body.help-center-page {
 .hc-form-actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
 .hc-form-status { color: var(--text-accent); font-size: 12px; }
 
-.hc-mystic { position: fixed; right: 24px; bottom: 24px; z-index: 80; font-family: inherit; }
-.hc-mystic-launcher { display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 10px 16px 10px 11px; color: var(--text-on-accent); background: var(--gradient-accent); border: 0; border-radius: 999px; box-shadow: var(--shadow-xl), var(--shadow-glow); font: inherit; font-size: 12px; font-weight: 850; cursor: pointer; }
-.hc-mystic-launcher:hover { filter: brightness(1.08); transform: translateY(-1px); }
-.hc-mystic-spark, .hc-mystic-avatar { display: grid; place-items: center; color: var(--text-on-accent); background: color-mix(in srgb, var(--accent) 65%, #fff 35%); border-radius: 50%; font-weight: 900; }
-.hc-mystic-spark { width: 25px; height: 25px; }
-.hc-mystic-panel { position: absolute; right: 0; bottom: 58px; display: grid; grid-template-rows: auto auto minmax(170px, 1fr) auto auto auto; width: min(390px, calc(100vw - 32px)); max-height: min(640px, calc(100vh - 105px)); overflow: hidden; color: var(--text-primary); background: color-mix(in srgb, var(--bg-secondary) 96%, #000); border: 1px solid var(--accent-border); border-radius: 18px; box-shadow: var(--shadow-xl), 0 0 36px color-mix(in srgb, var(--accent) 16%, transparent); }
-.hc-mystic-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 18px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--bg-card)), var(--bg-card)); border-bottom: 1px solid var(--border-subtle); }
-.hc-mystic-kicker { margin: 0 0 2px; color: var(--text-accent); font-size: 9px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; }
-.hc-mystic-header h2 { margin: 0; font-size: 20px; letter-spacing: -.03em; }
-.hc-mystic-close { width: 31px; height: 31px; color: var(--text-secondary); background: transparent; border: 1px solid var(--border-default); border-radius: 50%; font: inherit; font-size: 20px; line-height: 1; cursor: pointer; }
-.hc-mystic-close:hover { color: var(--text-primary); background: var(--accent-muted); }
-.hc-mystic-intro { display: flex; gap: 10px; padding: 14px 18px 10px; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
-.hc-mystic-intro p { margin: 0; }
-.hc-mystic-avatar { flex: 0 0 29px; width: 29px; height: 29px; background: var(--gradient-accent); box-shadow: var(--shadow-glow); }
-.hc-mystic-messages { display: grid; align-content: start; gap: 10px; min-height: 145px; max-height: 310px; overflow-y: auto; padding: 8px 18px 14px; }
-.hc-mystic-message { max-width: 92%; padding: 10px 12px; color: var(--text-secondary); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; font-size: 12px; line-height: 1.52; }
-.hc-mystic-message.is-user { justify-self: end; color: var(--text-primary); background: color-mix(in srgb, var(--accent) 14%, var(--bg-card)); border-color: var(--accent-border); }
-.hc-mystic-message p { margin: 0 0 8px; }
-.hc-mystic-message p:last-child { margin-bottom: 0; }
-.hc-mystic-message a { color: var(--text-accent); font-weight: 800; text-decoration: none; }
-.hc-mystic-message a:hover { text-decoration: underline; }
-.hc-mystic-result { margin: 9px 0; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 9px; }
-.hc-mystic-result strong { display: block; margin-bottom: 5px; color: var(--text-primary); font-size: 12px; }
-.hc-mystic-result p { margin: 0 0 8px; }
-.hc-mystic-result a { font-size: 11px; }
-.hc-mystic-quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 11px; }
-.hc-mystic-quick button { padding: 7px 9px; color: var(--text-secondary); background: transparent; border: 1px solid var(--border-default); border-radius: 999px; font: inherit; font-size: 10px; font-weight: 750; cursor: pointer; }
-.hc-mystic-quick button:hover { color: var(--text-primary); background: var(--accent-muted); border-color: var(--accent-border); }
-.hc-mystic-form { display: flex; gap: 7px; padding: 11px 18px; border-top: 1px solid var(--border-subtle); }
-.hc-mystic-form input { min-width: 0; flex: 1; padding: 10px 11px; color: var(--text-primary); background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 10px; outline: 0; font: inherit; font-size: 12px; }
-.hc-mystic-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
-.hc-mystic-form button { padding: 9px 12px; color: var(--text-on-accent); background: var(--gradient-accent); border: 0; border-radius: 10px; font: inherit; font-size: 11px; font-weight: 850; cursor: pointer; }
-.hc-mystic-note { margin: 0; padding: 0 18px 14px; color: var(--text-tertiary); font-size: 9px; line-height: 1.45; }
-
 /* The internal center shares the TPI shell but has a quiet operational cue so
    staff do not mistake it for the public member support surface. */
 .internal-help-center .hc-topbar { border-bottom-color: color-mix(in srgb, var(--accent) 45%, var(--border-default)); }
@@ -269,8 +235,6 @@ body.help-center-page {
     .hc-related-grid, .hc-form-grid { grid-template-columns: 1fr; }
     .hc-form label.full { grid-column: auto; }
     .hc-article-body { font-size: 14px; }
-    .hc-mystic { right: 16px; bottom: 16px; }
-    .hc-mystic-panel { bottom: 57px; max-height: calc(100vh - 92px); }
 }
 
 @media (max-width: 380px) {

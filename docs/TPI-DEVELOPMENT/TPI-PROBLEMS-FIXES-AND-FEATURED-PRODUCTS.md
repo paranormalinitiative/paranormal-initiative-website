@@ -50,36 +50,45 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 | An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
-| A member asks the Help Center a question and needs a grounded answer | [Mystic Help Center assistant](#inc-2026-11-14-20--mystic-help-center-assistant) | Public article search, member-support handoff, internal-content boundary |
+| A member asks Mystic a question anywhere in the community | [Mystic community assistant](#inc-2026-11-14-20--mystic-community-assistant) | Shared member shell, public article search, bug-report handoff, internal-content boundary |
 
 ## Incident and fix register
 
-### INC-2026-11-14-20 — Mystic Help Center assistant
+### INC-2026-11-14-20 — Mystic community assistant
 
 | Field | Record |
 | --- | --- |
 | Requested | **2026-11-14**, owner request to bring Mystic into the public Help Center |
 | Implemented | **2026-11-14**, website integration on `codex/tpi-development` |
-| Sitewide scope | **Member Help Center pages only**; the Internal Help Desk remains separate and protected |
+| Sitewide scope | **Shared member/community shell and public Member Help Center pages**; the Internal Help Desk remains separate and protected |
 | Status | **Implemented locally; release verification and production deployment pending** |
 
-**What was needed:** The member Help Center needed a friendly assistant that
-could answer common questions without becoming a second, confusing navigation
-system or exposing internal operations.
+**What was needed:** Members needed to be able to reach Mystic whenever they
+are using the TPI community, not only after navigating to the Help Center. The
+assistant still needed to answer common questions without becoming a second,
+confusing navigation system or exposing internal operations.
 
-**How it was fixed:** Added an Ask Mystic panel to the public Help Center home,
-category, article, search, and contact pages. It uses Mystic's existing TPI
-identity and evidence-first guardrails, searches only the public member article
-catalog, provides a direct guide link when it finds a match, and offers member
-support or bug-report handoff when it cannot verify an answer. It also refuses
-internal Help Desk questions in the public surface and reminds members never to
-share credentials or recovery secrets.
+**How it was fixed:** Added an Ask Mystic panel to the shared member/community
+shell as well as the public Help Center home, category, article, search, and
+contact pages. It uses Mystic's existing TPI identity and evidence-first
+guardrails, searches only the public member article catalog, provides a direct
+guide link when it finds a match, and offers member support or the existing
+bug-report flow when it cannot verify an answer. It also refuses internal Help
+Desk questions in the public surface and reminds members never to share
+credentials or recovery secrets.
+
+**Bug-report handoff:** Mystic's bug guidance links to `bug-report.html`. That
+form submits to the existing authenticated `/api/bug-reports` endpoint, and the
+protected Administration Center reads the resulting report queue. No parallel
+ticketing system was created.
 
 **Protection:** The integration is local and deterministic, with no model API
 key or third-party conversation service. The internal data namespace is never
 loaded by Mystic, and the Help Desk is not mounted in the public experience.
 The public article catalog remains the source of truth; updating a guide also
-updates what Mystic can retrieve.
+updates what Mystic can retrieve. The approved Mystic ghost image is reused
+from the TPI Research and Investigation program and has a reduced-motion
+fallback for members who disable animation.
 
 **Source alignment:** The website adapter reflects the Mystic identity and
 knowledge/guardrail intent in the TPI Research and Investigation program's

@@ -288,6 +288,11 @@
       } catch (e) {}
     }
 
+    // Mystic is available throughout the shared member/community experience,
+    // not only inside the public Help Center. The assistant remains grounded
+    // in public member guidance and never loads the internal Help Desk data.
+    await initMysticAssistant();
+
     // Mark ready
     document.body.classList.add("member-ready");
     window.dispatchEvent(new Event("tpi:member-shell-ready"));
@@ -339,6 +344,33 @@
     window.addEventListener("hashchange", function() {
       if (window.location.hash === "#messenger") openMessenger();
       syncMessengerNavigation();
+    });
+  }
+
+  function initMysticAssistant() {
+    if (document.getElementById("tpi-mystic-help-center")) return Promise.resolve();
+    var css = document.querySelector('link[data-tpi-mystic-css]');
+    if (!css) {
+      css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "mystic-help-center.css?v=1";
+      css.setAttribute("data-tpi-mystic-css", "1");
+      document.head.appendChild(css);
+    }
+    if (window.TPIMysticHelpCenter) {
+      window.TPIMysticHelpCenter.mount();
+      return Promise.resolve();
+    }
+    return new Promise(function(resolve) {
+      var script = document.createElement("script");
+      script.src = "mystic-help-center.js?v=2";
+      script.async = false;
+      script.onload = function() {
+        if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
+        resolve();
+      };
+      script.onerror = function() { resolve(); };
+      document.head.appendChild(script);
     });
   }
 

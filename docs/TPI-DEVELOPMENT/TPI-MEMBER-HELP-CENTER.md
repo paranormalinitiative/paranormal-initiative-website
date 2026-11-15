@@ -7,11 +7,11 @@
 
 ## Mystic Help Center assistant
 
-The public Member Help Center includes **Ask Mystic**, a grounded, local help
-assistant adapted from the Mystic identity and guardrails in the TPI Research
-and Investigation program. Mystic is presented as TPI's Spirit Guide,
-Researcher, and Shadow Seeker, with a friendly, calm, curious, evidence-first
-voice.
+The public Member Help Center and shared member/community shell include **Ask
+Mystic**, a grounded, local help assistant adapted from the Mystic identity and
+guardrails in the TPI Research and Investigation program. Mystic is presented
+as TPI's Spirit Guide, Researcher, and Shadow Seeker, with a friendly, calm,
+curious, evidence-first voice.
 
 Mystic searches only the public `help-center-data.js` member article inventory.
 It does not load, index, summarize, or link to `internal-help-center-data.js`,
@@ -20,11 +20,14 @@ member records, or credentials. A question without a verified member answer is
 answered honestly and routed to the full Help Center or member support instead
 of being guessed.
 
-The first website integration is intentionally deterministic and local. It
-does not require an AI API key, send member questions to a third party, or
-replace human support. The assistant offers article links, safe reporting
-guidance, and a member-support handoff. Any future model-backed or internal
-Help Desk version requires a separate scope and security review.
+The website integration is intentionally deterministic and local. It does not
+require an AI API key, send member questions to a third party, or replace human
+support. The assistant is available wherever the shared member/community shell
+is active and offers article links, safe reporting guidance, and a
+member-support handoff. Bug reports continue through the existing
+`/api/bug-reports` flow into the protected Administration Center report queue.
+Any future model-backed or internal Help Desk version requires a separate scope
+and security review.
 
 ## Purpose
 

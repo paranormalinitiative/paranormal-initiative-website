@@ -101,6 +101,9 @@
     if (/(administration center|admin center|help desk|moderator tools|ban someone|staff role)/.test(normalized)) {
       return '<p>The member Help Center does not provide internal administrative procedures. Those instructions belong to the protected Help Desk inside the Administration Center and are available only to authorized staff.</p><p>For a member-facing access question, open <a href="help-center-contact.html">member support</a>.</p>';
     }
+    if (/(bug|broken|not working|error|failed to load|doesn.t work)/.test(normalized)) {
+      return '<p>That sounds like a bug or a feature that is not working as expected. Please include the page, what you tried, what you expected, and what happened.</p><p><a href="bug-report.html">Open Report a bug</a>. Your report is submitted to the protected Administration Center for review. Never include a password, recovery code, session cookie, or other secret.</p>';
+    }
     if (/(password|recovery code|session cookie|api token|secret|credential)/.test(normalized) && /(send|share|give|tell|post|include)/.test(normalized)) {
       return '<p>Please do not share passwords, recovery codes, session cookies, API tokens, or other secrets in chat or support requests.</p><p>Use the <a href="help-center-article.html?id=login-recovery-security">login, recovery, and security guide</a> for the safe next step.</p>';
     }
@@ -113,14 +116,14 @@
     root.id = ROOT_ID;
     root.className = "hc-mystic";
     root.innerHTML =
-      '<button class="hc-mystic-launcher" type="button" data-mystic-toggle aria-expanded="false" aria-controls="hc-mystic-panel"><span class="hc-mystic-spark" aria-hidden="true">✦</span><span>Ask Mystic</span></button>' +
+      '<button class="hc-mystic-launcher" type="button" data-mystic-toggle aria-expanded="false" aria-controls="hc-mystic-panel"><span class="hc-mystic-spark" aria-hidden="true"><img src="assets/mystic-ghost.png" alt=""></span><span>Ask Mystic</span></button>' +
       '<section class="hc-mystic-panel" id="hc-mystic-panel" role="dialog" aria-labelledby="hc-mystic-title" aria-modal="false" hidden>' +
         '<header class="hc-mystic-header"><div><p class="hc-mystic-kicker">TPI Help Center</p><h2 id="hc-mystic-title">Ask Mystic</h2></div><button class="hc-mystic-close" type="button" data-mystic-close aria-label="Close Mystic">×</button></header>' +
-        '<div class="hc-mystic-intro"><span class="hc-mystic-avatar" aria-hidden="true">✦</span><p>Hi! I’m Mystic — TPI’s Spirit Guide, Researcher, and Shadow Seeker. I’ll help you find a verified member guide.</p></div>' +
+        '<div class="hc-mystic-intro"><span class="hc-mystic-avatar" aria-hidden="true"><img src="assets/mystic-ghost.png" alt=""></span><p>Hi! I’m Mystic — TPI’s Spirit Guide, Researcher, and Shadow Seeker. Ask me about TPI, the community, Help Center guidance, or a problem you need to report.</p></div>' +
         '<div class="hc-mystic-messages" data-mystic-messages aria-live="polite"></div>' +
         '<div class="hc-mystic-quick" data-mystic-quick aria-label="Suggested questions"><button type="button" data-mystic-prompt="How do I update my profile?">Update my profile</button><button type="button" data-mystic-prompt="How do I send a message?">Messaging</button><button type="button" data-mystic-prompt="I need to report a bug">Report a bug</button></div>' +
         '<form class="hc-mystic-form" data-mystic-form><input name="question" type="text" maxlength="240" autocomplete="off" placeholder="Ask about using TPI…" aria-label="Ask Mystic a question"><button type="submit">Ask</button></form>' +
-        '<p class="hc-mystic-note">Grounded in the public Member Help Center. Mystic will say when a verified answer is not available.</p>' +
+      '<p class="hc-mystic-note">Grounded in TPI’s public member guidance. Mystic will say when a verified answer is not available.</p>' +
       '</section>';
     document.body.appendChild(root);
 
