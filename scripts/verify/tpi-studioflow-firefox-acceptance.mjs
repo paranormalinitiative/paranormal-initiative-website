@@ -265,6 +265,17 @@ try {
     check(`synthetic ${accountKey} authentication succeeds`, true);
   }
 
+  // The login page confirms the new session before its final member-home
+  // navigation has necessarily settled. Starting StudioFlow while that
+  // redirect is still pending can let the old page win the navigation race,
+  // producing a false recording-setup timeout even though the session and
+  // StudioFlow route are healthy. Wait for the authoritative post-login
+  // landing page before seeding disposable Studio state or opening StudioFlow.
+  await waitFor("post-login member home navigation", async () => {
+    const url = new URL(await driver.getCurrentUrl());
+    return url.pathname === "/member-home" || url.pathname === "/member-home.html";
+  }, 15_000, 250);
+
   await js("var id=arguments[0], title=arguments[1]; var broadcast={id:id,title:title,description:'Disposable Firefox acceptance studio',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Disposable scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1'));", studioId, studioTitle);
   await enterStudio();
   check("StudioFlow loads in isolated Firefox", await count("[data-tpi-video-organization]") === 1);

@@ -113,6 +113,7 @@ check("deployment package excludes Markdown documentation", () => {
 check("production Firefox login waits locally and confirms auth once", () => {
   assert.match(firefoxAcceptance, /waitForManualLoginTransition/);
   assert.match(firefoxAcceptance, /await authenticatedSession\(\)/);
+  assert.match(firefoxAcceptance, /post-login member home navigation/);
   assert.match(firefoxAcceptance, /TPI ISOLATED LIVE ACCEPTANCE/);
   assert.match(firefoxAcceptance, /other Firefox windows cannot satisfy this acceptance/);
   assert.doesNotMatch(firefoxAcceptance, /waitFor\(\"authenticated isolated session\"/);
