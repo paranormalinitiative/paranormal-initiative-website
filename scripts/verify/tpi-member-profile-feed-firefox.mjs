@@ -95,6 +95,7 @@ try {
   await waitFor("own profile before Update Profile navigation", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden"));
   const updateLinkState = await driver.executeScript("var link=document.querySelector('[data-profile-edit]'); return {href:link&&link.getAttribute('href'),hidden:link&&link.hidden};");
   check("own profile exposes an Update Profile link to the editor", updateLinkState.href === "/member-profile.html#profile-editor" && updateLinkState.hidden === false, JSON.stringify(updateLinkState));
+  await waitFor("Messenger initializes before Update Profile navigation", async () => driver.executeScript("var chat=document.querySelector('[data-member-floating-chat]'); return Boolean(chat && chat.querySelector('[data-chat-minimize]'));"));
   await driver.executeScript("var minimize=document.querySelector('[data-chat-minimize]'); if (minimize) minimize.click();");
   await waitFor("Messenger hide before Update Profile navigation", async () => driver.executeScript("var chat=document.querySelector('[data-member-floating-chat]'); return !chat || chat.classList.contains('is-hidden')"));
   await waitFor("Messenger remains hidden before profile navigation", async () => driver.executeScript("var chat=document.querySelector('[data-member-floating-chat]'); if (!chat || chat.classList.contains('is-hidden')) return true; var minimize=chat.querySelector('[data-chat-minimize]'); if (minimize) minimize.click(); return false;"));
