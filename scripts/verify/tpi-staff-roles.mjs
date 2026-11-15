@@ -4,7 +4,7 @@
 // paths, profile recognition, and the staff-facing controls.
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { effectiveStaffRole, mayUseAdminRoute, publicStaffIdentity, STAFF_ROLE_CATALOG } from "../../lib/staff-roles.js";
+import { effectiveStaffRole, hasAdministrationCenterRole, mayUseAdminRoute, publicStaffIdentity, STAFF_ROLE_CATALOG } from "../../lib/staff-roles.js";
 import { hasCreatorStudioAccess } from "../../lib/auth.js";
 import { onRequest } from "../../functions/api/[[path]].js";
 
@@ -27,6 +27,7 @@ const worker = read("worker.js");
 check("migration stores explicit staff appointments and preserves revoked history", migration.includes("staff_role_appointments") && migration.includes("status TEXT NOT NULL DEFAULT 'active'") && migration.includes("'revoked'"));
 check("one active staff appointment per account prevents stacking", migration.includes("UNIQUE INDEX") && migration.includes("WHERE status = 'active'"));
 check("supported appointment types match the adopted role model", ["executive", "full_administrator", "administrator", "moderator"].every(role => migration.includes(`'${role}'`) && STAFF_ROLE_CATALOG[role]));
+check("Administration Center role eligibility is centralized and excludes non-admin staff", ["owner", "executive", "full_administrator", "administrator"].every(hasAdministrationCenterRole) && !hasAdministrationCenterRole("moderator") && !hasAdministrationCenterRole("member"));
 
 const owner = { id: "owner", role: "owner" };
 const legacyAdmin = { id: "legacy-admin", role: "admin" };
@@ -52,6 +53,7 @@ check("account access controls protect Owner, Executive, and staff peers", api.i
 check("Moderator content actions require a reason and retain audit history", api.includes("handleModerationStatus") && api.includes("community.${kind.slice(0, -1)}_moderated") && api.includes("Moderators may hide or remove content."));
 check("member profiles show badges from server staff identity", api.includes("staffIdentity: await publicStaffIdentity(env, target)") && profile.includes("staffIdentity.role") && profile.includes("(isModerator ? \"moderator\" : \"administrator\")") && existsSync(resolve(root, "assets/operational-roles/web/moderator-256.png")) && existsSync(resolve(root, "assets/operational-roles/web/administrator-256.png")));
 check("Creator Studio navigation recognizes appointed Executive leadership", read("member-shell.js").includes('["owner", "executive"].includes(staffRole)') && api.includes("await hasCreatorStudioAccess(env, user)"));
+check("Administration Center access probes use the effective appointed role", api.includes("const staffRole = await effectiveStaffRole(env, user)") && api.includes("adminAccess: hasAdministrationCenterRole(staffRole)") && worker.includes("hasAdministrationCenterRole(role)"));
 check("hosted login never trusts stale browser identity when the session API fails", read("member-login.js").includes("if (!isLocalPreviewOrigin()) return null") && read("member-login.js").includes("return isLocalPreviewOrigin() ? getLocalSessionUser() : null"));
 check("Admin Center provides a protected appointment form and audit-aware history", admin.includes("data-admin-staff-form") && admin.includes("Staff Roles &amp; Authority") && adminJs.includes("/api/admin/staff-roles"));
 check("Moderators receive a narrow moderation console, not the Admin Center", existsSync(resolve(root, "moderation.html")) && moderation.includes("/api/moderation/queue") && moderation.includes("/api/moderation/") && worker.includes("/moderation.html"));

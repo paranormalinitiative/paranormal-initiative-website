@@ -199,6 +199,24 @@
         ]
       },
       {
+        id: "administration-role-action-matrix",
+        category: "members-permissions",
+        title: "Match an Administration Center action to the correct role",
+        excerpt: "Use the role boundary before opening a protected view or taking an account, content, governance, or entitlement action.",
+        updated: "November 15, 2026",
+        popular: true,
+        body: [
+          { type: "p", text: "The server-side effective appointment is the authority source. The Administration Center menu is only a navigation aid: a visible item never grants permission, and an unavailable item should not be bypassed with a direct URL." },
+          { type: "h2", text: "Quick boundary" },
+          { type: "ul", items: ["Owner and Executive can open the full Administration Center; staff appointment and product-capability rules still apply to individual actions.", "Full Administrator has broad operational access but not protected ownership, staffing, governance, entitlement, security, or settings areas.", "Administrator has allowlisted routine member, community, article, report, event, contributor, and team routes.", "Moderator uses the focused Moderation surface for community posts and comments and does not receive the full Administration Center.", "Member, Contributor, Creator, and Founding labels do not create staff authority by themselves."] },
+          { type: "h2", text: "Before taking action" },
+          { type: "ol", items: ["Confirm the active server-side role or appointment in the protected session.", "Open the narrowest section that answers the operational question.", "Check whether the action is a routine member/content action, a moderation action, a governance action, a staff appointment, or a separate product entitlement.", "Use the supported workflow, provide the required reason, and verify the audit record or resulting status."] },
+          { type: "callout", tone: "warning", title: "Do not confuse authority", text: "A staff title, badge, membership, or client-side label cannot substitute for a server-side role or capability. If the action is unavailable, escalate to the role that owns it." },
+          { type: "h2", text: "Protected applications" },
+          { type: "p", text: "Administration Center work must not modify StudioFlow, Creator Studio, Nova, private recordings, stream credentials, or unpublished media. Those applications retain their own access and release boundaries." }
+        ]
+      },
+      {
         id: "member-data-and-private-contact",
         category: "members-permissions",
         title: "Handle member records and private contact data",

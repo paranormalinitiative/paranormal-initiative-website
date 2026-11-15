@@ -60,6 +60,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | The Administration Center candidate is ready after the unrelated StudioFlow rollback | [Administration Center guarded promotion](#inc-2026-11-15-27--administration-center-guarded-promotion) | Certified candidate reuse, anonymous smoke, protected admin routes, owner acceptance |
 | The live Administration Center needed owner verification after promotion | [Administration Center owner acceptance](#inc-2026-11-15-28--administration-center-owner-acceptance) | Owner session, Command Center, read-only navigation, protected boundaries |
 | Staff need a single policy source and complete repair-record format | [Internal Help Desk and policy foundation](#inc-2026-11-15-29--internal-help-desk-and-policy-foundation) | Internal Help Desk, policy reference, Bug / Repair record, protected application boundary |
+| An appointed staff member can open the Admin Center but sees the wrong limited interface | [Administration Center role matrix](#inc-2026-11-15-30--administration-center-role-probe-mismatch) | Effective staff appointment, legacy role mapping, Admin Center access probe |
 
 ## Incident and fix register
 
@@ -1243,6 +1244,24 @@ experiences**. A Creator should not need editorial authority to prepare a
 production. An editorial Contributor should not need StudioFlow production
 access to write a research paper. Content can move between the experiences only
 through an explicit, permission-aware bridge.
+
+### INC-2026-11-15-30 — Administration Center role probe mismatch
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15**, during the Administration Center role/capability reconciliation |
+| Product/surface | Protected Administration Center and `/api/editorial/access` |
+| Environment | Source and local verification; no member or production data changed |
+| Symptom | The server-side HTML gate recognized an appointed Executive, Full Administrator, or Administrator as an Administration Center account, but the navigation access probe still checked only the legacy `owner`/`admin` column. A valid appointed staff account could therefore be incorrectly shown the editorial-only shell. |
+| Root cause | Two access decisions used different sources: the shared effective appointment resolver in the Worker versus a legacy raw-role check in the access-probe response. |
+| Fix | Centralized full Administration Center eligibility in `hasAdministrationCenterRole()`. The Worker, `/api/auth/me`, and `/api/editorial/access` now use the effective appointed role; the access probe returns that effective role to the client. Added the role/action matrix audit and a protected Help Desk article. |
+| Verification | Staff-role regression passed **22/22**; Administration Center source/route contract passed **82/82**; release-impact classifier passed **15/15**; Markdown reference passed with **1,077** files. The local Help Center HTTP probe could not connect because the maintained Worker service was unavailable in this execution environment; all source-level audience checks passed **19/19**. |
+| Production status | Pending guarded release after clean-tree, GitHub-parity, local-auth, preflight, and live acceptance gates |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md`](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md), `lib/staff-roles.js`, `worker.js`, `functions/api/[[path]].js`, `scripts/verify/tpi-staff-roles.mjs` |
+
+**Lesson:** Every protected HTML gate, API response, and client navigation hint
+must derive from the same effective server-side role resolver. Legacy account
+columns are compatibility inputs, not the complete authority model.
 
 ## New-entry template
 

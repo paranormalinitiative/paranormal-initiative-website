@@ -58,6 +58,11 @@ not covered by the initial implementation. The role model is
 [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
 (TPI-GOVERNANCE-003B).
 
+The completed 2026-11-15 role/action reconciliation is recorded in
+[`200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md`](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md).
+It is the quick reference for matching the Center’s proposed areas to the
+effective server-side role, route allowlist, and separate product capabilities.
+
 Not yet implemented: staff suspension, member report intake and triage, warning
 and temporary restriction actions, appeals, a full staff directory, and an
 expanded per-capability inspection interface. Moderators currently manage

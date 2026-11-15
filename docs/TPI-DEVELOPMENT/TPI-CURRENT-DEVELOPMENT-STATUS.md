@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center role and action matrix reconciliation
+
+Status: **IMPLEMENTED IN SOURCE; PENDING GUARDED RELEASE.** Item 2 of the
+Administration Center roadmap is complete in the canonical repository. The
+server-side role resolver, Administration Center HTML gate, `/api/auth/me`, and
+`/api/editorial/access` now share one centralized full-Center eligibility
+decision. This repaired a real mismatch where an explicitly appointed
+Executive, Full Administrator, or Administrator could pass the server gate but
+receive the wrong limited navigation scope from the access probe. Added the
+role/action matrix audit and an internal Help Desk article covering every
+current Center area, the separate Moderator surface, protected entitlement
+boundaries, and unfinished future workflows. Staff-role regression passed
+**22/22**, Admin Center source/route contracts passed **82/82**, release-impact
+classification passed **15/15**, and the Markdown reference passed with
+**1,077** files. No StudioFlow, Creator Studio, Nova Editor Workspace, private
+media, D1, R2, or Crossroads data was changed. The local HTTP Help Center probe
+could not connect because the maintained local Worker service was unavailable
+in this execution environment; source-level separation checks passed **19/19**.
+The guarded release and live owner/staff acceptance remain the next gates.
+See [Administration Center Role and Action Matrix Audit](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md).
+
 ## 2026-11-15 — Internal Help Desk and policy foundation
 
 Status: **DEPLOYED AND VERIFIED; PROTECTED BOUNDARY PRESERVED.** Item 1 of the

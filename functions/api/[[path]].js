@@ -43,7 +43,7 @@ import {
   listLeadershipProfiles,
 } from "../../lib/leadership-distinctions.js";
 import { BOARD_DOMAIN_CATALOG, BOARD_MEMBER_BADGE, BOARD_ROLE_CATALOG, boardRolePayload, getBoardMembership, listBoardMembers } from "../../lib/board-members.js";
-import { activeStaffAppointment, effectiveStaffRole, mayUseAdminRoute, publicStaffIdentity, validOfficeTitle } from "../../lib/staff-roles.js";
+import { activeStaffAppointment, effectiveStaffRole, hasAdministrationCenterRole, mayUseAdminRoute, publicStaffIdentity, validOfficeTitle } from "../../lib/staff-roles.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -699,12 +699,13 @@ async function handleMe(request, env) {
   } catch (error) {
     editorialReviewAccess = false;
   }
+  const staffRole = await effectiveStaffRole(env, user);
   return json({
     user: {
       ...privateMemberUser(user, await hasCreatorStudioAccess(env, user)),
       staffIdentity: await publicStaffIdentity(env, user),
       editorialReviewAccess,
-      adminAccess: ["owner", "executive", "full_administrator", "administrator"].includes(await effectiveStaffRole(env, user)) || editorialReviewAccess,
+      adminAccess: hasAdministrationCenterRole(staffRole) || editorialReviewAccess,
       educationLeadershipAccess: await hasEducationLeadershipAccess(env, user),
       foundingMembership: await publicMembershipIdentity(env, user.id),
       leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
@@ -4816,11 +4817,12 @@ async function requireEditorial(request, env, handler) {
 // Administration Center navigation.
 async function handleEditorialAccess(env, user) {
   const capabilities = await contributorCapabilities(env, user);
+  const staffRole = await effectiveStaffRole(env, user);
   return json({
-    role: user.role || "",
+    role: staffRole,
     editorialReview: hasEditorialReview(capabilities),
     editorialPublish: hasEditorialPublish(capabilities),
-    adminAccess: ["owner", "admin"].includes(user.role)
+    adminAccess: hasAdministrationCenterRole(staffRole)
   }, 200, { "Cache-Control": "no-store" });
 }
 

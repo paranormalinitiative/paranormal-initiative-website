@@ -39,6 +39,9 @@ destination or served to an anonymous member.
   does not grant authority by itself.
 - Direct URLs, article routes, search routes, contact routes, and internal data
   assets must receive the same server-side access protection.
+- Use the [Administration Center role and action matrix](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md)
+  before taking a role-sensitive action. It records the current boundary for
+  Owner, Executive, Full Administrator, Administrator, Moderator, and Member.
 - The Member Help Center remains separate and may be linked for public-facing
   instructions, but member content must not be used to disclose internal
   procedures.
