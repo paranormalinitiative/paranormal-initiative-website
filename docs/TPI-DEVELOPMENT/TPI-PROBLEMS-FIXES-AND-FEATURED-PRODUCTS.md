@@ -420,7 +420,7 @@ internal credentials guidance.
 | Fix | Added TPI-specific member guides for account creation, profiles, friending, Home Page, messaging, Reels, Stories, photos, videos, accessibility, login/recovery/security, account management, privacy/safety, policies, and reporting |
 | Deferred | Pages and Groups remain intentionally staged for a later phase |
 | Audience rule | Member guidance stays in the public/member Help Center; internal Help Desk procedures remain protected inside Administration Center |
-| Status | **Source implemented; release verification pending** |
+| Status | **Deployed and live verified** |
 
 **How it was fixed:**
 
@@ -434,6 +434,11 @@ internal credentials guidance.
   Pages/Groups boundary.
 
 **Reference:** [`2026-11-14-HELP-CENTER-MEMBER-GUIDE-EXPANSION.md`](300-COMPLETED-WORK/2026-11-14-HELP-CENTER-MEMBER-GUIDE-EXPANSION.md)
+
+**Release evidence:** Source commit `3b8669dc87ae5dce6d9c0e09a705998df33016b6`,
+release candidate `rel-3b8669dc87ae-4b2f91c483dc`, production Worker
+`4ffc57d6-006f-4553-86f9-e0ab77bb667d`, rollback Worker
+`59cf78af-f9d1-4bc8-b7ef-4fd2d2294b00`, live smoke **10/10**.
 
 ### INC-2026-11-14-10 — Community Feed YouTube body-link recurrence
 

@@ -1,7 +1,7 @@
 # TPI Member Help Center — Facebook-Reference Guide Expansion
 
 Date: 2026-11-14 22:11 ET
-Status: IMPLEMENTED IN SOURCE — RELEASE VERIFICATION PENDING
+Status: DEPLOYED AND LIVE-VERIFIED
 
 ## Purpose
 
@@ -61,6 +61,19 @@ Studio application directories.
 - `npm run release:preflight`
 - Guarded production deployment and isolated Firefox Developer Edition live
   acceptance through the maintained runbook
+
+## Release evidence
+
+- Source commit: `3b8669dc87ae5dce6d9c0e09a705998df33016b6`
+- Release candidate: `rel-3b8669dc87ae-4b2f91c483dc`
+- Preflight: **READY**, 35 workflow gates; Help Center separation **13/13**;
+  profile/feed browser regression **53/53**
+- Protected application integrity: **passed**; StudioFlow, Nova, and Creator
+  Studio assets remained unchanged
+- Production Worker: `4ffc57d6-006f-4553-86f9-e0ab77bb667d`
+- Rollback Worker: `59cf78af-f9d1-4bc8-b7ef-4fd2d2294b00`
+- Live anonymous production smoke: **10/10 passed**
+- Production release result: **DEPLOYED_AND_VERIFIED**
 
 The separation regression now checks the requested member topic inventory and
 asserts that Pages and Groups remain deferred.
