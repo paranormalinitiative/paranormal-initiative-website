@@ -20,8 +20,16 @@ const publicData = read("help-center-data.js");
 const internalData = read("internal-help-center-data.js");
 const worker = read("worker.js");
 const sharedShell = read("help-center.js");
+const mystic = read("mystic-help-center.js");
 const memberSidebar = read("member-sidebar.html");
 const adminCenter = read("admin-center-app/src/app.tsx");
+const publicHelpPages = [
+  "help-center.html",
+  "help-center-category.html",
+  "help-center-article.html",
+  "help-center-search.html",
+  "help-center-contact.html"
+];
 
 check("member Help Center keeps public support content", publicData.includes("Privacy, safety, policies & reporting") && publicData.includes("report-bug-community-issue") && publicData.toLowerCase().includes("member support"));
 check("member Help Center covers the core member guide topics", [
@@ -54,6 +62,15 @@ check("Internal pages identify the internal audience", [
   "internal-help-center-contact.html"
 ].every((file) => read(file).includes('data-hc-audience="internal"')));
 check("Shared renderer switches to internal routes and labels", sharedShell.includes("TPI_INTERNAL_HELP_CENTER") && sharedShell.includes("internal-help-center-article.html") && sharedShell.includes("Help Desk") && sharedShell.includes("Member support"));
+check("Ask Mystic is available across public Help Center pages", publicHelpPages.every((file) => read(file).includes('src="mystic-help-center.js?v=1"')) && sharedShell.includes("TPIMysticHelpCenter"));
+check("Ask Mystic searches only public member articles", mystic.includes("window.TPI_HELP_CENTER") && !mystic.includes("TPI_INTERNAL_HELP_CENTER") && !mystic.includes("internal-help-center-data.js"));
+check("Internal Help Desk pages do not mount Ask Mystic", [
+  "internal-help-center.html",
+  "internal-help-center-category.html",
+  "internal-help-center-article.html",
+  "internal-help-center-search.html",
+  "internal-help-center-contact.html"
+].every((file) => !read(file).includes("mystic-help-center.js")) && sharedShell.includes("!INTERNAL"));
 const helpIndex = memberSidebar.indexOf('data-nav="help-center"');
 const logoutIndex = memberSidebar.indexOf('data-nav="logout"');
 check("Member Help Center sits immediately above Log Out", helpIndex >= 0 && logoutIndex > helpIndex && memberSidebar.slice(helpIndex, logoutIndex).includes("Help Center"));

@@ -6,6 +6,14 @@ other credentialed staff with an active server-side appointment
 **Status:** Protected internal operations reference
 **Last updated:** 2026-11-14
 
+## Relationship to Mystic
+
+The public Help Center's Ask Mystic assistant is not an internal operator and
+does not have access to this Help Desk. It searches only member-facing help
+articles. Internal procedures, moderation actions, staff roles, member records,
+audit details, and Administration Center workflows remain available only
+through this protected Help Desk and the server-side authorization boundary.
+
 ## Purpose
 
 The Internal Help Desk explains how authorized internal people use the

@@ -135,6 +135,7 @@
     applyTheme(currentTheme());
     bindShell();
     hydrateAccount();
+    if (!INTERNAL && window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
   }
 
   function bindShell() {
