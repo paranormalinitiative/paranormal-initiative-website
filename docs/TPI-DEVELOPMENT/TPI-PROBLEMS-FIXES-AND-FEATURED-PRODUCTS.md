@@ -596,9 +596,11 @@ Memberships API returned **200**; and the live Admin Center opened
 | --- | --- |
 | Detected | **2026-11-14**, owner request to remove the full member directory from Messenger |
 | Root cause confirmed | **2026-11-14 21:20 ET**, Messenger roster route and shared shell audit |
-| Fixed in source | **2026-11-14 21:33 ET**, pending guarded release commit |
+| Fixed in source | **2026-11-14 21:33 ET**, commit `a1d030af` |
+| Certified release | `rel-a1d030af3b2c-5152a1d5c14e`, shared-api profile |
+| Production Worker | `d1d8b5ee-f195-4ca9-ab86-ccaa8925e2cb` |
 | Scope | Site-wide Messenger member picker and existing Chats list |
-| Status | **Implemented and locally verified; production release pending** |
+| Status | **Deployed and live verified** |
 
 **What happened:** Messenger presented a directory of all members as the default
 starting list. That exposed more people than needed for routine messaging and

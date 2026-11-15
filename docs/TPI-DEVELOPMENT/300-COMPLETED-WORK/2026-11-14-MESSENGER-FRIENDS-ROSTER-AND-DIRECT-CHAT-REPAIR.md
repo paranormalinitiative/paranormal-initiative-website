@@ -49,10 +49,13 @@ Chats so it can be revisited without searching again.
 ## Release record
 
 - **Source branch:** `codex/tpi-development`
-- **Source commit:** pending guarded commit
-- **Certified release:** pending guarded preflight
-- **Production Worker version:** pending guarded deployment
-- **Production status:** **Local verification passed; production release pending**.
+- **Source commit:** `a1d030af3b2cb5336fd1a0d98e80ff6000c6fbd5`
+- **Certified release:** `rel-a1d030af3b2c-5152a1d5c14e`
+- **Production Worker version:** `d1d8b5ee-f195-4ca9-ab86-ccaa8925e2cb`
+- **Rollback version:** `c914a5a5-6cfd-460a-8856-3a0397a87498`
+- **Production status:** **Deployed and live verified**.
+- **Deployment duration:** **17.3 seconds**, including production smoke.
+- **Release profile:** Shared API / Tier 1 because the authenticated Worker API and release verification changed.
 
 ## Permanent protection
 
