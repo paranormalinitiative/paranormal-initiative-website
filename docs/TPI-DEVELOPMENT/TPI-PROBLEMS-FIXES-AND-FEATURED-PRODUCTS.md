@@ -58,6 +58,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | An Administration Center release deploys, then rolls back during an unrelated StudioFlow live gate | [Administration Center command center and release-gate finding](#inc-2026-11-15-25--administration-center-command-center-and-release-gate-finding) | Full release certification, live Firefox acceptance, protected application boundary |
 | A small Administration Center change starts the full StudioFlow release suite | [Administration Center impact-aware release guard](#inc-2026-11-15-26--administration-center-impact-aware-release-guard) | Release-impact classifier, admin-only verification, protected application byte guard |
 | The Administration Center candidate is ready after the unrelated StudioFlow rollback | [Administration Center guarded promotion](#inc-2026-11-15-27--administration-center-guarded-promotion) | Certified candidate reuse, anonymous smoke, protected admin routes, owner acceptance |
+| The live Administration Center needed owner verification after promotion | [Administration Center owner acceptance](#inc-2026-11-15-28--administration-center-owner-acceptance) | Owner session, Command Center, read-only navigation, protected boundaries |
 
 ## Incident and fix register
 
@@ -131,14 +132,30 @@ suite.
 | Worker | `5bd6d0c9-53cd-4d4d-9021-a57804512b7a`, 100% production traffic |
 | Verification | Certified candidate reused; anonymous production smoke **10/10**; `/admin-panel`, `/admin-center-preview/`, and `/api/admin/members` anonymous boundary checks returned **403** |
 | StudioFlow boundary | StudioFlow live acceptance was skipped for the website-profile candidate; no StudioFlow source or data changed |
-| Status | **Deployed and live verified; owner-authenticated Administration Center acceptance remains** |
+| Status | **Deployed and live verified; owner-authenticated Administration Center acceptance passed** |
 
-The next owner-facing step is to sign in privately and confirm the dashboard,
-all authorized navigation, and any action that requires Owner/Founder/CEO
-authority. The public boundary is already verified; no anonymous visitor can
-reach the Administration Center.
+The public boundary is verified; no anonymous visitor can reach the
+Administration Center. Owner-authenticated read-only acceptance is recorded
+below; mutation controls were intentionally not submitted during this pass.
 
 **Documentation:** [Administration Center impact-aware release guard](300-COMPLETED-WORK/2026-11-15-ADMIN-CENTER-IMPACT-AWARE-RELEASE-GUARD.md).
+
+### INC-2026-11-15-28 — Administration Center owner acceptance
+
+| Field | Record |
+| --- | --- |
+| Date and time | **2026-11-15 17:06 EST** |
+| What happened | The live Administration Center needed the Owner/Founder/CEO browser check after guarded promotion. |
+| How it was fixed | No code change was required. Firefox Developer Edition used the existing authenticated Owner session and loaded the live `/admin-panel` route. |
+| Verified | Command Center, health signal, queue bars, readiness gates, protected boundaries, Member Directory, Roles & Permissions, Community Overview, Reports & Moderation, Platform Health, Security, Audit Logs, Help Desk, Analytics, Activity, System Settings, and Notifications. |
+| Safety result | Anonymous admin-route protection remained intact. Read-only views rendered from live administrative data. No settings, member records, report statuses, notification read states, or other mutations were changed. |
+| Boundary result | StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, and R2 were not modified. |
+| Status | **Owner-authenticated live acceptance passed** |
+
+The Administration Center is now verified for the live Owner/Founder/CEO
+session. Product-completeness work remains for the unfinished internal
+workflows called out by the dashboard; that is separate from this access and
+rendering acceptance.
 
 ### INC-2026-11-14-20 — Mystic community assistant
 

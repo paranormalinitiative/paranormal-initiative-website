@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-15 15:54 EST  
 **Scope:** Authenticated Administration Center preview and its existing protected API contracts  
-**Status:** Audit completed; command-center presentation improved in preview; promotion to the legacy production route remains gated
+**Status:** Audit completed; command-center presentation improved, promoted, and owner-accepted in production
 
 ## Owner request
 
@@ -44,7 +44,7 @@ The following items are not represented as complete merely because a navigation 
 - A finished internal Help Desk knowledge base and policy inventory.
 - An authenticated NOVA retrieval boundary that can safely read internal Help Desk material.
 - Final parity review between the preview and the legacy production Administration Center.
-- Authenticated owner browser acceptance of the preview on the approved development runtime.
+- Final parity review between the preview and the legacy production Administration Center remains a future product-completeness review; the live legacy route is owner-authorized and operational.
 
 ## Command Center design
 
@@ -110,5 +110,5 @@ The next phase should complete the public-facing Administration Center foundatio
 - The exact candidate `rel-86907c5696de-6323c630311d` passed the full 38-gate certification and 10/10 anonymous production smoke. The guarded live Firefox gate then timed out during unrelated StudioFlow recording setup, so the release runner automatically restored Worker `7d6b3674-5396-463d-a4ef-247858b0c849`. The candidate is not live; no StudioFlow source was changed and no certification gate was bypassed.
 - No database migration, production data operation, credential change, protected-application change, or legacy route replacement was performed by this audit.
 - Documentation-only and preview-source changes require the repository's normal build and QA checks before commit. No production deployment is claimed by this document.
-- Follow-up promotion: after the impact-aware release guard passed full tooling certification, the candidate was promoted through release `rel-e5ada60ef448-6f27f390f5ab` as Worker `5bd6d0c9-53cd-4d4d-9021-a57804512b7a`. Anonymous production smoke passed **10/10**, traffic reached 100%, and `/admin-panel`, `/admin-center-preview/`, and `/api/admin/members` remained HTTP 403 without a session. Owner-authenticated browser acceptance remains for the owner; no StudioFlow source or data was changed.
+- Follow-up promotion: after the impact-aware release guard passed full tooling certification, the candidate was promoted through release `rel-e5ada60ef448-6f27f390f5ab` as Worker `5bd6d0c9-53cd-4d4d-9021-a57804512b7a`. Anonymous production smoke passed **10/10**, traffic reached 100%, and `/admin-panel`, `/admin-center-preview/`, and `/api/admin/members` remained HTTP 403 without a session. Owner-authenticated Firefox Developer Edition acceptance then passed against the live legacy route: Command Center, Member Directory, Roles & Permissions, Community Overview, Reports & Moderation, Platform Health, Security, Audit Logs, Help Desk, Analytics, Activity, System Settings, and Notifications all rendered successfully. No mutation controls were submitted; no StudioFlow source or data was changed.
 

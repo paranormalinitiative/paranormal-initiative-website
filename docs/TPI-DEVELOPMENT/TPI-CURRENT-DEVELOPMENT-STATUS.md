@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center impact-aware release guard
 
-Status: **DEPLOYED AND LIVE VERIFIED; OWNER ACCEPTANCE REMAINS.** The
+Status: **DEPLOYED AND LIVE VERIFIED; OWNER ACCEPTANCE PASSED.** The
 release workflow now distinguishes Administration Center-only changes from
 StudioFlow, shared Worker, authentication, migration, dependency, and release
 tool changes. An admin-confined change runs the local authentication smoke,
@@ -20,8 +20,12 @@ promoted through the guarded production path as Worker
 **10/10**, traffic reached 100%, and the unrelated StudioFlow live gate was
 skipped. Anonymous checks confirmed `/admin-panel`,
 `/admin-center-preview/`, and `/api/admin/members` remain protected with HTTP
-403. Owner-authenticated browser acceptance is the remaining human-facing
-check.
+403. Owner-authenticated Firefox Developer Edition acceptance passed on
+2026-11-15. The live owner session opened `/admin-panel`, rendered the Command
+Center, and navigated the read-only Member Directory, Roles & Permissions,
+Community Overview, Reports & Moderation, Platform Health, Security, Audit
+Logs, Help Desk, Analytics, Activity, System Settings, and Notifications
+views. No mutations were submitted.
 See [Administration Center Impact-Aware Release Guard](300-COMPLETED-WORK/2026-11-15-ADMIN-CENTER-IMPACT-AWARE-RELEASE-GUARD.md) and [TPI Problems, Fixes, and Featured Products](TPI-PROBLEMS-FIXES-AND-FEATURED-PRODUCTS.md).
 
 ## 2026-11-15 — Administration Center command-center audit and preview improvement
@@ -48,14 +52,15 @@ changed and the Administration Center candidate is not live yet. See
 
 ## 2026-11-15 — Administration Center guarded promotion
 
-Status: **DEPLOYED AND ANONYMOUSLY VERIFIED; OWNER ACCEPTANCE PENDING.** The
+Status: **DEPLOYED AND OWNER-ACCEPTED.** The
 previously certified Administration Center candidate was promoted after the
 impact-aware release guard was installed. Worker
 `5bd6d0c9-53cd-4d4d-9021-a57804512b7a` serves 100% of production traffic.
 Anonymous production smoke passed **10/10**; the protected admin routes
-returned **403** without a session. Todd should now sign in privately and
-confirm the Administration Center dashboard, navigation, and authorized
-actions. No StudioFlow source or data was changed.
+returned **403** without a session. Todd's Owner/Founder/CEO session was
+verified in Firefox Developer Edition: the Command Center and read-only
+Administration Center navigation loaded from the live Worker. No StudioFlow
+source or data was changed.
 
 ## 2026-11-15 — Mystic public AI Search and site-wide knowledge audit
 

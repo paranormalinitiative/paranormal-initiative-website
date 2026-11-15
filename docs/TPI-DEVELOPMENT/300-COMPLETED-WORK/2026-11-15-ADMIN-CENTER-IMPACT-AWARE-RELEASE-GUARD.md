@@ -77,5 +77,11 @@ The certified candidate was promoted as release
 `5bd6d0c9-53cd-4d4d-9021-a57804512b7a`. Production smoke passed **10/10** and
 the new Worker received 100% traffic. Anonymous checks returned **403** for
 `/admin-panel`, `/admin-center-preview/`, and `/api/admin/members`. The
-Administration Center is protected from anonymous access, while Todd still
-needs to complete private Owner/Founder/CEO browser acceptance.
+Administration Center is protected from anonymous access. Todd's private
+Owner/Founder/CEO Firefox Developer Edition acceptance subsequently passed:
+the live Command Center loaded and the read-only Member Directory, Roles &
+Permissions, Community Overview, Reports & Moderation, Platform Health,
+Security, Audit Logs, Help Desk, Analytics, Activity, System Settings, and
+Notifications views all rendered from the live Worker. No mutations were
+submitted and no StudioFlow, Creator Studio, Nova, private media, D1, or R2
+data was changed.
