@@ -317,6 +317,11 @@ async function preflight() {
   // the watched directory after startup can leave Miniflare serving the new
   // HTML with an old asset manifest, which presents as a blank StudioFlow page.
   run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"], { timing: { bucket: "staging" } });
+  // TPI-LOCALDEV-006C: staging alone is not a freshness boundary when the
+  // maintained Worker is already running. Use the same in-place general-site
+  // refresh as `npm run dev:local:refresh` before browser gates; protected
+  // application directories remain untouched by the local launcher.
+  run("Refresh running local Worker assets", process.execPath, ["scripts/local-dev.mjs", "refresh"], { timing: { bucket: "staging" } });
   if (impact.profile === "full" || impact.profile === "studioflow") await verifyAuthLifecycle();
   if (impact.profile === "full") {
     run("Legacy Admin session and staff-role regression", process.execPath, ["scripts/verify/tpi-staff-roles.mjs"], { timing: { bucket: "certification" } });
