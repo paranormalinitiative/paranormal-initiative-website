@@ -98,7 +98,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Fix | Moved Mystic to the upper sitewide launcher position, moved Nova to the lower position, added the supplied artwork as `assets/nova-help-center.png`, and used it in Nova's launcher, panel avatar, and Help Center assistant card. |
 | Safeguards | Cache versions advanced to `v3`; public/internal retrieval boundaries, staff authorization, Mystic's public-only sources, and protected applications remain unchanged. |
 | Verification | JavaScript syntax, Help Center separation, order/icon source contracts, guarded preflight, production smoke, and live production probe. |
-| Status | **Implemented; guarded release pending.** See [Assistant Launcher Order and Nova Artwork](300-COMPLETED-WORK/2026-11-16-ASSISTANT-LAUNCHER-ORDER-AND-NOVA-ARTWORK.md). |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-8fc6abb54996-0797f31bc261` is serving Worker `4a4cd164-fec4-4149-985c-8348b42b012e` at 100% traffic. See [Assistant Launcher Order and Nova Artwork](300-COMPLETED-WORK/2026-11-16-ASSISTANT-LAUNCHER-ORDER-AND-NOVA-ARTWORK.md). |
 
 ### INC-2026-11-16-03 — Member registration request failed
 

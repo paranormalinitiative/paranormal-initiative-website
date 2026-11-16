@@ -1,7 +1,7 @@
 # Assistant Launcher Order and Nova Artwork
 
 Date/time: **2026-11-16 15:14 EST**
-Status: **IMPLEMENTED; guarded release pending**
+Status: **DEPLOYED AND LIVE VERIFIED**
 
 ## Owner request
 
@@ -36,7 +36,18 @@ icon.
 - Full guarded preflight and production smoke.
 - Live production Help Center separation probe.
 
+Local and production Help Center separation checks passed **32/32**. The live
+production asset probe returned HTTP 200 for the Help Center, Nova artwork,
+Nova v3 CSS/JavaScript, and Mystic CSS. Production anonymous smoke passed
+**10/10**.
+
 ## Release record
 
-To be completed after the exact certified candidate is deployed and live
-verification passes.
+- Website commit: `8fc6abb5499670845cf65e1e93480065a8841b55`
+- Release ID: `rel-8fc6abb54996-0797f31bc261`
+- Worker version: `4a4cd164-fec4-4149-985c-8348b42b012e`
+- Rollback reference: `797a0c7f-91bd-4bb1-b195-582750d85b41`
+- Certification: Tier 1 website profile; 11 gates passed; manifest digest
+  `71b962891d0e8f19776c0ebbe85e1225d3645ef9d60f8c4ec8f5a943121b110b`
+- Production smoke: **10/10**
+- Production Help Center separation: **32/32**

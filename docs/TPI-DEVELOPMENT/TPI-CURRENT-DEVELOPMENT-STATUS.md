@@ -2,11 +2,15 @@
 
 ## 2026-11-16 — Assistant launcher order and Nova artwork
 
-Status: **IMPLEMENTED; guarded release pending.** Mystic is now positioned
+Status: **DEPLOYED AND LIVE VERIFIED.** Mystic is now positioned
 above Nova in the sitewide assistant controls. Nova uses the owner-supplied
 Help Center artwork in its launcher, panel avatar, and Help Center assistant
 card. Public/internal knowledge boundaries are unchanged. See [Assistant
 Launcher Order and Nova Artwork](300-COMPLETED-WORK/2026-11-16-ASSISTANT-LAUNCHER-ORDER-AND-NOVA-ARTWORK.md).
+
+Release `rel-8fc6abb54996-0797f31bc261` is live on Worker
+`4a4cd164-fec4-4149-985c-8348b42b012e` at 100% traffic. Production smoke passed
+10/10, and the live Help Center/order/icon probe passed 32/32.
 
 ## 2026-11-16 — Mystic and Nova identity separation and sitewide coverage
 
