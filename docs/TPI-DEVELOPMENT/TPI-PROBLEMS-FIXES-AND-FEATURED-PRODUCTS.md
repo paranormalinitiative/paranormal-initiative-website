@@ -1069,6 +1069,30 @@ image metadata.
 **Completion record:**
 [`2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md`](300-COMPLETED-WORK/2026-11-14-EXTERNAL-NON-YOUTUBE-VIDEO-PREVIEW-REPAIR.md)
 
+### INC-2026-11-16-01 — External page preview required an extra click
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-16 18:36 ET**, shown in the supplied Chimera screenshot |
+| Root cause confirmed | **2026-11-16**, shared Community Feed renderer inspection |
+| Fixed in source | **2026-11-16**, inline image/live-preview rendering and regression protection |
+| Status | **Implemented in source; guarded production release pending verification** |
+
+**What happened:** JavaScript-rendered external pages were classified as
+interactive previews, but the feed required the member to click **Open
+interactive preview** before showing the page. This made a usable visual link
+feel hidden, especially for sources such as Chimera that do not publish a
+standard `og:image`.
+
+**How it was fixed:** A safe source-provided image now appears immediately. If
+the source has no image but renders as an interactive page, the existing
+sandboxed iframe loads inline. The full external page remains available through
+the card's **Open interactive preview** link, and the original URL, SSRF
+guards, sandbox restrictions, and fallback behavior remain protected.
+
+**Completion record:**
+[`2026-11-16-EXTERNAL-PAGE-PREVIEW-IMAGE-REPAIR.md`](300-COMPLETED-WORK/2026-11-16-EXTERNAL-PAGE-PREVIEW-IMAGE-REPAIR.md)
+
 ### INC-2026-11-14-16 — Owner Admin authorization mismatch
 
 | Field | Record |

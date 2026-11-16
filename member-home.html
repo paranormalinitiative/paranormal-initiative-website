@@ -1681,6 +1681,13 @@
             background: radial-gradient(circle at 50% 35%, rgba(247, 2, 2, 0.16), transparent 58%), #071017;
         }
 
+        .external-page-preview-live {
+            display: block;
+            min-height: 320px;
+            padding: 0;
+            background: #000;
+        }
+
         .external-page-preview-media img {
             position: absolute;
             inset: 0;
@@ -1695,6 +1702,10 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(180deg, rgba(7, 16, 23, 0.1), rgba(7, 16, 23, 0.82));
+        }
+
+        .external-page-preview-live::after {
+            display: none;
         }
 
         .external-page-preview-action {
@@ -5162,10 +5173,18 @@
                     '<source src="' + escapeAttr(externalVideoUrl) + '"' + (sourceType ? ' type="' + escapeAttr(sourceType) + '"' : '') + '>' +
                     'Your browser could not load this video. <a href="' + escapeAttr(externalVideoUrl) + '" target="_blank" rel="noopener noreferrer ugc">Open the video</a>.' +
                 '</video></div>';
+        } else if (externalPageUrl && meta.image) {
+            // Show a source-provided image immediately instead of hiding it
+            // behind the interactive-preview action.
+            media = '<div class="link-preview-media external-page-preview-static" data-external-page-media>' +
+                '<img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();">' +
+            '</div>';
         } else if (externalPageUrl) {
-            media = '<div class="link-preview-media external-page-preview-media" data-external-page-media>' +
-                (meta.image ? '<img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.remove();">' : '') +
-                '<div class="external-page-preview-action"><button type="button" data-external-page-play="' + escapeAttr(externalPageUrl) + '">Open interactive preview</button></div>' +
+            // JavaScript-rendered pages such as Chimera may not publish an
+            // og:image, but the existing sandboxed preview still renders. Show
+            // it inline so members do not need an extra click.
+            media = '<div class="link-preview-media external-page-preview-media external-page-preview-live" data-external-page-media>' +
+                '<iframe class="external-page-preview-frame" src="' + escapeAttr(externalPageUrl) + '" title="Interactive external link preview" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts" allow="autoplay; fullscreen; picture-in-picture"></iframe>' +
             '</div>';
         } else if (meta.image) {
             media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();"></div>';
@@ -5206,8 +5225,8 @@
                 '<div class="link-preview-info">' +
                     (host ? '<span class="link-preview-host">' + escapeHtml(host) + '</span>' : "") +
                     '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
-                    (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : '<span class="link-preview-desc">Interactive external link. The source page will open here when embedding is allowed.</span>') +
-                    '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open source</a>' +
+                    (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : '<span class="link-preview-desc">External preview shown when the source permits it. Open the source for the complete experience.</span>') +
+                    '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open interactive preview</a>' +
                 '</div>' +
             '</div>';
         }
@@ -5222,16 +5241,6 @@
     }
 
     document.addEventListener("click", function(event) {
-        var externalPage = event.target.closest("[data-external-page-play]");
-        if (externalPage) {
-            event.preventDefault();
-            var externalUrl = String(externalPage.getAttribute("data-external-page-play") || "");
-            if (!/^https?:\/\//i.test(externalUrl)) return;
-            var media = externalPage.closest("[data-external-page-media]");
-            if (!media) return;
-            media.innerHTML = '<iframe class="external-page-preview-frame" src="' + escapeAttr(externalUrl) + '" title="Interactive external link preview" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts" allow="autoplay; fullscreen; picture-in-picture"></iframe>';
-            return;
-        }
         var play = event.target.closest("[data-youtube-play]");
         if (!play) return;
         event.preventDefault();
