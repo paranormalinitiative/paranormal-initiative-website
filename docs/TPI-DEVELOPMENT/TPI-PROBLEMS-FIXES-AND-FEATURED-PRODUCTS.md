@@ -66,6 +66,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one place to understand a member's real access | [Membership and entitlement inspection](#inc-2026-11-15-34--administration-center-membership-and-entitlement-inspection) | Effective role, capability flags, Founding identity, Creator Studio, Nova authority, restrictions, read-only metadata |
 | A staff member could submit a warning or restriction before reviewing the complete action | [Enforcement action review gate](#inc-2026-11-15-35--administration-center-enforcement-action-review-gate) | Enforcement & Appeals, confirmation boundary, audit-safe mutation |
 | Owner needs to grant or revoke direct Creator Studio access without touching memberships or StudioFlow | [Creator Studio access review gate](#inc-2026-11-15-36--administration-center-creator-studio-access-review-gate) | Owner-only capability grant, protected entitlement sources, review-before-change |
+| Owner needs a safe overview of creator channels and their published-video counts | [Creator Channels verification](#inc-2026-11-15-37--administration-center-creator-channels-verification) | Channel directory, search/filter/pagination, metadata-only boundary |
 
 ## Incident and fix register
 
@@ -1382,6 +1383,25 @@ confirmation.
 never flatten different authority sources into one editable record. Review the
 exact account and source, then mutate only the direct grant that the Owner
 intended.
+
+### INC-2026-11-15-37 — Administration Center Creator Channels verification
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15 21:38 EST**, during the next Creator section review |
+| Implemented in source | **2026-11-15**, existing implementation commit `18ceb209` |
+| Product/surface | Protected Administration Center → Creators → Creator Channels |
+| Symptom | Creator Channels was the next planned Creator section item and needed confirmation that the operational directory was complete, safe, and live. |
+| Root cause | No defect was found. The feature had already been integrated, but its completion and live verification had not yet been recorded in the maintained TPI documentation. |
+| Fix | Verified the existing server-backed channel directory: search by channel/slug/owner, public/private visibility filter, bounded pagination, owner identity, published-video count, updated timestamp, empty state, and explicit read-only boundary. |
+| Safeguards | The API is protected by the existing effective-role Administration Center gate and returns metadata only. No channel mutations, ownership transfers, visibility changes, video lifecycle actions, private media, or StudioFlow data are exposed. |
+| Verification | Admin Center build passed; source contracts **92/92**; live Owner Firefox page confirmed the controls and read-only notice. Production returned **0 channels**, which rendered the truthful empty state. |
+| Production status | **ALREADY DEPLOYED AND LIVE** in release `rel-ee2e52dce715-5a8621bf7e9f`; no redeploy or database change required for this verification. |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-CREATOR-CHANNELS.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-CREATOR-CHANNELS.md), `admin-center-app/src/app.tsx`, `functions/api/[[path]].js`, `admin-center-app/src/lib/api.ts`, `scripts/qa/tpi-admin-006-preview.mjs` |
+
+**Lesson:** A directory can be complete without exposing mutation controls. Show
+the authoritative metadata, report an honest empty state, and leave channel
+ownership and publishing actions on their existing protected workflows.
 
 ## New-entry template
 
