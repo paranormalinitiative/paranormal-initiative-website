@@ -3,7 +3,7 @@
 **Date:** 2026-11-15  
 **Time zone:** America/New_York  
 **Audience:** Owner, Executive, and Full Administrator effective roles  
-**Status:** Source complete; guarded production release pending
+**Status:** Deployed and live Owner-verified
 
 ## What was needed
 
@@ -48,8 +48,17 @@ created pressure to infer permissions from visible labels.
 
 The local policy check confirmed that Owner, Executive, and Full Administrator
 are eligible for the directory while the legacy Administrator role is denied by
-the server allowlist. The exact guarded production release, anonymous boundary
-check, and live Owner Firefox acceptance are recorded here once completed.
+the server allowlist. The exact production release
+`rel-319256e8ac86-3c7ebe4e1f27` deployed Worker
+`eadb134b-08f1-473b-af09-2189e3314c1a` to 100% traffic; rollback target was
+`3cf1b5cd-c7e4-415d-82fb-0f0fd24b8c96`. Preflight certified 13 gates in 28.19
+seconds, production anonymous smoke passed **10/10**, and live Firefox
+Owner/Founder/CEO acceptance passed. The live directory rendered Todd Wayne as
+Owner with all 21 mapped Administration Center areas allowed. Because the
+production database does not currently expose the optional
+`staff_role_appointments` table, the page displayed explicit **Legacy role
+mode**, returned the Owner record, and kept appointment history empty rather
+than returning HTTP 500.
 
 ## Safeguard
 
@@ -57,4 +66,6 @@ This is an inspection-only surface. The server remains the authority for every
 route and capability. Any future staff-role mutation must remain in the
 separate reasoned workflow, preserve appointment history, and pass its own
 authorization and audit checks. A client-side change cannot make a staff member
-more powerful.
+more powerful. The optional appointment table should be installed only through
+the maintained migration workflow; until then, legacy-role fallback must remain
+explicit and must never imply that appointment history was loaded.

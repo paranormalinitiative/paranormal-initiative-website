@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center staff directory and capability inspection
 
-Status: **SOURCE COMPLETE; GUARDED RELEASE PENDING.** The Administration Center
+Status: **DEPLOYED AND LIVE OWNER-VERIFIED; LEGACY SCHEMA BOUNDARY EXPLICIT.** The Administration Center
 now has a read-only Staff Directory & Capability Inspection view for Owner,
 Executive, and Full Administrator effective roles. It shows the server-derived
 effective role, base account role, office title, capabilities, allowed Center
@@ -15,9 +15,17 @@ No authority changes are available from this view. Legacy Administrator access
 to the new directory is intentionally denied while existing bounded
 Administrator routes remain unchanged. The source contract passed **88/88**, the
 Administration Center build passed, Worker syntax passed, and no migration or
-protected application source/data was changed. The exact guarded production
-release and live Firefox acceptance result will be recorded here after the
-release.
+protected application source/data was changed. A production environment without
+the optional `staff_role_appointments` table now falls back to safe legacy-role
+records and clearly labels appointment history as unavailable instead of
+returning HTTP 500. The exact guarded release
+`rel-319256e8ac86-3c7ebe4e1f27` deployed Worker
+`eadb134b-08f1-473b-af09-2189e3314c1a` to 100% traffic; the prior exact rollback
+Worker is `3cf1b5cd-c7e4-415d-82fb-0f0fd24b8c96`. Preflight certified 13 gates
+in 28.19 seconds, production anonymous smoke passed **10/10**, and live
+Owner/Founder/CEO Firefox acceptance passed: Todd Wayne rendered as Owner with
+all 21 mapped Center areas allowed. The directory showed the missing optional
+appointment schema in explicit Legacy role mode and remained read-only.
 
 See [Administration Center Staff Directory and Capability Inspection](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-STAFF-DIRECTORY-AND-CAPABILITY-INSPECTION.md).
 
