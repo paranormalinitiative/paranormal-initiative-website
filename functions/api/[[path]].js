@@ -57,6 +57,9 @@ export async function onRequest(context) {
   if (request.method === "POST" && path === "/mystic/ask") {
     return handleMysticAsk(request, env);
   }
+  if (request.method === "POST" && path === "/nova/ask") {
+    return handleNovaAsk(request, env);
+  }
 
   if (!env.TPI_DB) {
     return json({ error: "D1 database binding TPI_DB is not configured." }, 500);
@@ -504,6 +507,109 @@ async function handleMysticAsk(request, env) {
   } catch (error) {
     console.error("Mystic public AI Search request failed", error);
     return json({ ok: false, error: "Mystic's public knowledge service is temporarily unavailable." }, 503);
+  }
+}
+
+const NOVA_PUBLIC_INSTANCE = "tpi-mystic-public";
+const NOVA_INTERNAL_INSTANCE = "tpi-nova-internal";
+const NOVA_PUBLIC_SYSTEM_PROMPT = [
+  "You are Nova, The Paranormal Initiative's Everything Assistant for members and visitors.",
+  "Answer only from retrieved public TPI website context provided by AI Search.",
+  "Be friendly, clear, practical, and concise. Use TPI's own terminology.",
+  "You may explain public site features, member Help Center guidance, public policies, Education Center material, public research resources, and public TPI applications.",
+  "Never invent a feature, policy, person, resource, permission, or procedure.",
+  "Never reveal or summarize internal Help Desk, Administration Center, moderator, staff, owner, credential, or private member information.",
+  "If the question is internal, say that internal procedures are protected and available only to authorized staff through the Help Desk.",
+  "If the retrieved context does not answer the question, say that you do not have a verified public answer yet and direct the member to the public Help Center or member support.",
+  "When the context supports it, name the relevant public TPI page or resource."
+].join(" ");
+const NOVA_INTERNAL_SYSTEM_PROMPT = [
+  "You are Nova, the protected TPI Everything Assistant for authorized internal people.",
+  "Answer only from retrieved approved TPI internal Help Desk and policy context provided by AI Search.",
+  "You may explain documented Administration Center, staff, moderation, member-support, security, release, policy, and application procedures.",
+  "Do not invent permissions or imply that a title, badge, membership, or chat answer grants access.",
+  "Never reveal passwords, tokens, cookies, private member data, private messages, stream keys, or secret-bearing URLs.",
+  "Nova explains documented procedures but cannot change roles, ban members, delete data, deploy releases, or bypass an authorization boundary.",
+  "If the context does not answer the question, say that the procedure is not documented and direct the user to the authorized human escalation path.",
+  "Distinguish clearly between a documented current procedure, a historical record, a future proposal, and an unverified hypothesis."
+].join(" ");
+
+const NOVA_INTERNAL_ROLES = ["owner", "executive", "full_administrator", "administrator", "moderator"];
+
+async function hasNovaInternalAccess(env, user) {
+  if (!user) return false;
+  try {
+    const role = await effectiveStaffRole(env, user);
+    if (NOVA_INTERNAL_ROLES.includes(role)) return true;
+    const appointment = await activeStaffAppointment(env, user.id);
+    return NOVA_INTERNAL_ROLES.includes(appointment?.roleCode);
+  } catch (error) {
+    return false;
+  }
+}
+
+function novaInternalSource(key, metadata = {}) {
+  const safeKey = String(key || "").replace(/[^a-zA-Z0-9._/-]/g, "");
+  if (!safeKey || safeKey.includes("..") || safeKey.startsWith("/") || !safeKey.endsWith(".md")) return null;
+  const name = safeKey.split("/").pop().replace(/\.md$/i, "").replace(/[-_]+/g, " ").trim();
+  return { title: String(metadata.title || name || "Approved TPI internal source"), sourceKey: safeKey };
+}
+
+async function handleNovaAsk(request, env) {
+  const data = await readJson(request);
+  const question = typeof data?.question === "string" ? data.question.trim() : "";
+  const audience = data?.audience === "internal" ? "internal" : "public";
+  if (!question || question.length > 240) return json({ error: "Ask Nova a question up to 240 characters long." }, 400);
+
+  let role = "public";
+  if (audience === "internal") {
+    if (!env.TPI_DB) return json({ ok: false, error: "Nova's protected Help Desk is unavailable." }, 503);
+    const user = await getSessionUser(request, env);
+    if (!(await hasNovaInternalAccess(env, user))) return json({ ok: false, error: "Authorized internal Help Desk access is required." }, 403);
+    role = await effectiveStaffRole(env, user);
+  }
+
+  const instance = audience === "internal" ? NOVA_INTERNAL_INSTANCE : NOVA_PUBLIC_INSTANCE;
+  const systemPrompt = audience === "internal" ? NOVA_INTERNAL_SYSTEM_PROMPT : NOVA_PUBLIC_SYSTEM_PROMPT;
+  if (!env.AI_SEARCH || typeof env.AI_SEARCH.get !== "function") {
+    return json({ ok: false, error: "Nova's knowledge service is not configured." }, 503);
+  }
+  try {
+    const response = await env.AI_SEARCH.get(instance).chatCompletions({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: question }
+      ],
+      model: MYSTIC_GENERATION_MODEL,
+      ai_search_options: {
+        retrieval: {
+          retrieval_type: "hybrid",
+          max_num_results: audience === "internal" ? 8 : 6,
+          match_threshold: audience === "internal" ? 0.35 : 0.45,
+          context_expansion: 1,
+          keyword_match_mode: "or"
+        },
+        query_rewrite: { enabled: true },
+        reranking: { enabled: true, match_threshold: 0.35 }
+      }
+    });
+    const answer = String(response?.choices?.[0]?.message?.content || "").trim();
+    const sources = [];
+    for (const chunk of Array.isArray(response?.chunks) ? response.chunks : []) {
+      const source = audience === "internal"
+        ? novaInternalSource(chunk?.item?.key, chunk?.item?.metadata || {})
+        : mysticPublicSource(chunk?.item?.key, chunk?.item?.metadata || {});
+      if (!source) continue;
+      const identity = source.url || source.sourceKey;
+      if (sources.some(item => (item.url || item.sourceKey) === identity)) continue;
+      sources.push(source);
+      if (sources.length === 4) break;
+    }
+    if (!answer) return json({ ok: false, error: "Nova did not receive a verified answer from the approved knowledge base." }, 503);
+    return json({ ok: true, audience, role, answer, sources }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    console.error(`Nova ${audience} AI Search request failed`, error);
+    return json({ ok: false, error: "Nova's approved knowledge service is temporarily unavailable." }, 503);
   }
 }
 

@@ -403,7 +403,7 @@
           { type: "ol", items: ["Server-side authorization and safety boundary.", "Current approved interface and supported workflow.", "Active Internal Policies and Help Desk guidance.", "Dated audits, completion records, and bug/repair records for history.", "Future-work proposals only as planning, never as permission to act."] },
           { type: "h2", text: "When sources disagree" },
           { type: "p", text: "Stop the action, preserve safe evidence, and escalate. Do not choose the most permissive interpretation, try another account, or use a direct URL to bypass a missing control." },
-          { type: "callout", tone: "warning", title: "NOVA boundary", text: "NOVA is not connected to internal Help Desk or policy sources yet. Do not represent a future retrieval design as an available internal assistant." }
+          { type: "callout", tone: "info", title: "NOVA boundary", text: "NOVA is available inside this protected Help Desk for authorized internal people. It explains approved Help Desk and policy guidance, but it cannot grant access, change roles, ban members, delete data, deploy releases, or bypass an authorization boundary. Escalate when the documented procedure does not answer the situation." }
         ]
       },
       {

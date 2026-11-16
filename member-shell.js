@@ -295,6 +295,7 @@
     // community UI must become ready even if Mystic's script is still loading;
     // Mystic attaches independently as soon as the asset is available.
     initMysticAssistant();
+    initNovaAssistant();
 
     // Mark ready
     document.body.classList.add("member-ready");
@@ -404,6 +405,37 @@
     }
 
     return loadPublicHelpData().then(loadMystic);
+  }
+
+  function initNovaAssistant() {
+    if (document.getElementById("tpi-nova-help-center")) return Promise.resolve();
+    var css = document.querySelector('link[data-tpi-nova-css]');
+    if (!css) {
+      css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "nova-help-center.css?v=1";
+      css.setAttribute("data-tpi-nova-css", "1");
+      document.head.appendChild(css);
+    }
+    function loadScript(selector, src, attribute, globalName) {
+      if (globalName && window[globalName]) return Promise.resolve();
+      return new Promise(function(resolve) {
+        var script = document.querySelector(selector);
+        if (!script) {
+          script = document.createElement("script");
+          script.src = src;
+          script.async = false;
+          script.setAttribute(attribute, "1");
+          document.head.appendChild(script);
+        }
+        script.addEventListener("load", resolve, { once: true });
+        script.addEventListener("error", resolve, { once: true });
+        if (globalName && window[globalName]) resolve();
+      });
+    }
+    return loadScript('script[data-tpi-help-center-data]', "help-center-data.js?v=4", "data-tpi-help-center-data", "TPI_HELP_CENTER")
+      .then(function() { return loadScript('script[data-tpi-nova-assistant]', "nova-help-center.js?v=1", "data-tpi-nova-assistant", "TPINovaHelpCenter"); })
+      .then(function() { if (window.TPINovaHelpCenter) window.TPINovaHelpCenter.mount(); });
   }
 
   function syncMessengerNavigationState(open) {
