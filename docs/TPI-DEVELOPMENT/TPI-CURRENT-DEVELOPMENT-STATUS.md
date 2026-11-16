@@ -1,5 +1,29 @@
 # TPI Current Development Status
 
+## 2026-11-16 — StudioFlow destinations, recording library, and Nova save audit
+
+Status: **LOCAL REPAIRS VERIFIED; HOSTED RTMP RELAY CONFIGURATION REMAINS.**
+StudioFlow was audited from the approved release lineage. The local RTMP
+companion no longer collides with the authoritative Worker on port 8787 and
+now defaults to its dedicated port 8789. Choosing a recording-library folder
+now also makes it the explicit automatic recording destination; restoring the
+default clears the persisted folder handle and returns both settings to the
+Browser Library.
+
+The destination catalog passed **13/13**, the synthetic RTMP receiver captured
+decodable H.264/AAC output, and recording/storage acceptance passed **33/33**.
+Nova Core passed **105/105**, Nova Editor persistence passed **134/134** in
+Firefox and Chromium, and Nova Slides passed **23/23**. The maintained staging
+workflow produced two matching clean builds, preserved the TPI bridge files,
+and staged the exact approved candidate.
+
+The local companion is not a Cloudflare Worker and cannot be treated as a
+production relay. Hosted external livestream delivery remains configuration-
+required until an approved relay/provider adapter is provisioned and tested
+with a disposable key. No provider secret or stream key was stored or exposed.
+
+See [StudioFlow Destinations, Recording Library, and Nova Save Audit](300-COMPLETED-WORK/2026-11-16-STUDIOFLOW-DESTINATIONS-AND-LIBRARY-AUDIT.md).
+
 ## 2026-11-15 — Administration Center role-aware navigation repair
 
 Status: **DEPLOYED AND LIVE OWNER-VERIFIED.** The reactive Administration

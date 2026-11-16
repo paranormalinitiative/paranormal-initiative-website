@@ -2,13 +2,13 @@
 
 Status: ACTIVE / CANONICAL
 
-Last verified: 2026-11-02
+Last verified: 2026-11-16
 
 This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
 `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`; it does not create a second release path.
 
-## Current development status (2026-11-02)
+## Current development status (2026-11-16)
 
 **STUDIOFLOW CORE — STABLE / MAINTENANCE MODE.** The verified production release
 remains **TPI-STUDIOFLOW-137R — COMPLETE — PRODUCTION VERIFIED**. StudioFlow is
@@ -23,13 +23,38 @@ What changed is the *order of work*, not the workflow.
   (Documents + Slides) inside StudioFlow, not a playback or production feature.
   See
   [TPI Nova architecture record](400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
-- **Deferred:** Guest / Invite Connected Studio; Livestream Destination
-  Connections.
+- **Deferred:** Guest / Invite Connected Studio; hosted livestream destination
+  delivery until an approved production relay/provider adapter is configured.
+  Local RTMP delivery is maintained as an engineering companion on port 8789;
+  it must never compete with the authoritative Worker on port 8787.
 - **Release flow:** `npm run release:certify` then
   `TPI_PRODUCTION_DEPLOY=approved npm run release:production`. A StudioFlow
   change that alters the built bundle also changes the certified deployable
   bytes, so it requires a fresh certification — the production command will
   refuse an old one.
+
+## 2026-11-16 destination and library audit
+
+The approved StudioFlow source is the release-lineage commit
+`882237ae1944f09a4f529ef94905917910c52eff`, recorded in
+`scripts/studioflow-release-baseline.json`. The generated candidate is
+`studio/assets/index-hm0AhGrG.js` plus
+`studio/assets/index-V2mQ_DP8.css`; the provenance-checked staging workflow
+rebuilt it twice and preserved the maintained TPI bridge files.
+
+The standalone StudioFlow RTMP UI uses a separately configured companion URL.
+Local development defaults to `http://127.0.0.1:8789`; `8787` remains reserved
+for the local Cloudflare Worker. Hosted environments require an explicit
+`VITE_STUDIOFLOW_RTMP_URL` pointing to an approved relay. The UI fails clearly
+when that production configuration is absent rather than attempting to call a
+local address or claiming that a destination is connected.
+
+The Recording & Storage panel now makes **Choose Folder** the active library
+and automatic recording destination in one explicit action. The folder handle
+is persisted in IndexedDB, permission is rechecked before writing, completed
+files are byte-verified, and Restore Default clears the handle and returns to
+the Browser Library. See the 2026-11-16 completion record for the exact
+verification boundary and Nova save results.
 
 ## The four locations are not automatically synchronized
 

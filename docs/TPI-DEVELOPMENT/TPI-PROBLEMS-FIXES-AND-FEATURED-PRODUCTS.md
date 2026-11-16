@@ -1469,6 +1469,27 @@ replacing a protected administrative workflow.
 the allowed areas from the same server-side route matrix that protects the
 request, fail closed on probe errors, and keep the handler checks authoritative.
 
+### INC-2026-11-16-01 — StudioFlow destination collision and library-location mismatch
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-16 11:27 EST**, during the owner-requested StudioFlow destinations and save-location audit |
+| Fixed in source | **2026-11-16**, StudioFlow commit `882237ae1944f09a4f529ef94905917910c52eff`; website staging baseline updated |
+| Product/surface | StudioFlow livestream destinations; Recording & Storage; Nova Workspace verification |
+| Environment | Protected StudioFlow release lineage, disposable local Worker test environments, maintained staging workflow |
+| Symptom | The RTMP companion defaulted to the official local Worker port 8787, and choosing a library folder did not automatically select that folder for recording output. |
+| Root cause | The local media bridge and the authoritative Worker had the same default port. The folder picker updated `libraryLocation` but left `recordingDestination` unchanged, so the UI could look configured while the recording path remained Browser Library. |
+| Fix | Moved the local bridge default to 8789 with an explicit hosted `VITE_STUDIOFLOW_RTMP_URL` boundary; added clear hosted-not-configured handling; made folder selection set both library and recording destinations; made Restore Default clear the persisted handle and return to browser storage; added a destination regression guard. |
+| Safeguards | Provenance-checked two-build staging; protected bridge preservation; no credentials or stream keys stored; no silent recording fallback; permission check and byte verification remain required before a folder save is reported successful. |
+| Verification | Destination catalog **13/13**; synthetic RTMP H.264/AAC delivery PASS; recording/storage **33/33**; Nova Core **105/105**; Nova Editor persistence **134/134**; Nova Slides **23/23**; staging reproducibility PASS. |
+| Production status | Local repairs and staging verified. Hosted RTMP remains configuration-required until an approved production relay/provider adapter is provisioned and tested. |
+| References | [`2026-11-16-STUDIOFLOW-DESTINATIONS-AND-LIBRARY-AUDIT.md`](300-COMPLETED-WORK/2026-11-16-STUDIOFLOW-DESTINATIONS-AND-LIBRARY-AUDIT.md), `scripts/studioflow-release-baseline.json`, StudioFlow `src/App.tsx`, `server/rtmp-bridge.mjs`, `scripts/check-destinations.mjs` |
+
+**Lesson:** A local receiver test proves media transport, not production
+delivery. Every save-location control must change the actual destination state,
+and every hosted external destination must have an explicitly provisioned relay
+before it is labeled ready.
+
 ## New-entry template
 
 Copy this section for the next confirmed problem. Keep the wording factual and
