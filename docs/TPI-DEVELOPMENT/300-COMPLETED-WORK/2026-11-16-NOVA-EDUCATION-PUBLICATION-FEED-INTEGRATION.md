@@ -8,10 +8,12 @@ signed-in Member Home activity stream was requesting the discussion-only feed
 scope, which filtered published Education articles out of the member-facing
 feed even though the backend could already render article cards.
 
-Member Home now uses the complete public discovery stream. When an approved
-contributor publishes Education Center content through Nova, the feed includes
-one article card with the contributor identity, article type, title, summary,
-and link to the published Education Center page. Existing explicit
+Member Home now uses the complete public discovery stream. When a contributor
+with publishing access publishes Education Center content through Nova, the
+feed includes one article card with the contributor identity, article type,
+title, summary, and link to the published Education Center page. Standard
+Contributor publications in open Education subjects do not wait for reviewer
+or publisher approval. Existing explicit
 `scope=community` callers remain discussion-only.
 
 ## What changed
@@ -33,8 +35,10 @@ and link to the published Education Center page. Existing explicit
 
 1. Nova publication remains the source of truth; the feed is a read-only
    discovery projection and cannot publish or edit an article.
-2. A draft, review-only, or moderation-removed article does not appear in the
-   public feed.
+2. A draft or moderation-removed article does not appear in the public feed.
+   Historical articles already enrolled in the editorial workflow continue to
+   follow their recorded state; that workflow is not the default for new
+   standard Contributor publications.
 3. The explicit posts-only API scope remains available and is not broadened.
 4. The feed card links to the article's stored canonical `href`; it does not
    construct an alternate destination or expose internal editorial data.

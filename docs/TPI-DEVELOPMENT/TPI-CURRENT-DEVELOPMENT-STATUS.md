@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## Current owner publication policy — 2026-11-16
+
+Standard Contributor articles in open Education Center subjects are not sent
+through an approval queue anymore. A Contributor with the required publishing
+access can select **Publish**, and the article becomes live in the Education
+Center and discoverable in the Member Feed. Saving without publishing remains
+a draft. Ghostology and TPI Videos retain their separate leadership-only
+authoring and publication restriction.
+
+Older articles that were already enrolled in the historical editorial review
+workflow retain their recorded state until a separate migration decision is
+made. The older review-and-publisher records below are historical evidence, not
+the current default for new Education Center work.
+
 ## 2026-11-16 — Community Feed composer shape repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The shared Community Feed composer had pill/circular presentation

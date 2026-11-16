@@ -114,10 +114,16 @@ owner or designated decision-maker.
 
 ## 6. Content, editorial, and publishing
 
-- Keep drafts, review decisions, approved snapshots, and public publication
-  distinct.
-- Editorial review does not equal publication. Publish only the exact approved
-  version when the account has the required capability.
+- Keep drafts, publication state, and any historical review records distinct.
+- Current owner policy: standard Contributor articles in open Education Center
+  subjects may publish immediately when the author selects Publish. They do not
+  wait for reviewer or publisher approval.
+- Saving still creates a draft. Publication requires the account's existing
+  publishing access and remains subject to the server's subject restrictions,
+  privacy, safety, consent, evidence-aware language, and moderation controls.
+- Articles that were already enrolled in the historical editorial workflow
+  retain their recorded state until the owner authorizes a migration; that
+  historical state must not be described as the current default for new work.
 - Check privacy, consent, evidence-aware language, metadata, destination, and
   policy fit before publishing.
 - Do not paste replacement HTML, publish stale content, or use a general member

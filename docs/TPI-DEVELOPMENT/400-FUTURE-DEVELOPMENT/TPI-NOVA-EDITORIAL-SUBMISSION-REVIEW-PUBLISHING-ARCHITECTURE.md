@@ -6,6 +6,15 @@
 **Production:** not touched.
 **Current 004R5 workflow:** preserved.
 
+> **Owner policy supersession — 2026-11-16:** This document records the
+> historical editorial-review architecture and its implementation history. The
+> current default is direct publication for standard Contributor articles in
+> open Education Center subjects: a Contributor with publishing access may
+> select Publish without reviewer or publisher approval. Existing articles that
+> were already enrolled in the historical workflow retain their recorded state
+> until separately migrated. Do not use the older approval queue below as the
+> default policy for new Education Center work.
+
 Baseline: branch `codex/tpi-development`, HEAD and `origin/codex/tpi-development` at `02a0acd0`. Migrations 0059 and 0060 and the 004R5 application changes have not reached production (roadmap §21.11).
 
 Next phase: **TPI-NOVA-004R6B — Workflow foundation** (see §22). R6B is now implemented server-side: capabilities, `0061_article_editorial_workflow.sql`, and `lib/editorial-workflow.js`, verified by `npm run verify:nova-004r6b`. No UI or public-route change; direct publishing is unchanged.
