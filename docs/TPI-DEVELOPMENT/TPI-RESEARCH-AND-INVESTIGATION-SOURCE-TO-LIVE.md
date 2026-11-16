@@ -29,6 +29,11 @@ The official development URL is:
 
 `http://127.0.0.1:8787/apps/paranormal-initiative/`
 
+Port `8790` is retired for current work. Do not start or use the separate
+Research Studio Vite server; it is not an owner-facing environment and must
+not become a competing local application. All current development, browser
+acceptance, and owner review use the canonical Worker on port `8787`.
+
 After the generated tree and website links pass local verification, the
 canonical website runbook applies:
 
