@@ -1348,14 +1348,14 @@ not permission and must never be interpreted as permission.
 | Field | Record |
 | --- | --- |
 | Detected | **2026-11-15 21:05 EST**, during the first guarded member-action workflow review |
-| Fixed in source | **2026-11-15**, source commit pending guarded release |
+| Fixed in source | **2026-11-15**, commit `cefdec86b4d88b8370cfef1ca6fc9b41fdba4e18` |
 | Product/surface | Protected Administration Center Enforcement & Appeals |
 | Symptom | The existing bounded warning/restriction form could submit immediately after staff entered a reason, without a separate review of the target, scope, duration, and reason. |
 | Root cause | The form used its primary submit action as the mutation trigger, so the safety review was implicit rather than an explicit confirmation state. |
 | Fix | Added a no-write **Review action** step, a visible review summary, a cancel path, and an explicit **Confirm & record action** mutation step. Any edited field clears the pending review. |
 | Safeguards | Existing server-side staff authorization, non-staff target boundary, required reason, 1–720 hour limit, audit logging, member notice, revocation, appeals, and protected application boundaries remain in force. |
-| Verification | Administration Center source contracts **91/91**; Admin Center build passed; release-impact **15/15**; release-safety **37/37**; local browser review state verified with no action submitted. |
-| Production status | **Pending guarded release** |
+| Verification | Administration Center source contracts **91/91**; Admin Center build passed; release-impact **15/15**; release-safety **37/37**; local browser review state verified with no action submitted; exact candidate certified **10 gates in 18.8s**; production anonymous smoke **10/10**; live Owner/Founder/CEO Firefox review state verified with no action submitted. |
+| Production status | **DEPLOYED AND LIVE** — release `rel-cefdec86b4d8-744d578d1df7`, Worker `d56a2056-0f51-4636-b230-16e1b0f8f72b`, 100% traffic; rollback `60e536c8-b2a5-412a-b704-2b9fa4885a4` |
 | References | [`2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-REVIEW-GATE.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-REVIEW-GATE.md), `admin-center-app/src/app.tsx`, `scripts/qa/tpi-admin-006-preview.mjs`, `functions/api/[[path]].js`, `migrations/0072_moderation_enforcement_and_appeals.sql` |
 
 **Lesson:** A protected mutation should always show the exact proposed action

@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center enforcement action review gate
 
-Status: **SOURCE COMPLETE; GUARDED PRODUCTION RELEASE PENDING.** The existing
+Status: **DEPLOYED AND LIVE OWNER-VERIFIED.** The existing
 Enforcement & Appeals workflow now requires a review step before a new warning
 or temporary restriction can be recorded. Staff must first review the target,
 action type, scope, duration, and reason, then deliberately choose **Confirm &
@@ -11,9 +11,16 @@ record action**. Editing a reviewed field clears the pending confirmation.
 Administration Center source contracts passed **91/91**, the production build
 passed, release-impact classification passed **15/15**, release-safety passed
 **37/37**, and the local browser check confirmed the review state without
-creating a moderation action. Existing server-side role checks, reason
-requirements, audit logging, member notices, 1–720 hour limit, appeal path,
-and protected-application boundaries remain unchanged.
+creating a moderation action. The exact candidate passed **10 guarded gates in
+18.8s**, production anonymous smoke passed **10/10**, and live Owner/Founder/CEO
+Firefox acceptance confirmed the review state without submitting an action.
+Existing server-side role checks, reason requirements, audit logging, member
+notices, 1–720 hour limit, appeal path, and protected-application boundaries
+remain unchanged.
+
+Release `rel-cefdec86b4d8-744d578d1df7` deployed Worker
+`d56a2056-0f51-4636-b230-16e1b0f8f72b` to 100% traffic. The exact rollback
+Worker is `60e536c8-b2a5-412a-b704-2b9fa4885a4`.
 
 See [Administration Center Enforcement Action Review Gate](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-REVIEW-GATE.md).
 
