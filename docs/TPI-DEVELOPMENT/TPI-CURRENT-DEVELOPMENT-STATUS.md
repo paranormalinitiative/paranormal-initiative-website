@@ -2,7 +2,7 @@
 
 ## 2026-11-16 — Connected destination authorization foundation
 
-Status: **DEPLOYED AND LIVE VERIFIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**
+Status: **DEPLOYED AND LIVE VERIFIED; PRODUCTION SCHEMA APPLIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**
 The protected Administration Center now has a Connected Destinations view and
 server-side Facebook Page / YouTube OAuth boundaries. Tokens are encrypted,
 OAuth state is single-use and time-limited, connection responses are metadata
@@ -21,6 +21,10 @@ Guarded preflight passed **38 gates**, production smoke passed **10/10**, live
 isolated Firefox acceptance passed **65/65**, and release
 `rel-6109c7f6169a-0f4c1f4a3019` reached 100% traffic as Worker
 `ded22d94-a406-4fec-b025-e1822a23307c`.
+Migration `0073_social_destination_connections.sql` was then applied
+individually after a read-only production absence check; both new additive
+tables are present and empty. Anonymous access to the destination API remains
+denied with `403 Administrative access required.`
 
 The additive schema is `migrations/0073_social_destination_connections.sql`,
 the provider boundary is `lib/social-destinations.js`, and the regression guard

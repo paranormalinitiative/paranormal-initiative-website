@@ -1,7 +1,7 @@
 # TPI Connected Destinations — Authorization and Publishing Foundation
 
 Date: **2026-11-16**
-Status: **DEPLOYED AND LIVE VERIFIED / PROVIDER CONFIGURATION REQUIRED**
+Status: **DEPLOYED AND LIVE VERIFIED / PRODUCTION SCHEMA APPLIED / PROVIDER CONFIGURATION REQUIRED**
 
 ## Owner request
 
@@ -86,6 +86,9 @@ recording library, Nova Workspace, and Creator Studio remain protected.
   `ded22d94-a406-4fec-b025-e1822a23307c` reached 100% traffic.
 - Live anonymous production smoke — PASS, 10/10.
 - Live isolated Firefox Developer Edition acceptance — PASS, 65/65.
+- Production D1 migration `0073_social_destination_connections.sql` — applied
+  individually after a read-only absence check; both additive tables verified
+  present and empty.
 
 Real Facebook and YouTube consent cannot be verified until the private Meta
 and Google OAuth clients and `SOCIAL_OAUTH_ENCRYPTION_KEY` are configured
@@ -94,8 +97,7 @@ claimed or simulated in this record.
 
 ## Next controlled step
 
-Configure the provider clients privately, apply migration `0073` through the
-maintained release workflow, connect one disposable/test Facebook Page and one
+Configure the provider clients privately, connect one disposable/test Facebook Page and one
 YouTube channel, verify the metadata-only response and disconnect path, then
 design and test the hosted RTMP/provider adapter separately before enabling
 one-click StudioFlow live controls.
