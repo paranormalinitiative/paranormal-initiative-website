@@ -207,6 +207,42 @@ export type AdminScraperRun = {
 
 export type AdminProviderStatus = { key: string; label: string; state: string };
 
+export type SocialDestinationProvider = {
+  provider: "facebook" | "youtube";
+  label: string;
+  configured: boolean;
+  connected?: boolean;
+  connectionCount?: number;
+  scopes: string[];
+  capabilities: {
+    connect: boolean;
+    publishLinks: boolean;
+    startLivestream: boolean;
+    stopLivestream: boolean;
+    chat: boolean;
+  };
+};
+
+export type SocialDestinationConnection = {
+  id: string;
+  provider: "facebook" | "youtube";
+  providerAccountId: string;
+  displayName: string;
+  scopes: string[];
+  capabilities: SocialDestinationProvider["capabilities"];
+  status: string;
+  tokenExpiresAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SocialDestinations = {
+  providers: SocialDestinationProvider[];
+  connections: SocialDestinationConnection[];
+  hostedRelay: { state: string; startLivestream: boolean; stopLivestream: boolean; message: string };
+  rumble: { state: string; startLivestream: string; stopLivestream: string; message: string };
+};
+
 export type AdminCreatorMembership = {
   id: string;
   membershipType: string;

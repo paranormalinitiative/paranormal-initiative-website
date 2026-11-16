@@ -49,6 +49,7 @@
     "verify:creator-incentive-browser": "node scripts/verify/tpi-creator-incentive-001-browser.mjs",
     "local:creator-incentive-review": "node scripts/local-creator-incentive-review.mjs --local-only",
     "verify:release-safety": "node scripts/verify/tpi-release-safety.mjs",
+    "verify:social-destinations": "node scripts/verify/tpi-social-destinations.mjs",
     "verify:release-impact": "node scripts/verify/tpi-release-impact.mjs",
     "verify:member-sidebar": "node scripts/verify/tpi-member-sidebar.mjs",
     "verify:member-interactions": "node scripts/verify/tpi-member-interactions.mjs",

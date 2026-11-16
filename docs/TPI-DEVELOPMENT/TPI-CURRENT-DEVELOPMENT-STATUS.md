@@ -1,5 +1,28 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Connected destination authorization foundation
+
+Status: **IMPLEMENTED LOCALLY; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**
+The protected Administration Center now has a Connected Destinations view and
+server-side Facebook Page / YouTube OAuth boundaries. Tokens are encrypted,
+OAuth state is single-use and time-limited, connection responses are metadata
+only, and authorized administrators can disconnect a saved provider account.
+Facebook Page link publishing is available through the protected API once a
+Page is connected. Existing manual RTMP destination behavior remains intact.
+
+This work does not claim that StudioFlow can yet start and stop a hosted
+Facebook or YouTube livestream. A provider account authorization is not a
+video transport. The production site still needs a configured hosted RTMP
+relay or provider adapter; Rumble remains manual to start and provider-
+controlled to stop. StudioFlow, Nova Workspace, Creator Studio, private media,
+and owner data were not modified by this implementation slice.
+
+The additive schema is `migrations/0073_social_destination_connections.sql`,
+the provider boundary is `lib/social-destinations.js`, and the regression guard
+is `npm run verify:social-destinations`.
+
+See [Connected Destinations Authorization](300-COMPLETED-WORK/2026-11-16-CONNECTED-DESTINATIONS-AUTHORIZATION.md).
+
 ## 2026-11-16 — StudioFlow destinations, recording library, and Nova save audit
 
 Status: **DEPLOYED AND LIVE VERIFIED; HOSTED RTMP RELAY CONFIGURATION REMAINS.**

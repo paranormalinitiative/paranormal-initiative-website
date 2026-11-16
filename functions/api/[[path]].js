@@ -44,6 +44,18 @@ import {
 } from "../../lib/leadership-distinctions.js";
 import { BOARD_DOMAIN_CATALOG, BOARD_MEMBER_BADGE, BOARD_ROLE_CATALOG, boardRolePayload, getBoardMembership, listBoardMembers } from "../../lib/board-members.js";
 import { STAFF_ROLE_CATALOG, activeStaffAppointment, effectiveStaffRole, hasAdministrationCenterRole, mayUseAdminRoute, publicStaffIdentity, validOfficeTitle } from "../../lib/staff-roles.js";
+import {
+  SocialDestinationError,
+  buildAuthorizationUrl,
+  completeAuthorization,
+  destinationPayload,
+  disconnectConnection,
+  listConnections,
+  normalizeSocialProvider,
+  publishFacebookLink,
+  safeReturnPath,
+  supportedSocialProviders,
+} from "../../lib/social-destinations.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -68,6 +80,12 @@ export async function onRequest(context) {
   try {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders() });
     if (request.method === "GET" && path === "/auth/me") return handleMe(request, env);
+    if (request.method === "GET" && path === "/social/destinations") return requireDestinationAdmin(request, env, user => handleSocialDestinations(env, user));
+    if (request.method === "GET" && path === "/social/destinations/capabilities") return requireDestinationAdmin(request, env, user => handleSocialDestinationCapabilities(env, user));
+    if (request.method === "GET" && path.match(/^\/social\/oauth\/(facebook|youtube)\/start$/)) return requireDestinationAdmin(request, env, user => handleSocialOAuthStart(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/social\/oauth\/(facebook|youtube)\/callback$/)) return handleSocialOAuthCallback(path, request, env);
+    if (request.method === "POST" && path.match(/^\/social\/destinations\/[^/]+\/disconnect$/)) return requireDestinationAdmin(request, env, user => handleSocialDestinationDisconnect(path, env, user));
+    if (request.method === "POST" && path === "/social/share/facebook") return requireDestinationAdmin(request, env, user => handleSocialFacebookShare(request, env, user));
     if (path === "/me/personalization") return requireMember(request, env, user => handlePersonalization(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/theme") return requireMember(request, env, user => handleSiteTheme(request, env, user));
     if (request.method === "GET" && path === "/profile-style") return handlePublicStyle(request, env);
@@ -802,6 +820,119 @@ async function handleLogout(request, env) {
   return json({ ok: true }, 200, {
     "Set-Cookie": `${SESSION_COOKIE}=; ${sessionCookieAttributes(request, env, 0)}`
   });
+}
+
+async function handleSocialDestinations(env, user) {
+  const connections = await listConnections(env, user.id);
+  return json({
+    providers: supportedSocialProviders(env),
+    connections,
+    hostedRelay: {
+      state: "not_configured",
+      startLivestream: false,
+      stopLivestream: false,
+      message: "Provider authorization is separate from the hosted StudioFlow RTMP relay. Configure an approved relay before presenting one-click live controls.",
+    },
+    rumble: {
+      state: "manual_rtmp",
+      startLivestream: "manual",
+      stopLivestream: "provider_controlled",
+      message: "Rumble remains a manual RTMP destination. Start and stop controls are supplied by Rumble, not TPI.",
+    },
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleSocialDestinationCapabilities(env, user) {
+  const connections = await listConnections(env, user.id);
+  return json({
+    generatedAt: new Date().toISOString(),
+    providers: supportedSocialProviders(env).map(provider => ({
+      ...provider,
+      connected: connections.some(connection => connection.provider === provider.provider),
+      connectionCount: connections.filter(connection => connection.provider === provider.provider).length,
+    })),
+    hostedRelayConfigured: Boolean(env.STUDIOFLOW_HOSTED_RTMP_RELAY_URL),
+    rumble: { configured: false, start: "manual", stop: "provider_controlled" },
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleSocialOAuthStart(path, request, env, user) {
+  const provider = normalizeSocialProvider(path.split("/")[3]);
+  const returnPath = safeReturnPath(new URL(request.url).searchParams.get("returnTo"));
+  const state = crypto.randomUUID();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  try {
+    const authorizationUrl = buildAuthorizationUrl(request, env, provider, state, returnPath);
+    await env.TPI_DB.prepare(`INSERT INTO social_oauth_states (state, owner_id, provider, return_path, expires_at) VALUES (?, ?, ?, ?, ?)`).bind(state, user.id, provider, returnPath, expiresAt).run();
+    return Response.redirect(authorizationUrl, 302);
+  } catch (error) {
+    return socialDestinationErrorResponse(error);
+  }
+}
+
+async function handleSocialOAuthCallback(path, request, env) {
+  const provider = normalizeSocialProvider(path.split("/")[4]);
+  const url = new URL(request.url);
+  const state = clean(url.searchParams.get("state"));
+  const code = clean(url.searchParams.get("code"));
+  const errorCode = clean(url.searchParams.get("error"));
+  const redirectFailure = (codeValue) => socialDestinationRedirect(request, `/admin-panel?social_error=${encodeURIComponent(codeValue)}#destinations`);
+  if (errorCode) return redirectFailure("provider_denied");
+  if (!state || !code || !provider) return redirectFailure("invalid_callback");
+  const sessionUser = await getSessionUser(request, env);
+  if (!sessionUser) return Response.redirect(new URL("/member-login.html?returnTo=/admin-panel%23destinations", request.url).toString(), 302);
+  const role = await effectiveStaffRole(env, sessionUser);
+  if (!hasAdministrationCenterRole(role)) return redirectFailure("not_authorized");
+  const stateRow = await env.TPI_DB.prepare("SELECT state, owner_id, provider, return_path, expires_at FROM social_oauth_states WHERE state = ? LIMIT 1").bind(state).first();
+  await env.TPI_DB.prepare("DELETE FROM social_oauth_states WHERE state = ?").bind(state).run();
+  if (!stateRow || stateRow.owner_id !== sessionUser.id || stateRow.provider !== provider || Date.parse(stateRow.expires_at) <= Date.now()) return redirectFailure("expired_callback");
+  try {
+    const connections = await completeAuthorization(env, request, stateRow, code);
+    await writeAdminAuditLog(env, sessionUser, "social.destination.connected", "social_destination", connections[0]?.id || provider, { provider, connectionCount: connections.length });
+    return socialDestinationRedirect(request, "/admin-panel?social=connected#destinations");
+  } catch (error) {
+    return redirectFailure(error instanceof SocialDestinationError ? error.code : "connection_failed");
+  }
+}
+
+async function handleSocialDestinationDisconnect(path, env, user) {
+  const id = clean(decodeURIComponent(path.split("/")[3] || ""));
+  if (!id) return json({ error: "Destination id is required." }, 400);
+  const removed = await disconnectConnection(env, user.id, id);
+  if (!removed) return json({ error: "Connected destination not found." }, 404);
+  await writeAdminAuditLog(env, user, "social.destination.disconnected", "social_destination", id, {});
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleSocialFacebookShare(request, env, user) {
+  const data = await readJson(request);
+  const message = clean(data.message);
+  const link = clean(data.link);
+  if (!message && !link) return json({ error: "A message or link is required." }, 400);
+  try {
+    const result = await publishFacebookLink(env, user.id, { connectionId: clean(data.connectionId), message, link });
+    await writeAdminAuditLog(env, user, "social.facebook.link_published", "social_destination", result.connection.id, { provider: "facebook", providerPostId: result.providerPostId });
+    return json({ ok: true, provider: "facebook", connection: result.connection, providerPostId: result.providerPostId }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return socialDestinationErrorResponse(error);
+  }
+}
+
+function socialDestinationRedirect(request, path) {
+  return Response.redirect(new URL(path, request.url).toString(), 302);
+}
+
+function socialDestinationErrorResponse(error) {
+  if (error instanceof SocialDestinationError) return json({ error: error.message, code: error.code }, error.status);
+  return json({ error: "The connected destination request could not be completed.", code: "destination_request_failed" }, 502);
+}
+
+async function requireDestinationAdmin(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Administrative access required." }, 403);
+  const role = await effectiveStaffRole(env, user);
+  if (!hasAdministrationCenterRole(role)) return json({ error: "Owner, Executive, or Administrator authorization required." }, 403);
+  return handler(user);
 }
 
 async function handleMe(request, env) {
