@@ -1,5 +1,21 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Community Feed composer shape repair
+
+Status: **IMPLEMENTATION VERIFIED LOCALLY; GUARDED PRODUCTION RELEASE IN
+PROGRESS.** The shared Community Feed composer had pill/circular presentation
+rules that made the mobile message box look like a single-line control and
+made Photo, Video, File, Link, and pending attachment previews hard to
+distinguish. The textarea now uses a normal rectangular box, composer controls
+use compact rectangular corners, and pending attachments use readable
+rectangular preview cards. Avatars and remove badges remain circular by design.
+
+The member interaction source contracts passed **34/34**. Maintained Firefox
+acceptance passed **57/57**, including direct computed-style checks at desktop
+and a 390px mobile viewport with no horizontal overflow. StudioFlow, Creator
+Studio, Nova Workspace, private media, and owner data were not modified. See
+[Community Feed Composer Shape Repair](300-COMPLETED-WORK/2026-11-16-COMMUNITY-FEED-COMPOSER-SHAPE-REPAIR.md).
+
 ## 2026-11-16 — Nova Education publication feed integration
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Nova

@@ -51,6 +51,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger Friends appear vertically centered or leave a large empty gap above Chats | [Messenger Friends top alignment](#inc-2026-11-14-18--messenger-friends-top-alignment) | Contacts-column sizing, grid row alignment, bounded Friends scrolling |
 | Clicking Chat on a member's profile opens the wrong person, or New Chat asks for a room name | [Messenger profile target and direct New Chat](#inc-2026-11-16-45--messenger-profile-target-and-direct-new-chat) | Profile-to-Messenger target handoff, stale selected conversation, direct-chat chooser |
 | A contributor publishes Education Center content in Nova but members cannot discover it in the feed | [Nova Education publication feed integration](#inc-2026-11-16-46--nova-education-publication-feed-integration) | Member-home feed scope, published article projection, feed refresh detection |
+| The Community Feed composer is a pill-shaped box on mobile, or its Photo/Video/File/Link controls and attachment previews are circular | [Community Feed composer shape repair](#inc-2026-11-16-47--community-feed-composer-shape-repair) | Shared composer CSS, responsive viewport layout, attachment preview geometry |
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 | An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
@@ -80,6 +81,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-16-47 — Community Feed composer shape repair
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 18:40 EST** |
+| What happened | On a narrow mobile viewport, the Community Feed message box looked like a large pill and the visible LINK attachment, along with the Photo/Video/File/Link controls, appeared circular. The rounded geometry made the composer harder to read and made attachment types unclear. |
+| Root cause | Shared `member-home.html` composer rules explicitly used `border-radius: 999px` for the textarea, media controls, link field, and link buttons. Pending attachment previews used fixed 80px circular tiles. This was shared presentation code, so it was not limited to one browser. |
+| Fix | Changed the textarea to a normal 12px-corner box with explicit sizing and readable overflow; changed composer controls and link-entry controls to 8px corners; changed pending attachment previews to rectangular 148×88px cards with 12px corners; changed saved feed link chips to 10px corners. Avatars and remove badges remain circular intentionally. |
+| Safeguards | Added source-level checks for the shared geometry and Firefox computed-style acceptance at desktop and 390px mobile width. The mobile check also rejects horizontal overflow. The fix does not touch StudioFlow, Creator Studio, Nova Workspace, private media, or owner data. |
+| Verification | Member interaction contracts **34/34**; maintained local Firefox profile/feed acceptance **57/57**; desktop and mobile computed geometry checks passed; local staged asset refresh passed. |
+| Status | **Implementation verified locally; guarded production release in progress.** See [Community Feed Composer Shape Repair](300-COMPLETED-WORK/2026-11-16-COMMUNITY-FEED-COMPOSER-SHAPE-REPAIR.md). |
 
 ### INC-2026-11-16-46 — Nova Education publication feed integration
 
