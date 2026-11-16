@@ -30,6 +30,11 @@ created pressure to infer permissions from visible labels.
   directory cannot appoint, revoke, promote, demote, suspend, or grant access.
 - Intentionally denied the new directory route to legacy Administrator accounts
   while preserving their existing bounded Administration Center routes.
+- Added a fail-closed legacy-role fallback for environments where the optional
+  `staff_role_appointments` table has not yet been installed. Owner and legacy
+  Administrator records remain inspectable without a 500 response, while
+  appointed-role and appointment-history records remain clearly unavailable
+  until that maintained schema exists.
 
 ## Verification
 

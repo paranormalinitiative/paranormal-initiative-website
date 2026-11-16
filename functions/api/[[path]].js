@@ -2555,54 +2555,80 @@ async function handleAdminStaffDirectory(request, env) {
   const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10) || 1);
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
   const offset = (page - 1) * pageSize;
-  const searchClause = search ? "AND (c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR a.role_code LIKE ?)" : "";
-  const searchBinds = search ? [pattern, pattern, pattern, pattern] : [];
-  const count = await env.TPI_DB.prepare(`
-    SELECT COUNT(*) AS total
-    FROM contributors c
-    LEFT JOIN staff_role_appointments a ON a.contributor_id = c.id AND a.status = 'active'
-    WHERE (c.role = 'owner' OR c.role = 'admin' OR a.id IS NOT NULL) ${searchClause}
-  `).bind(...searchBinds).first();
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT c.id, c.username, c.display_name AS displayName, c.title,
-           c.role AS accountRole, c.active AS accountActive, c.created_at AS createdAt,
-           a.id AS appointmentId, a.role_code AS appointmentRole,
-           a.office_title AS officeTitle, a.status AS appointmentStatus,
-           a.reason AS appointmentReason, a.appointed_at AS appointedAt,
-           a.changed_at AS appointmentChangedAt
-    FROM contributors c
-    LEFT JOIN staff_role_appointments a ON a.contributor_id = c.id AND a.status = 'active'
-    WHERE (c.role = 'owner' OR c.role = 'admin' OR a.id IS NOT NULL) ${searchClause}
-    ORDER BY CASE WHEN c.role = 'owner' THEN 0 ELSE 1 END,
-             CASE a.role_code WHEN 'executive' THEN 0 WHEN 'full_administrator' THEN 1 WHEN 'administrator' THEN 2 WHEN 'moderator' THEN 3 ELSE 4 END,
-             c.display_name COLLATE NOCASE
-    LIMIT ? OFFSET ?
-  `).bind(...searchBinds, pageSize, offset).all();
-  const historyQuery = search
-    ? env.TPI_DB.prepare(`
-        SELECT a.id, a.contributor_id AS contributorId, target.username,
-               target.display_name AS displayName, a.role_code AS roleCode,
-               a.office_title AS officeTitle, a.status, a.reason,
-               a.appointed_at AS appointedAt, a.changed_at AS changedAt,
-               a.change_note AS changeNote, actor.username AS changedBy
-        FROM staff_role_appointments a
-        JOIN contributors target ON target.id = a.contributor_id
-        LEFT JOIN contributors actor ON actor.id = COALESCE(a.changed_by, a.appointed_by)
-        WHERE target.username LIKE ? OR target.display_name LIKE ? OR a.role_code LIKE ?
-        ORDER BY a.appointed_at DESC LIMIT 300
-      `).bind(pattern, pattern, pattern)
-    : env.TPI_DB.prepare(`
-        SELECT a.id, a.contributor_id AS contributorId, target.username,
-               target.display_name AS displayName, a.role_code AS roleCode,
-               a.office_title AS officeTitle, a.status, a.reason,
-               a.appointed_at AS appointedAt, a.changed_at AS changedAt,
-               a.change_note AS changeNote, actor.username AS changedBy
-        FROM staff_role_appointments a
-        JOIN contributors target ON target.id = a.contributor_id
-        LEFT JOIN contributors actor ON actor.id = COALESCE(a.changed_by, a.appointed_by)
-        ORDER BY a.appointed_at DESC LIMIT 300
-      `);
-  const { results: history } = await historyQuery.all();
+  let results = [];
+  let history = [];
+  let total = 0;
+  let appointmentSchemaAvailable = true;
+  try {
+    const searchClause = search ? "AND (c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR a.role_code LIKE ?)" : "";
+    const searchBinds = search ? [pattern, pattern, pattern, pattern] : [];
+    const count = await env.TPI_DB.prepare(`
+      SELECT COUNT(*) AS total
+      FROM contributors c
+      LEFT JOIN staff_role_appointments a ON a.contributor_id = c.id AND a.status = 'active'
+      WHERE (c.role = 'owner' OR c.role = 'admin' OR a.id IS NOT NULL) ${searchClause}
+    `).bind(...searchBinds).first();
+    const staffRows = await env.TPI_DB.prepare(`
+      SELECT c.id, c.username, c.display_name AS displayName, c.title,
+             c.role AS accountRole, c.active AS accountActive, c.created_at AS createdAt,
+             a.id AS appointmentId, a.role_code AS appointmentRole,
+             a.office_title AS officeTitle, a.status AS appointmentStatus,
+             a.reason AS appointmentReason, a.appointed_at AS appointedAt,
+             a.changed_at AS appointmentChangedAt
+      FROM contributors c
+      LEFT JOIN staff_role_appointments a ON a.contributor_id = c.id AND a.status = 'active'
+      WHERE (c.role = 'owner' OR c.role = 'admin' OR a.id IS NOT NULL) ${searchClause}
+      ORDER BY CASE WHEN c.role = 'owner' THEN 0 ELSE 1 END,
+               CASE a.role_code WHEN 'executive' THEN 0 WHEN 'full_administrator' THEN 1 WHEN 'administrator' THEN 2 WHEN 'moderator' THEN 3 ELSE 4 END,
+               c.display_name COLLATE NOCASE
+      LIMIT ? OFFSET ?
+    `).bind(...searchBinds, pageSize, offset).all();
+    results = staffRows.results || [];
+    total = Number(count?.total || 0);
+    const historyQuery = search
+      ? env.TPI_DB.prepare(`
+          SELECT a.id, a.contributor_id AS contributorId, target.username,
+                 target.display_name AS displayName, a.role_code AS roleCode,
+                 a.office_title AS officeTitle, a.status, a.reason,
+                 a.appointed_at AS appointedAt, a.changed_at AS changedAt,
+                 a.change_note AS changeNote, actor.username AS changedBy
+          FROM staff_role_appointments a
+          JOIN contributors target ON target.id = a.contributor_id
+          LEFT JOIN contributors actor ON actor.id = COALESCE(a.changed_by, a.appointed_by)
+          WHERE target.username LIKE ? OR target.display_name LIKE ? OR a.role_code LIKE ?
+          ORDER BY a.appointed_at DESC LIMIT 300
+        `).bind(pattern, pattern, pattern)
+      : env.TPI_DB.prepare(`
+          SELECT a.id, a.contributor_id AS contributorId, target.username,
+                 target.display_name AS displayName, a.role_code AS roleCode,
+                 a.office_title AS officeTitle, a.status, a.reason,
+                 a.appointed_at AS appointedAt, a.changed_at AS changedAt,
+                 a.change_note AS changeNote, actor.username AS changedBy
+          FROM staff_role_appointments a
+          JOIN contributors target ON target.id = a.contributor_id
+          LEFT JOIN contributors actor ON actor.id = COALESCE(a.changed_by, a.appointed_by)
+          ORDER BY a.appointed_at DESC LIMIT 300
+        `);
+    history = (await historyQuery.all()).results || [];
+  } catch (error) {
+    // Production may temporarily lack the additive appointment table. The
+    // directory must remain useful for legacy Owner/Admin accounts without
+    // turning a missing optional table into a 500 or bypassing the gate.
+    appointmentSchemaAvailable = false;
+    const searchClause = search ? "AND (username LIKE ? OR display_name LIKE ? OR title LIKE ? OR role LIKE ?)" : "";
+    const searchBinds = search ? [pattern, pattern, pattern, pattern] : [];
+    const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM contributors WHERE (role = 'owner' OR role = 'admin') ${searchClause}`).bind(...searchBinds).first();
+    const staffRows = await env.TPI_DB.prepare(`
+      SELECT id, username, display_name AS displayName, title, role AS accountRole,
+             active AS accountActive, created_at AS createdAt
+      FROM contributors
+      WHERE (role = 'owner' OR role = 'admin') ${searchClause}
+      ORDER BY CASE role WHEN 'owner' THEN 0 ELSE 1 END, display_name COLLATE NOCASE
+      LIMIT ? OFFSET ?
+    `).bind(...searchBinds, pageSize, offset).all();
+    results = staffRows.results || [];
+    total = Number(count?.total || 0);
+  }
   const staff = (results || []).map(row => {
     const effectiveRole = row.accountRole === "owner" ? "owner" : row.appointmentRole || (row.accountRole === "admin" ? "administrator" : "member");
     const definition = staffDirectoryRole(effectiveRole);
@@ -2636,9 +2662,10 @@ async function handleAdminStaffDirectory(request, env) {
     history: history || [],
     roleDefinitions,
     metadataOnly: true,
+    appointmentSchemaAvailable,
     mutationBoundary: "Read-only capability inspection. Staff appointments, revocations, account state, and member capabilities are not changed here.",
     search,
-    pagination: { page, pageSize, returned: staff.length, total: Number(count?.total || 0), totalPages: Math.ceil(Number(count?.total || 0) / pageSize) }
+    pagination: { page, pageSize, returned: staff.length, total, totalPages: Math.ceil(total / pageSize) }
   }, 200, { "Cache-Control": "no-store" });
 }
 
