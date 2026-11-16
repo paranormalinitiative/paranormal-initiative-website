@@ -88,8 +88,8 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Root cause | The password-hardening change requested PBKDF2 with 120,000 iterations. Cloudflare Worker Web Crypto rejects iteration counts above 100,000. The reset handler hashed before code lookup, so the Worker threw before confirming the code. Node-based tests and mocked browser tests did not exercise this provider-specific limit. |
 | Fix | Set new/reset hashes to 100,000 iterations; fail closed for higher-iteration records; validate the code and active account before hashing; claim the code only after hashing succeeds; preserve legacy-hash compatibility, expiry, single-use behavior, and session invalidation. |
 | Safeguards | Added explicit hosted-runtime limits and focused regressions for generated hash format, unsupported stored records, reset validation order, and recovery completion. |
-| Verification | Password hash **10/10**; password recovery **24/24**; registration **9/9**; production D1 schema and SQL read-only checks passed. Guarded release and live acceptance are recorded in the completion record. |
-| Status | **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** See [Password Recovery Cloudflare Compatibility Repair](300-COMPLETED-WORK/2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md). |
+| Verification | Password hash **10/10**; password recovery **24/24**; registration **9/9**; production D1 schema and SQL read-only checks passed; guarded preflight **13 gates**; production smoke **10/10**; invalid and malformed live codes returned controlled 400 responses; live Firefox recovery interaction passed. |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-634252c82091-f049f836a262` serves Worker `c302ad35-7aaf-431c-96d9-2e64efee3d16` at 100% traffic. See [Password Recovery Cloudflare Compatibility Repair](300-COMPLETED-WORK/2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md). |
 
 ### INC-2026-11-16-42 — Mystic and Nova identity separation and sitewide coverage
 

@@ -2,15 +2,19 @@
 
 ## 2026-11-16 — Password recovery Cloudflare compatibility repair
 
-Status: **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** The live
+Status: **DEPLOYED, LIVE VERIFIED, AND OWNER-REPORT REPAIR COMPLETE.** The live
 reset confirmation path returned Cloudflare 1101 because password hardening
 requested PBKDF2 at 120,000 iterations while the Worker runtime supports at
 most 100,000. The repair lowers new/reset hashes to the supported boundary,
 fails closed for unsupported higher-iteration records, validates the reset
 code before hashing, and prevents hashing failures from consuming a valid
 code. Focused verification passed password hashing **10/10**, password recovery
-**24/24**, and registration **9/9**. See [Password Recovery Cloudflare
-Compatibility Repair](300-COMPLETED-WORK/2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md).
+**24/24**, and registration **9/9**. The guarded repair release
+`rel-634252c82091-f049f836a262` is serving Worker
+`c302ad35-7aaf-431c-96d9-2e64efee3d16` at 100% traffic. Production smoke passed
+**10/10**, invalid and malformed live reset codes returned controlled 400
+responses, and the isolated live Firefox recovery interaction passed. See
+[Password Recovery Cloudflare Compatibility Repair](300-COMPLETED-WORK/2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md).
 
 ## 2026-11-16 — Assistant launcher order and Nova artwork
 

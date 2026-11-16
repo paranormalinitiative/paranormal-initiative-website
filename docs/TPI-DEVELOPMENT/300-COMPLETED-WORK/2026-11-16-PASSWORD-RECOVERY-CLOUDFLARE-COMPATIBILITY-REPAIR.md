@@ -3,7 +3,7 @@
 Date: 2026-11-16 17:53 EST  
 Incident: `TPI-AUTH-2026-11-16-PBKDF2`
 
-Status: **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS**
+Status: **DEPLOYED, LIVE VERIFIED, AND OWNER-REPORT REPAIR COMPLETE**
 
 ## What happened
 
@@ -51,9 +51,21 @@ limit.
   the deployed reset lookup SQL is accepted by D1.
 - Production Worker tail reproduced the original exception before the repair;
   no member password, reset code, or production record was exposed.
+- Live invalid eight-digit code returned **400** instead of Cloudflare 1101.
+- Live malformed code returned the normal **400** validation response.
+- Live Firefox recovery interaction passed with isolated mocked credentials;
+  no real member code or password was submitted.
 
-The guarded release and live reset verification are recorded below after
-deployment completes.
+## Release record
+
+- Source commit: `634252c82091bf5000599c9d98e50b4c2bd4db72`
+- Release: `rel-634252c82091-f049f836a262`
+- Worker: `c302ad35-7aaf-431c-96d9-2e64efee3d16`
+- Rollback: `f2e2f62b-f231-430c-bbc3-c737db519a24`
+- Release profile: `shared-api`
+- Guarded preflight: **13 gates passed**
+- Production smoke: **10/10**
+- Live Firefox recovery interaction: **PASS**
 
 ## Prevention
 
