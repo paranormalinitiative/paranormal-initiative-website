@@ -117,6 +117,8 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/creator-partnership") return requireAdmin(request, env, user => handleAdminCreatorPartnership(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/creators\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminCreatorDetail(path, env, user));
     if (request.method === "GET" && path === "/admin/creator-studio/entitlements") return requireAdmin(request, env, user => handleAdminCreatorStudioEntitlements(request, env, user));
+    if (request.method === "POST" && path === "/admin/creator-studio/access/grant") return requireOwnerOnly(request, env, user => handleAdminGrantCreatorStudioAccess(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/creator-studio\/access\/[^/]+\/revoke$/)) return requireOwnerOnly(request, env, user => handleAdminRevokeCreatorStudioAccess(path, request, env, user));
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(request, env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(request, env, user));
@@ -1487,20 +1489,79 @@ async function handleAdminCreatorStudioEntitlements(request, env) {
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
   try {
-    const count = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM creator_studio_entitlements").first();
+    const count = await env.TPI_DB.prepare(`
+      SELECT COUNT(*) AS total FROM (
+        SELECT cse.id FROM creator_studio_entitlements cse
+        UNION ALL
+        SELECT me.id FROM member_entitlements me WHERE me.capability = 'creator' AND me.source_type = 'admin_grant'
+      )
+    `).first();
     const { results } = await env.TPI_DB.prepare(`
-      SELECT cse.id, cse.entitlement_code AS entitlementCode, cse.entitlement_state AS entitlementState,
-             cse.granted_at AS grantedAt, cse.revoked_at AS revokedAt,
-             c.username, c.display_name AS displayName, c.role, c.active
-      FROM creator_studio_entitlements cse
-      JOIN contributors c ON c.id = cse.contributor_id
-      ORDER BY cse.granted_at DESC
+      SELECT * FROM (
+        SELECT cse.id, cse.entitlement_code AS entitlementCode, cse.entitlement_state AS entitlementState,
+               cse.granted_at AS grantedAt, cse.revoked_at AS revokedAt,
+               c.username, c.display_name AS displayName, c.role, c.active,
+               'legacy_creator_studio' AS sourceType, 0 AS canManage
+        FROM creator_studio_entitlements cse
+        JOIN contributors c ON c.id = cse.contributor_id
+        UNION ALL
+        SELECT me.id, me.capability AS entitlementCode, me.state AS entitlementState,
+               me.granted_at AS grantedAt, me.revoked_at AS revokedAt,
+               c.username, c.display_name AS displayName, c.role, c.active,
+               me.source_type AS sourceType, 1 AS canManage
+        FROM member_entitlements me
+        JOIN contributors c ON c.id = me.contributor_id
+        WHERE me.capability = 'creator' AND me.source_type = 'admin_grant'
+      )
+      ORDER BY grantedAt DESC
       LIMIT ? OFFSET ?
     `).bind(pageSize, (page - 1) * pageSize).all();
     const total = Number(count?.total || 0);
     return json({ entitlements: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
   } catch (error) {
     return json({ entitlements: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "migration_pending" });
+  }
+}
+
+async function handleAdminGrantCreatorStudioAccess(request, env, actingUser) {
+  const data = await readJson(request);
+  const member = await findExistingMember(env, data.username);
+  if (!member) return json({ error: "An active existing TPI account is required." }, 400, { "Cache-Control": "no-store" });
+  if (await hasCreatorStudioAccess(env, member)) {
+    return json({ error: "This account already has Creator Studio access through an authoritative role, membership, or entitlement source. No duplicate grant was created." }, 409, { "Cache-Control": "no-store" });
+  }
+  try {
+    const result = await grantCapability(env, {
+      member,
+      capability: CAPABILITY.CREATOR,
+      actor: actingUser,
+      notes: clean(data.notes).slice(0, 2000),
+    });
+    return json({ ...result, username: member.username, access: true }, 201, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return membershipErrorResponse(error);
+  }
+}
+
+async function handleAdminRevokeCreatorStudioAccess(path, request, env, actingUser) {
+  const entitlementId = clean(decodeURIComponent(path.match(/^\/admin\/creator-studio\/access\/([^/]+)\/revoke$/)?.[1] || ""));
+  if (!entitlementId) return json({ error: "A direct Creator Studio grant id is required." }, 400, { "Cache-Control": "no-store" });
+  const entitlement = await env.TPI_DB.prepare(`
+    SELECT id, contributor_id AS contributorId, capability, source_type AS sourceType, state
+    FROM member_entitlements WHERE id = ?
+  `).bind(entitlementId).first();
+  if (!entitlement || entitlement.capability !== CAPABILITY.CREATOR || entitlement.sourceType !== "admin_grant") {
+    return json({ error: "Only a direct administrative Creator Studio grant can be revoked here. Membership and legacy sources are protected." }, 409, { "Cache-Control": "no-store" });
+  }
+  try {
+    const result = await revokeCapability(env, {
+      entitlementId,
+      actor: actingUser,
+      notes: clean((await readJson(request)).notes).slice(0, 2000),
+    });
+    return json({ ...result, access: true }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return membershipErrorResponse(error);
   }
 }
 
@@ -11631,6 +11692,14 @@ async function requireOwner(request, env, handler) {
   if (!user) return json({ error: "Executive authorization required." }, 403);
   const role = await effectiveStaffRole(env, user);
   if (!["owner", "executive"].includes(role)) return json({ error: "Owner or Executive authorization required." }, 403);
+  return handler(user);
+}
+
+async function requireOwnerOnly(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Owner authorization required." }, 403);
+  const role = await effectiveStaffRole(env, user);
+  if (role !== "owner") return json({ error: "Only the Owner can change Creator Studio access." }, 403);
   return handler(user);
 }
 

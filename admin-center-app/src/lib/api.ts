@@ -226,6 +226,8 @@ export type AdminCreatorEntitlement = {
   id: string;
   entitlementCode?: string;
   entitlementState: string;
+  sourceType?: string;
+  canManage?: boolean;
   grantedAt?: string;
   revokedAt?: string;
   username: string;

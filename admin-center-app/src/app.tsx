@@ -1234,9 +1234,58 @@ function StudioAccess({ onNotice }: { onNotice: (value: string) => void }) {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [memberUsername, setMemberUsername] = useState("");
+  const [review, setReview] = useState<{ kind: "grant" | "revoke"; username: string; displayName?: string; entitlementId?: string; currentAccess: boolean } | null>(null);
+  const [notes, setNotes] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const load = () => { setLoading(true); adminFetch<{ entitlements: AdminCreatorEntitlement[]; pagination?: { total?: number } }>(`/admin/creator-studio/entitlements?page=${page}&pageSize=50`).then((body) => { setEntitlements(body.entitlements || []); setTotal(body.pagination?.total || 0); }).catch((error) => onNotice(error.message)).finally(() => setLoading(false)); };
   useEffect(load, [page]);
-  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Creators</p><h2>Creator Studio Access</h2><p>Read-only entitlement status from the existing role and entitlement gate. This preview does not grant, revoke, or expand access.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><Card><CardHeader><CardTitle>Entitlement records</CardTitle><CardDescription>{total} matching entitlements · page {page} · private StudioFlow recordings and stream credentials are not exposed.</CardDescription></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>Creator</TableHead><TableHead>Entitlement</TableHead><TableHead>State</TableHead><TableHead>Granted</TableHead><TableHead>Revoked</TableHead></TableRow></TableHeader><TableBody>{loading ? <TableRow><TableCell colSpan={5}><LoadingState label="Loading Creator Studio entitlements…" /></TableCell></TableRow> : entitlements.length ? entitlements.map((entitlement) => <TableRow key={entitlement.id}><TableCell><strong>{entitlement.displayName || entitlement.username}</strong><span className="table-subtext">@{entitlement.username} · {entitlement.role}</span></TableCell><TableCell>{entitlement.entitlementCode || "—"}</TableCell><TableCell><Badge variant={entitlement.entitlementState === "active" ? "success" : "warning"}>{entitlement.entitlementState}</Badge></TableCell><TableCell>{entitlement.grantedAt ? new Date(entitlement.grantedAt).toLocaleDateString() : "—"}</TableCell><TableCell>{entitlement.revokedAt ? new Date(entitlement.revokedAt).toLocaleDateString() : "—"}</TableCell></TableRow>) : <TableRow><TableCell colSpan={5}><EmptyState label="No Creator Studio entitlement records returned." /></TableCell></TableRow>}</TableBody></Table><div className="pagination"><span className="muted">{total} matching entitlements</span><div><Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={!total || page >= Math.ceil(total / 50)} onClick={() => setPage((value) => value + 1)}>Next</Button></div></div></CardContent></Card></section>;
+  useEffect(() => { adminFetch<EditorialAccess>("/editorial/access").then((body) => setIsOwner(body.role === "owner")).catch(() => setIsOwner(false)); }, []);
+  const reviewGrant = async () => {
+    const username = memberUsername.trim();
+    if (!username) { onNotice("Enter an existing member username first."); return; }
+    setReviewLoading(true);
+    try {
+      const body = await adminFetch<AdminMembershipEntitlements>(`/admin/membership-entitlements?search=${encodeURIComponent(username)}&page=1&pageSize=10`);
+      const member = body.members.find((entry) => entry.username.toLowerCase() === username.toLowerCase());
+      if (!member) { onNotice("No exact active member account matched that username."); return; }
+      if (!member.active) { onNotice("Inactive accounts cannot receive Creator Studio access."); return; }
+      if (member.creatorStudioAccess) { onNotice(`@${member.username} already has Creator Studio access through an existing authoritative source.`); return; }
+      setReview({ kind: "grant", username: member.username, displayName: member.displayName, currentAccess: false });
+      setNotes("");
+    } catch (error) {
+      onNotice((error as Error).message);
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+  const reviewRevoke = (entitlement: AdminCreatorEntitlement) => {
+    if (!entitlement.canManage || entitlement.entitlementState !== "active" || !entitlement.sourceType || entitlement.sourceType !== "admin_grant") return;
+    setReview({ kind: "revoke", username: entitlement.username, displayName: entitlement.displayName, entitlementId: entitlement.id, currentAccess: true });
+    setNotes("");
+  };
+  const save = async () => {
+    if (!review) return;
+    setSaving(true);
+    try {
+      if (review.kind === "grant") {
+        await adminFetch("/admin/creator-studio/access/grant", { method: "POST", body: JSON.stringify({ username: review.username, notes: notes.trim() }) });
+        onNotice(`Creator Studio access granted to @${review.username}.`);
+      } else if (review.entitlementId) {
+        await adminFetch(`/admin/creator-studio/access/${encodeURIComponent(review.entitlementId)}/revoke`, { method: "POST", body: JSON.stringify({ notes: notes.trim() }) });
+        onNotice(`Creator Studio access revoked for @${review.username}.`);
+      }
+      setReview(null); setConfirm(false); setNotes(""); load();
+    } catch (error) {
+      onNotice((error as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Creators</p><h2>Creator Studio Access</h2><p>Review the existing server-authoritative access ledger. Owner-only changes use a review step, preserve Founding Membership sources, and never expose private StudioFlow recordings or stream credentials.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div>{isOwner ? <Card><CardHeader><CardTitle>Review an access change</CardTitle><CardDescription>Use this only for a direct Creator capability grant or the reversal of a direct administrative grant. Founding Membership activation remains a separate owner-gated workflow.</CardDescription></CardHeader><CardContent className="detail-stack"><div className="two-column"><label className="form-field"><span>Existing member username</span><Input value={memberUsername} onChange={(event) => { setMemberUsername(event.target.value); setReview(null); }} placeholder="member username" /></label><label className="form-field"><span>Administrative note</span><Input value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={2000} placeholder="Why is this change needed?" /></label></div><Button onClick={() => void reviewGrant()} disabled={reviewLoading || saving}>{reviewLoading ? "Checking…" : "Review grant"}</Button>{review && <div className="notice-panel"><Badge variant={review.kind === "grant" ? "warning" : "outline"}>{review.kind === "grant" ? "Grant pending confirmation" : "Revoke pending confirmation"}</Badge><p><strong>{review.displayName || review.username}</strong> · @{review.username}<br />{review.kind === "grant" ? "Current access: not granted. Intended result: add one direct Creator capability grant." : "Current access: active direct administrative grant. Intended result: revoke only that grant; membership-derived or role-derived access is not changed."}</p><div className="detail-actions"><Button variant="outline" onClick={() => setReview(null)} disabled={saving}>Cancel review</Button><Button variant={review.kind === "revoke" ? "destructive" : "default"} onClick={() => setConfirm(true)} disabled={saving}>{review.kind === "grant" ? "Confirm grant" : "Confirm revoke"}</Button></div></div>}</CardContent></Card> : <div className="notice-panel"><Badge variant="outline">Owner-only mutation</Badge><p>Authorized staff can inspect this ledger. Only the Owner can grant or revoke a direct Creator Studio capability, and every change is confirmed through the server-side audit workflow.</p></div>}<Card><CardHeader><CardTitle>Entitlement records</CardTitle><CardDescription>{total} matching entitlements · page {page} · inherited role and membership access is not converted into a duplicate grant.</CardDescription></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>Creator</TableHead><TableHead>Source</TableHead><TableHead>State</TableHead><TableHead>Granted</TableHead><TableHead>Revoked</TableHead><TableHead>Action</TableHead></TableRow></TableHeader><TableBody>{loading ? <TableRow><TableCell colSpan={6}><LoadingState label="Loading Creator Studio entitlements…" /></TableCell></TableRow> : entitlements.length ? entitlements.map((entitlement) => <TableRow key={entitlement.id}><TableCell><strong>{entitlement.displayName || entitlement.username}</strong><span className="table-subtext">@{entitlement.username} · {entitlement.role}</span></TableCell><TableCell>{entitlement.sourceType === "admin_grant" ? "Direct Owner grant" : "Founding / legacy record"}<span className="table-subtext">{entitlement.entitlementCode || "creator"}</span></TableCell><TableCell><Badge variant={entitlement.entitlementState === "active" ? "success" : "warning"}>{entitlement.entitlementState}</Badge></TableCell><TableCell>{entitlement.grantedAt ? new Date(entitlement.grantedAt).toLocaleDateString() : "—"}</TableCell><TableCell>{entitlement.revokedAt ? new Date(entitlement.revokedAt).toLocaleDateString() : "—"}</TableCell><TableCell>{entitlement.canManage && entitlement.entitlementState === "active" ? <Button size="sm" variant="outline" onClick={() => reviewRevoke(entitlement)}>Review revoke</Button> : <span className="table-subtext">Protected source</span>}</TableCell></TableRow>) : <TableRow><TableCell colSpan={6}><EmptyState label="No Creator Studio entitlement records returned." /></TableCell></TableRow>}</TableBody></Table><div className="pagination"><span className="muted">{total} matching entitlements</span><div><Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={!total || page >= Math.ceil(total / 50)} onClick={() => setPage((value) => value + 1)}>Next</Button></div></div></CardContent></Card>{confirm && review && <ConfirmDialog title={`${review.kind === "grant" ? "Grant" : "Revoke"} Creator Studio access?`} message={`This will ${review.kind === "grant" ? "add one direct Creator capability grant for" : "revoke the direct administrative grant for"} @${review.username}. It will not change Founding Memberships, role appointments, StudioFlow data, or any other capability.`} confirmLabel={saving ? "Saving…" : review.kind === "grant" ? "Grant access" : "Revoke access"} destructive={review.kind === "revoke"} onCancel={() => setConfirm(false)} onConfirm={() => void save()} />}</section>;
 }
 
 function SettingsView({ onNotice }: { onNotice: (value: string) => void }) {
