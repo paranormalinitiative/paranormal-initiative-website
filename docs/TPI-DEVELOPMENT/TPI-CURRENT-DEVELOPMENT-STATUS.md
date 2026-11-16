@@ -2,7 +2,7 @@
 
 ## 2026-11-16 — StudioFlow destinations, recording library, and Nova save audit
 
-Status: **LOCAL REPAIRS VERIFIED; HOSTED RTMP RELAY CONFIGURATION REMAINS.**
+Status: **LOCAL REPAIRS VERIFIED; PRODUCTION PROMOTION RETRY READY; HOSTED RTMP RELAY CONFIGURATION REMAINS.**
 StudioFlow was audited from the approved release lineage. The local RTMP
 companion no longer collides with the authoritative Worker on port 8787 and
 now defaults to its dedicated port 8789. Choosing a recording-library folder
@@ -21,6 +21,15 @@ The local companion is not a Cloudflare Worker and cannot be treated as a
 production relay. Hosted external livestream delivery remains configuration-
 required until an approved relay/provider adapter is provisioned and tested
 with a disposable key. No provider secret or stream key was stored or exposed.
+
+The first guarded production promotion was automatically rolled back after a
+false Firefox acceptance failure: the browser check could mistake Member
+Home's “TPI Creator Studio” navigation label for the loaded StudioFlow shell.
+The acceptance predicate was repaired to require the real `/studio/` route and
+StudioFlow controls. The repaired isolated production run passed **65/65** on
+the unchanged rollback Worker, so the exact candidate is ready for a fresh
+guarded promotion. Production remains safely on the previous Worker until that
+promotion completes.
 
 See [StudioFlow Destinations, Recording Library, and Nova Save Audit](300-COMPLETED-WORK/2026-11-16-STUDIOFLOW-DESTINATIONS-AND-LIBRARY-AUDIT.md).
 

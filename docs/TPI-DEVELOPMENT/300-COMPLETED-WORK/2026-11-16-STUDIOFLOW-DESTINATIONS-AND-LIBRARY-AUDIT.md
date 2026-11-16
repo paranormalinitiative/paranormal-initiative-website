@@ -1,7 +1,7 @@
 # TPI-STUDIOFLOW — Destinations, Recording Library, and Nova Save Audit
 
 Date: **2026-11-16**  
-Status: **AUDIT COMPLETE / LOCAL REPAIRS VERIFIED / PRODUCTION RELAY CONFIGURATION REQUIRED**
+Status: **AUDIT COMPLETE / PRODUCTION CANDIDATE ROLLED BACK AFTER A FALSE ACCEPTANCE FAILURE / PRODUCTION RELAY CONFIGURATION REQUIRED**
 
 ## Owner request
 
@@ -148,6 +148,34 @@ owner-scoped structured storage remains the authoritative document save path.
 | Nova Editor Firefox/Chromium persistence | **134/134 PASS** |
 | Nova Slides | **23/23 PASS** |
 | Authoritative staging | PASS — reproducible build and protected bridge preservation |
+
+## Production release verification and repair
+
+The first guarded promotion uploaded the exact certified candidate, passed the
+public production smoke checks, and then rolled back automatically when the
+live Firefox gate reported that StudioFlow had not entered its recording setup.
+Production was restored to the exact previous Worker; no partial candidate was
+left serving and no owner data was changed.
+
+Investigation at **2026-11-16 11:50 EST** found that the acceptance harness's
+StudioFlow shell predicate was too broad: Member Home contains the navigation
+label “TPI Creator Studio”, so the harness could mistake Member Home for a
+loaded StudioFlow document and continue with the wrong DOM. The production QA
+account itself was verified by the authenticated route probe as a member with
+`creatorStudioAccess: true`, and `/studio/` returned the protected StudioFlow
+document with HTTP 200.
+
+The harness now requires both the `/studio/` route and an actual StudioFlow
+control before proceeding. A fresh isolated Firefox run against the unchanged
+production rollback passed **65/65**, including destinations, recording and
+storage, browser-local save, verified portable backup, restore-as-new, Studio
+switching, reload persistence, and narrow-width layout. This repair changes
+the verification guard only; it does not weaken the production access gate or
+the destination/storage safeguards.
+
+The candidate still requires the normal guarded release path after this
+verification repair. Until that promotion passes its complete live gate,
+production remains on the known-good rollback Worker.
 
 ## Remaining work before claiming hosted destinations
 

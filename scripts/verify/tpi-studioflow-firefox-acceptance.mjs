@@ -164,8 +164,13 @@ async function enterStudio() {
     try {
       await waitFor("StudioFlow shell", async () => {
         const url = new URL(await driver.getCurrentUrl());
-        if (/\/member-login(?:\.html)?\/?$/.test(url.pathname)) return false;
-        return /StudioFlow|Library|Destinations|Record without going live/i.test(await driver.findElement(By.css("body")).getText());
+        // Member Home also contains the navigation label "TPI Creator Studio".
+        // Requiring the protected route plus an actual StudioFlow control keeps
+        // that navigation text from being mistaken for a loaded Studio shell.
+        if (!/^\/studio(?:\/|$)/.test(url.pathname)) return false;
+        const body = await driver.findElement(By.css("body")).getText();
+        return /StudioFlow|Library|Destinations|Record without going live/i.test(body)
+          && (await count("[data-studio-panel-tab], .tpi-studio-selector, [data-tpi-video-organization]")) > 0;
       }, 8_000, 200);
       shellError = null;
       break;

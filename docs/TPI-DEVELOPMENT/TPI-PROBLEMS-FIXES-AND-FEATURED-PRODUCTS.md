@@ -50,6 +50,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 | An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
+| A StudioFlow release gate reports that recording setup is missing while the browser is still on Member Home | [StudioFlow acceptance shell false positive](#inc-2026-11-16-02--studioflow-acceptance-shell-false-positive) | Firefox route handoff, broad shell predicate, protected release gate |
 | A member asks Mystic a question anywhere in the community | [Mystic community assistant](#inc-2026-11-14-20--mystic-community-assistant) | Shared member shell, public article search, bug-report handoff, internal-content boundary |
 | Mystic opens but returns “I don’t have a verified member Help Center answer” for a documented question | [Mystic knowledge catalog loading](#inc-2026-11-14-21--mystic-knowledge-catalog-loading) | Shared shell dependency loading, public article catalog, profile-question regression |
 | Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
@@ -73,6 +74,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 11:50 EST** |
+| What happened | A guarded StudioFlow promotion passed the public smoke checks but the live Firefox gate reported that recording setup was missing and automatically rolled production back. The same failure reproduced against the unchanged rollback Worker. |
+| Root cause | The browser acceptance predicate treated Member Home's visible “TPI Creator Studio” navigation label as proof that the StudioFlow shell had loaded. The browser could still be on `/member-home` when the test advanced. |
+| Fix | Tightened the acceptance harness to require the actual `/studio/` route plus a real StudioFlow control before continuing. The production QA account was independently verified with Creator Studio access and `/studio/` returned HTTP 200. |
+| Safeguards | The route remains server-gated; the guard remains fail-closed; no access grant, destination secret, database change, or application behavior was bypassed. The failed promotion remained rolled back. |
+| Verification | Repaired isolated Firefox acceptance against the unchanged production rollback: **65/65 PASS**, including destination/storage panels, browser-local save, portable backup, restore-as-new, reopen persistence, and narrow-width behavior. |
+| Status | **Harness repaired; production promotion retry ready; production remains on the known-good rollback Worker until the guarded retry completes.** |
 
 ### INC-2026-11-15-40 — Nova TPI Everything Assistant
 
