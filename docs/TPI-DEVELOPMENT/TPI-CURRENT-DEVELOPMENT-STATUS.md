@@ -1,5 +1,36 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center role-aware navigation repair
+
+Status: **DEPLOYED AND LIVE OWNER-VERIFIED.** The reactive Administration
+Center now receives a complete server-derived capability catalog for its
+current navigation and filters the visible areas from that catalog. Owner,
+Executive, and Full Administrator sessions retain the areas allowed by the
+existing server route matrix; narrower staff roles see only their authorized
+areas; members and unauthorized sessions see no Administration Center
+navigation. A failed access probe now fails closed instead of defaulting to
+full access.
+
+The server remains authoritative for every HTML route, API handler, and
+mutation. This repair does not grant a role, change an appointment, alter a
+membership, or move the legacy `/admin-panel`. It also does not modify
+StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, R2, or
+Crossroads of the Unknown.
+
+The focused Administration Center checks passed **94/94**, the build passed,
+the maintained local authentication lifecycle passed **38/38**, and isolated
+Firefox StudioFlow acceptance passed **65/65**. The full guarded preflight
+classified the change as Tier 1 shared API, passed all **13** certification
+gates, and completed in **24.5 seconds**. Production anonymous smoke passed
+**10/10**. Live Owner Firefox verification after refresh confirmed the
+protected session and the complete role-aware navigation.
+
+Release `rel-661b06b57761-81f33a142a9c` deployed Worker
+`b00b96d8-c0a6-4ca8-a137-63bfd980ce0f` to 100% traffic. The exact rollback
+Worker is `e9306f06-8fe6-49d2-894c-e30bd2e21f7f`.
+
+See [Administration Center Role-Aware Navigation Repair](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ROLE-AWARE-NAVIGATION-REPAIR.md).
+
 ## 2026-11-15 — Administration Center parity and permissions audit
 
 Status: **AUDIT COMPLETE — NO PRODUCTION CODE CHANGED.** The legacy

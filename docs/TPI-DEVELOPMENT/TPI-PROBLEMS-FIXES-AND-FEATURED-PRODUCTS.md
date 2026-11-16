@@ -68,6 +68,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Owner needs to grant or revoke direct Creator Studio access without touching memberships or StudioFlow | [Creator Studio access review gate](#inc-2026-11-15-36--administration-center-creator-studio-access-review-gate) | Owner-only capability grant, protected entitlement sources, review-before-change |
 | Owner needs a safe overview of creator channels and their published-video counts | [Creator Channels verification](#inc-2026-11-15-37--administration-center-creator-channels-verification) | Channel directory, search/filter/pagination, metadata-only boundary |
 | Owner needs to know whether the reactive and legacy Administration Centers agree | [Administration Center parity and permissions audit](#inc-2026-11-15-38--administration-center-parity-and-permissions-audit) | Navigation inventory, server role matrix, migrate/integrate/preserve decisions |
+| An authorized Administration Center user sees the wrong navigation, or a failed access probe could expose too much UI | [Role-aware Administration Center navigation repair](#inc-2026-11-15-39--role-aware-administration-center-navigation-repair) | Server-derived capability catalog, fail-closed access probe, existing route allowlist |
 
 ## Incident and fix register
 
@@ -1422,6 +1423,26 @@ ownership and publishing actions on their existing protected workflows.
 **Lesson:** A navigation match is not feature parity. Compare the source
 contracts and server authority, then classify each difference before moving or
 replacing a protected administrative workflow.
+
+### INC-2026-11-15-39 — Role-aware Administration Center navigation repair
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15 21:54 EST**, during the parity and permissions follow-up |
+| Fixed in source | **2026-11-15 22:08 EST**, commit `661b06b5` |
+| Product/surface | Reactive `/admin-center-preview/`, `/api/editorial/access`, shared Administration Center role boundaries |
+| Environment | Local maintained Worker, guarded release candidate, production, live Owner Firefox session |
+| Symptom | The reactive Center's server capability catalog did not name every current navigation area, and the client still used hardcoded role checks for only two items. A failed access probe could also default the UI to full administration visibility. |
+| Root cause | The reactive navigation expanded faster than the older capability catalog. The server route matrix and handler gates were authoritative, but the UI hint was incomplete and its error fallback was not fail-closed. |
+| Fix | Expanded the server-returned catalog to cover every current reactive navigation key, added route-aware allowed flags derived from the existing server allowlist, made Help Desk and TPI Videos use the existing full Administration Center boundary, filtered navigation from the server response, reset disallowed deep links to Overview, and changed access-probe failure to a denied state. |
+| Safeguards | No role grant, appointment change, membership change, migration, legacy route replacement, or production data change. HTML gates, API route checks, handler authorization, protected application byte guards, exact-candidate certification, and anonymous smoke remain mandatory. |
+| Verification | Administration Center source checks **94/94**; build passed; local authentication lifecycle **38/38**; isolated Firefox StudioFlow acceptance **65/65**; full preflight **13** certification gates; production anonymous smoke **10/10**; live Owner Firefox navigation verified after refresh. |
+| Production status | **DEPLOYED AND LIVE** — release `rel-661b06b57761-81f33a142a9c`, Worker `b00b96d8-c0a6-4ca8-a137-63bfd980ce0f`, 100% traffic; rollback `e9306f06-8fe6-49d2-894c-e30bd2e21f7f` |
+| References | [Administration Center Role-Aware Navigation Repair](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ROLE-AWARE-NAVIGATION-REPAIR.md), [Parity and Permissions Audit](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-PARITY-AND-PERMISSIONS-AUDIT.md), `admin-center-app/src/app.tsx`, `admin-center-app/src/lib/api.ts`, `functions/api/[[path]].js`, `scripts/qa/tpi-admin-006-preview.mjs` |
+
+**Lesson:** The UI may describe authority, but it must never invent it. Return
+the allowed areas from the same server-side route matrix that protects the
+request, fail closed on probe errors, and keep the handler checks authoritative.
 
 ## New-entry template
 
