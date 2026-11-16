@@ -84,7 +84,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Sitewide scope | Public Help Center, shared member/community shell, protected Help Desk, and `/api/nova/ask`; Mystic and protected applications remain separate |
 | Safeguard | Public pages never load internal Help Desk data; internal retrieval requires an active server-side staff role; Nova cannot grant access or perform mutations |
 | Verification | JavaScript syntax, Help Center separation, private index retrieval, anonymous internal denial, authenticated internal retrieval, and guarded browser/release gates |
-| Status | **Implemented and ready for guarded production release** |
+| Status | **Deployed and live verified** — release `rel-0cede55a393d-df67016fd878`; Worker `98040d28-927f-48b2-9022-b2274ab7ae06` |
 
 ### INC-2026-11-15-41 — Nova protected internal Help Desk
 
@@ -95,7 +95,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Knowledge source | Private R2 bucket `tpi-nova-internal-knowledge` and Cloudflare AI Search instance `tpi-nova-internal` |
 | Fix | Added the protected Nova assistant to all internal Help Desk routes, updated the internal Help Desk article, and separated public Mystic/Nova knowledge from internal Nova retrieval |
 | Safety behavior | Anonymous and ordinary member requests receive no internal answer; direct API requests are authorization checked; credentials, private messages, secrets, and destructive actions are out of scope |
-| Remaining owner action | Use the guarded release and live Firefox acceptance to confirm the deployed protected session; no StudioFlow source or owner data is changed by this work |
+| Remaining owner action | None for this public/internal assistant release. The private source is uploaded and its indexing job was started; anonymous internal access remains denied, and no StudioFlow source or owner data was changed |
 
 ### INC-2026-11-15-25 — Administration Center command center and release-gate finding
 

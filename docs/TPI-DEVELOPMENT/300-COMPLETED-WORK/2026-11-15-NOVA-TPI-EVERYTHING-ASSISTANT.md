@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-15
 **Audience:** Public members/visitors and authorized internal staff
-**Status:** Implementation complete; guarded production release required
+**Status:** Deployed and live verified
 
 ## Outcome
 
@@ -46,21 +46,27 @@ Creator Studio, or Nova Editor Workspace source or data.
 
 ## Verification evidence
 
-- The protected AI Search index completed its first scheduled indexing job and
-  returned internal release-boundary and policy chunks.
-- Public and internal knowledge sources remain separate.
+- The private Cloudflare source was uploaded to R2 and the protected AI Search
+  indexing job was started; retrieval returned the revised Help Desk and policy
+  guidance.
+- Public and internal knowledge sources remain separate, and anonymous internal
+  retrieval fails closed.
 - Curated local article matching remains available if retrieval is unavailable.
-- Syntax, source-separation, access-boundary, local lifecycle, release
-  preflight, and Firefox acceptance remain required before production is
-  called complete.
+- Help Center separation passed **26/26** checks; release safety passed
+  **37/37** checks; local authentication lifecycle passed **38/38** checks;
+  local Firefox StudioFlow acceptance passed **65/65** without changing
+  StudioFlow.
+- The exact certified release passed **13** preflight gates in **23.7 seconds**,
+  anonymous production smoke **10/10**, and live public Nova browser acceptance
+  answered the profile-update question with the verified TPI guide.
 
 ## Release record
 
-Production deployment and live browser acceptance are recorded below after the
-maintained release path completes:
+Production deployment and live browser acceptance:
 
-- Website commit: pending
-- Worker version: pending
-- Release ID: pending
-- Live Firefox result: pending
-- Rollback reference: pending
+- Website commit: `0cede55a393d089f57ca6d44ef15b78a60c92ae8`
+- Worker version: `98040d28-927f-48b2-9022-b2274ab7ae06`
+- Release ID: `rel-0cede55a393d-df67016fd878`
+- Live public browser result: **PASS**
+- Anonymous production smoke: **10/10**
+- Rollback reference: `b00b96d8-c0a6-4ca8-a137-63bfd980ce0f`

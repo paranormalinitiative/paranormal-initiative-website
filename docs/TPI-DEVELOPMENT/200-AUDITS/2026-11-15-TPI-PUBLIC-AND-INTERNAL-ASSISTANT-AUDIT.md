@@ -3,8 +3,7 @@
 **Date:** 2026-11-15
 **Scope:** Member Help Center, protected Internal Help Desk, Mystic, Nova, and
 knowledge-source boundaries
-**Status:** Audit complete; production release verification remains part of the
-current directive
+**Status:** Audit complete; deployed and live verified
 
 ## Current architecture
 
@@ -34,15 +33,19 @@ current directive
    before model retrieval and remains available when the retrieval service is
    unavailable.
 
-## Remaining release gates
+## Release verification completed
 
-- Run the repository's syntax and separation checks.
-- Run local authentication lifecycle and protected Help Desk access checks.
-- Run the complete guarded preflight and deploy the exact certified candidate.
-- Verify public Nova and protected internal Nova in isolated Firefox Developer
-  Edition sessions.
-- Record the Worker version, release ID, live result, and rollback reference in
-  the completion record and current status.
+- Syntax, Help Center separation, and release-safety checks passed.
+- Local authentication lifecycle passed **38/38** checks; local Firefox
+  StudioFlow acceptance passed **65/65** with protected application integrity
+  preserved.
+- The exact candidate passed **13** guarded preflight gates and deployed as
+  `rel-0cede55a393d-df67016fd878` on Worker
+  `98040d28-927f-48b2-9022-b2274ab7ae06`.
+- Anonymous production smoke passed **10/10** and the live public Help Center
+  opened Nova and returned the verified profile guide.
+- Internal production retrieval remains server-protected; no owner session or
+  private production data was accessed during the public browser check.
 
 ## Protected products
 
