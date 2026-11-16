@@ -713,13 +713,14 @@ async function handleMe(request, env) {
     editorialReviewAccess = false;
   }
   const staffRole = await effectiveStaffRole(env, user);
+  const educationLeadershipAccess = await hasEducationLeadershipAccess(env, user);
   return json({
     user: {
       ...privateMemberUser(user, await hasCreatorStudioAccess(env, user)),
       staffIdentity: await publicStaffIdentity(env, user),
       editorialReviewAccess,
       adminAccess: hasAdministrationCenterRole(staffRole) || editorialReviewAccess,
-      educationLeadershipAccess: await hasEducationLeadershipAccess(env, user),
+      educationLeadershipAccess,
       foundingMembership: await publicMembershipIdentity(env, user.id),
       leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
       boardMembership: await getBoardMembership(env, user.id),
@@ -2704,24 +2705,48 @@ const STAFF_DIRECTORY_AREAS = Object.freeze([
   ["analytics", "Analytics", "/admin/analytics"],
   ["activity", "Activity and audit logs", "/admin/audit-logs"],
   ["members", "Member Directory", "/admin/members"],
+  ["membership-entitlements", "Membership & Entitlements", "/admin/membership-entitlements"],
   ["roles", "Roles and permissions", "/admin/roles"],
+  ["staff-directory", "Staff Directory", "/admin/staff-directory"],
+  ["restrictions", "Account Restrictions", "/admin/restrictions"],
   ["community", "Community moderation", "/admin/community/posts"],
+  ["community-content", "Posts & Comments", "/admin/community/posts"],
+  ["reactions", "Reactions", "/admin/community/posts"],
   ["reports", "Reports and moderation", "/admin/reports"],
   ["enforcement", "Enforcement and appeals", "/admin/moderation-actions"],
+  ["moderation-history", "Moderation history", "/admin/audit-logs"],
   ["staff", "Staff appointments", "/admin/staff-roles"],
-  ["founding", "Founding memberships", "/admin/founding-memberships"],
-  ["creatorStudio", "Creator Studio access", "/admin/creator-studio/entitlements"],
+  ["creators", "Creator directory", "/admin/creator-partnership"],
+  ["founding", "Founding 50", "/admin/founding-50"],
+  ["founding-memberships", "Founding Memberships", "/admin/founding-memberships"],
+  ["studio-access", "Creator Studio access", "/admin/creator-studio/entitlements"],
+  ["channels", "Creator channels", "/admin/channels"],
   ["leadership", "Leadership distinctions", "/admin/leadership/distinctions"],
-  ["board", "Board members", "/admin/board-members"],
+  ["board-members", "Board members", "/admin/board-members"],
   ["contributors", "Contributor management", "/admin/contributors"],
   ["editorial", "Editorial review", "/admin/articles"],
   ["teams", "Paranormal Teams", "/admin/teams"],
+  ["education", "Education Center", "/admin/articles"],
   ["comments", "Article comments", "/admin/comments"],
+  ["videos", "TPI Videos", "/tpi-videos"],
   ["events", "Events", "/admin/events"],
   ["notifications", "Notifications", "/admin/notifications"],
   ["health", "Platform health", "/admin/scraper-runs"],
+  ["security", "Security", "/admin/security"],
   ["settings", "System settings", "/admin/settings"],
+  ["audit", "Audit logs", "/admin/audit-logs"],
+  ["help-desk", "Help Desk", "/internal-help-center"],
 ]);
+
+function staffDirectoryAreaAllowed(roleCode, route) {
+  // These surfaces are read-only or separately capability-gated inside the
+  // protected Center. Their server contracts remain the final authority for
+  // any mutation or private data access.
+  if (route === "/internal-help-center" || route === "/tpi-videos") {
+    return hasAdministrationCenterRole(roleCode);
+  }
+  return mayUseAdminRoute(roleCode, route, "GET");
+}
 
 function staffDirectoryRole(roleCode) {
   const catalog = STAFF_ROLE_CATALOG[roleCode] || STAFF_ROLE_CATALOG.member;
@@ -2730,7 +2755,7 @@ function staffDirectoryRole(roleCode) {
     label: catalog.label,
     rank: catalog.rank,
     capabilities: catalog.capabilities,
-    areas: STAFF_DIRECTORY_AREAS.map(([key, label, route]) => ({ key, label, allowed: mayUseAdminRoute(roleCode, route, "GET") }))
+    areas: STAFF_DIRECTORY_AREAS.map(([key, label, route]) => ({ key, label, route, allowed: staffDirectoryAreaAllowed(roleCode, route) }))
   };
 }
 
@@ -5417,11 +5442,14 @@ async function requireEditorial(request, env, handler) {
 async function handleEditorialAccess(env, user) {
   const capabilities = await contributorCapabilities(env, user);
   const staffRole = await effectiveStaffRole(env, user);
+  const educationLeadershipAccess = await hasEducationLeadershipAccess(env, user);
   return json({
     role: staffRole,
     editorialReview: hasEditorialReview(capabilities),
     editorialPublish: hasEditorialPublish(capabilities),
-    adminAccess: hasAdministrationCenterRole(staffRole)
+    adminAccess: hasAdministrationCenterRole(staffRole),
+    educationLeadershipAccess,
+    adminAreas: staffDirectoryRole(staffRole).areas
   }, 200, { "Cache-Control": "no-store" });
 }
 

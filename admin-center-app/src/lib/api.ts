@@ -549,7 +549,8 @@ export function metricValue(metrics: AdminOverview["metrics"], section: string, 
 // TPI-NOVA-004R6D: reviewer contract for the Editorial Review Queue. These
 // reads require EDITORIAL_REVIEW; the UI never derives review authority from the
 // admin role.
-export type EditorialAccess = { role: string; editorialReview: boolean; editorialPublish: boolean; adminAccess: boolean };
+export type AdminAreaAccess = { key: string; label: string; route: string; allowed: boolean };
+export type EditorialAccess = { role: string; editorialReview: boolean; editorialPublish: boolean; adminAccess: boolean; educationLeadershipAccess?: boolean; adminAreas?: AdminAreaAccess[] };
 
 export type EditorialNovaNode = { type: string; text?: string; attrs?: { level?: number; href?: string }; content?: EditorialNovaNode[]; marks?: Array<{ type: string; attrs?: { href?: string } }> };
 export type EditorialNovaDocument = { type: string; content?: EditorialNovaNode[] };

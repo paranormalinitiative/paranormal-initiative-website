@@ -31,17 +31,17 @@ function App() {
   // access probe decides whether this session sees the whole Administration
   // Center or only the Editorial Review section.
   const [access, setAccess] = useState<EditorialAccess | null>(null);
-  useEffect(() => { let active = true; adminFetch<EditorialAccess>("/editorial/access").then((body) => { if (active) setAccess(body); }).catch(() => { if (active) setAccess({ role: "", editorialReview: false, editorialPublish: false, adminAccess: true }); }); return () => { active = false; }; }, []);
+  useEffect(() => { let active = true; adminFetch<EditorialAccess>("/editorial/access").then((body) => { if (active) setAccess(body); }).catch(() => { if (active) setAccess({ role: "", editorialReview: false, editorialPublish: false, adminAccess: false, adminAreas: [] }); }); return () => { active = false; }; }, []);
   // TPI-NOVA-004R6E: EDITORIAL_PUBLISH is its own authority. A Publisher
   // without the admin role sees only the Editorial section, exactly like a
   // Reviewer without the admin role, and never inherits Review controls.
   const editorialOnly = Boolean((access?.editorialReview || access?.editorialPublish) && !access?.adminAccess);
   const editorialScopeLabel = access?.editorialReview && access?.editorialPublish ? "Editorial review & publication session" : access?.editorialPublish ? "Editorial publisher session" : "Editorial reviewer session";
-  const staffDirectoryAllowed = ["owner", "executive", "full_administrator"].includes(access?.role || "");
-  const membershipEntitlementsAllowed = ["owner", "executive", "full_administrator"].includes(access?.role || "");
-  const authorizedNavGroups = navGroups.map((group) => group.label === "Members" ? { ...group, items: group.items.filter((item) => (item.id !== "staff-directory" || staffDirectoryAllowed) && (item.id !== "membership-entitlements" || membershipEntitlementsAllowed)) } : group);
+  const allowedAreaKeys = new Set((access?.adminAreas || []).filter((area) => area.allowed).map((area) => area.key));
+  const authorizedNavGroups = access?.adminAccess ? navGroups.map((group) => ({ ...group, items: group.items.filter((item) => allowedAreaKeys.has(item.id)) })).filter((group) => group.items.length) : [];
   const visibleNavGroups = editorialOnly ? [{ label: "Content & Publishing", items: flatNav.filter((item) => item.id === "editorial") }] : authorizedNavGroups;
   useEffect(() => { if (editorialOnly) { setView("editorial"); setSidebarOpen(false); } }, [editorialOnly]);
+  useEffect(() => { if (!editorialOnly && access?.adminAccess && !authorizedNavGroups.flatMap((group) => group.items).some((item) => item.id === view)) { setView("overview"); try { window.history.replaceState(null, "", "#overview"); } catch { /* history is optional */ } } }, [access?.adminAccess, editorialOnly, view, authorizedNavGroups.length]);
   const loadOverview = () => { setOverviewLoading(true); adminFetch<AdminOverview>(`/admin/overview?range=${range}`).then(setOverview).catch((error) => setNotice(error.message)).finally(() => setOverviewLoading(false)); };
   useEffect(() => { if (!editorialOnly) loadOverview(); }, [range, editorialOnly]);
   const selectView = (next: View) => { setView(next); setSidebarOpen(false); setNotice(""); try { window.history.replaceState(null, "", `#${next}`); } catch { /* history is optional */ } };
