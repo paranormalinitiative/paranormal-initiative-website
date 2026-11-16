@@ -63,6 +63,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | An appointed staff member can open the Admin Center but sees the wrong limited interface | [Administration Center role matrix](#inc-2026-11-15-30--administration-center-role-probe-mismatch) | Effective staff appointment, legacy role mapping, Admin Center access probe |
 | A member bug report appears in the queue but cannot be opened or documented with a triage decision | [Administration Center report triage](#inc-2026-11-15-31--administration-center-report-triage-contract) | Bug-report route coverage, required triage note, metadata-only evidence, audit history |
 | Authorized staff need to see who can access which Administration Center areas | [Staff directory and capability inspection](#inc-2026-11-15-33--administration-center-staff-directory-and-capability-inspection) | Effective server role, capability boundaries, appointment history, read-only staff metadata |
+| Authorized staff need one place to understand a member's real access | [Membership and entitlement inspection](#inc-2026-11-15-34--administration-center-membership-and-entitlement-inspection) | Effective role, capability flags, Founding identity, Creator Studio, Nova authority, restrictions, read-only metadata |
 
 ## Incident and fix register
 
@@ -1321,6 +1322,25 @@ suspension, content deletion, or private-message inspection tool.
 
 **Lesson:** Staff access must be inspectable from the same effective server-side
 role resolver that enforces it, while inspection remains strictly read-only.
+
+### INC-2026-11-15-34 — Administration Center membership and entitlement inspection
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15 20:38 EST**, during the next Administration Center roadmap slice |
+| Fixed in source | **2026-11-15**, source commit pending guarded release |
+| Product/surface | Protected Administration Center Membership & Entitlements view |
+| Symptom | Member Directory, Roles & Permissions, Founding Memberships, Creator Studio, Staff Directory, and Account Restrictions each showed only part of a member's access. Staff had no single safe answer for what the account could actually use or which server-authorized source explained it. |
+| Root cause | Access information was distributed across separate contracts. Client labels and legacy roles could not safely represent the effective union of account flags, staff appointments, membership entitlements, Creator Studio records, editorial grants, and active restrictions. |
+| Fix | Added `GET /api/admin/membership-entitlements` and a read-only Administration Center view with bounded search, pagination, summary counts, effective-role resolution, capability-source inspection, Founding Membership identity, Creator Studio access, and active restriction metadata. |
+| Safeguards | Owner, Executive, and Full Administrator only; legacy Administrator denied; server-derived access; metadata-only response; optional missing schemas fail closed; no mutation controls; credentials, sessions, private contact data, private messages, and private evidence excluded; protected applications untouched. |
+| Verification | Administration Center source contracts **90/90**; Admin Center build passed; `git diff --check` passed; local assets refreshed in place; local authentication lifecycle **38/38**; guarded production release and live Firefox acceptance pending at record creation. |
+| Production status | **Pending guarded release** |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-MEMBERSHIP-ENTITLEMENT-INSPECTION.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-MEMBERSHIP-ENTITLEMENT-INSPECTION.md), `functions/api/[[path]].js`, `admin-center-app/src/app.tsx`, `admin-center-app/src/lib/api.ts`, `lib/staff-roles.js`, `scripts/qa/tpi-admin-006-preview.mjs` |
+
+**Lesson:** Administration needs one server-derived access inspection surface,
+but inspection and mutation must remain separate. A missing optional source is
+not permission and must never be interpreted as permission.
 
 ## New-entry template
 

@@ -96,6 +96,15 @@ scannable without putting every procedure in one long menu.
   slice and must be escalated through the documented authority path
 - Members can review their own safety notices in Settings and submit one open
   appeal per active action
+- Use **Membership & Entitlements** for one read-only, server-derived view of
+  effective staff role, account capability flags, Creator/Contributor access,
+  Founding Membership identity, Creator Studio access, Nova authority, and
+  active restrictions
+- Treat the Membership & Entitlements view as inspection only; do not infer
+  authority from a title, badge, or navigation item, and do not add mutation
+  controls to this view
+- If an optional entitlement or moderation source is unavailable, record it as
+  unavailable and escalate; never treat missing data as permission
 
 ### Content, teams, and publishing
 

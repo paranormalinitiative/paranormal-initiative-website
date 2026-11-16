@@ -96,15 +96,16 @@ The preview currently contains most of these resources but still presents some a
 
 The next phase should complete the public-facing Administration Center foundation in this order:
 
-1. Reconcile the server role/capability matrix with every proposed Administration Center action.
-2. Complete the Command Center with recent audit activity and real alert/queue links using existing protected APIs.
-3. Finish report triage, appeals, restrictions, and staff directory contracts before exposing mutation controls.
-4. Run authenticated owner acceptance on the approved development runtime, then compare parity with `/admin-panel`.
-5. Only after those gates pass, define NOVA's internal sources and separate authorization boundary.
+1. Complete the read-only Membership & Entitlements inspection of effective access sources.
+2. Run authenticated Owner acceptance and compare the new view with `/admin-panel` without replacing the legacy surface.
+3. Design the first owner-confirmed mutation workflow with explicit audit and rollback behavior.
+4. Keep StudioFlow, Creator Studio, Nova Editor Workspace, private media, and other stable applications outside unrelated Administration Center changes.
+5. Only after the public Administration Center foundation is accepted, define NOVA's internal sources and separate authorization boundary.
 
 ## Verification record
 
 - Source inspection confirmed that the preview already contains live overview metrics, SVG charts, and read-only Platform Health.
+- Membership & Entitlement Inspection is now implemented as a server-derived, metadata-only view; source contracts pass **90/90** and the Admin Center build passes.
 - The new dashboard summary uses only existing overview data and explicit unavailable states.
 - The maintained local launcher now watches `admin-center-preview/` and its generated assets, so a rebuild is promoted into the running local Worker without a manual asset-copy step. Protected StudioFlow/Nova directories remain outside that general-site refresh list.
 - The local protected route now uses the maintained clean-URL fallback; `/admin-center-preview/`, `/admin-advanced-settings`, `/admin-events`, and `/teams/admin` returned HTTP 200 for the local administrator fixture, while member and contributor access returned HTTP 403.

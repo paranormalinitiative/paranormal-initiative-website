@@ -86,6 +86,28 @@ their existing bounded routes remain unchanged. The API is `GET
 /api/admin/staff-directory`, and the server returns 403 when the effective role
 is outside the inspection boundary.
 
+### Membership & Entitlement Inspection
+
+The Administration Center now also has a read-only **Membership & Entitlements**
+view for Owner, Executive, and Full Administrator effective roles. It combines
+the account's effective staff role, account state, post/comment/message flags,
+Creator and Contributor capability sources, explicit Nova editorial authority,
+Founding Membership identity, Creator Studio access, entitlement sources, and
+active moderation actions in one searchable, paginated view.
+
+The API is `GET /api/admin/membership-entitlements`. It is server-derived and
+metadata-only; it does not expose credentials, session material, private
+contact details, private messages, or private evidence. Missing optional
+entitlement, staff-appointment, or moderation schemas fail closed and are
+reported as unavailable rather than granting access. Legacy Administrator
+accounts are intentionally denied this broader inspection view.
+
+No mutation controls are presented. Granting or revoking an entitlement,
+changing account state, appointing staff, changing Creator Studio access, and
+moderating an account remain separate confirmed and audited workflows. The
+completed record is [Administration Center Membership & Entitlement
+Inspection](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-MEMBERSHIP-ENTITLEMENT-INSPECTION.md).
+
 The first report-intake and triage workflow is now implemented for video,
 messenger, and member bug reports: authorized staff can filter the safe queue,
 open protected metadata detail, choose a supported review outcome, and record

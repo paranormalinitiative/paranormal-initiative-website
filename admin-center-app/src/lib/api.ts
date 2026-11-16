@@ -453,6 +453,45 @@ export type AdminRestriction = {
   createdAt: string;
 };
 
+export type AdminMembershipEntitlementRecord = {
+  id: string;
+  username: string;
+  displayName?: string;
+  title?: string;
+  role: string;
+  effectiveRole: string;
+  effectiveRoleLabel: string;
+  active: boolean;
+  createdAt: string;
+  capabilities: {
+    creator: boolean;
+    contributor: boolean;
+    editorialReview: boolean;
+    editorialPublish: boolean;
+    canPost: boolean;
+    canComment: boolean;
+    canMessage: boolean;
+  };
+  creatorStudioAccess: boolean;
+  foundingMemberships: Array<{ id: string; classCode: string; displayName: string; membershipNumber: string; state: string; issuedAt?: string }>;
+  entitlementSources: Array<{ type: string; id: string; label: string; capabilities: string[] }>;
+  entitlementSchemaPending: boolean;
+  accountRestrictions: string[];
+  activeModerationActions: Array<{ id: string; actionType: string; scope: string; reason: string; startsAt: string; expiresAt?: string | null; status: string }>;
+  restricted: boolean;
+  staffAppointment?: { id: string; roleCode: string; officeTitle?: string; status: string; reason?: string; appointedAt?: string; changedAt?: string } | null;
+};
+
+export type AdminMembershipEntitlements = {
+  members: AdminMembershipEntitlementRecord[];
+  totals: { returned: number; active: number; staff: number; creatorCapable: number; contributorCapable: number; creatorStudioAccess: number; restricted: number };
+  metadataOnly: boolean;
+  mutationBoundary: string;
+  schema: { appointmentSchemaAvailable: boolean; moderationSchemaAvailable: boolean; entitlementSchemaAvailable: boolean };
+  search: string;
+  pagination: { page: number; pageSize: number; returned: number; total: number; totalPages: number };
+};
+
 export type AdminModerationAction = {
   id: string;
   memberId: string;

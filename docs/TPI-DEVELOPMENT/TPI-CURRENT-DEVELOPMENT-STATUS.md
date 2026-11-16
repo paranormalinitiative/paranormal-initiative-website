@@ -1,5 +1,29 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center Membership & Entitlement Inspection
+
+Status: **SOURCE COMPLETE; GUARDED PRODUCTION RELEASE PENDING.** The
+Administration Center now has a read-only Membership & Entitlements view for
+Owner, Executive, and Full Administrator effective roles. It combines the
+server-derived effective staff role, account state, community capability flags,
+Creator and Contributor access, explicit Nova authority, Founding Membership
+identity, Creator Studio access, entitlement sources, and active moderation
+actions in one searchable and paginated view.
+
+The API is `GET /api/admin/membership-entitlements`. It is protected by the
+existing effective-role route allowlist and does not infer permission from
+client labels. Missing optional schemas fail closed and are shown as
+unavailable. The view cannot grant, revoke, suspend, deactivate, appoint,
+promote, demote, or otherwise mutate authority. Stable applications and owner
+data were not changed.
+
+Administration Center source contracts passed **90/90**, the production build
+passed, local assets refreshed in place, and the maintained local
+authentication lifecycle passed **38/38**. Guarded production release and
+live Owner/Founder/CEO Firefox acceptance are the next gates.
+
+See [Administration Center Membership & Entitlement Inspection](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-MEMBERSHIP-ENTITLEMENT-INSPECTION.md).
+
 ## 2026-11-15 — Administration Center staff directory and capability inspection
 
 Status: **DEPLOYED AND LIVE OWNER-VERIFIED; STAFF APPOINTMENT SCHEMA INSTALLED.** The Administration Center

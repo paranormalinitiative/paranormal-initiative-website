@@ -154,6 +154,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/admin/notifications/read-all") return requireAdmin(request, env, user => handleAdminMarkAllNotificationsRead(env, user));
     if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
     if (request.method === "GET" && path === "/admin/roles") return requireAdmin(request, env, user => handleAdminRoles(request, env, user));
+    if (request.method === "GET" && path === "/admin/membership-entitlements") return requireAdmin(request, env, user => handleAdminMembershipEntitlements(request, env, user));
     if (request.method === "GET" && path === "/admin/restrictions") return requireAdmin(request, env, user => handleAdminRestrictions(request, env, user));
     if (request.method === "GET" && path === "/admin/events") return requireAdmin(request, env, user => handleAdminEvents(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminEventDetail(path, env, user));
@@ -2493,6 +2494,130 @@ async function handleAdminRoles(request, env) {
     END, role
   `).all();
   return json({ roles: results || [], metadataOnly: true, mutationBoundary: "Role and capability changes remain on existing protected Contributor Management workflows." }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminMembershipEntitlements(request, env) {
+  const url = new URL(request.url);
+  const search = clean(url.searchParams.get("search")).slice(0, 120);
+  const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10) || 1);
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const offset = (page - 1) * pageSize;
+  const binds = [];
+  const where = [];
+  if (search) {
+    const pattern = `%${search}%`;
+    where.push("(c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR c.role LIKE ?)");
+    binds.push(pattern, pattern, pattern, pattern);
+  }
+  const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM contributors c ${whereSql}`).bind(...binds).first();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.username, c.display_name AS displayName, c.title,
+           c.role, c.active, c.can_post AS canPost, c.can_comment AS canComment,
+           c.can_message AS canMessage, c.created_at AS createdAt
+    FROM contributors c
+    ${whereSql}
+    ORDER BY c.active DESC, c.display_name COLLATE NOCASE ASC, c.username COLLATE NOCASE ASC
+    LIMIT ? OFFSET ?
+  `).bind(...binds, pageSize, offset).all();
+  const members = results || [];
+  const ids = members.map((member) => member.id);
+  const staffByMember = new Map();
+  let appointmentSchemaAvailable = true;
+  if (ids.length) {
+    try {
+      const placeholders = ids.map(() => "?").join(",");
+      const appointmentRows = await env.TPI_DB.prepare(`
+        SELECT id, contributor_id AS contributorId, role_code AS roleCode,
+               office_title AS officeTitle, status, reason,
+               appointed_at AS appointedAt, changed_at AS changedAt
+        FROM staff_role_appointments
+        WHERE contributor_id IN (${placeholders}) AND status = 'active'
+      `).bind(...ids).all();
+      for (const appointment of appointmentRows.results || []) staffByMember.set(appointment.contributorId, appointment);
+    } catch {
+      appointmentSchemaAvailable = false;
+    }
+  }
+  const moderationByMember = new Map();
+  let moderationSchemaAvailable = true;
+  if (ids.length) {
+    try {
+      const placeholders = ids.map(() => "?").join(",");
+      const moderationRows = await env.TPI_DB.prepare(`
+        SELECT id, member_id AS memberId, action_type AS actionType, scope,
+               reason, starts_at AS startsAt, expires_at AS expiresAt, status
+        FROM member_moderation_actions
+        WHERE member_id IN (${placeholders}) AND status = 'active'
+        ORDER BY created_at DESC
+      `).bind(...ids).all();
+      for (const action of moderationRows.results || []) {
+        const current = moderationByMember.get(action.memberId) || [];
+        current.push(action);
+        moderationByMember.set(action.memberId, current);
+      }
+    } catch {
+      moderationSchemaAvailable = false;
+    }
+  }
+  const records = await Promise.all(members.map(async (member) => {
+    const appointment = staffByMember.get(member.id) || null;
+    const effectiveRole = member.role === "owner" ? "owner" : appointment?.roleCode || (member.role === "admin" ? "administrator" : "member");
+    const resolved = await resolveMemberEntitlements(env, member);
+    const capabilities = Array.isArray(resolved.capabilities) ? resolved.capabilities : [];
+    const activeRestrictions = moderationByMember.get(member.id) || [];
+    const accountRestrictions = [];
+    if (!Boolean(member.active)) accountRestrictions.push("account_inactive");
+    if (!Boolean(member.canPost)) accountRestrictions.push("posting_disabled");
+    if (!Boolean(member.canComment)) accountRestrictions.push("commenting_disabled");
+    if (!Boolean(member.canMessage)) accountRestrictions.push("messaging_disabled");
+    return {
+      id: member.id,
+      username: member.username,
+      displayName: member.displayName,
+      title: member.title || "",
+      role: member.role,
+      effectiveRole,
+      effectiveRoleLabel: (STAFF_ROLE_CATALOG[effectiveRole] || STAFF_ROLE_CATALOG.member).label,
+      active: Boolean(member.active),
+      createdAt: member.createdAt,
+      capabilities: {
+        creator: capabilities.includes(CAPABILITY.CREATOR),
+        contributor: capabilities.includes(CAPABILITY.CONTRIBUTOR),
+        editorialReview: capabilities.includes(CAPABILITY.EDITORIAL_REVIEW),
+        editorialPublish: capabilities.includes(CAPABILITY.EDITORIAL_PUBLISH),
+        canPost: Boolean(member.canPost),
+        canComment: Boolean(member.canComment),
+        canMessage: Boolean(member.canMessage),
+      },
+      creatorStudioAccess: ["owner", "admin"].includes(member.role) || effectiveRole === "executive" || capabilities.includes(CAPABILITY.CREATOR),
+      foundingMemberships: resolved.memberships || [],
+      entitlementSources: resolved.sources || [],
+      entitlementSchemaPending: Boolean(resolved.schemaPending),
+      accountRestrictions,
+      activeModerationActions: activeRestrictions,
+      restricted: accountRestrictions.length > 0 || activeRestrictions.length > 0,
+      staffAppointment: appointment,
+    };
+  }));
+  const totals = {
+    returned: records.length,
+    active: records.filter((member) => member.active).length,
+    staff: records.filter((member) => member.effectiveRole !== "member").length,
+    creatorCapable: records.filter((member) => member.capabilities.creator).length,
+    contributorCapable: records.filter((member) => member.capabilities.contributor).length,
+    creatorStudioAccess: records.filter((member) => member.creatorStudioAccess).length,
+    restricted: records.filter((member) => member.restricted).length,
+  };
+  return json({
+    members: records,
+    totals,
+    metadataOnly: true,
+    mutationBoundary: "Read-only inspection. Account state, staff appointments, memberships, entitlements, and moderation actions remain on their existing confirmed workflows.",
+    schema: { appointmentSchemaAvailable, moderationSchemaAvailable, entitlementSchemaAvailable: !records.some((member) => member.entitlementSchemaPending) },
+    search,
+    pagination: { page, pageSize, returned: records.length, total: Number(count?.total || 0), totalPages: Math.ceil(Number(count?.total || 0) / pageSize) },
+  }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleAdminStaffRoles(request, env, actingUser) {
