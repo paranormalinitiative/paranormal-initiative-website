@@ -1,7 +1,7 @@
 # TPI-STUDIOFLOW — Destinations, Recording Library, and Nova Save Audit
 
 Date: **2026-11-16**  
-Status: **AUDIT COMPLETE / PRODUCTION CANDIDATE ROLLED BACK AFTER A FALSE ACCEPTANCE FAILURE / PRODUCTION RELAY CONFIGURATION REQUIRED**
+Status: **AUDIT COMPLETE / DEPLOYED AND LIVE VERIFIED / PRODUCTION RELAY CONFIGURATION REQUIRED**
 
 ## Owner request
 
@@ -173,9 +173,18 @@ switching, reload persistence, and narrow-width layout. This repair changes
 the verification guard only; it does not weaken the production access gate or
 the destination/storage safeguards.
 
-The candidate still requires the normal guarded release path after this
-verification repair. Until that promotion passes its complete live gate,
-production remains on the known-good rollback Worker.
+The repaired candidate then completed the normal guarded release path:
+
+- Release: `rel-047845c745eb-9ce22fed1969`
+- Website source: `047845c745ebee26421c4ac203048020b0114017`
+- StudioFlow source: `882237ae1944f09a4f529ef94905917910c52eff`
+- Production Worker: `9098fc45-3a5a-4afd-9365-c7117140b489` at 100% traffic
+- Anonymous production smoke: **10/10 PASS**
+- Live isolated Firefox acceptance: **65/65 PASS**
+
+The previous Worker remains the recorded rollback target. Hosted external
+livestream delivery remains configuration-required until an approved relay or
+provider adapter is provisioned and tested with a disposable key.
 
 ## Remaining work before claiming hosted destinations
 

@@ -85,7 +85,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Fix | Tightened the acceptance harness to require the actual `/studio/` route plus a real StudioFlow control before continuing. The production QA account was independently verified with Creator Studio access and `/studio/` returned HTTP 200. |
 | Safeguards | The route remains server-gated; the guard remains fail-closed; no access grant, destination secret, database change, or application behavior was bypassed. The failed promotion remained rolled back. |
 | Verification | Repaired isolated Firefox acceptance against the unchanged production rollback: **65/65 PASS**, including destination/storage panels, browser-local save, portable backup, restore-as-new, reopen persistence, and narrow-width behavior. |
-| Status | **Harness repaired; production promotion retry ready; production remains on the known-good rollback Worker until the guarded retry completes.** |
+| Status | **Harness repaired; guarded promotion completed and live verified.** Release `rel-047845c745eb-9ce22fed1969`; Worker `9098fc45-3a5a-4afd-9365-c7117140b489`; rollback `98040d28-927f-48b2-9022-b2274ab7ae06`. |
 
 ### INC-2026-11-15-40 — Nova TPI Everything Assistant
 
