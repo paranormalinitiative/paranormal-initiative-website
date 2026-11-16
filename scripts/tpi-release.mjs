@@ -336,8 +336,13 @@ async function preflight() {
     run("Legacy Admin session and staff-role regression", process.execPath, ["scripts/verify/tpi-staff-roles.mjs"], { timing: { bucket: "certification" } });
     run("Password hash compatibility and upgrade regression", process.execPath, ["scripts/verify/tpi-password-hash.mjs"], { timing: { bucket: "certification" } });
     run("Password recovery API regression", process.execPath, ["scripts/verify/tpi-password-recovery.mjs"], { timing: { bucket: "certification" } });
+    run("Member registration source contract", process.execPath, ["scripts/verify/tpi-member-registration.mjs"], { timing: { bucket: "certification" } });
     run("Password recovery Firefox interaction", process.execPath, ["scripts/verify/tpi-password-recovery-browser.mjs"], {
       env: { TPI_RECOVERY_BASE_URL: "http://127.0.0.1:8787" },
+      timing: { bucket: "certification", browser: true },
+    });
+    run("Member registration Firefox interaction", process.execPath, ["scripts/verify/tpi-member-registration-browser.mjs"], {
+      env: { TPI_REGISTRATION_BASE_URL: "http://127.0.0.1:8787" },
       timing: { bucket: "certification", browser: true },
     });
     run("Community YouTube preview and in-feed playback", "npm", ["run", "verify:community-youtube-preview"], {

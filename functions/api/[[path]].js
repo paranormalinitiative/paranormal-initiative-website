@@ -989,36 +989,89 @@ async function handleMemberRegister(request, env) {
   if (await getUserByEmail(env, email)) return json({ error: "That email is already connected to an account." }, 409);
 
   const id = crypto.randomUUID();
-  await env.TPI_DB.prepare(`
-    INSERT INTO contributors (
-      id, username, password_hash, display_name, title, role, correspondence,
-      contact_name, phone, address_line1, address_line2, city, state, postal_code,
-      affiliation, organization, website, bio, photo_url, comment_signature_enabled, active
-    )
-    VALUES (?, ?, ?, ?, ?, 'member', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-  `).bind(
+  const passwordHash = await hashPassword(password);
+  const profile = {
     id,
     username,
-    await hashPassword(password),
-    displayName,
-    clean(data.title || "Member"),
-    email,
-    clean(data.contactName || displayName),
-    clean(data.phone),
-    clean(data.addressLine1),
-    clean(data.addressLine2),
-    clean(data.city),
-    clean(data.state),
-    clean(data.postalCode),
-    clean(data.affiliation),
-    clean(data.organization),
-    clean(data.website),
-    clean(data.bio).slice(0, 175),
-    clean(data.photoUrl),
-    data.commentSignatureEnabled === false ? 0 : 1
-  ).run();
+    password_hash: passwordHash,
+    display_name: displayName,
+    title: clean(data.title || "Member"),
+    role: "member",
+    correspondence: email,
+    contact_name: clean(data.contactName || displayName),
+    phone: clean(data.phone),
+    address_line1: clean(data.addressLine1),
+    address_line2: clean(data.addressLine2),
+    city: clean(data.city),
+    state: clean(data.state),
+    postal_code: clean(data.postalCode),
+    affiliation: clean(data.affiliation),
+    organization: clean(data.organization),
+    website: clean(data.website),
+    bio: clean(data.bio).slice(0, 175),
+    photo_url: clean(data.photoUrl),
+    comment_signature_enabled: data.commentSignatureEnabled === false ? 0 : 1,
+    active: 1,
+    created_at: new Date().toISOString(),
+  };
 
-  return json({ ok: true });
+  // Account and first session are one atomic D1 batch. A transient failure
+  // cannot leave a half-created account that the member cannot enter.
+  const sessionToken = crypto.randomUUID();
+  const sessionExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
+  try {
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare(`
+        INSERT INTO contributors (
+          id, username, password_hash, display_name, title, role, correspondence,
+          contact_name, phone, address_line1, address_line2, city, state, postal_code,
+          affiliation, organization, website, bio, photo_url, comment_signature_enabled, active
+        )
+        VALUES (?, ?, ?, ?, ?, 'member', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      `).bind(
+        id,
+        username,
+        passwordHash,
+        displayName,
+        profile.title,
+        email,
+        profile.contact_name,
+        profile.phone,
+        profile.address_line1,
+        profile.address_line2,
+        profile.city,
+        profile.state,
+        profile.postal_code,
+        profile.affiliation,
+        profile.organization,
+        profile.website,
+        profile.bio,
+        profile.photo_url,
+        profile.comment_signature_enabled
+      ),
+      env.TPI_DB.prepare("INSERT INTO sessions (token, contributor_id, expires_at) VALUES (?, ?, ?)")
+        .bind(sessionToken, id, sessionExpires)
+    ]);
+  } catch (error) {
+    const message = String(error?.message || "");
+    if (/unique constraint|unique failed|already exists/i.test(message)) {
+      return json({ error: "That username or email is already connected to an account." }, 409);
+    }
+    console.error("member registration failed", message || "unknown database error");
+    return json({ error: "Account creation is temporarily unavailable. Please try again in a moment." }, 503);
+  }
+
+  // Return the first session in the same response as account creation. The
+  // browser no longer has to perform a second login and a third session probe,
+  // which removes two avoidable failure points from the public signup path.
+  return json({
+    ok: true,
+    signedIn: true,
+    user: privateMemberUser(profile),
+    message: "Account created. Opening Member Home.",
+  }, 200, {
+    "Set-Cookie": `${SESSION_COOKIE}=${sessionToken}; ${sessionCookieAttributes(request, env, 60 * 60 * 24 * 14)}`
+  });
 }
 
 async function handleCreateInvite(request, env, user) {

@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Member registration reliability repair
+
+Status: **IMPLEMENTED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** Public
+member signup now creates the account and first session atomically, returns the
+secure session in the registration response, and opens Member Home without a
+second login/session-probe chain. Common `/register`, `/signup`, `/sign-up`, and
+`/members/register` links redirect to the canonical form. Duplicate races and
+unexpected database failures receive controlled, user-safe responses.
+
+The repair is covered by registration source contracts **9/9**, a Firefox local
+end-to-end signup test, member interactions **29/29**, password recovery
+**23/23**, release safety **37/37**, local authentication lifecycle **38/38**,
+and isolated Firefox **65/65**. No production account was created during
+diagnosis or verification. See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md).
+
 ## 2026-11-16 — Connected destination authorization foundation
 
 Status: **DEPLOYED AND LIVE VERIFIED; PRODUCTION SCHEMA APPLIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**

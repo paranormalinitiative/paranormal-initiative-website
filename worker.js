@@ -305,6 +305,13 @@ async function serveCanonicalAdminCenter(request, env) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // Keep public and social links resilient when they use a conventional
+    // signup path instead of the underlying member-login document. The form
+    // remains one canonical implementation, while these aliases prevent a
+    // harmless link variation from becoming a dead end.
+    if (["/register", "/signup", "/sign-up", "/members/register"].includes(url.pathname) && request.method === "GET") {
+      return Response.redirect(new URL(`/member-login.html#register${url.search}`, url.origin).toString(), 302);
+    }
     if (["/moderation", "/moderation/", "/moderation.html"].includes(url.pathname)) {
       const user = await getSessionUser(request, env);
       let allowed = false;

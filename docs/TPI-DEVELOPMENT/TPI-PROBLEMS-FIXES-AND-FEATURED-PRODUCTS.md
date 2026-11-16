@@ -27,6 +27,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 
 | If you see this | Check first | Likely area |
 | --- | --- | --- |
+| A visitor cannot create a member account, receives a signup request error, or a join link opens the wrong place | [Member registration repair](#inc-2026-11-16-03--member-registration-request-failed) | Public registration form, atomic account/session creation, signup aliases, browser cache |
 | A member cannot save a profile photo or banner | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | Member Profile, R2 upload, shared profile API |
 | A new image previews but disappears after saving | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | File-input cleanup, object URL, cache version |
 | A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
@@ -74,6 +75,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-16-03 — Member registration request failed
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 13:36 EST** |
+| What happened | A prospective member reported that both attempts to create a TPI login failed with a generic signup request/widget error. |
+| Root cause | The public flow required account creation, a separate login request, and a third session check before redirecting. Any transient failure in the follow-up chain could make a valid signup appear broken. Common `/register`-style links also had no canonical redirect. |
+| Fix | Made contributor insertion and first-session creation one atomic D1 batch; returned the session cookie and safe member payload from registration; removed the browser's second login/session-probe chain; added duplicate/error mapping, canonical signup aliases, registration focus behavior, and cache version `v51`. |
+| Safeguards | Public registration creates only the normal `member` role. It cannot grant administrative, staff, Creator Studio, or internal Help Desk access. Password hashing, secure hosted cookies, and server-side authorization remain unchanged. |
+| Verification | Registration source contracts **9/9**; Firefox local end-to-end signup **PASS**; member interactions **29/29**; password recovery **23/23**; release safety **37/37**; local auth lifecycle **38/38** with Firefox **65/65**. |
+| Status | **Repair implemented locally; full guarded production release is the next step.** See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md). |
 
 ### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
 

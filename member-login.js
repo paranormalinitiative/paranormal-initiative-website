@@ -224,6 +224,14 @@
     authenticatedLoginState.hidden = false;
   }
 
+  function focusRegistrationFromHash() {
+    if (window.location.hash !== "#register") return;
+    const form = document.querySelector("[data-member-register]");
+    if (!form) return;
+    form.closest(".editor-access-card")?.scrollIntoView({ block: "start", behavior: "smooth" });
+    window.setTimeout(() => form.querySelector("input[name='displayName']")?.focus(), 150);
+  }
+
   function escapeHtml(value) {
     return String(value || "").replace(/[&<>"']/g, char => ({
       "&": "&amp;",
@@ -2499,7 +2507,7 @@
         try {
           if (!window.TPIApi) throw new Error("The live member service did not load. Refresh this page and try again.");
           setMemberRegisterStatus("Creating your member account…", false);
-          await window.TPIApi.registerMember({
+          const registration = await window.TPIApi.registerMember({
             username,
             password,
             displayName,
@@ -2507,16 +2515,10 @@
             title: "Member",
             commentSignatureEnabled: data.get("commentSignature") === "on"
           });
-          setMemberRegisterStatus("Account created. Signing you in…", false);
-          try {
-            await window.TPIApi.login(username, password);
-            const session = await window.TPIApi.me();
-            if (!session.user) throw new Error("Session unavailable");
-            try { localStorage.setItem(ACCESS_SESSION_KEY, username); } catch (storageError) {}
-            window.location.href = "/member-home?username=" + encodeURIComponent(username);
-          } catch (signInError) {
-            setMemberRegisterStatus("Your account was created, but automatic sign-in failed. Use Sign In above with this username and password.", true);
-          }
+          if (!registration?.signedIn) throw new Error("Account was created, but the sign-in session was not ready. Use Member Login above.");
+          setMemberRegisterStatus("Account created. Opening Member Home…", false);
+          try { localStorage.setItem(ACCESS_SESSION_KEY, registration.user?.username || username); } catch (storageError) {}
+          window.location.href = "/member-home?username=" + encodeURIComponent(registration.user?.username || username);
         } catch (error) {
           setMemberRegisterStatus(error.message || "Account creation failed. Please try again.", true);
         }
@@ -2937,6 +2939,7 @@
   if (inviteSetupPanel) inviteSetupPanel.hidden = true;
   if (inviteOwnerTools) inviteOwnerTools.hidden = true;
   initAuthenticatedLoginState();
+  focusRegistrationFromHash();
   importInviteFromUrl();
   showOwnerToolsForSetupOnly();
   initDashboard();

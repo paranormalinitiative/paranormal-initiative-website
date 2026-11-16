@@ -64,6 +64,15 @@ check("release preflight blocks legacy Admin and password recovery regressions",
   assert.match(release, /tpi-password-recovery\.mjs/);
   assert.match(release, /tpi-password-recovery-browser\.mjs/);
 });
+check("release preflight blocks member registration regressions", () => {
+  assert.match(release, /Member registration source contract/);
+  assert.match(release, /scripts\/verify\/tpi-member-registration\.mjs/);
+  assert.match(release, /Member registration Firefox interaction/);
+  assert.match(release, /scripts\/verify\/tpi-member-registration-browser\.mjs/);
+  const pkg = JSON.parse(packageSource);
+  assert.equal(pkg.scripts["verify:member-registration"], "node scripts/verify/tpi-member-registration.mjs");
+  assert.equal(pkg.scripts["verify:member-registration-browser"], "node scripts/verify/tpi-member-registration-browser.mjs");
+});
 check("release preflight blocks Community YouTube preview regressions", () => {
   assert.match(release, /Community YouTube preview and in-feed playback/);
   assert.match(release, /verify:community-youtube-preview/);
