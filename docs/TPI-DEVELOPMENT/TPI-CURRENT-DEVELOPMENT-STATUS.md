@@ -2,7 +2,7 @@
 
 ## 2026-11-16 — Messenger profile targeting and direct New Chat repair
 
-Status: **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** Clicking
+Status: **DEPLOYED AND LIVE VERIFIED.** Clicking
 Chat on a member profile now passes that member's username into Messenger and
 opens or reuses the correct direct conversation instead of reopening the last
 selected chat. New Chat now presents a direct-chat chooser: it does not show a
@@ -10,12 +10,14 @@ room-name field or create-room submit action, and choosing a member opens the
 one-to-one conversation directly.
 
 The member interaction source contracts passed **31/31**. Focused Firefox
-Developer Edition acceptance on the maintained local Worker passed **27/27**,
-including profile targeting, direct-chat selection, non-friend search,
-conversation opening, clipboard paste, responsive layout, and existing
-Messenger navigation. No StudioFlow, Creator Studio, Nova Workspace, private
-media, D1, R2, or owner data was changed. See [Messenger Profile Chat and
-Direct New Chat Repair](300-COMPLETED-WORK/2026-11-16-MESSENGER-PROFILE-CHAT-AND-DIRECT-NEW-CHAT-REPAIR.md).
+Developer Edition acceptance passed **27/27** locally and **27/27** against
+production with the guarded synthetic QA account, including profile targeting,
+direct-chat selection, non-friend search, conversation opening, clipboard
+paste, responsive layout, and existing Messenger navigation. Guarded preflight
+certified release `rel-08fc99157bb1-83ce1678ef5e`; production smoke passed
+**10/10**, and Worker `e72e8de9-ddbe-4c52-af28-d50d34c51019` holds 100% traffic.
+No StudioFlow, Creator Studio, Nova Workspace, private media, D1, R2, or owner
+data was changed. See [Messenger Profile Chat and Direct New Chat Repair](300-COMPLETED-WORK/2026-11-16-MESSENGER-PROFILE-CHAT-AND-DIRECT-NEW-CHAT-REPAIR.md).
 
 ## 2026-11-16 — Password recovery Cloudflare compatibility repair
 

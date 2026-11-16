@@ -90,7 +90,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Fix | Profile Chat now passes the exact profile member to a sitewide `openDirectChat` entry point. Messenger resolves that member, reuses or creates the correct direct conversation, and opens it. New Chat now opens a clearly labeled direct-chat chooser; the room-name field and room-creation submit button are hidden, and choosing a member immediately opens the direct chat. |
 | Safeguards | Added source contracts for profile-target propagation and direct-chat-only New Chat behavior. Added isolated Firefox regression coverage for profile targeting, direct chooser presentation, non-friend search, conversation opening, paste, responsive layout, and existing Messenger controls. The runtime records the active direct-chat target for acceptance verification. |
 | Verification | Member interaction contracts **31/31**; focused Firefox Messenger acceptance **27/27** on the maintained local Worker. The first browser attempt exposed a test-navigation readiness issue; the test was corrected to wait for the shared shell and the complete rerun passed. |
-| Status | **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** See [Messenger Profile Chat and Direct New Chat Repair](300-COMPLETED-WORK/2026-11-16-MESSENGER-PROFILE-CHAT-AND-DIRECT-NEW-CHAT-REPAIR.md). |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-08fc99157bb1-83ce1678ef5e` serves Worker `e72e8de9-ddbe-4c52-af28-d50d34c51019` at 100% traffic. See [Messenger Profile Chat and Direct New Chat Repair](300-COMPLETED-WORK/2026-11-16-MESSENGER-PROFILE-CHAT-AND-DIRECT-NEW-CHAT-REPAIR.md). |
 
 ### INC-2026-11-16-44 — Password recovery Cloudflare compatibility
 

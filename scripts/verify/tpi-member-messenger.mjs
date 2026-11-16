@@ -111,7 +111,8 @@ try {
 
   const profileTarget = await js(`return fetch('/api/messenger/roster?search=a',{credentials:'same-origin'}).then(function(response){return response.json();}).then(function(body){
     var current=${JSON.stringify(account.username)}.toLowerCase();
-    var member=(body.members||[]).find(function(item){return String(item.username||'').toLowerCase() !== current;});
+    var members=(body.members||[]).filter(function(item){return String(item.username||'').toLowerCase() !== current;});
+    var member=members.find(function(item){return item.friendStatus !== 'friends';}) || members[0];
     return member ? {username:member.username,displayName:member.displayName||member.username} : null;
   }).catch(function(){return null;});`);
   if (profileTarget) {
@@ -137,8 +138,8 @@ try {
   let memberButton = (await driver.findElements(By.css("[data-online-member]")))[0] || null;
   if (!memberButton) {
     const searchInput = await driver.findElement(By.css("[data-chat-member-search]"));
-    const searchSeed = await js(`return fetch('/api/messenger/roster?search=a',{credentials:'same-origin'}).then(function(response){return response.json();}).then(function(body){var member=(body.members||[])[0]; return member ? String(member.displayName||member.username||'').slice(0,4) : '';}).catch(function(){return '';});`);
-    await searchInput.sendKeys(searchSeed || "a");
+    const searchSeed = profileTarget?.username || "a";
+    await searchInput.sendKeys(searchSeed);
     memberButton = await waitFor("searchable Messenger member", async () => {
       const nodes = await driver.findElements(By.css("[data-online-member]"));
       return nodes[0] || null;

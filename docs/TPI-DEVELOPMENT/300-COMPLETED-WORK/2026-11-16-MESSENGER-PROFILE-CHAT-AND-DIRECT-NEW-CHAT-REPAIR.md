@@ -3,7 +3,7 @@
 Date: 2026-11-16 18:11 EST  
 Incident: `TPI-MESSENGER-2026-11-16-PROFILE-TARGET`
 
-Status: **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE PENDING**
+Status: **DEPLOYED AND LIVE VERIFIED**
 
 ## What happened
 
@@ -59,13 +59,24 @@ reusing or creating a conversation.
 
 - JavaScript syntax checks: **PASS**.
 - Member interaction contracts: **31/31**.
-- Focused Firefox Developer Edition Messenger acceptance: **27/27**.
+- Focused Firefox Developer Edition Messenger acceptance: **27/27** locally.
+- Focused Firefox Developer Edition Messenger acceptance against production
+  with the guarded synthetic QA account: **27/27**.
 - Local Worker asset refresh: **PASS** (`286` served paths refreshed).
 - Existing Messenger media, paste, responsive, navigation, and friends-only
   roster checks remained passing.
 
 ## Release record
 
-This record will be completed with the source commit, guarded preflight result,
-production Worker version, live smoke result, and rollback reference after the
-maintained release procedure completes.
+- Source commit deployed: `08fc99157bb1e8dbc8cb7d66450a7076fb8c1357`
+- Release: `rel-08fc99157bb1-83ce1678ef5e`
+- Worker: `e72e8de9-ddbe-4c52-af28-d50d34c51019`
+- Rollback: `c302ad35-7aaf-431c-96d9-2e64efee3d16`
+- Release profile: `website`
+- Guarded preflight: **CERTIFIED**, 11 gates passed
+- Production smoke: **10/10**
+- Live Firefox Messenger acceptance: **27/27**
+
+The follow-up test-only commit makes the production fixture lookup deterministic;
+it does not change deployable application bytes. The live application repair is
+the exact certified source commit above.
