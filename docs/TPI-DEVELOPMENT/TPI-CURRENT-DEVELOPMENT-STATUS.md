@@ -2,7 +2,7 @@
 
 ## 2026-11-16 — Mystic and Nova identity separation and sitewide coverage
 
-Status: **IMPLEMENTED; guarded release and live acceptance pending.** Mystic is
+Status: **DEPLOYED AND LIVE VERIFIED.** Mystic is
 now explicitly the public paranormal research assistant. Nova is explicitly the
 TPI Help Center assistant on public pages and the protected Help Desk assistant
 for authorized internal people. The public Help Center now presents both
@@ -19,6 +19,11 @@ Internal data remains fail-closed and server-authorized. StudioFlow, Creator
 Studio, Nova Editor Workspace, private media, D1, R2, and owner data were not
 modified. The completion record is [Mystic and Nova identity separation and
 sitewide coverage](300-COMPLETED-WORK/2026-11-16-MYSTIC-NOVA-IDENTITY-AND-SITEWIDE-COVERAGE.md).
+
+Release `rel-9bbfd62591d3-5da81729f15f` is live on Worker
+`797a0c7f-91bd-4bb1-b195-582750d85b41` at 100% traffic. Production smoke passed
+10/10 and the production Help Center separation probe passed 31/31; the local
+focused profile/feed acceptance passed 55/55.
 
 ## 2026-11-16 — Member registration reliability repair
 

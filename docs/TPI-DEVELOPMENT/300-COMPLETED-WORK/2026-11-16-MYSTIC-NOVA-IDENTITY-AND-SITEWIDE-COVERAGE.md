@@ -1,7 +1,7 @@
 # Mystic and Nova — Identity, Sitewide Coverage, and Knowledge Boundaries
 
 Date/time: **2026-11-16 14:41 EST**
-Status: **IMPLEMENTED; guarded release and live acceptance pending**
+Status: **DEPLOYED AND LIVE VERIFIED**
 
 ## Owner request
 
@@ -77,9 +77,25 @@ private messages, deploy releases, or bypass server authorization.
 - Full maintained release preflight, guarded production deployment, anonymous
   smoke, and isolated Firefox Developer Edition acceptance.
 
+The focused Firefox profile/feed acceptance passed **55/55** after the
+acceptance harness was aligned with the new Nova profile-help boundary and a
+bounded retry was added for a transient profile-shell bootstrap race. The
+production Help Center separation probe passed **31/31** against
+`https://paranormalinitiative.com`; anonymous `/help-center.html` returned
+200 and anonymous `/internal-help-center.html` returned 403.
+
 ## Release record
 
-To be completed after the exact certified candidate is deployed and live
-acceptance passes. The record must include the website commit, Worker version,
-release ID, rollback reference, verification counts, and any intentional
-behavior change.
+- Website commit: `9bbfd62591d3f2d7f940f61a441699849a8b813e`
+- Release ID: `rel-9bbfd62591d3-5da81729f15f`
+- Worker version: `797a0c7f-91bd-4bb1-b195-582750d85b41`
+- Rollback reference: `36cffaa9-1ac6-4dc1-93c4-a7f767cac648`
+- Certification: Tier 1 website profile; 13 gates passed; manifest digest
+  `fe326ab505a7dc73fbee67d157329266accb7ed1c08484f5b94378acad7bee5c`
+- Production smoke: **10/10**
+- Local focused Firefox profile/feed acceptance: **55/55**
+- Production Help Center separation probe: **31/31**
+- Intentional behavior change: Mystic is now clearly reserved for public
+  paranormal research and education; Nova is the clearly labeled TPI support
+  assistant and the protected internal Help Desk assistant. Internal Help Desk
+  knowledge is never loaded into public pages.

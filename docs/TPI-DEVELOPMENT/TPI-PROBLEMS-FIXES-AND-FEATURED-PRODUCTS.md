@@ -85,8 +85,8 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | What happened | Mystic and Nova were both helpful, but their labels and entry points could make a member unsure which assistant handled paranormal research versus TPI support. Nova was not automatically available on every shared site page, and the reactive Administration Center needed a direct Help Desk handoff. |
 | Fix | Distinguished Mystic as the public paranormal research assistant and Nova as the TPI Help Center / protected Help Desk assistant. Added a Help Center assistant directory, distinct launchers and role copy, sitewide loading through `includes.js`, direct public Mystic answers for ghost definitions, MEL/EMF meters, weather, intake, and walkthroughs, and an Administration Center “Ask Nova · Help Desk” link. |
 | Safeguards | Public pages load only public Help Center and Mystic knowledge. Internal pages load protected Help Desk data and Nova only. Internal retrieval remains server-authorized and fail-closed. Stable applications and owner data were not modified. |
-| Verification | JavaScript syntax, Help Center separation, assistant identity/source contracts, public/internal loader checks, Admin Center build, full guarded preflight, production smoke, and isolated Firefox acceptance. |
-| Status | **Implemented; release record to be completed after guarded production verification.** See [Mystic and Nova identity separation](300-COMPLETED-WORK/2026-11-16-MYSTIC-NOVA-IDENTITY-AND-SITEWIDE-COVERAGE.md). |
+| Verification | JavaScript syntax, Help Center separation **31/31**, assistant identity/source contracts, public/internal loader checks, Admin Center build, full guarded preflight, production smoke **10/10**, and focused Firefox profile/feed acceptance **55/55**. |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-9bbfd62591d3-5da81729f15f` is serving Worker `797a0c7f-91bd-4bb1-b195-582750d85b41` at 100% traffic. See [Mystic and Nova identity separation](300-COMPLETED-WORK/2026-11-16-MYSTIC-NOVA-IDENTITY-AND-SITEWIDE-COVERAGE.md). |
 
 ### INC-2026-11-16-03 — Member registration request failed
 
