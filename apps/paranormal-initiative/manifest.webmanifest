@@ -1,0 +1,12 @@
+{
+  "name": "TPI Research & Investigation Studio",
+  "short_name": "TPI Studio",
+  "description": "Professional paranormal investigation platform: case management, evidence, and the Mystic assistant.",
+  "start_url": "/apps/paranormal-initiative/",
+  "display": "standalone",
+  "background_color": "#0b0e12",
+  "theme_color": "#0b0e12",
+  "icons": [
+    { "src": "/apps/paranormal-initiative/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

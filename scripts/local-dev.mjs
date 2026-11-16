@@ -193,7 +193,7 @@ function refreshRunningWorkerAssets() {
     const source = resolve(repoRoot, entry.name);
     if (entry.isFile()) {
       if (rootServedAssetPattern.test(entry.name)) paths.push(entry.name);
-    } else if (entry.isDirectory() && ["assets", "admin-center-preview"].includes(entry.name)) {
+    } else if (entry.isDirectory() && ["apps", "assets", "admin-center-preview"].includes(entry.name)) {
       paths.push(entry.name);
     }
   }

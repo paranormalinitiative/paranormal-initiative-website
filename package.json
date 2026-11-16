@@ -12,6 +12,7 @@
     "dev:local:service:restart": "node scripts/local-dev-service.mjs restart",
     "dev:local:service:status": "node scripts/local-dev-service.mjs status",
     "dev:local:service:uninstall": "node scripts/local-dev-service.mjs uninstall",
+    "stage:research-investigation": "node scripts/stage-research-investigation.mjs",
     "local:credentials": "zsh scripts/show-local-admin-credentials.sh",
     "test:studioflow:firefox": "node scripts/verify/tpi-studioflow-firefox-acceptance.mjs",
     "test:studioflow:122h-export": "node scripts/verify/tpi-studioflow-122h-project-export.mjs",
