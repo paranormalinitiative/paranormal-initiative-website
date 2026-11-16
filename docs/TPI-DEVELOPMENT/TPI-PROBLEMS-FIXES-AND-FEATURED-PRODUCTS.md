@@ -57,6 +57,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
 | Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
 | Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
+| A member cannot tell whether to ask Mystic or Nova, or Nova is missing from a site page | [Mystic and Nova identity separation](#inc-2026-11-16-42--mystic-and-nova-identity-separation-and-sitewide-coverage) | Assistant identity copy, shared site loader, public/internal knowledge boundary |
 | An Administration Center release deploys, then rolls back during an unrelated StudioFlow live gate | [Administration Center command center and release-gate finding](#inc-2026-11-15-25--administration-center-command-center-and-release-gate-finding) | Full release certification, live Firefox acceptance, protected application boundary |
 | A small Administration Center change starts the full StudioFlow release suite | [Administration Center impact-aware release guard](#inc-2026-11-15-26--administration-center-impact-aware-release-guard) | Release-impact classifier, admin-only verification, protected application byte guard |
 | The Administration Center candidate is ready after the unrelated StudioFlow rollback | [Administration Center guarded promotion](#inc-2026-11-15-27--administration-center-guarded-promotion) | Certified candidate reuse, anonymous smoke, protected admin routes, owner acceptance |
@@ -75,6 +76,17 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-16-42 — Mystic and Nova identity separation and sitewide coverage
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 14:41 EST** |
+| What happened | Mystic and Nova were both helpful, but their labels and entry points could make a member unsure which assistant handled paranormal research versus TPI support. Nova was not automatically available on every shared site page, and the reactive Administration Center needed a direct Help Desk handoff. |
+| Fix | Distinguished Mystic as the public paranormal research assistant and Nova as the TPI Help Center / protected Help Desk assistant. Added a Help Center assistant directory, distinct launchers and role copy, sitewide loading through `includes.js`, direct public Mystic answers for ghost definitions, MEL/EMF meters, weather, intake, and walkthroughs, and an Administration Center “Ask Nova · Help Desk” link. |
+| Safeguards | Public pages load only public Help Center and Mystic knowledge. Internal pages load protected Help Desk data and Nova only. Internal retrieval remains server-authorized and fail-closed. Stable applications and owner data were not modified. |
+| Verification | JavaScript syntax, Help Center separation, assistant identity/source contracts, public/internal loader checks, Admin Center build, full guarded preflight, production smoke, and isolated Firefox acceptance. |
+| Status | **Implemented; release record to be completed after guarded production verification.** See [Mystic and Nova identity separation](300-COMPLETED-WORK/2026-11-16-MYSTIC-NOVA-IDENTITY-AND-SITEWIDE-COVERAGE.md). |
 
 ### INC-2026-11-16-03 — Member registration request failed
 

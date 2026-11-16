@@ -137,6 +137,17 @@
     hydrateAccount();
     if (window.TPINovaHelpCenter) window.TPINovaHelpCenter.mount();
     if (!INTERNAL && window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
+    bindAssistantGuide();
+  }
+
+  function bindAssistantGuide() {
+    document.querySelectorAll("[data-open-assistant]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var selector = button.dataset.openAssistant === "mystic" ? "[data-mystic-toggle]" : "[data-nova-toggle]";
+        var launcher = document.querySelector(selector);
+        if (launcher) launcher.click();
+      });
+    });
   }
 
   function bindShell() {
@@ -238,6 +249,10 @@
         '<p>' + (INTERNAL ? "Find the procedure for Administration Center work, moderation, member actions, publishing, apps, security, and escalation." : "Find clear guidance for your member account, community tools, research, apps, policies, safety, and the people behind TPI.") + '</p>' +
         searchForm("") +
       '</section>' +
+      '<section class="hc-section hc-assistant-guide" id="assistants" aria-labelledby="hc-assistants-heading"><div class="hc-section-heading"><div><h2 id="hc-assistants-heading">Choose the right TPI assistant</h2><p>' + (INTERNAL ? "Nova is the protected internal assistant for approved staff. Mystic remains the public paranormal research companion." : "Mystic and Nova have different jobs, so you always know who to ask.") + '</p></div></div><div class="hc-assistant-grid">' +
+        (!INTERNAL ? '<article class="hc-assistant-card hc-assistant-mystic"><div class="hc-assistant-card-top"><span class="hc-assistant-avatar hc-assistant-avatar-mystic">✦</span><div><span class="hc-assistant-label">Paranormal research</span><h3>Mystic</h3></div></div><p>Ask about ghosts, Ghostology, haunted locations, equipment, investigation methods, books, and paranormal research.</p><button class="hc-secondary-button" type="button" data-open-assistant="mystic">Ask Mystic</button></article>' : '') +
+        '<article class="hc-assistant-card hc-assistant-nova"><div class="hc-assistant-card-top"><span class="hc-assistant-avatar hc-assistant-avatar-nova">N</span><div><span class="hc-assistant-label">' + (INTERNAL ? 'Protected internal Help Desk' : 'TPI Help Center') + '</span><h3>Nova</h3></div></div><p>' + (INTERNAL ? 'Ask about Administration Center procedures, moderation, policies, security, roles, and approved internal workflows.' : 'Ask how TPI works, how to use your account, where to find a feature, or how to report a problem.') + '</p><button class="hc-secondary-button" type="button" data-open-assistant="nova">Ask Nova</button></article>' +
+      '</div></section>' +
       '<section class="hc-section" aria-labelledby="hc-topics-heading"><div class="hc-section-heading"><div><h2 id="hc-topics-heading">Browse TPI help</h2><p>Choose the area closest to your question. Each topic opens into its complete guide list.</p></div></div><div class="hc-category-grid">' + categories + '</div></section>' +
       '<section class="hc-section" aria-labelledby="hc-popular-heading"><div class="hc-section-heading"><div><h2 id="hc-popular-heading">Popular guides</h2><p>Good places to start when you are new or stuck.</p></div><a href="' + PATHS.search + '?q=">Search all guides</a></div><div class="hc-article-list">' + popular.map(articleRow).join("") + '</div></section>' +
       contactCard(),

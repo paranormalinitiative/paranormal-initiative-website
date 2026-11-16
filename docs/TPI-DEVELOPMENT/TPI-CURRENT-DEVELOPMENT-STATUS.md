@@ -1,5 +1,25 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Mystic and Nova identity separation and sitewide coverage
+
+Status: **IMPLEMENTED; guarded release and live acceptance pending.** Mystic is
+now explicitly the public paranormal research assistant. Nova is explicitly the
+TPI Help Center assistant on public pages and the protected Help Desk assistant
+for authorized internal people. The public Help Center now presents both
+choices, and the shared site include loads the appropriate assistant across
+site pages without loading internal Help Desk knowledge publicly.
+
+Mystic's public knowledge catalog now has direct, source-linked answers for
+ghost definitions, MEL/EMF meters, weather and environmental effects, case
+intake, and investigation walkthroughs. Nova's public/internal role copy,
+prompts, handoff links, and protected Admin Center link are distinct. The
+reactive Administration Center links directly to **Ask Nova · Help Desk**.
+
+Internal data remains fail-closed and server-authorized. StudioFlow, Creator
+Studio, Nova Editor Workspace, private media, D1, R2, and owner data were not
+modified. The completion record is [Mystic and Nova identity separation and
+sitewide coverage](300-COMPLETED-WORK/2026-11-16-MYSTIC-NOVA-IDENTITY-AND-SITEWIDE-COVERAGE.md).
+
 ## 2026-11-16 — Member registration reliability repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Public

@@ -1,5 +1,6 @@
 .hc-mystic { position: fixed; right: 24px; bottom: 24px; z-index: 180; font-family: inherit; }
-.hc-mystic-launcher { display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 10px 16px 10px 11px; color: var(--text-on-accent); background: var(--gradient-accent); border: 0; border-radius: 999px; box-shadow: var(--shadow-xl), var(--shadow-glow); font: inherit; font-size: 12px; font-weight: 850; cursor: pointer; }
+.hc-mystic-launcher { display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 10px 16px 10px 11px; color: #f7fbff; background: linear-gradient(135deg, #253a72, #58358f); border: 1px solid rgba(141, 189, 255, .42); border-radius: 999px; box-shadow: var(--shadow-xl), 0 0 24px rgba(86, 117, 255, .24); font: inherit; font-size: 12px; font-weight: 850; cursor: pointer; }
+.hc-mystic-launcher small, .hc-nova-launcher small { font-size: 9px; font-weight: 800; opacity: .82; }
 .hc-mystic-launcher:hover { filter: brightness(1.08); transform: translateY(-1px); }
 .hc-mystic-spark, .hc-mystic-avatar { display: grid; place-items: center; overflow: hidden; color: var(--text-on-accent); background: #081b29; border: 1px solid color-mix(in srgb, #7cefff 70%, var(--accent)); border-radius: 50%; box-shadow: 0 0 15px rgba(73, 225, 255, .55); animation: mystic-pulse 2.8s ease-in-out infinite; }
 .hc-mystic-spark { width: 25px; height: 25px; }
@@ -8,6 +9,7 @@
 .hc-mystic-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 18px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--bg-card)), var(--bg-card)); border-bottom: 1px solid var(--border-subtle); }
 .hc-mystic-kicker { margin: 0 0 2px; color: var(--text-accent); font-size: 9px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; }
 .hc-mystic-header h2 { margin: 0; font-size: 20px; letter-spacing: -.03em; }
+.hc-mystic-role, .hc-nova-role { display: block; margin-top: 3px; color: var(--text-tertiary); font-size: 10px; font-weight: 750; }
 .hc-mystic-close { width: 31px; height: 31px; color: var(--text-secondary); background: transparent; border: 1px solid var(--border-default); border-radius: 50%; font: inherit; font-size: 20px; line-height: 1; cursor: pointer; }
 .hc-mystic-close:hover { color: var(--text-primary); background: var(--accent-muted); }
 .hc-mystic-intro { display: flex; gap: 10px; padding: 14px 18px 10px; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
@@ -34,6 +36,9 @@
 .hc-mystic-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
 .hc-mystic-form button { padding: 9px 12px; color: var(--text-on-accent); background: var(--gradient-accent); border: 0; border-radius: 10px; font: inherit; font-size: 11px; font-weight: 850; cursor: pointer; }
 .hc-mystic-note { margin: 0; padding: 0 18px 14px; color: var(--text-tertiary); font-size: 9px; line-height: 1.45; }
+.hc-mystic-alternate { padding: 0 18px 14px; font-size: 10px; line-height: 1.4; }
+.hc-mystic-alternate a { color: #a9c7ff; font-weight: 800; text-decoration: none; }
+.hc-mystic-alternate a:hover { text-decoration: underline; }
 @keyframes mystic-pulse { 0%, 100% { box-shadow: 0 0 12px rgba(73, 225, 255, .4); transform: scale(1); } 50% { box-shadow: 0 0 23px rgba(73, 225, 255, .8); transform: scale(1.045); } }
 @media (prefers-reduced-motion: reduce) { .hc-mystic-spark, .hc-mystic-avatar { animation: none; } }
 @media (max-width: 720px) { .hc-mystic { right: 16px; bottom: 16px; } .hc-mystic-panel { bottom: 57px; max-height: calc(100vh - 92px); } }

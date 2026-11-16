@@ -4,7 +4,7 @@
 other credentialed staff with an active server-side appointment
 **Owner:** The Paranormal Initiative
 **Status:** Protected internal operations reference
-**Last updated:** 2026-11-15
+**Last updated:** 2026-11-16
 
 ## Nova internal Help Desk assistant
 
@@ -51,6 +51,11 @@ procedures; the server remains the authority for access.
 The website experience is the protected internal Help Desk reached through the
 Administration Center. It must not be listed as a normal member-navigation
 destination or served to an anonymous member.
+
+The reactive Administration Center includes a direct **Ask Nova · Help Desk**
+link in its protected top bar. Nova is available for documented internal
+procedure lookup from the Help Desk, while Mystic remains the public
+paranormal research assistant and is not mounted on internal Help Desk pages.
 
 ## Access boundary
 

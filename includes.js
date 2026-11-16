@@ -324,6 +324,75 @@
       ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname);
   }
 
+  function isInternalAssistantSurface() {
+    const path = window.location.pathname.replace(/\/+$/, "") || "/";
+    return path === "/admin-center-preview" ||
+      path.startsWith("/admin-center-preview/") ||
+      path === "/admin-panel" ||
+      path === "/admin-panel.html" ||
+      path === "/admin-advanced-settings" ||
+      path === "/admin-advanced-settings.html" ||
+      path === "/admin-events" ||
+      path === "/admin-events.html" ||
+      path === "/moderation" ||
+      path === "/moderation.html" ||
+      path === "/contributor-invite" ||
+      path === "/contributor-invite.html" ||
+      path.startsWith("/internal-help-center");
+  }
+
+  function ensureAssistantStylesheet(fileName, version, marker) {
+    if (document.querySelector(`link[data-${marker}]`) || Array.from(document.querySelectorAll("link[rel='stylesheet']")).some(link => link.href.includes(`/${fileName}`))) return;
+    const stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = `/${fileName}?v=${version}`;
+    stylesheet.setAttribute(`data-${marker}`, "1");
+    document.head.appendChild(stylesheet);
+  }
+
+  function loadAssistantScript(fileName, version, marker, globalName) {
+    if (globalName && window[globalName]) return Promise.resolve();
+    let script = document.querySelector(`script[data-${marker}]`) || Array.from(document.scripts).find(item => item.src.includes(`/${fileName}`));
+    if (!script) {
+      script = document.createElement("script");
+      script.src = `/${fileName}?v=${version}`;
+      script.async = false;
+      script.setAttribute(`data-${marker}`, "1");
+      document.head.appendChild(script);
+    }
+    return new Promise(resolve => {
+      const finish = () => resolve();
+      script.addEventListener("load", finish, { once: true });
+      script.addEventListener("error", finish, { once: true });
+      if (globalName && window[globalName]) finish();
+    });
+  }
+
+  async function initGlobalAssistants() {
+    // Member mode already owns these public assistants through member-shell.js.
+    // Avoid a second loader racing its script/data promises.
+    if (document.body.classList.contains("member-mode")) return;
+    const internal = isInternalAssistantSurface();
+    if (internal) document.body.dataset.tpiAssistantAudience = "internal";
+
+    ensureAssistantStylesheet("nova-help-center.css", 2, "tpi-global-nova-css");
+    await loadAssistantScript("help-center-data.js", 4, "tpi-help-center-data", "TPI_HELP_CENTER");
+
+    if (internal) {
+      await loadAssistantScript("internal-help-center-data.js", 4, "tpi-internal-help-center-data", "TPI_INTERNAL_HELP_CENTER");
+      await loadAssistantScript("nova-help-center.js", 2, "tpi-nova-assistant", "TPINovaHelpCenter");
+      if (window.TPINovaHelpCenter) window.TPINovaHelpCenter.mount();
+      return;
+    }
+
+    ensureAssistantStylesheet("mystic-help-center.css", 2, "tpi-global-mystic-css");
+    await loadAssistantScript("mystic-public-knowledge.js", 2, "tpi-mystic-public-knowledge", "TPI_MYSTIC_PUBLIC_KNOWLEDGE");
+    await loadAssistantScript("mystic-help-center.js", 6, "tpi-mystic-assistant", "TPIMysticHelpCenter");
+    await loadAssistantScript("nova-help-center.js", 2, "tpi-nova-assistant", "TPINovaHelpCenter");
+    if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
+    if (window.TPINovaHelpCenter) window.TPINovaHelpCenter.mount();
+  }
+
   function escapeGreeting(value) {
     return String(value || "").replace(/[&<>"']/g, char => ({
       "&": "&amp;",
@@ -944,6 +1013,7 @@
   installPublishedArticleCards();
   installComments();
   await ensureRequestedMemberShell();
+  initGlobalAssistants().catch(error => console.error("TPI assistants could not be initialized:", error));
 
   // Auto-active nav link (for injected header pages)
   try {

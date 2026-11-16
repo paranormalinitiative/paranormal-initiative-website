@@ -58,7 +58,7 @@
   }
 
   function articleUrl(id) {
-    return "help-center-article.html?id=" + encodeURIComponent(id);
+    return "/help-center-article.html?id=" + encodeURIComponent(id);
   }
 
   function findMatches(query) {
@@ -167,15 +167,15 @@
 
   function specialAnswer(query) {
     var normalized = normalize(query);
-    if (isGreeting(query)) return '<p>Mystic is standing by. I can help you find a verified member Help Center answer.</p><p>Tell me what you are trying to do, such as updating your profile, sending a message, finding a notification, or reporting a problem.</p>';
+    if (isGreeting(query)) return '<p>Mystic is standing by for paranormal research questions.</p><p>Ask about ghosts, Ghostology, haunted locations, equipment, weather and environmental effects, intake, walkthroughs, evidence, or TPI’s public research sources. For using TPI, ask Nova.</p>';
     if (/(administration center|admin center|help desk|moderator tools|ban someone|staff role)/.test(normalized)) {
-      return '<p>The member Help Center does not provide internal administrative procedures. Those instructions belong to the protected Help Desk inside the Administration Center and are available only to authorized staff.</p><p>For a member-facing access question, open <a href="help-center-contact.html">member support</a>.</p>';
+      return '<p>The member Help Center does not provide internal administrative procedures. Those instructions belong to the protected Help Desk inside the Administration Center and are available only to authorized staff.</p><p>For a member-facing access question, open <a href="/help-center-contact.html">member support</a>.</p>';
     }
     if (/(bug|broken|not working|error|failed to load|doesn.t work)/.test(normalized)) {
-      return '<p>That sounds like a bug or a feature that is not working as expected. Please include the page, what you tried, what you expected, and what happened.</p><p><a href="bug-report.html">Open Report a bug</a>. Your report is submitted to the protected Administration Center for review. Never include a password, recovery code, session cookie, or other secret.</p>';
+      return '<p>That sounds like a bug or a feature that is not working as expected. Please include the page, what you tried, what you expected, and what happened.</p><p><a href="/bug-report.html">Open Report a bug</a>. Your report is submitted to the protected Administration Center for review. Never include a password, recovery code, session cookie, or other secret.</p>';
     }
     if (/(password|recovery code|session cookie|api token|secret|credential)/.test(normalized) && /(send|share|give|tell|post|include)/.test(normalized)) {
-      return '<p>Please do not share passwords, recovery codes, session cookies, API tokens, or other secrets in chat or support requests.</p><p>Use the <a href="help-center-article.html?id=login-recovery-security">login, recovery, and security guide</a> for the safe next step.</p>';
+      return '<p>Please do not share passwords, recovery codes, session cookies, API tokens, or other secrets in chat or support requests.</p><p>Use the <a href="/help-center-article.html?id=login-recovery-security">login, recovery, and security guide</a> for the safe next step.</p>';
     }
     return "";
   }
@@ -186,14 +186,14 @@
     root.id = ROOT_ID;
     root.className = "hc-mystic";
     root.innerHTML =
-      '<button class="hc-mystic-launcher" type="button" data-mystic-toggle aria-expanded="false" aria-controls="hc-mystic-panel"><span class="hc-mystic-spark" aria-hidden="true"><img src="assets/mystic-ghost.png" alt=""></span><span>Ask Mystic</span></button>' +
+      '<button class="hc-mystic-launcher" type="button" data-mystic-toggle aria-expanded="false" aria-controls="hc-mystic-panel"><span class="hc-mystic-spark" aria-hidden="true"><img src="/assets/mystic-ghost.png" alt=""></span><span>Ask Mystic <small>· Paranormal</small></span></button>' +
       '<section class="hc-mystic-panel" id="hc-mystic-panel" role="dialog" aria-labelledby="hc-mystic-title" aria-modal="false" hidden>' +
-        '<header class="hc-mystic-header"><div><p class="hc-mystic-kicker">TPI Help Center</p><h2 id="hc-mystic-title">Ask Mystic</h2></div><button class="hc-mystic-close" type="button" data-mystic-close aria-label="Close Mystic">×</button></header>' +
-        '<div class="hc-mystic-intro"><span class="hc-mystic-avatar" aria-hidden="true"><img src="assets/mystic-ghost.png" alt=""></span><p>Hi! I’m Mystic — TPI’s Spirit Guide, Researcher, and Shadow Seeker. Ask me about TPI, the community, Help Center guidance, or a problem you need to report.</p></div>' +
+        '<header class="hc-mystic-header"><div><p class="hc-mystic-kicker">TPI Paranormal Research</p><h2 id="hc-mystic-title">Mystic</h2><span class="hc-mystic-role">Paranormal research assistant</span></div><button class="hc-mystic-close" type="button" data-mystic-close aria-label="Close Mystic">×</button></header>' +
+        '<div class="hc-mystic-intro"><span class="hc-mystic-avatar" aria-hidden="true"><img src="/assets/mystic-ghost.png" alt=""></span><p>Hi! I’m Mystic — TPI’s paranormal research assistant. Ask about Ghostology, ghosts, haunted locations, equipment, investigation methods, books, or research concepts. For using TPI, ask Nova.</p></div>' +
         '<div class="hc-mystic-messages" data-mystic-messages aria-live="polite"></div>' +
-        '<div class="hc-mystic-quick" data-mystic-quick aria-label="Suggested questions"><button type="button" data-mystic-prompt="How do I update my profile?">Update my profile</button><button type="button" data-mystic-prompt="How do I send a message?">Messaging</button><button type="button" data-mystic-prompt="I need to report a bug">Report a bug</button></div>' +
-        '<form class="hc-mystic-form" data-mystic-form><input name="question" type="text" maxlength="240" autocomplete="off" placeholder="Ask about using TPI…" aria-label="Ask Mystic a question"><button type="submit">Ask</button></form>' +
-      '<p class="hc-mystic-note">Grounded in TPI’s public member guidance. Mystic will say when a verified answer is not available.</p>' +
+        '<div class="hc-mystic-quick" data-mystic-quick aria-label="Suggested questions"><button type="button" data-mystic-prompt="What is a ghost?">What is a ghost?</button><button type="button" data-mystic-prompt="How do EMF meters work?">EMF meters</button><button type="button" data-mystic-prompt="How do I conduct a walkthrough?">Walkthroughs</button></div>' +
+        '<form class="hc-mystic-form" data-mystic-form><input name="question" type="text" maxlength="240" autocomplete="off" placeholder="Ask about paranormal research…" aria-label="Ask Mystic about paranormal research"><button type="submit">Ask</button></form>' +
+      '<p class="hc-mystic-note">Grounded in TPI’s public paranormal research and education sources. Mystic separates reported experiences from verified conclusions.</p><div class="hc-mystic-alternate"><a href="/help-center.html#assistants">Need help using TPI? Ask Nova in the Help Center.</a></div>' +
       '</section>';
     document.body.appendChild(root);
 
@@ -228,7 +228,7 @@
       if (matches.length && matches[0].score >= 4) return resultMessage(matches[0]);
       var sourceMatches = findSourceMatches(query);
       if (sourceMatches.length && sourceMatches[0].score >= 5) return sourceResultMessage(sourceMatches[0]);
-      return '<p>I don’t have a verified member Help Center answer for that yet.</p><p>Try a shorter question, search the <a href="help-center-search.html">full Help Center</a>, or <a href="help-center-contact.html">contact member support</a> with the page, steps, expected result, and what happened.</p>';
+      return '<p>I don’t have a verified member Help Center answer for that yet.</p><p>Try a shorter question, search the <a href="/help-center-search.html">full Help Center</a>, or <a href="/help-center-contact.html">contact member support</a> with the page, steps, expected result, and what happened.</p>';
     }
 
     async function ask(query) {

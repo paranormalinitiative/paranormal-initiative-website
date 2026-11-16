@@ -65,6 +65,12 @@ boundaries are original to TPI.
 
 ## Navigation model
 
+The public Help Center identifies the two TPI assistants before the topic
+library: **Mystic** answers public paranormal research questions, while
+**Nova** explains how to use TPI, its member features, public applications,
+policies, and support paths. This distinction is part of the member-facing
+orientation and is also available from the shared site header.
+
 Each topic is an expandable dropdown with an “All guides” destination and
 article links. Keep the labels plain, predictable, and consistent with the TPI
 site.
