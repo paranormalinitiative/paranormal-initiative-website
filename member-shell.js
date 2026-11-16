@@ -2762,12 +2762,12 @@
           '<div class="member-chat-list" data-chat-list></div>' +
         '</aside>' +
         '<section class="member-chat-thread">' +
-          '<section class="member-chat-create" data-chat-create role="dialog" aria-labelledby="messenger-room-builder-title" hidden>' +
+          '<section class="member-chat-create" data-chat-create role="dialog" aria-labelledby="messenger-chat-builder-title" hidden>' +
             '<header class="member-chat-create-header">' +
-              '<div><span class="member-chat-kicker">Messenger rooms</span><strong id="messenger-room-builder-title" data-chat-create-title>Create Room</strong></div>' +
-              '<button type="button" data-chat-create-close aria-label="Close room builder">Close</button>' +
+              '<div><span class="member-chat-kicker">Messenger</span><strong id="messenger-chat-builder-title" data-chat-create-title>Choose a member</strong></div>' +
+              '<button type="button" data-chat-create-close aria-label="Close chat chooser">Close</button>' +
             '</header>' +
-            '<p data-chat-create-description>Name the room, then add at least one friend from the left. You are included automatically.</p>' +
+            '<p data-chat-create-description>Choose one member to start a direct chat. You are included automatically.</p>' +
             '<label class="member-chat-create-name"><span>Room name</span><input type="text" data-chat-name maxlength="160" placeholder="Example: Investigation Team"></label>' +
             '<span class="member-chat-create-count" data-chat-create-count>0 members selected</span>' +
             '<div class="member-chat-member-list" data-chat-members aria-label="Selected room members"></div>' +
@@ -3298,7 +3298,7 @@
       });
       onlineEl.innerHTML = filtered.length ? filtered.map(function(member) {
         var online = Boolean(member.online);
-        var selectingForRoom = createEl && !createEl.hidden;
+        var selectingForRoom = createEl && !createEl.hidden && conversationBuilderMode !== "chat";
         var selectedForRoom = selectingForRoom && selectedMembers.has(member.username);
         var presenceText = online ? "Online" : "Offline";
         var presenceClass = online ? "is-online" : "is-offline";
@@ -3319,6 +3319,11 @@
         return normalizeChatUsername(candidate.username) === normalizeChatUsername(requestedUsername);
       });
       if (!member) return;
+      if (createEl && !createEl.hidden && conversationBuilderMode === "chat") {
+        closeConversationBuilder();
+        await openOrCreateDirectConversation(member);
+        return;
+      }
       if (createEl && !createEl.hidden) {
         if (selectedMembers.has(member.username)) selectedMembers.delete(member.username);
         else selectedMembers.add(member.username);
@@ -3365,6 +3370,7 @@
     async function openOrCreateDirectConversation(member) {
       closeIdentityMenu();
       closeOwnerMenu();
+      if (createEl && !createEl.hidden) closeConversationBuilder();
       if (!member || !member.username) return;
       setChatStatus("");
       try {
@@ -3377,6 +3383,25 @@
       await refreshChatListFromRemote();
       await openChat(currentChat);
       if (inputEl) inputEl.focus();
+    }
+
+    async function openDirectChat(member) {
+      if (!member || !member.username || normalizeChatUsername(member.username) === normalizeChatUsername(user.username)) return;
+      if (chat.classList.contains("is-hidden")) setMessengerCollapsed(false);
+      var targetUsername = normalizeChatUsername(member.username);
+      var target = roster.find(function(candidate) {
+        return normalizeChatUsername(candidate.username) === targetUsername;
+      });
+      if (!target) {
+        try {
+          var searched = await loadChatRoster(user, member.username);
+          target = searched.find(function(candidate) {
+            return normalizeChatUsername(candidate.username) === targetUsername;
+          });
+          if (target) roster = dedupeChatMembers(roster.concat([target]));
+        } catch (error) {}
+      }
+      await openOrCreateDirectConversation(target || normalizeChatMember(member, false));
     }
 
     async function refreshChatListFromRemote() {
@@ -3468,7 +3493,7 @@
         if (member && member.username && member.username !== user.username) selectedMembers.add(member.username);
       });
       if (chatNameEl) chatNameEl.value = conversationBuilderMode === "manage" && currentChat ? currentChat.title : "";
-      if (chatNameLabelEl) chatNameLabelEl.hidden = conversationBuilderMode === "manage";
+      if (chatNameLabelEl) chatNameLabelEl.hidden = conversationBuilderMode === "manage" || conversationBuilderMode === "chat";
       if (createTitleEl) createTitleEl.textContent = conversationBuilderMode === "manage" ? "Manage People" : (conversationBuilderMode === "room" ? "Create Room" : "Start a Chat");
       if (createDescriptionEl) createDescriptionEl.textContent = conversationBuilderMode === "manage"
           ? "Click friends in the left column to add or remove them from this room. Then save your changes."
@@ -3478,6 +3503,7 @@
       if (createSubmitEl) {
         createSubmitEl.textContent = conversationBuilderMode === "manage" ? "Save People" : (conversationBuilderMode === "room" ? "Create Room" : "Start Chat");
         createSubmitEl.disabled = false;
+        createSubmitEl.hidden = conversationBuilderMode === "chat";
       }
       setConversationBuilderStatus("");
       createEl.hidden = false;
@@ -3498,7 +3524,10 @@
       if (chatNameEl) chatNameEl.value = "";
       if (chatNameLabelEl) chatNameLabelEl.hidden = false;
       setConversationBuilderStatus("");
-      if (createSubmitEl) createSubmitEl.disabled = false;
+      if (createSubmitEl) {
+        createSubmitEl.disabled = false;
+        createSubmitEl.hidden = false;
+      }
       renderOnline();
     }
 
@@ -3542,6 +3571,9 @@
       var hasConversation = Boolean(currentChat && currentChat.id && currentChat.id !== "chat-default");
       if (conversationBarEl) conversationBarEl.hidden = !hasConversation;
       chat.setAttribute("data-conversation-theme", currentChat && currentChat.theme ? currentChat.theme : "default");
+      var activeOther = currentChat && currentChat.direct && !isGroupConversation(currentChat) ? getOtherParticipant(currentChat, user) : null;
+      if (activeOther && activeOther.username) chat.setAttribute("data-conversation-target", activeOther.username);
+      else chat.removeAttribute("data-conversation-target");
       var quickButton = chat.querySelector("[data-chat-like]");
       if (quickButton) {
         quickButton.textContent = currentChat && currentChat.quickEmoji ? currentChat.quickEmoji : "👍";
@@ -3668,7 +3700,8 @@
           } catch (e) {}
         }
         if (inputEl) inputEl.focus();
-      }
+      },
+      openDirectChat: openDirectChat
     };
 
     // ---- Unified Messenger menu, settings, thread search ----

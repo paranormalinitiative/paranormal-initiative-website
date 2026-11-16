@@ -49,6 +49,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Messenger Chats shows the full conversation, truncates the thread, or overlaps the Members list | [Messenger chat-list truncation](#inc-2026-11-14-13--messenger-chat-list-truncation-and-layout) | Chat preview rendering, contacts-column sizing, independent scrolling |
 | Messenger lists every member instead of friends, or a direct chat with a non-friend cannot be revisited | [Messenger friends roster and searchable direct chat](#inc-2026-11-14-17--messenger-friends-roster-and-searchable-direct-chat) | Accepted-friend roster, member search, persistent Chats list |
 | Messenger Friends appear vertically centered or leave a large empty gap above Chats | [Messenger Friends top alignment](#inc-2026-11-14-18--messenger-friends-top-alignment) | Contacts-column sizing, grid row alignment, bounded Friends scrolling |
+| Clicking Chat on a member's profile opens the wrong person, or New Chat asks for a room name | [Messenger profile target and direct New Chat](#inc-2026-11-16-45--messenger-profile-target-and-direct-new-chat) | Profile-to-Messenger target handoff, stale selected conversation, direct-chat chooser |
 | Messenger MP4 or ZIP upload returns 500/1101, ZIP is missing from the picker, or paste does not work | [Messenger media and clipboard repair](#inc-2026-11-14-14--messenger-media-upload-and-clipboard) | Media authorization query, browser MIME normalization, file pickers, shared text controls |
 | An external link or non-YouTube video shows only a chain icon or will not preview/play | [External link/video preview](#inc-2026-11-14-15--external-non-youtube-video-preview-and-interactive-fallback) | Link-preview metadata, direct video responses, JavaScript-rendered or HTTP-only source pages |
 | Owner/Founder receives a staff-role access error in the Admin Center | [Owner Admin authorization](#inc-2026-11-14-16--owner-admin-authorization-mismatch) | Server-side contributor role, legacy admin mapping, protected Admin Center route |
@@ -78,6 +79,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-16-45 — Messenger profile target and direct New Chat
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 18:11 EST** |
+| What happened | Clicking Chat on a member profile opened Messenger but retained the previously selected conversation, so a profile for Keith could open Bill's chat. New Chat also presented the room-builder workflow, including a room-name field, even when the member wanted a one-to-one conversation. |
+| Root cause | The profile action linked only to `#messenger` and did not pass the profile username. Messenger therefore restored its existing active conversation. The shared chooser used one room-oriented panel for both room creation and direct chat selection. |
+| Fix | Profile Chat now passes the exact profile member to a sitewide `openDirectChat` entry point. Messenger resolves that member, reuses or creates the correct direct conversation, and opens it. New Chat now opens a clearly labeled direct-chat chooser; the room-name field and room-creation submit button are hidden, and choosing a member immediately opens the direct chat. |
+| Safeguards | Added source contracts for profile-target propagation and direct-chat-only New Chat behavior. Added isolated Firefox regression coverage for profile targeting, direct chooser presentation, non-friend search, conversation opening, paste, responsive layout, and existing Messenger controls. The runtime records the active direct-chat target for acceptance verification. |
+| Verification | Member interaction contracts **31/31**; focused Firefox Messenger acceptance **27/27** on the maintained local Worker. The first browser attempt exposed a test-navigation readiness issue; the test was corrected to wait for the shared shell and the complete rerun passed. |
+| Status | **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** See [Messenger Profile Chat and Direct New Chat Repair](300-COMPLETED-WORK/2026-11-16-MESSENGER-PROFILE-CHAT-AND-DIRECT-NEW-CHAT-REPAIR.md). |
 
 ### INC-2026-11-16-44 — Password recovery Cloudflare compatibility
 

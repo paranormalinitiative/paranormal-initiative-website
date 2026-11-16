@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Messenger profile targeting and direct New Chat repair
+
+Status: **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** Clicking
+Chat on a member profile now passes that member's username into Messenger and
+opens or reuses the correct direct conversation instead of reopening the last
+selected chat. New Chat now presents a direct-chat chooser: it does not show a
+room-name field or create-room submit action, and choosing a member opens the
+one-to-one conversation directly.
+
+The member interaction source contracts passed **31/31**. Focused Firefox
+Developer Edition acceptance on the maintained local Worker passed **27/27**,
+including profile targeting, direct-chat selection, non-friend search,
+conversation opening, clipboard paste, responsive layout, and existing
+Messenger navigation. No StudioFlow, Creator Studio, Nova Workspace, private
+media, D1, R2, or owner data was changed. See [Messenger Profile Chat and
+Direct New Chat Repair](300-COMPLETED-WORK/2026-11-16-MESSENGER-PROFILE-CHAT-AND-DIRECT-NEW-CHAT-REPAIR.md).
+
 ## 2026-11-16 — Password recovery Cloudflare compatibility repair
 
 Status: **DEPLOYED, LIVE VERIFIED, AND OWNER-REPORT REPAIR COMPLETE.** The live

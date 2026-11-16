@@ -3005,7 +3005,7 @@
                                 <a class="member-btn member-btn-secondary" data-profile-edit hidden href="/member-profile.html#profile-editor">Update Profile</a>
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-follow hidden>Follow</button>
                                 <button type="button" class="member-btn member-btn-secondary" data-profile-friend hidden>Add Friend</button>
-                                <a class="member-btn member-btn-primary" data-profile-chat hidden href="#messenger">Chat</a>
+                            <a class="member-btn member-btn-primary" data-profile-chat hidden href="#messenger">Chat</a>
                                 <div class="member-profile-options" data-profile-options hidden>
                                     <button type="button" class="member-profile-options-toggle" data-profile-options-toggle aria-expanded="false" aria-haspopup="menu" aria-label="More profile options">•••</button>
                                     <div class="member-profile-options-panel" data-profile-options-panel hidden role="menu">
@@ -4169,9 +4169,32 @@
         if (profileChatLink) {
             profileChatLink.hidden = false;
             profileChatLink.href = "#messenger";
-            profileChatLink.addEventListener("click", function() {
-                var chatLink = document.querySelector('[data-nav="chat"], [href*="#messenger"]');
+            profileChatLink.addEventListener("click", function(event) {
+                event.preventDefault();
+                var target = {
+                    id: profileUser && profileUser.id || "",
+                    username: profileUser && profileUser.username || "",
+                    displayName: profileUser && (profileUser.displayName || profileUser.display_name || profileUser.name) || "Member",
+                    photoUrl: profileUser && (profileUser.photoUrl || profileUser.photo_url || profileUser.avatar) || "",
+                    chatColor: profileUser && (profileUser.chatColor || profileUser.chat_color) || ""
+                };
+                if (!target.username || target.username === activeUser.username) return;
+                var openDirectChat = function() {
+                    if (window.TPIMessenger && typeof window.TPIMessenger.openDirectChat === "function") {
+                        window.TPIMessenger.openDirectChat(target);
+                        return true;
+                    }
+                    return false;
+                };
+                if (openDirectChat()) return;
+                var chatLink = document.querySelector('[data-nav="chat"]');
                 if (chatLink && chatLink !== profileChatLink) chatLink.click();
+                var attempts = 0;
+                var retryOpenDirectChat = function() {
+                    if (openDirectChat() || attempts++ >= 30) return;
+                    window.setTimeout(retryOpenDirectChat, 100);
+                };
+                window.setTimeout(retryOpenDirectChat, 0);
             });
         }
     }

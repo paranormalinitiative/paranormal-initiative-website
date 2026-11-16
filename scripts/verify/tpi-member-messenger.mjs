@@ -108,6 +108,32 @@ try {
   const defaultRosterState = await js("var list=document.querySelector('[data-chat-online]'), style=list&&getComputedStyle(list), first=list&&list.querySelector('[data-online-member]'), listRect=list&&list.getBoundingClientRect(), firstRect=first&&first.getBoundingClientRect(); return {label:document.querySelector('.member-chat-section-label')?.textContent.trim()||'', buttons:Array.from(document.querySelectorAll('[data-online-member]')).map(function(node){return node.getAttribute('data-chat-friend');}), alignContent:style&&style.alignContent, gridAutoRows:style&&style.gridAutoRows, firstTop:firstRect&&Math.round(firstRect.top), listTop:listRect&&Math.round(listRect.top)};");
   check("Messenger default roster is limited to friends", defaultRosterState.label === "Friends" && defaultRosterState.buttons.every(value => value === "true"), JSON.stringify(defaultRosterState));
   check("Messenger friends begin at the top of the contacts column", (defaultRosterState.alignContent === "start" || defaultRosterState.alignContent === "flex-start") && defaultRosterState.gridAutoRows === "max-content" && (!defaultRosterState.firstTop || defaultRosterState.firstTop <= defaultRosterState.listTop + 12), JSON.stringify(defaultRosterState));
+
+  const profileTarget = await js(`return fetch('/api/messenger/roster?search=a',{credentials:'same-origin'}).then(function(response){return response.json();}).then(function(body){
+    var current=${JSON.stringify(account.username)}.toLowerCase();
+    var member=(body.members||[]).find(function(item){return String(item.username||'').toLowerCase() !== current;});
+    return member ? {username:member.username,displayName:member.displayName||member.username} : null;
+  }).catch(function(){return null;});`);
+  if (profileTarget) {
+    await driver.get(`${base}/member-home?username=${encodeURIComponent(profileTarget.username)}`);
+    await waitFor("profile Chat action", async () => await js("var node=document.querySelector('[data-profile-chat]'); return Boolean(node && !node.hidden);"));
+    const profileChatClicked = await clickVisible('[data-profile-chat]');
+    await waitFor("profile-targeted Messenger conversation", async () => await js(`var chat=document.querySelector('[data-member-floating-chat]'); return Boolean(chat && chat.getAttribute('data-conversation-target') === ${JSON.stringify(profileTarget.username)});`));
+    const profileChatState = await js("var chat=document.querySelector('[data-member-floating-chat]'), identity=document.querySelector('[data-chat-identity] strong'), bar=document.querySelector('[data-chat-conversation-bar]'); return {name:identity&&identity.textContent.trim()||'',target:chat&&chat.getAttribute('data-conversation-target')||'',open:Boolean(bar&& !bar.hidden)};");
+    check("profile Chat opens the selected member's conversation", profileChatClicked && profileChatState.open && profileChatState.target.toLowerCase() === profileTarget.username.toLowerCase(), JSON.stringify(profileChatState));
+  } else {
+    check("profile Chat opens the selected member's conversation", false, "No disposable target member was returned by the Messenger roster.");
+  }
+
+  const newChatClicked = await clickVisible('[data-chat-new]');
+  await waitFor("New Chat direct chooser", async () => await js("var node=document.querySelector('[data-chat-create]'); return Boolean(node && !node.hidden);"));
+  const newChatState = await js("var panel=document.querySelector('[data-chat-create]'), title=document.querySelector('[data-chat-create-title]'), name=document.querySelector('[data-chat-create-name]'), submit=document.querySelector('[data-chat-start]'); return {open:Boolean(panel&&!panel.hidden),title:title&&title.textContent.trim()||'',roomNameVisible:Boolean(name&& !name.hidden),submitVisible:Boolean(submit&& !submit.hidden)};");
+  check("New Chat opens a direct-chat chooser instead of a room form", newChatClicked && newChatState.open && newChatState.title === "Start a Chat" && newChatState.roomNameVisible === false && newChatState.submitVisible === false, JSON.stringify(newChatState));
+  await clickVisible('[data-chat-create-close]');
+  await driver.get(`${base}/member-home`);
+  await waitFor("community home after profile Messenger check", async () => Boolean(await state()));
+  await waitFor("community composer after profile Messenger check", async () => Boolean(await js("return document.querySelector('[data-composer-body]');")));
+
   let memberButton = (await driver.findElements(By.css("[data-online-member]")))[0] || null;
   if (!memberButton) {
     const searchInput = await driver.findElement(By.css("[data-chat-member-search]"));
