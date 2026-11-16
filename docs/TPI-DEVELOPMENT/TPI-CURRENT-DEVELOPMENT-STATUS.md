@@ -1,5 +1,32 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center parity and permissions audit
+
+Status: **AUDIT COMPLETE — NO PRODUCTION CODE CHANGED.** The legacy
+`/admin-panel` remains the current production Administration Center, while the
+reactive `/admin-center-preview/` remains the protected integration surface.
+Source comparison found no need to replace the legacy route or touch protected
+applications. The reactive Center currently exposes 35 navigation resources;
+the legacy navigation exposes 22 and retains several established workflows as
+separate routes or combined panels. This is an integration-parity gap, not a
+permission bypass.
+
+The server remains authoritative. The role/action matrix, effective-role
+resolver, route allowlist, protected HTML gate, and handler-level checks remain
+in place. Administration Center source contracts passed **92/92**, the reactive
+Center build passed, and live Owner Firefox verification showed the protected
+reactive navigation and Creator Channels read-only boundary. The audit made no
+member, staff, channel, StudioFlow, database, or production-data changes.
+
+The first follow-up repair is to expand the server-returned staff capability
+catalog so it names every current reactive area, then make the visible
+navigation reflect those same server-derived boundaries. After that, each
+legacy-only or preview-only area can be classified as **migrate**, **integrate**,
+or **preserve as a separate protected workflow**. The legacy route must not be
+replaced until that matrix and Owner/role acceptance are complete.
+
+See [Administration Center Parity and Permissions Audit](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-PARITY-AND-PERMISSIONS-AUDIT.md).
+
 ## 2026-11-15 — Administration Center Creator Channels verification
 
 Status: **LIVE AND OWNER-VERIFIED.** The Creator Channels view is complete in

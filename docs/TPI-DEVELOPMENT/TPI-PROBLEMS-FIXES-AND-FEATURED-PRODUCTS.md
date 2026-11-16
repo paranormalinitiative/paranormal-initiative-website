@@ -67,6 +67,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A staff member could submit a warning or restriction before reviewing the complete action | [Enforcement action review gate](#inc-2026-11-15-35--administration-center-enforcement-action-review-gate) | Enforcement & Appeals, confirmation boundary, audit-safe mutation |
 | Owner needs to grant or revoke direct Creator Studio access without touching memberships or StudioFlow | [Creator Studio access review gate](#inc-2026-11-15-36--administration-center-creator-studio-access-review-gate) | Owner-only capability grant, protected entitlement sources, review-before-change |
 | Owner needs a safe overview of creator channels and their published-video counts | [Creator Channels verification](#inc-2026-11-15-37--administration-center-creator-channels-verification) | Channel directory, search/filter/pagination, metadata-only boundary |
+| Owner needs to know whether the reactive and legacy Administration Centers agree | [Administration Center parity and permissions audit](#inc-2026-11-15-38--administration-center-parity-and-permissions-audit) | Navigation inventory, server role matrix, migrate/integrate/preserve decisions |
 
 ## Incident and fix register
 
@@ -1402,6 +1403,25 @@ intended.
 **Lesson:** A directory can be complete without exposing mutation controls. Show
 the authoritative metadata, report an honest empty state, and leave channel
 ownership and publishing actions on their existing protected workflows.
+
+### INC-2026-11-15-38 — Administration Center parity and permissions audit
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15 21:54 EST**, during the planned legacy/reactive Administration Center comparison |
+| Implemented in source | **2026-11-15**, documentation and audit record only |
+| Product/surface | Legacy `/admin-panel`, reactive `/admin-center-preview/`, server role and route boundaries |
+| Symptom | The reactive Center and legacy Center use different navigation inventories, so a label appearing in one surface cannot be assumed to represent the same data contract or authority boundary in the other. |
+| Root cause | The reactive Center has grown with newer read-only and review-gated resources while the legacy Center retains established combined panels and separate route integrations. The staff capability catalog was not yet a complete inventory of the reactive resources. |
+| Fix | Completed a read-only source comparison and recorded the current role/action matrix, protected application boundary, 35-resource reactive inventory, 22-entry legacy navigation inventory, and the required migrate/integrate/preserve classification step before replacement. |
+| Safeguards | Server-side effective-role resolution, protected HTML access, route allowlists, handler-level checks, no client-side authority, no legacy replacement, and no production data or protected-application changes. |
+| Verification | Reactive Administration Center build passed; source contracts **92/92**; live Owner Firefox verification confirmed the protected reactive navigation and read-only Creator Channels boundary. |
+| Production status | **Documentation-only audit; no production deployment required.** The legacy route remains the current production surface, and the reactive Center remains a separate protected integration surface. |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-PARITY-AND-PERMISSIONS-AUDIT.md`](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-PARITY-AND-PERMISSIONS-AUDIT.md), [`2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md`](200-AUDITS/2026-11-15-ADMINISTRATION-CENTER-ROLE-MATRIX-AUDIT.md), `admin-center-app/src/app.tsx`, `admin-panel.html`, `functions/api/[[path]].js`, `lib/staff-roles.js`, `scripts/qa/tpi-admin-006-preview.mjs` |
+
+**Lesson:** A navigation match is not feature parity. Compare the source
+contracts and server authority, then classify each difference before moving or
+replacing a protected administrative workflow.
 
 ## New-entry template
 
