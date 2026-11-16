@@ -1,5 +1,35 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center Creator Studio access review gate
+
+Status: **DEPLOYED AND LIVE OWNER-VERIFIED.** Creator Studio Access now
+combines the existing entitlement ledger with a narrowly bounded Owner-only
+management workflow. The Owner can look up an active existing member, review a
+proposed direct Creator capability grant, and then deliberately confirm it.
+Only a direct administrative grant can be revoked from this surface; Founding
+Membership, role-derived, and legacy Creator Studio sources remain protected.
+
+The change does not modify StudioFlow, Creator Studio application source,
+private media, Founding Membership records, staff appointments, or owner data.
+Other authorized staff can inspect the ledger but do not see mutation controls.
+The final live Firefox check reviewed @Backwoods_Signal's no-access state and
+opened the final confirmation dialog; the dialog was canceled and no
+entitlement was changed.
+
+Administration Center source contracts passed **92/92**, the production build
+passed, release-impact classification passed **15/15**, release-safety passed
+**37/37**, the maintained local authorization lifecycle passed **38/38**, and
+isolated Firefox StudioFlow acceptance passed **65/65**. The exact candidate
+passed the targeted shared-API and Messenger/member gates in **22.9s**;
+production anonymous smoke passed **10/10**, and the deployed Worker reached
+100% traffic.
+
+Release `rel-ee2e52dce715-5a8621bf7e9f` deployed Worker
+`e9306f06-8fe6-49d2-894c-e30bd2e21f7f`. The exact rollback Worker is
+`d56a2056-0f51-4636-b230-16e1b0f8f72b`.
+
+See [Administration Center Creator Studio Access Review Gate](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-CREATOR-STUDIO-ACCESS-REVIEW-GATE.md).
+
 ## 2026-11-15 — Administration Center enforcement action review gate
 
 Status: **DEPLOYED AND LIVE OWNER-VERIFIED.** The existing

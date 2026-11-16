@@ -65,6 +65,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need to see who can access which Administration Center areas | [Staff directory and capability inspection](#inc-2026-11-15-33--administration-center-staff-directory-and-capability-inspection) | Effective server role, capability boundaries, appointment history, read-only staff metadata |
 | Authorized staff need one place to understand a member's real access | [Membership and entitlement inspection](#inc-2026-11-15-34--administration-center-membership-and-entitlement-inspection) | Effective role, capability flags, Founding identity, Creator Studio, Nova authority, restrictions, read-only metadata |
 | A staff member could submit a warning or restriction before reviewing the complete action | [Enforcement action review gate](#inc-2026-11-15-35--administration-center-enforcement-action-review-gate) | Enforcement & Appeals, confirmation boundary, audit-safe mutation |
+| Owner needs to grant or revoke direct Creator Studio access without touching memberships or StudioFlow | [Creator Studio access review gate](#inc-2026-11-15-36--administration-center-creator-studio-access-review-gate) | Owner-only capability grant, protected entitlement sources, review-before-change |
 
 ## Incident and fix register
 
@@ -1361,6 +1362,26 @@ not permission and must never be interpreted as permission.
 **Lesson:** A protected mutation should always show the exact proposed action
 before it can be written, and editing any reviewed input must invalidate that
 confirmation.
+
+### INC-2026-11-15-36 — Administration Center Creator Studio access review gate
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15 21:12 EST**, during the next Administration Center workflow slice |
+| Fixed in source | **2026-11-15 21:20 EST**, commit `ee2e52dce7159f3af77318a8c27fb072e177bd0b` |
+| Product/surface | Protected Administration Center → Creators → Creator Studio Access |
+| Symptom | The integrated Creator Studio Access view was read-only, so the Owner had no safe way to manage a direct Creator capability grant while preserving membership-derived access. |
+| Root cause | The view exposed only the legacy Creator Studio entitlement ledger and had no explicit review boundary for direct capability changes. Generic entitlement helpers existed, but the Creator Studio surface did not bind them to an Owner-only workflow. |
+| Fix | Added a combined ledger view for legacy and direct administrative Creator grants; added exact-member lookup, visible review state, final confirmation, and Owner-only server routes for grant and revoke. Revoke refuses membership and legacy sources. Duplicate access is refused rather than creating a second grant. |
+| Safeguards | Server authority uses the existing effective-role resolver and capability ledger. Only `owner` may mutate. Founding Memberships, staff appointments, role-derived access, legacy entitlements, StudioFlow source, private media, and owner data remain outside the workflow. Every successful grant/revoke uses the existing audit path. |
+| Verification | Admin Center source contracts **92/92**; build passed; release-impact **15/15**; release-safety **37/37**; local authorization lifecycle **38/38**; isolated Firefox StudioFlow acceptance **65/65**; preflight certified the exact shared-API candidate in **22.9s**; production anonymous smoke **10/10**; live Owner Firefox review opened the final grant confirmation for @Backwoods_Signal and was canceled without mutation. |
+| Production status | **DEPLOYED AND LIVE** — release `rel-ee2e52dce715-5a8621bf7e9f`, Worker `e9306f06-8fe6-49d2-894c-e30bd2e21f7f`, 100% traffic; rollback `d56a2056-0f51-4636-b230-16e1b0f8f72b` |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-CREATOR-STUDIO-ACCESS-REVIEW-GATE.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-CREATOR-STUDIO-ACCESS-REVIEW-GATE.md), `admin-center-app/src/app.tsx`, `admin-center-app/src/lib/api.ts`, `functions/api/[[path]].js`, `lib/founding-memberships.js`, `scripts/qa/tpi-admin-006-preview.mjs` |
+
+**Lesson:** Access management should be reversible and explicit, but it must
+never flatten different authority sources into one editable record. Review the
+exact account and source, then mutate only the direct grant that the Owner
+intended.
 
 ## New-entry template
 
