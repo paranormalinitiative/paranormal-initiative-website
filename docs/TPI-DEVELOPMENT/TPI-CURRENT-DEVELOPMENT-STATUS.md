@@ -2,8 +2,7 @@
 
 ## 2026-11-16 — Community Feed composer shape repair
 
-Status: **IMPLEMENTATION VERIFIED LOCALLY; GUARDED PRODUCTION RELEASE IN
-PROGRESS.** The shared Community Feed composer had pill/circular presentation
+Status: **DEPLOYED AND LIVE VERIFIED.** The shared Community Feed composer had pill/circular presentation
 rules that made the mobile message box look like a single-line control and
 made Photo, Video, File, Link, and pending attachment previews hard to
 distinguish. The textarea now uses a normal rectangular box, composer controls
@@ -15,6 +14,11 @@ acceptance passed **57/57**, including direct computed-style checks at desktop
 and a 390px mobile viewport with no horizontal overflow. StudioFlow, Creator
 Studio, Nova Workspace, private media, and owner data were not modified. See
 [Community Feed Composer Shape Repair](300-COMPLETED-WORK/2026-11-16-COMMUNITY-FEED-COMPOSER-SHAPE-REPAIR.md).
+
+The certified release `rel-5cd6b06c78f3-9ee36bce394e` serves Worker
+`c1ff12bd-7830-4a3e-a479-3ee602efff39` at 100% traffic. Production smoke passed
+**10/10**, and the live authenticated mobile Firefox check passed with the
+deployed composer visible, 367px wide, and free of horizontal overflow.
 
 ## 2026-11-16 — Nova Education publication feed integration
 

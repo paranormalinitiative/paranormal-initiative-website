@@ -92,7 +92,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Fix | Changed the textarea to a normal 12px-corner box with explicit sizing and readable overflow; changed composer controls and link-entry controls to 8px corners; changed pending attachment previews to rectangular 148×88px cards with 12px corners; changed saved feed link chips to 10px corners. Avatars and remove badges remain circular intentionally. |
 | Safeguards | Added source-level checks for the shared geometry and Firefox computed-style acceptance at desktop and 390px mobile width. The mobile check also rejects horizontal overflow. The fix does not touch StudioFlow, Creator Studio, Nova Workspace, private media, or owner data. |
 | Verification | Member interaction contracts **34/34**; maintained local Firefox profile/feed acceptance **57/57**; desktop and mobile computed geometry checks passed; local staged asset refresh passed. |
-| Status | **Implementation verified locally; guarded production release in progress.** See [Community Feed Composer Shape Repair](300-COMPLETED-WORK/2026-11-16-COMMUNITY-FEED-COMPOSER-SHAPE-REPAIR.md). |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-5cd6b06c78f3-9ee36bce394e` serves Worker `c1ff12bd-7830-4a3e-a479-3ee602efff39` at 100% traffic; production smoke passed **10/10** and live mobile Firefox verification passed. See [Community Feed Composer Shape Repair](300-COMPLETED-WORK/2026-11-16-COMMUNITY-FEED-COMPOSER-SHAPE-REPAIR.md). |
 
 ### INC-2026-11-16-46 — Nova Education publication feed integration
 

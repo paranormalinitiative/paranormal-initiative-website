@@ -58,15 +58,22 @@ the Community Feed composer was used.
 | Desktop computed composer geometry | **PASS** — textarea 12px, controls 8px, previews 12px / 148×88px |
 | Mobile computed composer geometry | **PASS** — 390px viewport, no horizontal overflow |
 | Local staged asset refresh | **PASS** |
-| Guarded production preflight | Pending final release |
-| Production smoke and live browser acceptance | Pending final release |
+| Guarded production preflight | **PASS** — certified website candidate; full safety contract, staging, protected-byte, and release gates passed |
+| Production smoke | **10/10** |
+| Live production Firefox acceptance | **PASS** — authenticated disposable QA member at 390×844; visible composer, 367px textarea, 12px/8px/12px radii, no horizontal overflow |
 
 ## Release record
 
-The application release record will be completed after the exact certified
-candidate is promoted and live acceptance passes. The test-only source change
-is intentionally included in the same focused release so the protection is
-retained for future edits.
+The exact certified candidate was promoted and live acceptance passed. The
+source change and its regression protection are included together so future
+edits cannot silently remove the responsive shape contract.
+
+- Release: `rel-5cd6b06c78f3-9ee36bce394e`
+- Source commit: `5cd6b06c78f37b327cf02939716aa914c38aa849`
+- Production Worker version: `c1ff12bd-7830-4a3e-a479-3ee602efff39`
+- Rollback version: `617e1f7a-647c-4d45-9b1d-dbf828ed29e5`
+- Traffic: **100%** on the new Worker
+- Certification manifest digest: `742a6f9d0a7ccdc137cc3a40a605935849bb5202f9e0ee0198c295d0953c58c7`
 
 ## Files
 
