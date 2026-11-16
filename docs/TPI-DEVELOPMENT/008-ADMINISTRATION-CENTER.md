@@ -63,6 +63,29 @@ The completed 2026-11-15 role/action reconciliation is recorded in
 It is the quick reference for matching the Center’s proposed areas to the
 effective server-side role, route allowlist, and separate product capabilities.
 
+### Staff Directory & Capability Inspection
+
+The Administration Center now includes a read-only **Staff Directory &
+Capability Inspection** view. It is available only to the Owner, Executive, and
+Full Administrator effective roles. The view derives each staff member's
+effective role from the same server-side appointment and legacy-role resolver
+used by protected routes; it does not trust a client badge, title, or navigation
+item.
+
+For each recognized staff account, authorized viewers can inspect the effective
+role, base account role, office title, active state, capability set, allowed
+Administration Center areas, appointment metadata, and appointment/revocation
+history. The response is deliberately minimized: it does not expose passwords,
+tokens, private contact details, session material, or private member content.
+
+This view cannot appoint, revoke, promote, demote, suspend, or otherwise change
+authority. Staff-role mutation remains in the existing Staff Roles workflow and
+continues to require the applicable server-side authority and a reason. Legacy
+Administrator accounts are intentionally not granted this directory route;
+their existing bounded routes remain unchanged. The API is `GET
+/api/admin/staff-directory`, and the server returns 403 when the effective role
+is outside the inspection boundary.
+
 The first report-intake and triage workflow is now implemented for video,
 messenger, and member bug reports: authorized staff can filter the safe queue,
 open protected metadata detail, choose a supported review outcome, and record

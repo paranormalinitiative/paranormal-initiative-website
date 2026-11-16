@@ -400,6 +400,47 @@ export type AdminRoleSummary = {
   canMessage: number;
 };
 
+export type AdminStaffDirectoryEntry = {
+  id: string;
+  username: string;
+  displayName?: string;
+  title?: string;
+  accountRole: string;
+  effectiveRole: string;
+  roleLabel: string;
+  rank: number;
+  capabilities: string[];
+  areas: Array<{ key: string; label: string; allowed: boolean }>;
+  active: boolean;
+  source: string;
+  officeTitle?: string;
+  appointment?: { id: string; status: string; reason?: string; appointedAt?: string; changedAt?: string } | null;
+  createdAt: string;
+};
+
+export type AdminStaffHistory = {
+  id: string;
+  contributorId: string;
+  username: string;
+  displayName?: string;
+  roleCode: string;
+  officeTitle?: string;
+  status: string;
+  reason?: string;
+  appointedAt?: string;
+  changedAt?: string;
+  changeNote?: string;
+  changedBy?: string;
+};
+
+export type AdminStaffRoleDefinition = {
+  code: string;
+  label: string;
+  rank: number;
+  capabilities: string[];
+  areas: Array<{ key: string; label: string; allowed: boolean }>;
+};
+
 export type AdminRestriction = {
   username: string;
   displayName: string;

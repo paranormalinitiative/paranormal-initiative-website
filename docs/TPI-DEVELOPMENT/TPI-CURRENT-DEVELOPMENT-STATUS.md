@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center staff directory and capability inspection
+
+Status: **SOURCE COMPLETE; GUARDED RELEASE PENDING.** The Administration Center
+now has a read-only Staff Directory & Capability Inspection view for Owner,
+Executive, and Full Administrator effective roles. It shows the server-derived
+effective role, base account role, office title, capabilities, allowed Center
+areas, appointment metadata, and appointment/revocation history. The API uses
+the existing server-side appointment and legacy-role resolver and returns only
+minimized operational metadata; it does not expose private contact details,
+credentials, session material, or member content.
+
+No authority changes are available from this view. Legacy Administrator access
+to the new directory is intentionally denied while existing bounded
+Administrator routes remain unchanged. The source contract passed **88/88**, the
+Administration Center build passed, Worker syntax passed, and no migration or
+protected application source/data was changed. The exact guarded production
+release and live Firefox acceptance result will be recorded here after the
+release.
+
+See [Administration Center Staff Directory and Capability Inspection](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-STAFF-DIRECTORY-AND-CAPABILITY-INSPECTION.md).
+
 ## 2026-11-15 — Administration Center bounded enforcement and appeals
 
 Status: **DEPLOYED AND LIVE VERIFIED; PROTECTED APPLICATION BOUNDARY PRESERVED.** The

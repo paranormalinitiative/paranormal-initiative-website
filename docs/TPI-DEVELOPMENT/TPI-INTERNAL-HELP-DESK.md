@@ -84,6 +84,10 @@ scannable without putting every procedure in one long menu.
 
 - Block or restore a member account
 - Understand staff roles and appointments
+- Use **Staff Directory & Capability Inspection** to review a staff member's
+  effective role, allowed Administration Center areas, capability boundaries,
+  and appointment/revocation history; this view is read-only and cannot change
+  permissions
 - Handle member records and private contact data
 - Keep account blocking separate from content moderation and member-to-member
   blocking

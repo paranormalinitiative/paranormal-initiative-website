@@ -43,7 +43,7 @@ import {
   listLeadershipProfiles,
 } from "../../lib/leadership-distinctions.js";
 import { BOARD_DOMAIN_CATALOG, BOARD_MEMBER_BADGE, BOARD_ROLE_CATALOG, boardRolePayload, getBoardMembership, listBoardMembers } from "../../lib/board-members.js";
-import { activeStaffAppointment, effectiveStaffRole, hasAdministrationCenterRole, mayUseAdminRoute, publicStaffIdentity, validOfficeTitle } from "../../lib/staff-roles.js";
+import { STAFF_ROLE_CATALOG, activeStaffAppointment, effectiveStaffRole, hasAdministrationCenterRole, mayUseAdminRoute, publicStaffIdentity, validOfficeTitle } from "../../lib/staff-roles.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -80,6 +80,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/admin/staff-roles") return requireExecutive(request, env, user => handleAdminStaffRoles(request, env, user));
     if (request.method === "POST" && path === "/admin/staff-roles") return requireExecutive(request, env, user => handleAdminSetStaffRole(request, env, user));
+    if (request.method === "GET" && path === "/admin/staff-directory") return requireAdmin(request, env, user => handleAdminStaffDirectory(request, env, user));
     if (request.method === "GET" && path === "/moderation/queue") return requireModeration(request, env, user => handleModerationQueue(request, env, user));
     if (request.method === "POST" && path.match(/^\/moderation\/(posts|comments)\/[^/]+\/status$/)) return requireModeration(request, env, user => handleModerationStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/overview") return requireAdmin(request, env, user => handleAdminOverview(request, env, user));
@@ -2510,6 +2511,135 @@ async function handleAdminStaffRoles(request, env, actingUser) {
     LIMIT 300
   `).all();
   return json({ appointments: results || [], canAssignExecutive: actingUser.role === "owner", metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+}
+
+const STAFF_DIRECTORY_AREAS = Object.freeze([
+  ["overview", "Command Center", "/admin/overview"],
+  ["analytics", "Analytics", "/admin/analytics"],
+  ["activity", "Activity and audit logs", "/admin/audit-logs"],
+  ["members", "Member Directory", "/admin/members"],
+  ["roles", "Roles and permissions", "/admin/roles"],
+  ["community", "Community moderation", "/admin/community/posts"],
+  ["reports", "Reports and moderation", "/admin/reports"],
+  ["enforcement", "Enforcement and appeals", "/admin/moderation-actions"],
+  ["staff", "Staff appointments", "/admin/staff-roles"],
+  ["founding", "Founding memberships", "/admin/founding-memberships"],
+  ["creatorStudio", "Creator Studio access", "/admin/creator-studio/entitlements"],
+  ["leadership", "Leadership distinctions", "/admin/leadership/distinctions"],
+  ["board", "Board members", "/admin/board-members"],
+  ["contributors", "Contributor management", "/admin/contributors"],
+  ["editorial", "Editorial review", "/admin/articles"],
+  ["teams", "Paranormal Teams", "/admin/teams"],
+  ["comments", "Article comments", "/admin/comments"],
+  ["events", "Events", "/admin/events"],
+  ["notifications", "Notifications", "/admin/notifications"],
+  ["health", "Platform health", "/admin/scraper-runs"],
+  ["settings", "System settings", "/admin/settings"],
+]);
+
+function staffDirectoryRole(roleCode) {
+  const catalog = STAFF_ROLE_CATALOG[roleCode] || STAFF_ROLE_CATALOG.member;
+  return {
+    code: roleCode,
+    label: catalog.label,
+    rank: catalog.rank,
+    capabilities: catalog.capabilities,
+    areas: STAFF_DIRECTORY_AREAS.map(([key, label, route]) => ({ key, label, allowed: mayUseAdminRoute(roleCode, route, "GET") }))
+  };
+}
+
+async function handleAdminStaffDirectory(request, env) {
+  const url = new URL(request.url);
+  const search = clean(url.searchParams.get("search")).slice(0, 120);
+  const pattern = `%${search}%`;
+  const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10) || 1);
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const offset = (page - 1) * pageSize;
+  const searchClause = search ? "AND (c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR a.role_code LIKE ?)" : "";
+  const searchBinds = search ? [pattern, pattern, pattern, pattern] : [];
+  const count = await env.TPI_DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM contributors c
+    LEFT JOIN staff_role_appointments a ON a.contributor_id = c.id AND a.status = 'active'
+    WHERE (c.role = 'owner' OR c.role = 'admin' OR a.id IS NOT NULL) ${searchClause}
+  `).bind(...searchBinds).first();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.username, c.display_name AS displayName, c.title,
+           c.role AS accountRole, c.active AS accountActive, c.created_at AS createdAt,
+           a.id AS appointmentId, a.role_code AS appointmentRole,
+           a.office_title AS officeTitle, a.status AS appointmentStatus,
+           a.reason AS appointmentReason, a.appointed_at AS appointedAt,
+           a.changed_at AS appointmentChangedAt
+    FROM contributors c
+    LEFT JOIN staff_role_appointments a ON a.contributor_id = c.id AND a.status = 'active'
+    WHERE (c.role = 'owner' OR c.role = 'admin' OR a.id IS NOT NULL) ${searchClause}
+    ORDER BY CASE WHEN c.role = 'owner' THEN 0 ELSE 1 END,
+             CASE a.role_code WHEN 'executive' THEN 0 WHEN 'full_administrator' THEN 1 WHEN 'administrator' THEN 2 WHEN 'moderator' THEN 3 ELSE 4 END,
+             c.display_name COLLATE NOCASE
+    LIMIT ? OFFSET ?
+  `).bind(...searchBinds, pageSize, offset).all();
+  const historyQuery = search
+    ? env.TPI_DB.prepare(`
+        SELECT a.id, a.contributor_id AS contributorId, target.username,
+               target.display_name AS displayName, a.role_code AS roleCode,
+               a.office_title AS officeTitle, a.status, a.reason,
+               a.appointed_at AS appointedAt, a.changed_at AS changedAt,
+               a.change_note AS changeNote, actor.username AS changedBy
+        FROM staff_role_appointments a
+        JOIN contributors target ON target.id = a.contributor_id
+        LEFT JOIN contributors actor ON actor.id = COALESCE(a.changed_by, a.appointed_by)
+        WHERE target.username LIKE ? OR target.display_name LIKE ? OR a.role_code LIKE ?
+        ORDER BY a.appointed_at DESC LIMIT 300
+      `).bind(pattern, pattern, pattern)
+    : env.TPI_DB.prepare(`
+        SELECT a.id, a.contributor_id AS contributorId, target.username,
+               target.display_name AS displayName, a.role_code AS roleCode,
+               a.office_title AS officeTitle, a.status, a.reason,
+               a.appointed_at AS appointedAt, a.changed_at AS changedAt,
+               a.change_note AS changeNote, actor.username AS changedBy
+        FROM staff_role_appointments a
+        JOIN contributors target ON target.id = a.contributor_id
+        LEFT JOIN contributors actor ON actor.id = COALESCE(a.changed_by, a.appointed_by)
+        ORDER BY a.appointed_at DESC LIMIT 300
+      `);
+  const { results: history } = await historyQuery.all();
+  const staff = (results || []).map(row => {
+    const effectiveRole = row.accountRole === "owner" ? "owner" : row.appointmentRole || (row.accountRole === "admin" ? "administrator" : "member");
+    const definition = staffDirectoryRole(effectiveRole);
+    return {
+      id: row.id,
+      username: row.username,
+      displayName: row.displayName,
+      title: row.title || "",
+      accountRole: row.accountRole,
+      effectiveRole,
+      roleLabel: definition.label,
+      rank: definition.rank,
+      capabilities: definition.capabilities,
+      areas: definition.areas,
+      active: row.accountActive !== 0,
+      source: row.accountRole === "owner" || (!row.appointmentId && row.accountRole === "admin") ? "legacy account role" : "active appointment",
+      officeTitle: row.officeTitle || "",
+      appointment: row.appointmentId ? {
+        id: row.appointmentId,
+        status: row.appointmentStatus,
+        reason: row.appointmentReason || "",
+        appointedAt: row.appointedAt,
+        changedAt: row.appointmentChangedAt
+      } : null,
+      createdAt: row.createdAt
+    };
+  });
+  const roleDefinitions = Object.keys(STAFF_ROLE_CATALOG).map(staffDirectoryRole);
+  return json({
+    staff,
+    history: history || [],
+    roleDefinitions,
+    metadataOnly: true,
+    mutationBoundary: "Read-only capability inspection. Staff appointments, revocations, account state, and member capabilities are not changed here.",
+    search,
+    pagination: { page, pageSize, returned: staff.length, total: Number(count?.total || 0), totalPages: Math.ceil(Number(count?.total || 0) / pageSize) }
+  }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleAdminSetStaffRole(request, env, actingUser) {

@@ -62,6 +62,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Staff need a single policy source and complete repair-record format | [Internal Help Desk and policy foundation](#inc-2026-11-15-29--internal-help-desk-and-policy-foundation) | Internal Help Desk, policy reference, Bug / Repair record, protected application boundary |
 | An appointed staff member can open the Admin Center but sees the wrong limited interface | [Administration Center role matrix](#inc-2026-11-15-30--administration-center-role-probe-mismatch) | Effective staff appointment, legacy role mapping, Admin Center access probe |
 | A member bug report appears in the queue but cannot be opened or documented with a triage decision | [Administration Center report triage](#inc-2026-11-15-31--administration-center-report-triage-contract) | Bug-report route coverage, required triage note, metadata-only evidence, audit history |
+| Authorized staff need to see who can access which Administration Center areas | [Staff directory and capability inspection](#inc-2026-11-15-33--administration-center-staff-directory-and-capability-inspection) | Effective server role, capability boundaries, appointment history, read-only staff metadata |
 
 ## Incident and fix register
 
@@ -1301,6 +1302,25 @@ server, and private evidence stays outside the administrative response.
 **Lesson:** Moderation needs a separate, bounded enforcement record with an
 appeal path; report triage must not silently become a permanent ban, staff
 suspension, content deletion, or private-message inspection tool.
+
+### INC-2026-11-15-33 — Administration Center staff directory and capability inspection
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15**, during the next Administration Center roadmap slice |
+| Fixed in source | **2026-11-15**, source complete; guarded production release pending |
+| Product/surface | Protected Administration Center Staff Directory & Capability Inspection |
+| Environment | Source and isolated local verification; no production data changed |
+| Symptom | Authorized staff had no single read-only view showing recognized staff, effective roles, allowed Center areas, capabilities, or appointment/revocation history. |
+| Root cause | Role management and individual capability probes existed separately, so authority had to be inferred from labels or inspected across multiple screens. |
+| Fix | Added the server-authorized `GET /api/admin/staff-directory` route and a read-only Staff Directory view. It derives effective roles from the maintained appointment/legacy resolver, maps allowed areas through the server route allowlist, and returns minimized appointment history. |
+| Safeguards | Owner, Executive, and Full Administrator only; legacy Administrator is denied the new directory route; no authority mutations, private contact data, credentials, tokens, session material, or member content are exposed. |
+| Verification | Admin Center source contract **88/88**; Administration Center build passed; Worker syntax passed; local policy check confirmed the intended role boundary; no migration was added or applied. |
+| Production status | Guarded release and live Owner Firefox acceptance pending |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-STAFF-DIRECTORY-AND-CAPABILITY-INSPECTION.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-STAFF-DIRECTORY-AND-CAPABILITY-INSPECTION.md), `functions/api/[[path]].js`, `admin-center-app/src/app.tsx`, `lib/staff-roles.js`, `scripts/qa/tpi-admin-006-preview.mjs` |
+
+**Lesson:** Staff access must be inspectable from the same effective server-side
+role resolver that enforces it, while inspection remains strictly read-only.
 
 ## New-entry template
 
