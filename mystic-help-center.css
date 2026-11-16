@@ -1,4 +1,4 @@
-.hc-mystic { position: fixed; right: 24px; bottom: 24px; z-index: 180; font-family: inherit; }
+.hc-mystic { position: fixed; right: 24px; bottom: 82px; z-index: 180; font-family: inherit; }
 .hc-mystic-launcher { display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 10px 16px 10px 11px; color: #f7fbff; background: linear-gradient(135deg, #253a72, #58358f); border: 1px solid rgba(141, 189, 255, .42); border-radius: 999px; box-shadow: var(--shadow-xl), 0 0 24px rgba(86, 117, 255, .24); font: inherit; font-size: 12px; font-weight: 850; cursor: pointer; }
 .hc-mystic-launcher small, .hc-nova-launcher small { font-size: 9px; font-weight: 800; opacity: .82; }
 .hc-mystic-launcher:hover { filter: brightness(1.08); transform: translateY(-1px); }
@@ -41,4 +41,4 @@
 .hc-mystic-alternate a:hover { text-decoration: underline; }
 @keyframes mystic-pulse { 0%, 100% { box-shadow: 0 0 12px rgba(73, 225, 255, .4); transform: scale(1); } 50% { box-shadow: 0 0 23px rgba(73, 225, 255, .8); transform: scale(1.045); } }
 @media (prefers-reduced-motion: reduce) { .hc-mystic-spark, .hc-mystic-avatar { animation: none; } }
-@media (max-width: 720px) { .hc-mystic { right: 16px; bottom: 16px; } .hc-mystic-panel { bottom: 57px; max-height: calc(100vh - 92px); } }
+@media (max-width: 720px) { .hc-mystic { right: 16px; bottom: 72px; } .hc-mystic-panel { bottom: 57px; max-height: calc(100vh - 92px); } }

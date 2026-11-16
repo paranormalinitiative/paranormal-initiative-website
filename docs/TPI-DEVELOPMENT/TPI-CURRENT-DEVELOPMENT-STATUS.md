@@ -1,5 +1,13 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Assistant launcher order and Nova artwork
+
+Status: **IMPLEMENTED; guarded release pending.** Mystic is now positioned
+above Nova in the sitewide assistant controls. Nova uses the owner-supplied
+Help Center artwork in its launcher, panel avatar, and Help Center assistant
+card. Public/internal knowledge boundaries are unchanged. See [Assistant
+Launcher Order and Nova Artwork](300-COMPLETED-WORK/2026-11-16-ASSISTANT-LAUNCHER-ORDER-AND-NOVA-ARTWORK.md).
+
 ## 2026-11-16 — Mystic and Nova identity separation and sitewide coverage
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Mystic is

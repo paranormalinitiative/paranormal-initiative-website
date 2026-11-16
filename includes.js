@@ -375,12 +375,12 @@
     const internal = isInternalAssistantSurface();
     if (internal) document.body.dataset.tpiAssistantAudience = "internal";
 
-    ensureAssistantStylesheet("nova-help-center.css", 2, "tpi-global-nova-css");
+    ensureAssistantStylesheet("nova-help-center.css", 3, "tpi-global-nova-css");
     await loadAssistantScript("help-center-data.js", 4, "tpi-help-center-data", "TPI_HELP_CENTER");
 
     if (internal) {
       await loadAssistantScript("internal-help-center-data.js", 4, "tpi-internal-help-center-data", "TPI_INTERNAL_HELP_CENTER");
-      await loadAssistantScript("nova-help-center.js", 2, "tpi-nova-assistant", "TPINovaHelpCenter");
+      await loadAssistantScript("nova-help-center.js", 3, "tpi-nova-assistant", "TPINovaHelpCenter");
       if (window.TPINovaHelpCenter) window.TPINovaHelpCenter.mount();
       return;
     }
@@ -388,7 +388,7 @@
     ensureAssistantStylesheet("mystic-help-center.css", 2, "tpi-global-mystic-css");
     await loadAssistantScript("mystic-public-knowledge.js", 2, "tpi-mystic-public-knowledge", "TPI_MYSTIC_PUBLIC_KNOWLEDGE");
     await loadAssistantScript("mystic-help-center.js", 6, "tpi-mystic-assistant", "TPIMysticHelpCenter");
-    await loadAssistantScript("nova-help-center.js", 2, "tpi-nova-assistant", "TPINovaHelpCenter");
+    await loadAssistantScript("nova-help-center.js", 3, "tpi-nova-assistant", "TPINovaHelpCenter");
     if (window.TPIMysticHelpCenter) window.TPIMysticHelpCenter.mount();
     if (window.TPINovaHelpCenter) window.TPINovaHelpCenter.mount();
   }

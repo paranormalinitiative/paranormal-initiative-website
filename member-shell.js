@@ -413,7 +413,7 @@
     if (!css) {
       css = document.createElement("link");
       css.rel = "stylesheet";
-      css.href = "nova-help-center.css?v=2";
+      css.href = "nova-help-center.css?v=3";
       css.setAttribute("data-tpi-nova-css", "1");
       document.head.appendChild(css);
     }
@@ -434,7 +434,7 @@
       });
     }
     return loadScript('script[data-tpi-help-center-data]', "help-center-data.js?v=4", "data-tpi-help-center-data", "TPI_HELP_CENTER")
-      .then(function() { return loadScript('script[data-tpi-nova-assistant]', "nova-help-center.js?v=2", "data-tpi-nova-assistant", "TPINovaHelpCenter"); })
+      .then(function() { return loadScript('script[data-tpi-nova-assistant]', "nova-help-center.js?v=3", "data-tpi-nova-assistant", "TPINovaHelpCenter"); })
       .then(function() { if (window.TPINovaHelpCenter) window.TPINovaHelpCenter.mount(); });
   }
 

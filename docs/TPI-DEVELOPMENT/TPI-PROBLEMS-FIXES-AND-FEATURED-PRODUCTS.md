@@ -58,6 +58,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
 | Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
 | A member cannot tell whether to ask Mystic or Nova, or Nova is missing from a site page | [Mystic and Nova identity separation](#inc-2026-11-16-42--mystic-and-nova-identity-separation-and-sitewide-coverage) | Assistant identity copy, shared site loader, public/internal knowledge boundary |
+| Mystic and Nova appear in the wrong launcher order, or Nova has the wrong icon | [Assistant launcher order and Nova artwork](#inc-2026-11-16-43--assistant-launcher-order-and-nova-artwork) | Shared assistant positioning, Nova artwork, cache version |
 | An Administration Center release deploys, then rolls back during an unrelated StudioFlow live gate | [Administration Center command center and release-gate finding](#inc-2026-11-15-25--administration-center-command-center-and-release-gate-finding) | Full release certification, live Firefox acceptance, protected application boundary |
 | A small Administration Center change starts the full StudioFlow release suite | [Administration Center impact-aware release guard](#inc-2026-11-15-26--administration-center-impact-aware-release-guard) | Release-impact classifier, admin-only verification, protected application byte guard |
 | The Administration Center candidate is ready after the unrelated StudioFlow rollback | [Administration Center guarded promotion](#inc-2026-11-15-27--administration-center-guarded-promotion) | Certified candidate reuse, anonymous smoke, protected admin routes, owner acceptance |
@@ -87,6 +88,17 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Safeguards | Public pages load only public Help Center and Mystic knowledge. Internal pages load protected Help Desk data and Nova only. Internal retrieval remains server-authorized and fail-closed. Stable applications and owner data were not modified. |
 | Verification | JavaScript syntax, Help Center separation **31/31**, assistant identity/source contracts, public/internal loader checks, Admin Center build, full guarded preflight, production smoke **10/10**, and focused Firefox profile/feed acceptance **55/55**. |
 | Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-9bbfd62591d3-5da81729f15f` is serving Worker `797a0c7f-91bd-4bb1-b195-582750d85b41` at 100% traffic. See [Mystic and Nova identity separation](300-COMPLETED-WORK/2026-11-16-MYSTIC-NOVA-IDENTITY-AND-SITEWIDE-COVERAGE.md). |
+
+### INC-2026-11-16-43 — Assistant launcher order and Nova artwork
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 15:14 EST** |
+| What happened | The owner wanted Mystic visually above Nova and supplied a dedicated Nova Help Center icon so members could distinguish the two assistants at a glance. |
+| Fix | Moved Mystic to the upper sitewide launcher position, moved Nova to the lower position, added the supplied artwork as `assets/nova-help-center.png`, and used it in Nova's launcher, panel avatar, and Help Center assistant card. |
+| Safeguards | Cache versions advanced to `v3`; public/internal retrieval boundaries, staff authorization, Mystic's public-only sources, and protected applications remain unchanged. |
+| Verification | JavaScript syntax, Help Center separation, order/icon source contracts, guarded preflight, production smoke, and live production probe. |
+| Status | **Implemented; guarded release pending.** See [Assistant Launcher Order and Nova Artwork](300-COMPLETED-WORK/2026-11-16-ASSISTANT-LAUNCHER-ORDER-AND-NOVA-ARTWORK.md). |
 
 ### INC-2026-11-16-03 — Member registration request failed
 

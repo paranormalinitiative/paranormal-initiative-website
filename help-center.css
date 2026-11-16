@@ -93,6 +93,7 @@ body.help-center-page {
 .hc-assistant-avatar { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; border-radius: 13px; font-size: 18px; font-weight: 900; }
 .hc-assistant-avatar-mystic { color: #f7fbff; background: linear-gradient(135deg, #253a72, #58358f); border: 1px solid rgba(141, 189, 255, .5); box-shadow: 0 0 20px rgba(86, 117, 255, .26); }
 .hc-assistant-avatar-nova { color: #07121c; background: linear-gradient(135deg, #7cefff, #55b8ec); box-shadow: 0 0 20px rgba(73, 225, 255, .24); }
+.hc-assistant-avatar img { width: 100%; height: 100%; display: block; object-fit: cover; border-radius: inherit; }
 .hc-assistant-label { display: block; margin-bottom: 4px; color: var(--text-tertiary); font-size: 9px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
 .hc-assistant-card h3 { margin: 0; color: var(--text-primary); font-size: 18px; }
 .hc-assistant-card p { margin: 18px 0; color: var(--text-secondary); font-size: 12.5px; line-height: 1.55; }
