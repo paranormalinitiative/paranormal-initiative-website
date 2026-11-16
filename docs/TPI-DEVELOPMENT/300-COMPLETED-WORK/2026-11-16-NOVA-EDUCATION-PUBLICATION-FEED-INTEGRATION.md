@@ -52,8 +52,10 @@ and link to the published Education Center page. Existing explicit
 | JavaScript syntax checks | **PASS** |
 | Local member/profile/feed acceptance | **47/47** |
 | Disposable local port-8787 publication → public feed check | **PASS** |
-| Production guarded release | **Pending at initial record** |
-| Production live acceptance | **Pending at initial record** |
+| Guarded production preflight | **40/40 gates; Tier 1 full/shared-API profile** |
+| Production anonymous smoke | **10/10** |
+| Live isolated Firefox Developer Edition acceptance | **65/65** |
+| Live public feed/page probe | **PASS** — 36 feed items, including 23 article cards; Member Home requests the complete feed |
 
 ## Files
 
@@ -67,6 +69,17 @@ and link to the published Education Center page. Existing explicit
 
 ## Release record
 
-This record is updated with the exact certified release, Worker version,
-rollback version, production smoke result, and live browser acceptance after
-the guarded deployment completes.
+The exact certified candidate was deployed without recertification because the
+candidate bytes remained sealed and unchanged:
+
+- Release: `rel-6d82f7e349f7-7eb0976ad7d9`
+- Source commit: `6d82f7e349f7e80bc86c73c1d23cd3bc9ed5adf9`
+- Production Worker version: `617e1f7a-647c-4d45-9b1d-dbf828ed29e5`
+- Rollback version: `e72e8de9-ddbe-4c52-af28-d50d34c51019`
+- Traffic: **100%** on the new Worker
+- Certified deployable bytes: **799 assets + 25 Worker source files + 1 configuration**
+- Certification manifest digest: `74fe7a1e0d182a99a7f51d84c62134df1e0d44c4db183f206479a0317f4ced41`
+
+The release changed only the shared feed projection/client loading and its
+verification/documentation. StudioFlow, Creator Studio, Nova storage, private
+media, and owner data were not modified.

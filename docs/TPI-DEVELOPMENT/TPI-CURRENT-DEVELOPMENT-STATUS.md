@@ -2,7 +2,7 @@
 
 ## 2026-11-16 — Nova Education publication feed integration
 
-Status: **SOURCE REPAIRED; GUARDED PRODUCTION RELEASE IN PROGRESS.** Nova
+Status: **DEPLOYED AND LIVE VERIFIED.** Nova
 already published the authoritative Education Center article, and the backend
 already had a safe article-card projection. Member Home was requesting the
 discussion-only feed scope, so members did not see a newly published article
@@ -18,9 +18,15 @@ preserved, and no duplicate Community Feed post is created.
 The Nova publication verifier passed **66/66**, member interaction contracts
 passed **33/33**, local member/profile/feed acceptance passed **47/47**, syntax
 and diff checks passed, and a disposable publication-to-feed check passed on
-the maintained port-8787 Worker. StudioFlow, Creator Studio, Nova storage,
-private media, and owner data were not modified. See [Nova Education Publication
-Feed Integration](300-COMPLETED-WORK/2026-11-16-NOVA-EDUCATION-PUBLICATION-FEED-INTEGRATION.md).
+the maintained port-8787 Worker. Guarded preflight passed **40/40**, production
+smoke passed **10/10**, live isolated Firefox acceptance passed **65/65**, and
+the final read-only production probe found 36 feed items, including 23 article
+cards, with Member Home requesting the complete feed. Release
+`rel-6d82f7e349f7-7eb0976ad7d9` serves Worker
+`617e1f7a-647c-4d45-9b1d-dbf828ed29e5` at 100% traffic; rollback is
+`e72e8de9-ddbe-4c52-af28-d50d34c51019`. StudioFlow, Creator Studio, Nova
+storage, private media, and owner data were not modified. See [Nova Education
+Publication Feed Integration](300-COMPLETED-WORK/2026-11-16-NOVA-EDUCATION-PUBLICATION-FEED-INTEGRATION.md).
 
 ## 2026-11-16 — Messenger profile targeting and direct New Chat repair
 
