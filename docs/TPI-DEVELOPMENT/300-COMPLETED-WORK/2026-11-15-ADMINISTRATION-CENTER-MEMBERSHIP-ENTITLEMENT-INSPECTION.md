@@ -3,7 +3,7 @@
 **Date:** 2026-11-15  
 **Time zone:** America/New_York  
 **Audience:** Owner, Executive, and Full Administrator effective roles  
-**Status:** Source complete; guarded production release pending
+**Status:** Deployed and live Owner-verified
 
 ## What was needed
 
@@ -51,8 +51,13 @@ the Unknown, D1 production data, and R2 data were not changed by this work.
   application directories were not included.
 - Local authentication lifecycle: **38/38**.
 - No production migration was required.
-- Guarded deployment and live Owner/Founder/CEO acceptance remain pending at
-  the time this record was created.
+- Guarded preflight certified the exact candidate with **38 gates** in
+  **6m42s**.
+- Production anonymous smoke passed **10/10**.
+- Live isolated Firefox Developer Edition acceptance passed **65/65**.
+- Live Owner/Founder/CEO acceptance confirmed the Membership & Entitlements
+  navigation item, 10 live account records, and Todd Wayne's Owner record with
+  Creator Studio access and read-only inspection details.
 
 ## Safeguard
 
@@ -63,10 +68,15 @@ source contract rejects accidental POST-based mutation wiring. Future mutation
 controls must remain separate, reasoned, confirmed, audited, and server
 authorized.
 
-## Next step
+## Production release
 
-Run the maintained release preflight, deploy only the certified candidate,
-complete anonymous production smoke, and perform live Owner/Founder/CEO
-Firefox acceptance of the new view. After that, the next Administration Center
-slice is controlled mutation design, beginning with the smallest owner-confirmed
-workflow rather than adding broad “do everything” controls.
+- Release: `rel-1bd4528c0d1e-6432f3fdd589`
+- Source commit: `1bd4528c0d1e1e28c9e09a7ee667fc478dc3ff88`
+- Worker version: `60e536c8-b2a5-412a-b704-2b9fa4885a4`
+- Rollback version: `eadb134b-08f1-473b-af09-2189e3314c1a`
+- Deployed at: **2026-11-15 20:50 EST**
+- Worker traffic: **100%** on the new version
+
+The next Administration Center slice is controlled mutation design, beginning
+with the smallest owner-confirmed workflow rather than adding broad “do
+everything” controls.

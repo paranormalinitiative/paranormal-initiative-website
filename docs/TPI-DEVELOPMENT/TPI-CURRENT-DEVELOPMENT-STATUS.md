@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center Membership & Entitlement Inspection
 
-Status: **SOURCE COMPLETE; GUARDED PRODUCTION RELEASE PENDING.** The
+Status: **DEPLOYED AND LIVE OWNER-VERIFIED.** The
 Administration Center now has a read-only Membership & Entitlements view for
 Owner, Executive, and Full Administrator effective roles. It combines the
 server-derived effective staff role, account state, community capability flags,
@@ -19,8 +19,16 @@ data were not changed.
 
 Administration Center source contracts passed **90/90**, the production build
 passed, local assets refreshed in place, and the maintained local
-authentication lifecycle passed **38/38**. Guarded production release and
-live Owner/Founder/CEO Firefox acceptance are the next gates.
+authentication lifecycle passed **38/38**. The exact certified candidate
+passed **38** guarded gates in **6m42s**, production anonymous smoke passed
+**10/10**, and live isolated Firefox acceptance passed **65/65**. Live
+Owner/Founder/CEO acceptance confirmed the navigation item and read-only
+inspection of Todd Wayne's Owner record.
+
+Release `rel-1bd4528c0d1e-6432f3fdd589` deployed Worker
+`60e536c8-b2a5-412a-b704-2b9fa4885a4` to 100% traffic. The exact rollback
+Worker is `eadb134b-08f1-473b-af09-2189e3314c1a`. No production migration or
+protected application change was required.
 
 See [Administration Center Membership & Entitlement Inspection](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-MEMBERSHIP-ENTITLEMENT-INSPECTION.md).
 

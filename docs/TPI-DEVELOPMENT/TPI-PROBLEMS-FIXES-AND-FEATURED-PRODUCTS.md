@@ -1328,14 +1328,14 @@ role resolver that enforces it, while inspection remains strictly read-only.
 | Field | Record |
 | --- | --- |
 | Detected | **2026-11-15 20:38 EST**, during the next Administration Center roadmap slice |
-| Fixed in source | **2026-11-15**, source commit pending guarded release |
+| Fixed in source | **2026-11-15**, commit `1bd4528c0d1e1e28c9e09a7ee667fc478dc3ff88` |
 | Product/surface | Protected Administration Center Membership & Entitlements view |
 | Symptom | Member Directory, Roles & Permissions, Founding Memberships, Creator Studio, Staff Directory, and Account Restrictions each showed only part of a member's access. Staff had no single safe answer for what the account could actually use or which server-authorized source explained it. |
 | Root cause | Access information was distributed across separate contracts. Client labels and legacy roles could not safely represent the effective union of account flags, staff appointments, membership entitlements, Creator Studio records, editorial grants, and active restrictions. |
 | Fix | Added `GET /api/admin/membership-entitlements` and a read-only Administration Center view with bounded search, pagination, summary counts, effective-role resolution, capability-source inspection, Founding Membership identity, Creator Studio access, and active restriction metadata. |
 | Safeguards | Owner, Executive, and Full Administrator only; legacy Administrator denied; server-derived access; metadata-only response; optional missing schemas fail closed; no mutation controls; credentials, sessions, private contact data, private messages, and private evidence excluded; protected applications untouched. |
-| Verification | Administration Center source contracts **90/90**; Admin Center build passed; `git diff --check` passed; local assets refreshed in place; local authentication lifecycle **38/38**; guarded production release and live Firefox acceptance pending at record creation. |
-| Production status | **Pending guarded release** |
+| Verification | Administration Center source contracts **90/90**; Admin Center build passed; `git diff --check` passed; local assets refreshed in place; local authentication lifecycle **38/38**; exact guarded candidate certified **38 gates in 6m42s**; production anonymous smoke **10/10**; live isolated Firefox acceptance **65/65**; live Owner/Founder/CEO inspection confirmed Todd Wayne as Owner with Creator Studio access and a read-only boundary. |
+| Production status | **DEPLOYED AND LIVE** — release `rel-1bd4528c0d1e-6432f3fdd589`, Worker `60e536c8-b2a5-412a-b704-2b9fa4885a4`, 100% traffic; rollback `eadb134b-08f1-473b-af09-2189e3314c1a` |
 | References | [`2026-11-15-ADMINISTRATION-CENTER-MEMBERSHIP-ENTITLEMENT-INSPECTION.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-MEMBERSHIP-ENTITLEMENT-INSPECTION.md), `functions/api/[[path]].js`, `admin-center-app/src/app.tsx`, `admin-center-app/src/lib/api.ts`, `lib/staff-roles.js`, `scripts/qa/tpi-admin-006-preview.mjs` |
 
 **Lesson:** Administration needs one server-derived access inspection surface,
