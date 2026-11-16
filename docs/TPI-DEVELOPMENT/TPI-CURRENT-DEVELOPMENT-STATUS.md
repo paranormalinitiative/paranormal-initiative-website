@@ -356,6 +356,20 @@ verified in Firefox Developer Edition: the Command Center and read-only
 Administration Center navigation loaded from the live Worker. No StudioFlow
 source or data was changed.
 
+## 2026-11-15 — Nova public Help Center and protected Help Desk assistant
+
+Status: **IMPLEMENTED, INDEXED, AND READY FOR GUARDED RELEASE.** Nova is now
+the TPI Everything Assistant with two explicit audiences: a public member mode
+grounded in the Member Help Center and public TPI knowledge, and a protected
+internal mode grounded in the Help Desk, policies, Administration Center
+procedures, release records, and approved application documentation. Mystic
+remains the separate public paranormal assistant. The public surface never
+loads internal Help Desk data, while the internal `/api/nova/ask` route requires
+an active authorized staff role and uses the separate `tpi-nova-internal`
+Cloudflare AI Search instance backed by private R2. Curated local answers remain
+available if model retrieval is unavailable. See [Nova TPI Everything Assistant](300-COMPLETED-WORK/2026-11-15-NOVA-TPI-EVERYTHING-ASSISTANT.md)
+and [Public/Internal Assistant Audit](200-AUDITS/2026-11-15-TPI-PUBLIC-AND-INTERNAL-ASSISTANT-AUDIT.md).
+
 ## 2026-11-15 — Mystic public AI Search and site-wide knowledge audit
 
 Status: **DEPLOYED, CRAWLED, AUDITED, AND LIVE VERIFIED** — release

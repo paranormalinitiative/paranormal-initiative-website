@@ -180,15 +180,17 @@ Use precise language such as **deployed and live verified**, **local only**,
 **blocked**, or **not yet implemented**. “Fixed” alone is not an adequate
 operational record.
 
-## 10. Documentation and future assistants
+## 10. Documentation and assistants
 
 - Public Member Help Center content is safe for members and for Mystic’s public
   knowledge boundary.
 - Internal Help Desk and policy content is protected and must not be loaded by
   the public Mystic assistant.
-- NOVA is a future internal assistant boundary. It must not be connected to
-  internal sources until this policy set, the Help Desk inventory, and the
-  authenticated retrieval boundary are complete and tested.
+- NOVA is the protected internal TPI Everything Assistant. It may retrieve only
+  from the approved private Help Desk and policy sources after the server-side
+  staff boundary has granted access. It explains documented procedures but
+  cannot grant access, change roles, ban members, delete data, inspect private
+  messages, deploy releases, or bypass an authorization boundary.
 - Every policy change updates its date, the relevant Help Desk article, and the
   bug/repair or completion record when behavior changed.
 

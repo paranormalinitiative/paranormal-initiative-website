@@ -69,8 +69,33 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Owner needs a safe overview of creator channels and their published-video counts | [Creator Channels verification](#inc-2026-11-15-37--administration-center-creator-channels-verification) | Channel directory, search/filter/pagination, metadata-only boundary |
 | Owner needs to know whether the reactive and legacy Administration Centers agree | [Administration Center parity and permissions audit](#inc-2026-11-15-38--administration-center-parity-and-permissions-audit) | Navigation inventory, server role matrix, migrate/integrate/preserve decisions |
 | An authorized Administration Center user sees the wrong navigation, or a failed access probe could expose too much UI | [Role-aware Administration Center navigation repair](#inc-2026-11-15-39--role-aware-administration-center-navigation-repair) | Server-derived capability catalog, fail-closed access probe, existing route allowlist |
+| Nova needs to answer public TPI questions without exposing internal operations | [Nova TPI Everything Assistant](#inc-2026-11-15-40--nova-tpi-everything-assistant) | Public Member Help Center mode, Mystic separation, public-only retrieval |
+| Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-15-40 — Nova TPI Everything Assistant
+
+| Field | Record |
+| --- | --- |
+| Requested | **2026-11-15**, Owner authorized completion of the public Help Center and protected internal Help Desk assistant work |
+| What happened | Mystic was correctly focused on paranormal research, but the TPI Help Center still lacked a single assistant for site, member, product, policy, and support questions |
+| Fix | Added Nova with public and protected internal modes, deterministic article matching, server-side Cloudflare retrieval, clear source boundaries, and safe human handoff |
+| Sitewide scope | Public Help Center, shared member/community shell, protected Help Desk, and `/api/nova/ask`; Mystic and protected applications remain separate |
+| Safeguard | Public pages never load internal Help Desk data; internal retrieval requires an active server-side staff role; Nova cannot grant access or perform mutations |
+| Verification | JavaScript syntax, Help Center separation, private index retrieval, anonymous internal denial, authenticated internal retrieval, and guarded browser/release gates |
+| Status | **Implemented and ready for guarded production release** |
+
+### INC-2026-11-15-41 — Nova protected internal Help Desk
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-15 America/New_York**; exact release time is recorded by the guarded release runner |
+| Affected audience | Owner, Executive, Full Administrator, Administrator, Moderator, and other active staff with the protected Help Desk boundary |
+| Knowledge source | Private R2 bucket `tpi-nova-internal-knowledge` and Cloudflare AI Search instance `tpi-nova-internal` |
+| Fix | Added the protected Nova assistant to all internal Help Desk routes, updated the internal Help Desk article, and separated public Mystic/Nova knowledge from internal Nova retrieval |
+| Safety behavior | Anonymous and ordinary member requests receive no internal answer; direct API requests are authorization checked; credentials, private messages, secrets, and destructive actions are out of scope |
+| Remaining owner action | Use the guarded release and live Firefox acceptance to confirm the deployed protected session; no StudioFlow source or owner data is changed by this work |
 
 ### INC-2026-11-15-25 — Administration Center command center and release-gate finding
 

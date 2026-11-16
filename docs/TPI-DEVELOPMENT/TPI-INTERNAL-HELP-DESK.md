@@ -6,13 +6,37 @@ other credentialed staff with an active server-side appointment
 **Status:** Protected internal operations reference
 **Last updated:** 2026-11-15
 
-## Relationship to Mystic
+## Nova internal Help Desk assistant
+
+The protected Help Desk includes **Ask Nova**, the TPI Everything Assistant for
+authorized internal people. Nova can explain the documented Administration
+Center, staff roles, moderation, reports, security, policy, release, member
+support, StudioFlow handoff, Creator Studio, Nova Editorial Workspace, and
+operational procedures in this reference set.
+
+The internal assistant uses the separate Cloudflare AI Search instance
+`tpi-nova-internal`, backed by the private R2 source `tpi-nova-internal-knowledge`.
+It is not the public Mystic index. The `/api/nova/ask` internal route requires
+the same server-side active staff authorization as the protected Help Desk and
+fails closed for anonymous members.
+
+Nova explains documented procedures; it cannot grant access, change roles, ban
+members, delete data, deploy releases, inspect private messages, or bypass a
+server-side permission check. Owners, Executives, Full Administrators,
+Administrators, and Moderators receive the internal assistant according to the
+same role boundary that controls the Help Desk and Administration Center. When
+the documentation does not answer a situation, Nova directs the user to the
+internal request and escalation path.
+
+## Relationship to Mystic and Nova
 
 The public Help Center's Ask Mystic assistant is not an internal operator and
 does not have access to this Help Desk. It searches only member-facing help
 articles. Internal procedures, moderation actions, staff roles, member records,
 audit details, and Administration Center workflows remain available only
 through this protected Help Desk and the server-side authorization boundary.
+Nova is the protected TPI Everything Assistant layered onto this Help Desk;
+Mystic remains public-only and paranormal-focused.
 
 ## Purpose
 

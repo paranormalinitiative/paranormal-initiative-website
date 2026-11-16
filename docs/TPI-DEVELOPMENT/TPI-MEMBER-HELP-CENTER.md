@@ -3,7 +3,27 @@
 **Audience:** Members and public visitors
 **Owner:** The Paranormal Initiative
 **Status:** Active member-facing reference
-**Last updated:** 2026-11-14
+**Last updated:** 2026-11-15
+
+## Nova Help Center assistant
+
+The public Member Help Center and shared member/community shell include **Ask
+Nova**, TPI's Everything Assistant. Nova explains how the TPI site, member
+features, public policies, Education Center, public applications, StudioFlow,
+Creator Studio, and Nova Editorial Workspace work. It searches the public
+member knowledge base first and can use the public Cloudflare AI Search index
+for broader questions.
+
+Nova is not Mystic. **Mystic is TPI's paranormal research assistant** for
+Ghostology, haunted locations, paranormal terminology, books, fieldwork, and
+research material. Nova is the guide to using TPI itself. The two assistants
+have separate identities and public-only knowledge boundaries.
+
+Nova cannot grant access, change an account, reveal internal procedures, or
+replace member support. It refuses internal Administration Center and Help Desk
+questions from the public surface and directs members to the appropriate
+support path. If Nova cannot find a verified public answer, it says so instead
+of guessing.
 
 ## Mystic Help Center assistant
 
@@ -20,14 +40,13 @@ member records, or credentials. A question without a verified member answer is
 answered honestly and routed to the full Help Center or member support instead
 of being guessed.
 
-The website integration is intentionally deterministic and local. It does not
-require an AI API key, send member questions to a third party, or replace human
-support. The assistant is available wherever the shared member/community shell
-is active and offers article links, safe reporting guidance, and a
-member-support handoff. Bug reports continue through the existing
-`/api/bug-reports` flow into the protected Administration Center report queue.
-Any future model-backed or internal Help Desk version requires a separate scope
-and security review.
+The curated article match remains deterministic and local. The optional model
+retrieval is server-side, uses the approved public index, and is constrained to
+public TPI sources. The assistant is available wherever the shared
+member/community shell is active and offers article links, safe reporting
+guidance, and a member-support handoff. Bug reports continue through the
+existing `/api/bug-reports` flow into the protected Administration Center
+report queue.
 
 ## Purpose
 
