@@ -36,6 +36,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Update Profile opens the public profile instead of the editor, or avatars/backgrounds still do not load | [Production profile editor route](#inc-2026-11-14-12--production-profile-editor-route-redirect) | Cloudflare HTML handling, editor route, profile media render |
 | Login works, then the member is sent somewhere unexpected | [Member access](#inc-2026-11-14-03--member-access-and-home-redirect-loop) | Session identity, staff-role fallback, stale browser state |
 | Password reset appears to work but sign-in fails | [Password recovery](#inc-2026-11-14-04--password-storage-and-recovery-hardening) | Session creation, password hash compatibility, recovery code |
+| Password reset verification returns Cloudflare 1101/500 or the new password is not saved | [Cloudflare password recovery compatibility](#inc-2026-11-16-44--password-recovery-cloudflare-compatibility) | Worker Web Crypto PBKDF2 limit, code validation order, reset session handoff |
 | A YouTube link is only a URL or playback is broken in the Feed | [YouTube preview](#inc-2026-11-14-05--community-feed-youtube-preview) and [body-link recurrence](#inc-2026-11-14-10--community-feed-youtube-body-link-recurrence) | Link preview extraction, body URL discovery, iframe boundary |
 | Firefox acceptance cannot see markup that is present in source | [Local Worker asset freshness](#inc-2026-11-14-11--local-worker-asset-freshness) | Local staged assets, Worker reuse, browser acceptance |
 | Help content is visible to the wrong audience | [Two Help Centers](#inc-2026-11-14-06--member-help-center-and-internal-help-desk-confusion) | Member Help Center, internal Help Desk, Admin Center gate |
@@ -77,6 +78,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-16-44 — Password recovery Cloudflare compatibility
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 17:53 EST** |
+| What happened | Members could request a reset, but entering the emailed eight-digit code and a new password could fail with Cloudflare **1101 / HTTP 500**. The owner could still sign in; the reset verification path was the broken part. |
+| Root cause | The password-hardening change requested PBKDF2 with 120,000 iterations. Cloudflare Worker Web Crypto rejects iteration counts above 100,000. The reset handler hashed before code lookup, so the Worker threw before confirming the code. Node-based tests and mocked browser tests did not exercise this provider-specific limit. |
+| Fix | Set new/reset hashes to 100,000 iterations; fail closed for higher-iteration records; validate the code and active account before hashing; claim the code only after hashing succeeds; preserve legacy-hash compatibility, expiry, single-use behavior, and session invalidation. |
+| Safeguards | Added explicit hosted-runtime limits and focused regressions for generated hash format, unsupported stored records, reset validation order, and recovery completion. |
+| Verification | Password hash **10/10**; password recovery **24/24**; registration **9/9**; production D1 schema and SQL read-only checks passed. Guarded release and live acceptance are recorded in the completion record. |
+| Status | **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** See [Password Recovery Cloudflare Compatibility Repair](300-COMPLETED-WORK/2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md). |
 
 ### INC-2026-11-16-42 — Mystic and Nova identity separation and sitewide coverage
 

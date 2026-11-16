@@ -14,9 +14,10 @@ function check(name, condition) {
 const password = "synthetic-password-123";
 const modernHash = await hashPassword(password);
 const legacyHash = await legacyPasswordHash(password);
-check("new password hashes use the salted PBKDF2 format", modernHash.startsWith("pbkdf2-sha256$120000$") && !isLegacyPasswordHash(modernHash));
+check("new password hashes use the Cloudflare-compatible salted PBKDF2 format", modernHash.startsWith("pbkdf2-sha256$100000$") && !isLegacyPasswordHash(modernHash));
 check("new password hash verifies", await verifyPassword(password, modernHash));
 check("new password hash rejects a different password", !(await verifyPassword("wrong-password", modernHash)));
+check("unsupported higher-iteration records fail closed without throwing", !(await verifyPassword(password, "pbkdf2-sha256$120000$invalid$invalid")));
 check("legacy SHA-256 hashes remain recognizable", isLegacyPasswordHash(legacyHash));
 check("legacy password hashes remain verifiable", await verifyPassword(password, legacyHash));
 check("legacy password hashes reject a different password", !(await verifyPassword("wrong-password", legacyHash)));

@@ -15,6 +15,7 @@ const footer = readFileSync(resolve(root, "footer.html"), "utf8");
 const checks = [
   ["password reset request sends through the configured email helper", api.includes("sendEmail(env") && api.includes("passwordResetEmail(token)")],
   ["password reset uses a short-lived numeric code", api.includes("randomCode()") && api.includes("1000 * 60 * 30")],
+  ["password reset validates the code before hashing", api.indexOf("const candidate = await env.TPI_DB.prepare") < api.indexOf("const passwordHash = await hashPassword(password)")],
   ["password reset confirmation route is registered", api.includes('path === "/auth/password-reset/confirm"')],
   ["confirmation atomically consumes an unexpired active code", api.includes("UPDATE password_reset_tokens SET used = 1") && api.includes("used = 0 AND datetime(expires_at) > CURRENT_TIMESTAMP") && api.includes("RETURNING contributor_id AS contributorId")],
   ["confirmation invalidates existing sessions", api.includes("DELETE FROM sessions WHERE contributor_id = ?")],
@@ -55,6 +56,9 @@ const mockDb = {
           async first() {
             if (sql.includes("lower(correspondence)")) return resetUser;
             if (sql.includes("SELECT COUNT(*) AS count FROM password_reset_tokens")) return { count: recentCount };
+            if (sql.includes("SELECT prt.contributor_id AS contributorId")) {
+              return codeUsed ? null : { contributorId: resetUser.id };
+            }
             if (sql.includes("UPDATE password_reset_tokens SET used = 1")) {
               if (args[0] !== issuedCode || codeUsed) return null;
               codeUsed = true;

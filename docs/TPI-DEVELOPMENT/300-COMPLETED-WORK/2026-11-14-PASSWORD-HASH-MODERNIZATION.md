@@ -16,7 +16,8 @@ performed.
 
 - New registrations, owner bootstrap, password changes, password resets, QA
   accounts, and local administrator resets now write a salted PBKDF2-SHA-256
-  password record with 120,000 iterations.
+  password record with 100,000 iterations, the maximum supported by the
+  Cloudflare Worker Web Crypto runtime.
 - Existing 64-character SHA-256 records remain readable only through the
   successful password-verification compatibility path. After a valid login,
   the Worker upgrades that one account with a compare-and-swap update; a
@@ -56,6 +57,13 @@ production test state.
 - Worker: `6c84d19b-6e50-4d5d-a6d7-75da5152cf12`
 - Rollback: `aabd3b01-6769-4402-b05a-b06cbe964c1c`
 - StudioFlow source: `2c7c651f34839b0115596d632f1009214e4cd63d`
+
+## Follow-up compatibility repair
+
+The original 120,000-iteration setting was accepted by Node's Web Crypto but
+rejected by Cloudflare Workers during password-reset confirmation. The
+site-wide recovery repair is documented in
+[Password Recovery Cloudflare Compatibility Repair](2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md).
 
 ## Remaining boundary
 

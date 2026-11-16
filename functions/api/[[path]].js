@@ -771,6 +771,18 @@ async function handlePasswordResetConfirm(request, env) {
   if (!/^\d{8}$/.test(code)) return json({ error: "Enter the 8-digit reset code from your email." }, 400);
   if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
 
+  const candidate = await env.TPI_DB.prepare(`
+    SELECT prt.contributor_id AS contributorId
+    FROM password_reset_tokens prt
+    JOIN contributors c ON c.id = prt.contributor_id
+    WHERE prt.token = ? AND prt.used = 0 AND datetime(prt.expires_at) > CURRENT_TIMESTAMP AND c.active = 1
+    LIMIT 1
+  `).bind(code).first();
+  if (!candidate) return json({ error: "That reset code is invalid or expired." }, 400);
+
+  // Validate the code before doing the expensive password work. A
+  // malformed/expired code must remain a normal 400 response, and a runtime
+  // hashing failure must not consume a usable recovery code.
   const passwordHash = await hashPassword(password);
   const reset = await env.TPI_DB.prepare(`
     UPDATE password_reset_tokens SET used = 1

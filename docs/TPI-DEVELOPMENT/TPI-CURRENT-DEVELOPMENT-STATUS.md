@@ -1,5 +1,17 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Password recovery Cloudflare compatibility repair
+
+Status: **REPAIRED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** The live
+reset confirmation path returned Cloudflare 1101 because password hardening
+requested PBKDF2 at 120,000 iterations while the Worker runtime supports at
+most 100,000. The repair lowers new/reset hashes to the supported boundary,
+fails closed for unsupported higher-iteration records, validates the reset
+code before hashing, and prevents hashing failures from consuming a valid
+code. Focused verification passed password hashing **10/10**, password recovery
+**24/24**, and registration **9/9**. See [Password Recovery Cloudflare
+Compatibility Repair](300-COMPLETED-WORK/2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md).
+
 ## 2026-11-16 — Assistant launcher order and Nova artwork
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Mystic is now positioned
@@ -517,7 +529,7 @@ and [Mystic Cloudflare AI Search Integration](300-COMPLETED-WORK/2026-11-15-MYST
 
 ## 2026-11-14 — Password hash modernization and compatibility upgrade
 
-Status: **DEPLOYED AND LIVE VERIFIED — release `rel-710b6c9126f5-dedd127c76c8`, Worker `6c84d19b-6e50-4d5d-a6d7-75da5152cf12`, 100% traffic.** The member API no longer writes unsalted SHA-256 passwords. New and changed credentials use salted PBKDF2-SHA-256 with 120,000 iterations. Existing legacy records remain compatible and upgrade after a successful login through a guarded compare-and-swap write; no bulk production credential rewrite was performed. The release permanently runs the compatibility/upgrade regression. Password hashing passed 9/9, local authentication lifecycle passed 38/38 at each stage with Firefox 65/65, full preflight passed 35 gates, production smoke passed 10/10, and production Firefox passed 65/65 using only the protected synthetic QA account. See [Password Hash Modernization and Login Compatibility](300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md).
+Status: **DEPLOYED AND LIVE VERIFIED — release `rel-710b6c9126f5-dedd127c76c8`, Worker `6c84d19b-6e50-4d5d-a6d7-75da5152cf12`, 100% traffic.** The member API no longer writes unsalted SHA-256 passwords. New and changed credentials use salted PBKDF2-SHA-256 with the then-selected 120,000 iterations; the later Cloudflare compatibility repair documents the runtime limit and moves new/reset writes to 100,000. Existing legacy records remain compatible and upgrade after a successful login through a guarded compare-and-swap write; no bulk production credential rewrite was performed. The release permanently runs the compatibility/upgrade regression. Password hashing passed 9/9, local authentication lifecycle passed 38/38 at each stage with Firefox 65/65, full preflight passed 35 gates, production smoke passed 10/10, and production Firefox passed 65/65 using only the protected synthetic QA account. See [Password Hash Modernization and Login Compatibility](300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md) and [Password Recovery Cloudflare Compatibility Repair](300-COMPLETED-WORK/2026-11-16-PASSWORD-RECOVERY-CLOUDFLARE-COMPATIBILITY-REPAIR.md).
 
 ## 2026-11-14 — Community Feed YouTube previews and in-feed playback
 
