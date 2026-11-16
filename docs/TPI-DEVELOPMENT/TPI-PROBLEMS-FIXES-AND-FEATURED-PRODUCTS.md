@@ -1288,14 +1288,14 @@ server, and private evidence stays outside the administrative response.
 | Field | Record |
 | --- | --- |
 | Detected | **2026-11-15**, during the next Administration Center roadmap slice |
-| Fixed in source | **2026-11-15**, source change pending guarded production release |
+| Fixed in source | **2026-11-15**, commit `a9a199d33bcaa2ae10c3b6225a7a1c2dd5db8a45` |
 | Product/surface | Protected Administration Center Enforcement & Appeals; member Settings safety notices |
 | Environment | Source and maintained local schema; no production data or protected application changed |
 | Symptom | The report queue could document a decision, but there was no bounded workflow for a warning, temporary content restriction, member notice, or appeal. Staff could not complete a documented next step without using an unrelated account control. |
 | Root cause | Report triage and account controls had been implemented as separate slices, while the enforcement state and appeal records had not yet been modeled as additive, auditable resources. |
 | Fix | Added migration `0072_moderation_enforcement_and_appeals.sql`, server-authorized warning and temporary-restriction routes, member notice/appeal routes, Admin Center Enforcement & Appeals UI, member Settings notices, audit events, and fail-closed missing-schema handling. Restrictions are reasoned, scoped, time-limited, non-staff-only, and capped at 720 hours. |
-| Verification | Admin Center source contracts **86/86**; release-safety contracts **37/37**; Admin Center build passed; Worker syntax passed; local schema migration 0072 applied; production release pending at time of documentation |
-| Production status | Pending guarded release and live verification |
+| Verification | Admin Center source contracts **86/86**; release-safety contracts **37/37**; Admin Center build passed; Worker syntax passed; local schema migration 0072 applied; full certification **38 gates**; production smoke **10/10**; live isolated Firefox **65/65** |
+| Production status | **Deployed and live verified** in release `rel-a9a199d33bca-4ff0b360fcd3`; Worker `627d364b-8cab-476f-b777-481528fb9d27` serves 100% of traffic; rollback `771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad` |
 | References | `migrations/0072_moderation_enforcement_and_appeals.sql`, `functions/api/[[path]].js`, `admin-center-app/src/app.tsx`, `member-settings.js`, `docs/TPI-DEVELOPMENT/008-ADMINISTRATION-CENTER.md` |
 
 **Lesson:** Moderation needs a separate, bounded enforcement record with an

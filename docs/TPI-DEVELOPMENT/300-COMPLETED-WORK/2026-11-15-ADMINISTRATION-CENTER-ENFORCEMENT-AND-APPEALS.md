@@ -1,7 +1,7 @@
 # Administration Center Enforcement and Appeals
 
 **Date:** 2026-11-15  
-**Status:** Source complete; guarded production release pending  
+**Status:** Deployed and live verified
 **Scope:** Administration Center and member Settings only
 
 ## What was added
@@ -63,6 +63,23 @@ verification.
 - Maintained local schema: migration 0072 **APPLIED**
 - Protected-application source boundary: unchanged
 
-The exact production migration, release identifier, Worker version, production
-smoke, and live acceptance results must be appended here after the runbook's
-guarded release completes.
+## Production release
+
+The production schema check found both new tables absent without changing any
+existing row. The reviewed additive migration was then applied individually;
+the two tables and the one-open-appeal index were verified afterward. The
+historical D1 migration ledger was not replayed.
+
+- Release: `rel-a9a199d33bca-4ff0b360fcd3`
+- Source commit: `a9a199d33bcaa2ae10c3b6225a7a1c2dd5db8a45`
+- Worker: `627d364b-8cab-476f-b777-481528fb9d27`
+- Traffic: 100%
+- Rollback Worker: `771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad`
+- Full certification: **38 gates passed in 6m28s**
+- Anonymous production smoke: **10/10**
+- Live isolated Firefox Developer Edition: **65/65**
+- Protected application byte guard: passed
+
+No protected application, private message, recording, member, report, or
+existing moderation row was rewritten. The exact candidate was deployed
+without recertification, as required by the immutable release workflow.

@@ -2,7 +2,7 @@
 
 ## 2026-11-15 — Administration Center bounded enforcement and appeals
 
-Status: **SOURCE COMPLETE; GUARDED PRODUCTION RELEASE PENDING.** The
+Status: **DEPLOYED AND LIVE VERIFIED; PROTECTED APPLICATION BOUNDARY PRESERVED.** The
 Administration Center now has a protected Enforcement & Appeals slice for
 reasoned warnings and time-limited restrictions against non-staff members.
 Restrictions are scoped to posting, commenting, messaging, or all community
@@ -18,8 +18,16 @@ be recorded here after verification.
 
 Source checks passed **86/86**, release-safety contracts passed **37/37**, the
 Administration Center build passed, Worker syntax passed, and local schema
-verification reports migration 0072 **APPLIED**. See [Administration Center
-Enforcement and Appeals](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-AND-APPEALS.md).
+verification reports migration 0072 **APPLIED**. Release
+`rel-a9a199d33bca-4ff0b360fcd3` deployed Worker
+`627d364b-8cab-476f-b777-481528fb9d27` to 100% traffic; the additive
+production migration was applied individually after a read-only table check;
+production anonymous smoke passed **10/10** and live isolated Firefox
+Developer Edition passed **65/65**. Full certification passed **38 gates** in
+6m28s, and the exact rollback Worker is
+`771c0fbc-27a8-4af0-8d6a-1e994d0aa9ad`. No protected application, private
+message, recording, member, report, or existing moderation row was rewritten.
+See [Administration Center Enforcement and Appeals](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-AND-APPEALS.md).
 
 ## 2026-11-15 — Administration Center report intake and triage
 
