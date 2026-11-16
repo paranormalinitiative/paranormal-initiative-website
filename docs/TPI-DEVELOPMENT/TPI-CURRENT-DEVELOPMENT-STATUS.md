@@ -2,7 +2,7 @@
 
 ## 2026-11-16 — Connected destination authorization foundation
 
-Status: **IMPLEMENTED LOCALLY; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**
+Status: **DEPLOYED AND LIVE VERIFIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**
 The protected Administration Center now has a Connected Destinations view and
 server-side Facebook Page / YouTube OAuth boundaries. Tokens are encrypted,
 OAuth state is single-use and time-limited, connection responses are metadata
@@ -16,6 +16,11 @@ video transport. The production site still needs a configured hosted RTMP
 relay or provider adapter; Rumble remains manual to start and provider-
 controlled to stop. StudioFlow, Nova Workspace, Creator Studio, private media,
 and owner data were not modified by this implementation slice.
+
+Guarded preflight passed **38 gates**, production smoke passed **10/10**, live
+isolated Firefox acceptance passed **65/65**, and release
+`rel-6109c7f6169a-0f4c1f4a3019` reached 100% traffic as Worker
+`ded22d94-a406-4fec-b025-e1822a23307c`.
 
 The additive schema is `migrations/0073_social_destination_connections.sql`,
 the provider boundary is `lib/social-destinations.js`, and the regression guard

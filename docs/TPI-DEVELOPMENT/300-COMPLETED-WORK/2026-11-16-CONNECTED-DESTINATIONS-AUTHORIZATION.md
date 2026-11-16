@@ -1,7 +1,7 @@
 # TPI Connected Destinations — Authorization and Publishing Foundation
 
 Date: **2026-11-16**
-Status: **IMPLEMENTED LOCALLY / PROVIDER CONFIGURATION REQUIRED / NOT YET PRODUCTION-VERIFIED**
+Status: **DEPLOYED AND LIVE VERIFIED / PROVIDER CONFIGURATION REQUIRED**
 
 ## Owner request
 
@@ -80,6 +80,12 @@ recording library, Nova Workspace, and Creator Studio remain protected.
 - `npm run verify:release-safety` — PASS, 37/37.
 - `npm --prefix admin-center-app run build` — PASS; Vite emitted only its
   existing large-bundle warning.
+- Guarded production preflight — PASS, 38 gates; certified release
+  `rel-6109c7f6169a-0f4c1f4a3019`.
+- Production deployment — PASS; Worker version
+  `ded22d94-a406-4fec-b025-e1822a23307c` reached 100% traffic.
+- Live anonymous production smoke — PASS, 10/10.
+- Live isolated Firefox Developer Edition acceptance — PASS, 65/65.
 
 Real Facebook and YouTube consent cannot be verified until the private Meta
 and Google OAuth clients and `SOCIAL_OAUTH_ENCRYPTION_KEY` are configured
