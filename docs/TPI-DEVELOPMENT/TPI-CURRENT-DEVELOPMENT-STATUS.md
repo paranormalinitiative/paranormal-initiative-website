@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center enforcement action review gate
+
+Status: **SOURCE COMPLETE; GUARDED PRODUCTION RELEASE PENDING.** The existing
+Enforcement & Appeals workflow now requires a review step before a new warning
+or temporary restriction can be recorded. Staff must first review the target,
+action type, scope, duration, and reason, then deliberately choose **Confirm &
+record action**. Editing a reviewed field clears the pending confirmation.
+
+Administration Center source contracts passed **91/91**, the production build
+passed, release-impact classification passed **15/15**, release-safety passed
+**37/37**, and the local browser check confirmed the review state without
+creating a moderation action. Existing server-side role checks, reason
+requirements, audit logging, member notices, 1–720 hour limit, appeal path,
+and protected-application boundaries remain unchanged.
+
+See [Administration Center Enforcement Action Review Gate](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-REVIEW-GATE.md).
+
 ## 2026-11-15 — Administration Center Membership & Entitlement Inspection
 
 Status: **DEPLOYED AND LIVE OWNER-VERIFIED.** The

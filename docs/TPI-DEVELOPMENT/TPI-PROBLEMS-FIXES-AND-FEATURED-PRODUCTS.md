@@ -64,6 +64,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | A member bug report appears in the queue but cannot be opened or documented with a triage decision | [Administration Center report triage](#inc-2026-11-15-31--administration-center-report-triage-contract) | Bug-report route coverage, required triage note, metadata-only evidence, audit history |
 | Authorized staff need to see who can access which Administration Center areas | [Staff directory and capability inspection](#inc-2026-11-15-33--administration-center-staff-directory-and-capability-inspection) | Effective server role, capability boundaries, appointment history, read-only staff metadata |
 | Authorized staff need one place to understand a member's real access | [Membership and entitlement inspection](#inc-2026-11-15-34--administration-center-membership-and-entitlement-inspection) | Effective role, capability flags, Founding identity, Creator Studio, Nova authority, restrictions, read-only metadata |
+| A staff member could submit a warning or restriction before reviewing the complete action | [Enforcement action review gate](#inc-2026-11-15-35--administration-center-enforcement-action-review-gate) | Enforcement & Appeals, confirmation boundary, audit-safe mutation |
 
 ## Incident and fix register
 
@@ -1341,6 +1342,25 @@ role resolver that enforces it, while inspection remains strictly read-only.
 **Lesson:** Administration needs one server-derived access inspection surface,
 but inspection and mutation must remain separate. A missing optional source is
 not permission and must never be interpreted as permission.
+
+### INC-2026-11-15-35 — Administration Center enforcement action review gate
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15 21:05 EST**, during the first guarded member-action workflow review |
+| Fixed in source | **2026-11-15**, source commit pending guarded release |
+| Product/surface | Protected Administration Center Enforcement & Appeals |
+| Symptom | The existing bounded warning/restriction form could submit immediately after staff entered a reason, without a separate review of the target, scope, duration, and reason. |
+| Root cause | The form used its primary submit action as the mutation trigger, so the safety review was implicit rather than an explicit confirmation state. |
+| Fix | Added a no-write **Review action** step, a visible review summary, a cancel path, and an explicit **Confirm & record action** mutation step. Any edited field clears the pending review. |
+| Safeguards | Existing server-side staff authorization, non-staff target boundary, required reason, 1–720 hour limit, audit logging, member notice, revocation, appeals, and protected application boundaries remain in force. |
+| Verification | Administration Center source contracts **91/91**; Admin Center build passed; release-impact **15/15**; release-safety **37/37**; local browser review state verified with no action submitted. |
+| Production status | **Pending guarded release** |
+| References | [`2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-REVIEW-GATE.md`](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-REVIEW-GATE.md), `admin-center-app/src/app.tsx`, `scripts/qa/tpi-admin-006-preview.mjs`, `functions/api/[[path]].js`, `migrations/0072_moderation_enforcement_and_appeals.sql` |
+
+**Lesson:** A protected mutation should always show the exact proposed action
+before it can be written, and editing any reviewed input must invalidate that
+confirmation.
 
 ## New-entry template
 
