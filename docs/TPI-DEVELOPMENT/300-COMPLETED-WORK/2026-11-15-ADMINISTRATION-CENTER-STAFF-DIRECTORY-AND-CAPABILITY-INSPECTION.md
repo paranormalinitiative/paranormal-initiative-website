@@ -42,8 +42,13 @@ created pressure to infer permissions from visible labels.
 - Worker syntax check: passed.
 - Administration Center production build: passed.
 - `git diff --check`: passed before release preparation.
-- No migration was added or applied.
-- No StudioFlow, Creator Studio, Nova Editor Workspace, private media, D1, R2,
+- Before schema installation, no migration was added or applied during source
+  verification.
+- With explicit Owner approval, migration `0071_staff_role_appointments.sql`
+  was applied individually to production after a read-only absence check. The
+  table and both indexes were verified afterward; the table contains **0**
+  appointment rows, so no staff role was assigned or changed.
+- No StudioFlow, Creator Studio, Nova Editor Workspace, private media, R2,
   Crossroads of the Unknown, or member data was changed.
 
 The local policy check confirmed that Owner, Executive, and Full Administrator
@@ -54,11 +59,10 @@ the server allowlist. The exact production release
 `3cf1b5cd-c7e4-415d-82fb-0f0fd24b8c96`. Preflight certified 13 gates in 28.19
 seconds, production anonymous smoke passed **10/10**, and live Firefox
 Owner/Founder/CEO acceptance passed. The live directory rendered Todd Wayne as
-Owner with all 21 mapped Administration Center areas allowed. Because the
-production database does not currently expose the optional
-`staff_role_appointments` table, the page displayed explicit **Legacy role
-mode**, returned the Owner record, and kept appointment history empty rather
-than returning HTTP 500.
+Owner with all 21 mapped Administration Center areas allowed. Before migration,
+the page displayed explicit **Legacy role mode** and returned the Owner record
+without HTTP 500. After migration, that notice disappeared; the Owner record
+remained visible and appointment history correctly showed zero retained rows.
 
 ## Safeguard
 
@@ -66,6 +70,7 @@ This is an inspection-only surface. The server remains the authority for every
 route and capability. Any future staff-role mutation must remain in the
 separate reasoned workflow, preserve appointment history, and pass its own
 authorization and audit checks. A client-side change cannot make a staff member
-more powerful. The optional appointment table should be installed only through
-the maintained migration workflow; until then, legacy-role fallback must remain
-explicit and must never imply that appointment history was loaded.
+more powerful. The additive appointment schema was installed only after the
+Owner's explicit approval and a read-only absence check. Future appointments
+must still use the existing reasoned Staff Roles workflow; this migration did
+not appoint anyone.
