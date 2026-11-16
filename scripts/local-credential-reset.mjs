@@ -1,7 +1,7 @@
 import { createHash, pbkdf2Sync, randomBytes, timingSafeEqual } from "node:crypto";
 
 const PBKDF2_PREFIX = "pbkdf2-sha256";
-const PBKDF2_ITERATIONS = 120000;
+const PBKDF2_ITERATIONS = 100000;
 
 function base64UrlEncode(value) {
   return Buffer.from(value).toString("base64url");
@@ -25,7 +25,7 @@ export function verifyPassword(password, storedHash) {
   const stored = String(storedHash || "");
   if (/^[0-9a-f]{64}$/i.test(stored)) return stored.toLowerCase() === legacyPasswordHash(password);
   const parts = stored.split("$");
-  if (parts.length !== 4 || parts[0] !== PBKDF2_PREFIX || Number(parts[1]) < 100000) return false;
+  if (parts.length !== 4 || parts[0] !== PBKDF2_PREFIX || Number(parts[1]) < 100000 || Number(parts[1]) > PBKDF2_ITERATIONS) return false;
   try {
     const expected = Buffer.from(parts[3], "base64url");
     const actual = pbkdf2Sync(String(password), Buffer.from(parts[2], "base64url"), Number(parts[1]), expected.length, "sha256");
