@@ -1,7 +1,7 @@
 # Member Registration Repair
 
-Date/time: **2026-11-16 13:36 EST**  
-Status: **IMPLEMENTED LOCALLY; RELEASE VERIFICATION IN PROGRESS**
+Date/time: **2026-11-16 13:36–13:48 EST**
+Status: **DEPLOYED AND LIVE VERIFIED**
 
 ## What happened
 
@@ -48,10 +48,17 @@ continue.
   was cleaned up after the test.
 - Member interaction contracts: **29/29 PASS**.
 - Password recovery contracts: **23/23 PASS**.
-- Release safety: **37/37 PASS**.
+- Release safety: **38/38 PASS**.
 - Release impact classification: **15/15 PASS**.
 - Local authentication lifecycle: **38/38 PASS** at each checkpoint;
   isolated Firefox acceptance: **65/65 PASS**.
+- Full guarded preflight: **40/40 gates PASS**; certified release
+  `rel-fe8c882100f9-f8d876e3d386`.
+- Production smoke: **10/10 PASS**; live isolated Firefox acceptance:
+  **65/65 PASS**; Worker version
+  `36cffaa9-1ac6-4dc1-93c4-a7f767cac648` reached 100% traffic.
+- Live read-only boundary checks: `/register` and `/signup` redirect to the
+  canonical form, an empty signup request returns the controlled 400 response,
+  and the live page serves `member-login.js?v=51`.
 
-Production deployment remains gated until the complete certified candidate
-passes the maintained preflight and live acceptance workflow.
+No real production account was created during diagnosis or verification.

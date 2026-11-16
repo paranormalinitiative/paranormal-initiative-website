@@ -2,7 +2,7 @@
 
 ## 2026-11-16 — Member registration reliability repair
 
-Status: **IMPLEMENTED LOCALLY; GUARDED PRODUCTION RELEASE IN PROGRESS.** Public
+Status: **DEPLOYED AND LIVE VERIFIED.** Public
 member signup now creates the account and first session atomically, returns the
 secure session in the registration response, and opens Member Home without a
 second login/session-probe chain. Common `/register`, `/signup`, `/sign-up`, and
@@ -11,9 +11,12 @@ unexpected database failures receive controlled, user-safe responses.
 
 The repair is covered by registration source contracts **9/9**, a Firefox local
 end-to-end signup test, member interactions **29/29**, password recovery
-**23/23**, release safety **37/37**, local authentication lifecycle **38/38**,
-and isolated Firefox **65/65**. No production account was created during
-diagnosis or verification. See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md).
+**23/23**, release safety **38/38**, local authentication lifecycle **38/38**,
+and isolated Firefox **65/65**. The full guarded preflight passed **40/40
+gates**; production smoke passed **10/10** and live isolated Firefox passed
+**65/65** for release `rel-fe8c882100f9-f8d876e3d386`, serving Worker
+`36cffaa9-1ac6-4dc1-93c4-a7f767cac648` at 100% traffic. No production account
+was created during diagnosis or verification. See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md).
 
 ## 2026-11-16 — Connected destination authorization foundation
 

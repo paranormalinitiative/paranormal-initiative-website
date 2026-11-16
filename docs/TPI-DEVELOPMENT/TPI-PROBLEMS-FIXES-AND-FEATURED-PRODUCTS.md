@@ -85,8 +85,8 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Root cause | The public flow required account creation, a separate login request, and a third session check before redirecting. Any transient failure in the follow-up chain could make a valid signup appear broken. Common `/register`-style links also had no canonical redirect. |
 | Fix | Made contributor insertion and first-session creation one atomic D1 batch; returned the session cookie and safe member payload from registration; removed the browser's second login/session-probe chain; added duplicate/error mapping, canonical signup aliases, registration focus behavior, and cache version `v51`. |
 | Safeguards | Public registration creates only the normal `member` role. It cannot grant administrative, staff, Creator Studio, or internal Help Desk access. Password hashing, secure hosted cookies, and server-side authorization remain unchanged. |
-| Verification | Registration source contracts **9/9**; Firefox local end-to-end signup **PASS**; member interactions **29/29**; password recovery **23/23**; release safety **37/37**; local auth lifecycle **38/38** with Firefox **65/65**. |
-| Status | **Repair implemented locally; full guarded production release is the next step.** See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md). |
+| Verification | Registration source contracts **9/9**; Firefox local end-to-end signup **PASS**; member interactions **29/29**; password recovery **23/23**; release safety **38/38**; local auth lifecycle **38/38** with Firefox **65/65**; full preflight **40/40**; production smoke **10/10**; live Firefox **65/65**. |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-fe8c882100f9-f8d876e3d386` is serving Worker `36cffaa9-1ac6-4dc1-93c4-a7f767cac648` at 100% traffic. No production account was created during verification. See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md). |
 
 ### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
 
