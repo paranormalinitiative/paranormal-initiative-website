@@ -35,6 +35,16 @@ async function waitFor(description, predicate, timeout = 20_000) {
   throw new Error(`${description} timed out`);
 }
 
+async function waitForPageShell(description, predicate) {
+  try {
+    await waitFor(description, predicate);
+  } catch (error) {
+    console.log(`${description} needed one bounded Firefox refresh retry`);
+    await driver.navigate().refresh();
+    await waitFor(description, predicate);
+  }
+}
+
 async function loginOnOrigin() {
   return driver.executeAsyncScript(`var done=arguments[arguments.length-1], username=arguments[0], password=arguments[1];
     fetch('/api/auth/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:username,password:password})})
@@ -61,7 +71,7 @@ try {
     ]).then(function(){done(true);}).catch(function(){done(false);});`, target.username);
 
   await driver.get(`${base}/member-profile`);
-  await waitFor("own profile mode", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden"));
+  await waitForPageShell("own profile mode", async () => driver.executeScript("return document.body.classList.contains('member-profile-mode') && !document.querySelector('[data-member-profile-view]').hidden"));
   await waitFor("My Pulse profile link", async () => driver.executeScript("return Boolean(document.querySelector('.rail-pulse-link')?.getAttribute('href'))"));
   const ownProfileState = await driver.executeScript("var banner=document.querySelector('[data-member-profile-banner]'), composer=document.querySelector('[data-member-composer]'), options=document.querySelector('[data-profile-options]'), setup=document.querySelector('[data-profile-setup]'), about=document.querySelector('[data-profile-about]'), aboutToggle=document.querySelector('[data-profile-about-toggle]'), menu=document.querySelector('[data-profile-options-panel]'), tab=document.querySelector('[data-feed-tab]'), rail=document.querySelector('[data-home-rail]'), pulse=document.querySelector('[data-rail-pulse]'), pulseLink=document.querySelector('.rail-pulse-link'), recognition=document.querySelector('[data-rail-recognition]'), members=document.querySelector('[data-rail-members]'), discover=document.querySelector('[data-rail-discover]'), recent=document.querySelector('[data-rail-recent]'), news=document.querySelector('[data-rail-news]'), copy=document.querySelector('.member-profile-copy'), name=document.querySelector('[data-member-name]'), username=document.querySelector('[data-member-username]'), title=document.querySelector('[data-member-title]'), role=document.querySelector('[data-member-role]'), headingRow=document.querySelector('.member-profile-heading-row'); var follows=(a,b)=>Boolean(a&&b&&(a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING)); return {banner:!!banner&&banner.getAttribute('src').includes('tpi-banner.png'),composer:!!composer&&!composer.hidden,options:!!options&&!options.hidden,setupAbsent:!setup,identityOrder:Boolean(copy&&name&&username&&title&&role&&copy.contains(name)&&copy.contains(username)&&copy.contains(title)&&copy.contains(role)&&follows(name,username)&&follows(username,title)&&follows(title,role)),headingPadding:headingRow&&getComputedStyle(headingRow).paddingTop,roleBadgePadding:role&&getComputedStyle(role).padding,aboutInitiallyHidden:!!about&&about.hidden,aboutToggleVisible:!!aboutToggle&&!aboutToggle.hidden,editMenuPresent:!!menu&&!!menu.querySelector('[data-profile-option-edit]'),tab:tab&&tab.textContent.trim(),pulseHref:pulseLink&&pulseLink.getAttribute('href'),recognitionShell:Boolean(recognition),recognitionRailOrder:Boolean(rail&&follows(pulse,recognition)&&follows(recognition,members)&&follows(members,discover)&&follows(discover,recent)&&follows(recent,news)),recognitionTriggers:document.querySelectorAll('[data-recognition-trigger]').length};");
   check("a member's saved banner remains visible on their own profile", ownProfileState.banner && ownProfileState.options, JSON.stringify(ownProfileState));
