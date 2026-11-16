@@ -81,21 +81,22 @@ most permissive interpretation.
 
 ## 4. Reports, restrictions, and appeals
 
-The current system supports the implemented report and moderation workflows
-documented in the Help Desk. A complete report-triage queue, warning and
-temporary-restriction workflow, staff suspension workflow, and formal appeals
-surface are not yet available as a complete product.
+The current system supports the report and moderation workflows documented in
+the Help Desk, including bounded warnings, time-limited content restrictions,
+and member appeals. An authorized administrator can issue a warning or a
+temporary restriction for posting, commenting, messaging, or all community
+activity. Temporary restrictions must have a reason and expire within 1–720
+hours. A member can review the notice in Settings and submit one open appeal
+for an active action. Appeal decisions require a reviewer note; accepting an
+appeal revokes the linked action.
 
-Until those surfaces are implemented and verified:
-
-- Do not promise a member a specific appeal status, review deadline, or
-  restriction type that the interface does not show.
-- Record the safe report reference, concern, date/time, and next owner when an
-  appeal or unresolved restriction question is received.
-- Do not invent a manual database status or use an unrelated account action as
-  a substitute for an unavailable workflow.
-- Escalate unresolved policy decisions to the authorized owner or designated
-  decision-maker.
+These controls are intentionally bounded. They do not provide permanent bans,
+staff suspension, content deletion, or private-message inspection. Do not use
+an unrelated account action as a substitute for any unavailable authority.
+Do not promise a member a specific appeal status or review deadline that the
+interface does not show. Escalate unresolved policy decisions, conflicts of
+interest, threats, doxxing, or immediate safety concerns to the authorized
+owner or designated decision-maker.
 
 ## 5. Member accounts and role boundaries
 

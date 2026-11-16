@@ -141,6 +141,12 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger|bug)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger|bug)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
+    if (request.method === "GET" && path === "/admin/moderation-actions") return requireAdmin(request, env, user => handleAdminModerationActions(request, env, user));
+    if (request.method === "GET" && path === "/admin/appeals") return requireAdmin(request, env, user => handleAdminAppeals(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/appeals\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminAppealDetail(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/appeals\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminAppealStatus(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/moderation-actions\/[^/]+\/revoke$/)) return requireAdmin(request, env, user => handleAdminModerationActionRevoke(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/moderation-actions$/)) return requireAdmin(request, env, user => handleAdminCreateModerationAction(path, request, env, user));
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/notifications\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminNotificationDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/notifications\/[^/]+\/(read|unread)$/)) return requireAdmin(request, env, user => handleAdminNotificationState(path, env, user));
@@ -168,6 +174,9 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/notifications/preferences") return requireMember(request, env, user => handleGetNotificationPreferences(env, user));
     if (request.method === "POST" && path === "/notifications/preferences") return requireMember(request, env, user => handleSetNotificationPreferences(request, env, user));
     if (request.method === "POST" && path.match(/^\/notifications\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkNotificationRead(path, env, user));
+    if (request.method === "GET" && path === "/moderation-actions") return requireMember(request, env, user => handleMemberModerationActions(env, user));
+    if (request.method === "GET" && path === "/moderation-appeals") return requireMember(request, env, user => handleMemberModerationAppeals(env, user));
+    if (request.method === "POST" && path === "/moderation-appeals") return requireMember(request, env, user => handleMemberCreateModerationAppeal(request, env, user));
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "GET" && path === "/leadership/profiles") return handleLeadershipProfiles(env);
@@ -2627,6 +2636,249 @@ async function handleAdminRestrictions(request, env) {
   const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM contributors WHERE ${filters.join(" AND ")}`).bind(...binds).first();
   const total = Number(count?.total || 0);
   return json({ ...payload, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
+}
+
+function moderationActionPayload(row) {
+  if (!row) return null;
+  const expired = row.actionType === "temporary_restriction"
+    && row.status === "active"
+    && row.expiresAt
+    && new Date(row.expiresAt).getTime() <= Date.now();
+  return { ...row, status: expired ? "expired" : row.status };
+}
+
+async function handleAdminCreateModerationAction(path, request, env, actingUser) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/moderation-actions$/)?.[1] || ""));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const target = await getUserByUsername(env, username);
+  if (!target) return json({ error: "Member was not found." }, 404);
+  const actingRole = await effectiveStaffRole(env, actingUser);
+  const targetRole = await effectiveStaffRole(env, target);
+  if (["owner", "executive", "full_administrator", "administrator", "moderator"].includes(targetRole)) {
+    return json({ error: "Staff accounts require a separate staff-authority workflow." }, 403);
+  }
+  if (target.id === actingUser.id) return json({ error: "You cannot issue an action against your own account." }, 400);
+  const data = await readJson(request);
+  const actionType = clean(data.actionType).toLowerCase();
+  const scope = clean(data.scope || "all_content").toLowerCase();
+  const reason = clean(data.reason).slice(0, 1000);
+  const allowedTypes = ["warning", "temporary_restriction"];
+  const allowedScopes = ["posting", "commenting", "messaging", "all_content"];
+  if (!allowedTypes.includes(actionType)) return json({ error: "Choose a warning or temporary restriction." }, 400);
+  if (!allowedScopes.includes(scope)) return json({ error: "Restriction scope was not recognized." }, 400);
+  if (reason.length < 8) return json({ error: "Add a clear reason (at least 8 characters)." }, 400);
+  let expiresAt = null;
+  if (actionType === "temporary_restriction") {
+    const durationHours = Number.parseInt(String(data.durationHours || ""), 10);
+    if (!Number.isInteger(durationHours) || durationHours < 1 || durationHours > 720) {
+      return json({ error: "Temporary restrictions must be between 1 and 720 hours." }, 400);
+    }
+    expiresAt = new Date(Date.now() + durationHours * 60 * 60 * 1000).toISOString();
+  }
+  const sourceReportType = ["video", "messenger", "bug"].includes(clean(data.sourceReportType).toLowerCase()) ? clean(data.sourceReportType).toLowerCase() : null;
+  const sourceReportId = clean(data.sourceReportId).slice(0, 160) || null;
+  const id = crypto.randomUUID();
+  try {
+    await env.TPI_DB.prepare(`
+      INSERT INTO member_moderation_actions
+        (id, member_id, actor_id, action_type, scope, reason, source_report_type, source_report_id, starts_at, expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+    `).bind(id, target.id, actingUser.id, actionType, scope, reason, sourceReportType, sourceReportId, expiresAt).run();
+  } catch (error) {
+    return json({ error: "The moderation action could not be recorded. Verify the enforcement schema is available." }, 503);
+  }
+  await writeAdminAuditLog(env, actingUser, actionType === "warning" ? "moderation.warning_issued" : "moderation.restriction_issued", "member_moderation_action", id, {
+    memberUsername: target.username, actionType, scope, expiresAt, sourceReportType, sourceReportId, reason
+  });
+  if (categoryEnabledForType(target.notification_prefs, "warning")) {
+    const title = actionType === "warning" ? "TPI community notice" : "Temporary TPI account restriction";
+    const body = actionType === "warning"
+      ? `A staff warning was recorded for your account: ${reason}`
+      : `Your ${scope === "all_content" ? "community activity" : scope} is temporarily restricted until ${new Date(expiresAt).toLocaleString()}. Reason: ${reason}`;
+    await env.TPI_DB.prepare(`
+      INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
+      VALUES (?, ?, ?, ?, ?, 'warning', ?)
+    `).bind(crypto.randomUUID(), target.id, title, body.slice(0, 1000), "/member-dashboard.html#account", actingUser.id).run();
+  }
+  return json({ action: moderationActionPayload({ id, memberId: target.id, memberUsername: target.username, memberName: target.display_name, actorUsername: actingUser.username, actionType, scope, reason, status: "active", startsAt: new Date().toISOString(), expiresAt }) }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminModerationActions(request, env) {
+  const url = new URL(request.url);
+  const status = ["active", "expired", "revoked", "all"].includes(clean(url.searchParams.get("status")).toLowerCase()) ? clean(url.searchParams.get("status")).toLowerCase() : "active";
+  const actionType = ["warning", "temporary_restriction", "all"].includes(clean(url.searchParams.get("type")).toLowerCase()) ? clean(url.searchParams.get("type")).toLowerCase() : "all";
+  const search = clean(url.searchParams.get("search")).slice(0, 120);
+  const page = Math.max(1, Math.min(Number.parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(Number.parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const filters = [];
+  const binds = [];
+  if (actionType !== "all") { filters.push("a.action_type = ?"); binds.push(actionType); }
+  if (status === "active") filters.push("a.status = 'active' AND (a.expires_at IS NULL OR datetime(a.expires_at) > CURRENT_TIMESTAMP)");
+  if (status === "expired") filters.push("a.status = 'active' AND a.expires_at IS NOT NULL AND datetime(a.expires_at) <= CURRENT_TIMESTAMP");
+  if (status === "revoked") { filters.push("a.status = 'revoked'"); }
+  if (search) { filters.push("(c.username LIKE ? OR c.display_name LIKE ? OR a.reason LIKE ?)"); const pattern = `%${search}%`; binds.push(pattern, pattern, pattern); }
+  const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
+  try {
+    const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM member_moderation_actions a JOIN contributors c ON c.id = a.member_id ${where}`).bind(...binds).first();
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT a.id, a.member_id AS memberId, c.username AS memberUsername, c.display_name AS memberName,
+             a.actor_id AS actorId, actor.username AS actorUsername, a.action_type AS actionType,
+             a.scope, a.reason, a.source_report_type AS sourceReportType,
+             a.source_report_id AS sourceReportId, a.starts_at AS startsAt, a.expires_at AS expiresAt,
+             a.status, a.revoked_at AS revokedAt, a.revocation_note AS revocationNote, a.created_at AS createdAt
+      FROM member_moderation_actions a
+      JOIN contributors c ON c.id = a.member_id
+      LEFT JOIN contributors actor ON actor.id = a.actor_id
+      ${where}
+      ORDER BY a.created_at DESC LIMIT ? OFFSET ?
+    `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+    const total = Number(count?.total || 0);
+    return json({ actions: (results || []).map(moderationActionPayload), status, actionType, search, metadataOnly: true, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ actions: [], status, actionType, search, metadataOnly: true, schema: "migration_pending", pagination: { page, pageSize, total: 0, totalPages: 0 } }, 200, { "Cache-Control": "no-store" });
+  }
+}
+
+async function handleAdminModerationActionRevoke(path, request, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/moderation-actions\/([^/]+)\/revoke$/)?.[1] || ""));
+  const reason = clean((await readJson(request)).reason).slice(0, 1000);
+  if (!id) return json({ error: "Moderation action id is required." }, 400);
+  if (reason.length < 8) return json({ error: "Add a clear revocation reason (at least 8 characters)." }, 400);
+  const action = await env.TPI_DB.prepare("SELECT id, member_id AS memberId, status FROM member_moderation_actions WHERE id = ?").bind(id).first();
+  if (!action) return json({ error: "Moderation action was not found." }, 404);
+  if (action.status !== "active") return json({ error: "Only an active moderation action can be revoked." }, 409);
+  await env.TPI_DB.prepare("UPDATE member_moderation_actions SET status = 'revoked', revoked_at = CURRENT_TIMESTAMP, revoked_by = ?, revocation_note = ? WHERE id = ?").bind(actingUser.id, reason, id).run();
+  await writeAdminAuditLog(env, actingUser, "moderation.action_revoked", "member_moderation_action", id, { reason });
+  return json({ ok: true, id, status: "revoked" }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminAppeals(request, env) {
+  const url = new URL(request.url);
+  const status = ["pending", "under_review", "accepted", "denied", "withdrawn", "all"].includes(clean(url.searchParams.get("status")).toLowerCase()) ? clean(url.searchParams.get("status")).toLowerCase() : "pending";
+  const search = clean(url.searchParams.get("search")).slice(0, 120);
+  const page = Math.max(1, Math.min(Number.parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(Number.parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const filters = [];
+  const binds = [];
+  if (status !== "all") { filters.push("ap.status = ?"); binds.push(status); }
+  if (search) { filters.push("(c.username LIKE ? OR c.display_name LIKE ? OR ap.statement LIKE ?)"); const pattern = `%${search}%`; binds.push(pattern, pattern, pattern); }
+  const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
+  try {
+    const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM moderation_appeals ap JOIN contributors c ON c.id = ap.member_id ${where}`).bind(...binds).first();
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT ap.id, ap.action_id AS actionId, ap.member_id AS memberId,
+             c.username AS memberUsername, c.display_name AS memberName,
+             a.action_type AS actionType, a.scope, a.reason AS actionReason,
+             a.starts_at AS startsAt, a.expires_at AS expiresAt,
+             ap.statement, ap.status, ap.reviewed_by AS reviewedById,
+             reviewer.username AS reviewerUsername, ap.reviewed_at AS reviewedAt,
+             ap.response_note AS responseNote, ap.created_at AS createdAt, ap.updated_at AS updatedAt
+      FROM moderation_appeals ap
+      JOIN contributors c ON c.id = ap.member_id
+      JOIN member_moderation_actions a ON a.id = ap.action_id
+      LEFT JOIN contributors reviewer ON reviewer.id = ap.reviewed_by
+      ${where}
+      ORDER BY ap.created_at DESC LIMIT ? OFFSET ?
+    `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+    const total = Number(count?.total || 0);
+    return json({ appeals: results || [], status, search, metadataOnly: true, privateEvidence: false, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ appeals: [], status, search, metadataOnly: true, privateEvidence: false, schema: "migration_pending", pagination: { page, pageSize, total: 0, totalPages: 0 } }, 200, { "Cache-Control": "no-store" });
+  }
+}
+
+async function handleAdminAppealDetail(path, env) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/appeals\/([^/]+)$/)?.[1] || ""));
+  if (!id) return json({ error: "Appeal id is required." }, 400);
+  const appeal = await env.TPI_DB.prepare(`
+    SELECT ap.id, ap.action_id AS actionId, ap.member_id AS memberId,
+           c.username AS memberUsername, c.display_name AS memberName,
+           a.action_type AS actionType, a.scope, a.reason AS actionReason,
+           a.starts_at AS startsAt, a.expires_at AS expiresAt, a.status AS actionStatus,
+           ap.statement, ap.status, ap.reviewed_at AS reviewedAt,
+           ap.response_note AS responseNote, ap.created_at AS createdAt, ap.updated_at AS updatedAt
+    FROM moderation_appeals ap
+    JOIN contributors c ON c.id = ap.member_id
+    JOIN member_moderation_actions a ON a.id = ap.action_id
+    WHERE ap.id = ?
+  `).bind(id).first();
+  if (!appeal) return json({ error: "Appeal was not found." }, 404);
+  return json({ appeal, metadataOnly: true, privateEvidence: false }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminAppealStatus(path, request, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/appeals\/([^/]+)\/status$/)?.[1] || ""));
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  const responseNote = clean(data.responseNote || data.reason).slice(0, 1000);
+  if (!id) return json({ error: "Appeal id is required." }, 400);
+  if (!["under_review", "accepted", "denied"].includes(status)) return json({ error: "Appeal status was not recognized." }, 400);
+  if (responseNote.length < 8) return json({ error: "Add a clear appeal decision note (at least 8 characters)." }, 400);
+  const appeal = await env.TPI_DB.prepare("SELECT id, action_id AS actionId, member_id AS memberId, status FROM moderation_appeals WHERE id = ?").bind(id).first();
+  if (!appeal) return json({ error: "Appeal was not found." }, 404);
+  if (["accepted", "denied", "withdrawn"].includes(appeal.status)) return json({ error: "This appeal already has a final decision." }, 409);
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare("UPDATE moderation_appeals SET status = ?, reviewed_by = ?, reviewed_at = ?, response_note = ?, updated_at = ? WHERE id = ?").bind(status, actingUser.id, now, responseNote, now, id).run();
+  if (status === "accepted") {
+    await env.TPI_DB.prepare("UPDATE member_moderation_actions SET status = 'revoked', revoked_at = ?, revoked_by = ?, revocation_note = ? WHERE id = ? AND status = 'active'").bind(now, actingUser.id, `Appeal accepted: ${responseNote}`, appeal.actionId).run();
+  }
+  await writeAdminAuditLog(env, actingUser, `moderation.appeal_${status}`, "moderation_appeal", id, { actionId: appeal.actionId, responseNote });
+  const target = await env.TPI_DB.prepare("SELECT notification_prefs FROM contributors WHERE id = ?").bind(appeal.memberId).first();
+  if (target && categoryEnabledForType(target.notification_prefs, "warning")) {
+    const title = status === "accepted" ? "Your TPI appeal was accepted" : status === "denied" ? "Your TPI appeal was reviewed" : "Your TPI appeal is under review";
+    await env.TPI_DB.prepare(`INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by) VALUES (?, ?, ?, ?, ?, 'warning', ?)`).bind(crypto.randomUUID(), appeal.memberId, title, responseNote, "/member-dashboard.html#account", actingUser.id).run();
+  }
+  return json({ ok: true, id, status, actionRevoked: status === "accepted" }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleMemberModerationActions(env, user) {
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT id, action_type AS actionType, scope, reason, starts_at AS startsAt,
+             expires_at AS expiresAt, status, revoked_at AS revokedAt,
+             revocation_note AS revocationNote, created_at AS createdAt
+      FROM member_moderation_actions
+      WHERE member_id = ? ORDER BY created_at DESC LIMIT 50
+    `).bind(user.id).all();
+    return json({ actions: (results || []).map(moderationActionPayload), metadataOnly: true }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return json({ actions: [], metadataOnly: true, schema: "migration_pending" }, 200, { "Cache-Control": "private, no-store" });
+  }
+}
+
+async function handleMemberModerationAppeals(env, user) {
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT ap.id, ap.action_id AS actionId, a.action_type AS actionType, a.scope,
+             a.reason AS actionReason, a.starts_at AS startsAt, a.expires_at AS expiresAt,
+             a.status AS actionStatus, ap.statement, ap.status, ap.reviewed_at AS reviewedAt,
+             ap.response_note AS responseNote, ap.created_at AS createdAt
+      FROM moderation_appeals ap
+      JOIN member_moderation_actions a ON a.id = ap.action_id
+      WHERE ap.member_id = ? ORDER BY ap.created_at DESC LIMIT 50
+    `).bind(user.id).all();
+    return json({ appeals: results || [], metadataOnly: true }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return json({ appeals: [], metadataOnly: true, schema: "migration_pending" }, 200, { "Cache-Control": "private, no-store" });
+  }
+}
+
+async function handleMemberCreateModerationAppeal(request, env, user) {
+  const data = await readJson(request);
+  const actionId = clean(data.actionId);
+  const statement = clean(data.statement).slice(0, 2000);
+  if (!actionId) return json({ error: "Choose the moderation action you want reviewed." }, 400);
+  if (statement.length < 20) return json({ error: "Explain the appeal in at least 20 characters." }, 400);
+  const action = await env.TPI_DB.prepare("SELECT id, action_type AS actionType, scope, status, expires_at AS expiresAt FROM member_moderation_actions WHERE id = ? AND member_id = ?").bind(actionId, user.id).first();
+  if (!action) return json({ error: "That moderation action was not found for your account." }, 404);
+  if (action.status !== "active" || (action.expiresAt && new Date(action.expiresAt).getTime() <= Date.now())) return json({ error: "Only an active moderation action can be appealed." }, 409);
+  const id = crypto.randomUUID();
+  try {
+    await env.TPI_DB.prepare("INSERT INTO moderation_appeals (id, action_id, member_id, statement) VALUES (?, ?, ?, ?)").bind(id, actionId, user.id, statement).run();
+  } catch (error) {
+    return json({ error: "An open appeal already exists for this action, or the appeal schema is unavailable." }, 409);
+  }
+  return json({ appeal: { id, actionId, actionType: action.actionType, scope: action.scope, status: "pending", statement } }, 201, { "Cache-Control": "private, no-store" });
 }
 
 async function handleAdminEvents(request, env) {
@@ -11129,6 +11381,27 @@ async function getMemberActionAccessError(env, user, action) {
   if (action === "post" && user.can_post === 0) return "Posting is currently disabled for your account.";
   if (action === "comment" && user.can_comment === 0) return "Commenting is currently disabled for your account.";
   if (action === "message" && user.can_message === 0) return "Messaging is currently disabled for your account.";
+  const scope = action === "post" ? "posting" : action === "comment" ? "commenting" : action === "message" ? "messaging" : "";
+  if (scope) {
+    try {
+      const restriction = await env.TPI_DB.prepare(`
+        SELECT scope, expires_at AS expiresAt
+        FROM member_moderation_actions
+        WHERE member_id = ? AND action_type = 'temporary_restriction' AND status = 'active'
+          AND datetime(starts_at) <= CURRENT_TIMESTAMP
+          AND (expires_at IS NULL OR datetime(expires_at) > CURRENT_TIMESTAMP)
+          AND (scope = ? OR scope = 'all_content')
+        ORDER BY datetime(created_at) DESC LIMIT 1
+      `).bind(user.id, scope).first();
+      if (restriction) {
+        const until = restriction.expiresAt ? ` until ${new Date(restriction.expiresAt).toLocaleString()}` : "";
+        return `${action === "post" ? "Posting" : action === "comment" ? "Commenting" : "Messaging"} is temporarily restricted${until}.`;
+      }
+    } catch (error) {
+      // The additive enforcement table may not exist in an older local or
+      // development database. Preserve the established capability behavior.
+    }
+  }
   return "";
 }
 

@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-15 — Administration Center bounded enforcement and appeals
+
+Status: **SOURCE COMPLETE; GUARDED PRODUCTION RELEASE PENDING.** The
+Administration Center now has a protected Enforcement & Appeals slice for
+reasoned warnings and time-limited restrictions against non-staff members.
+Restrictions are scoped to posting, commenting, messaging, or all community
+activity and expire within 1–720 hours. Members can review their own notices in
+Settings and submit one open appeal per active action. Staff decisions require
+a response note, and accepting an appeal revokes the linked active action.
+Issue, revoke, and appeal decisions are audited. Permanent bans, staff
+suspension, content deletion, private-message review, and protected
+applications remain outside this slice. Additive migration
+`0072_moderation_enforcement_and_appeals.sql` is applied in the maintained
+local schema; production migration and the exact guarded release result will
+be recorded here after verification.
+
+Source checks passed **86/86**, release-safety contracts passed **37/37**, the
+Administration Center build passed, Worker syntax passed, and local schema
+verification reports migration 0072 **APPLIED**. See [Administration Center
+Enforcement and Appeals](300-COMPLETED-WORK/2026-11-15-ADMINISTRATION-CENTER-ENFORCEMENT-AND-APPEALS.md).
+
 ## 2026-11-15 — Administration Center report intake and triage
 
 Status: **DEPLOYED AND LIVE VERIFIED; PROTECTED EVIDENCE BOUNDARY PRESERVED.** The first

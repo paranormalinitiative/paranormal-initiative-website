@@ -1283,6 +1283,25 @@ columns are compatibility inputs, not the complete authority model.
 supported source can be opened, every terminal decision is documented by the
 server, and private evidence stays outside the administrative response.
 
+### INC-2026-11-15-32 — Administration Center bounded enforcement and appeals
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-15**, during the next Administration Center roadmap slice |
+| Fixed in source | **2026-11-15**, source change pending guarded production release |
+| Product/surface | Protected Administration Center Enforcement & Appeals; member Settings safety notices |
+| Environment | Source and maintained local schema; no production data or protected application changed |
+| Symptom | The report queue could document a decision, but there was no bounded workflow for a warning, temporary content restriction, member notice, or appeal. Staff could not complete a documented next step without using an unrelated account control. |
+| Root cause | Report triage and account controls had been implemented as separate slices, while the enforcement state and appeal records had not yet been modeled as additive, auditable resources. |
+| Fix | Added migration `0072_moderation_enforcement_and_appeals.sql`, server-authorized warning and temporary-restriction routes, member notice/appeal routes, Admin Center Enforcement & Appeals UI, member Settings notices, audit events, and fail-closed missing-schema handling. Restrictions are reasoned, scoped, time-limited, non-staff-only, and capped at 720 hours. |
+| Verification | Admin Center source contracts **86/86**; release-safety contracts **37/37**; Admin Center build passed; Worker syntax passed; local schema migration 0072 applied; production release pending at time of documentation |
+| Production status | Pending guarded release and live verification |
+| References | `migrations/0072_moderation_enforcement_and_appeals.sql`, `functions/api/[[path]].js`, `admin-center-app/src/app.tsx`, `member-settings.js`, `docs/TPI-DEVELOPMENT/008-ADMINISTRATION-CENTER.md` |
+
+**Lesson:** Moderation needs a separate, bounded enforcement record with an
+appeal path; report triage must not silently become a permanent ban, staff
+suspension, content deletion, or private-message inspection tool.
+
 ## New-entry template
 
 Copy this section for the next confirmed problem. Keep the wording factual and

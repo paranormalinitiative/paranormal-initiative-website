@@ -67,12 +67,27 @@ The first report-intake and triage workflow is now implemented for video,
 messenger, and member bug reports: authorized staff can filter the safe queue,
 open protected metadata detail, choose a supported review outcome, and record
 a required triage note for reviewed, dismissed, or actioned decisions. Private
-message evidence remains outside the surface, and no member restriction is
-applied by report triage. The remaining future work is staff suspension,
-warning and temporary restriction actions, appeals, a full staff directory,
-and expanded per-capability inspection. Moderators currently manage Community
-Feed posts and comments only. Do not describe the remaining future tools as
-available.
+message evidence remains outside the surface, and report triage does not itself
+apply a member restriction.
+
+The next enforcement slice is implemented under **Enforcement & Appeals**.
+Authorized administrators can issue a reasoned warning or a time-limited
+restriction against a non-staff member, scoped to posting, commenting,
+messaging, or all community activity. Temporary restrictions are limited to
+1–720 hours and are enforced server-side when the affected member attempts the
+matching action. Members can review their own notices in Settings and submit
+one open appeal per active action. Staff decisions require a response note;
+accepting an appeal revokes the linked action. All issue, revoke, and appeal
+decisions are written to the existing administrative audit trail.
+
+This slice deliberately does not add permanent bans, staff suspension, content
+deletion, private-message review, or a new authority tier. It is additive and
+uses migration `0072_moderation_enforcement_and_appeals.sql`; missing-schema
+responses fail closed as `migration_pending` rather than bypassing the
+authorization boundary. The protected application boundary remains unchanged:
+StudioFlow, Creator Studio, Nova Editor Workspace, private media, and their
+source/deployment artifacts are not part of this work. Moderators continue to
+manage Community Feed posts and comments only.
 
 This report-triage slice is deployed and live verified in release
 `rel-33a090f8a72c-497b729bbec3` (Worker

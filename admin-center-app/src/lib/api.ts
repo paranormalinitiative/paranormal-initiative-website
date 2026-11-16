@@ -412,6 +412,45 @@ export type AdminRestriction = {
   createdAt: string;
 };
 
+export type AdminModerationAction = {
+  id: string;
+  memberId: string;
+  memberUsername: string;
+  memberName?: string;
+  actorUsername?: string;
+  actionType: "warning" | "temporary_restriction";
+  scope: "posting" | "commenting" | "messaging" | "all_content";
+  reason: string;
+  sourceReportType?: string | null;
+  sourceReportId?: string | null;
+  startsAt: string;
+  expiresAt?: string | null;
+  status: "active" | "expired" | "revoked";
+  revokedAt?: string | null;
+  revocationNote?: string | null;
+  createdAt: string;
+};
+
+export type AdminAppeal = {
+  id: string;
+  actionId: string;
+  memberId: string;
+  memberUsername: string;
+  memberName?: string;
+  actionType: "warning" | "temporary_restriction";
+  scope: string;
+  actionReason: string;
+  startsAt: string;
+  expiresAt?: string | null;
+  statement: string;
+  status: "pending" | "under_review" | "accepted" | "denied" | "withdrawn";
+  reviewerUsername?: string | null;
+  reviewedAt?: string | null;
+  responseNote?: string | null;
+  createdAt: string;
+  updatedAt?: string;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

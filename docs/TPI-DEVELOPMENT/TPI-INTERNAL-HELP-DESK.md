@@ -71,6 +71,13 @@ scannable without putting every procedure in one long menu.
 - Remember that the queue exposes metadata only; private conversation evidence remains protected
 - Hide or remove a community post or comment
 - Use the moderation decision checklist
+- Issue a documented warning or time-limited content restriction from
+  **Enforcement & Appeals** when the server-side role permits it
+- Use only the supported scopes: posting, commenting, messaging, or all
+  community activity; temporary restrictions are limited to 1–720 hours
+- Review a member appeal and record a factual decision note; accepting an
+  appeal revokes the linked active action
+- Revoke an active warning or temporary restriction with a reason
 - Escalate threats, doxxing, or immediate safety concerns
 
 ### Members, roles, and restrictions
@@ -80,6 +87,11 @@ scannable without putting every procedure in one long menu.
 - Handle member records and private contact data
 - Keep account blocking separate from content moderation and member-to-member
   blocking
+- Do not use Enforcement & Appeals for permanent bans, staff suspension,
+  content deletion, or private-message review; those actions are outside this
+  slice and must be escalated through the documented authority path
+- Members can review their own safety notices in Settings and submit one open
+  appeal per active action
 
 ### Content, teams, and publishing
 

@@ -107,8 +107,10 @@
     const panel = root.querySelector('[data-settings-panel="'+active+'"]');
     if(focus) { const heading=panel.querySelector('h2'); if(heading) heading.focus({preventScroll:true}); panel.scrollIntoView({block:'start'}); }
     if(active==='blocked-users') loadBlocks();
+    if(active==='account') loadModerationNotices();
   }
   let blocks=[], loading=false, loaded=false;
+  let moderationLoaded=false, moderationLoading=false;
   window.addEventListener('hashchange',()=>navigate(true));
   navigate(false);
   root.querySelector('#settings-search').addEventListener('input', event=>{
@@ -137,6 +139,48 @@
     try { const response=await fetch('/api/me/blocked-users',{credentials:'same-origin',cache:'no-store'}); const data=await response.json(); if(!response.ok) throw new Error(data.error || 'Could not load blocks.'); blocks=data.users || []; loaded=true; renderBlocks(); }
     catch(error) {list.textContent=error.message;}
     finally {loading=false;}
+  }
+  function renderModerationNotices(actions, appeals) {
+    const host=root.querySelector('[data-moderation-notices-body]');
+    if(!host) return;
+    const openAppealIds=new Set((appeals||[]).filter(item=>['pending','under_review'].includes(item.status)).map(item=>item.actionId));
+    const visible=(actions||[]).filter(item=>['active','expired','revoked'].includes(item.status));
+    const actionHtml=visible.length?visible.map(item=>{
+      const label=item.actionType==='warning'?'Warning':'Temporary restriction';
+      const scope=item.scope==='all_content'?'community activity':item.scope;
+      const end=item.expiresAt?` until ${esc(new Date(item.expiresAt).toLocaleString())}`:'';
+      const appeal=item.status==='active'&&!openAppealIds.has(item.id)?`<form data-appeal-form data-action-id="${esc(item.id)}"><label><span>Appeal this action</span><textarea name="statement" rows="3" minlength="20" maxlength="2000" placeholder="Explain why you believe this should be reviewed." required></textarea></label><button type="submit">Submit Appeal</button></form>`:item.status==='active'?'<p class="settings-status">Appeal submitted · awaiting review</p>':'';
+      return `<div class="settings-pref" data-moderation-action><div><strong>${label} · ${esc(scope)}</strong><p>${esc(item.reason)}${end}</p><small>Status: ${esc(item.status)}</small></div>${appeal}</div>`;
+    }).join(''):'<p class="settings-empty">No warnings or temporary restrictions are recorded for your account.</p>';
+    const appealHtml=(appeals||[]).filter(item=>!['pending','under_review'].includes(item.status)).map(item=>`<p class="settings-status">Appeal ${esc(item.status)}: ${esc(item.responseNote||'A decision was recorded.')}</p>`).join('');
+    host.innerHTML=actionHtml+appealHtml;
+    host.querySelectorAll('[data-appeal-form]').forEach(form=>form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      const button=form.querySelector('button');
+      const statement=form.querySelector('textarea').value.trim();
+      if(statement.length<20) return;
+      button.disabled=true;
+      try {
+        const response=await fetch('/api/moderation-appeals',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({actionId:form.dataset.actionId,statement})});
+        const data=await response.json();
+        if(!response.ok) throw new Error(data.error||'Could not submit appeal.');
+        moderationLoaded=false;
+        await loadModerationNotices();
+      } catch(error) { host.insertAdjacentHTML('afterbegin',`<p class="settings-error">${esc(error.message)}</p>`); button.disabled=false; }
+    }));
+  }
+  async function loadModerationNotices() {
+    if(moderationLoaded||moderationLoading) return;
+    const host=root.querySelector('[data-moderation-notices-body]');
+    if(!host) return;
+    moderationLoading=true; host.textContent='Loading your community safety notices…';
+    try {
+      const responses=await Promise.all([fetch('/api/moderation-actions',{credentials:'same-origin',cache:'no-store'}),fetch('/api/moderation-appeals',{credentials:'same-origin',cache:'no-store'})]);
+      const data=await Promise.all(responses.map(response=>response.json()));
+      if(!responses[0].ok||!responses[1].ok) throw new Error(data.find(item=>item.error)?.error||'Could not load safety notices.');
+      renderModerationNotices(data[0].actions||[],data[1].appeals||[]); moderationLoaded=true;
+    } catch(error) { host.textContent=error.message; }
+    finally { moderationLoading=false; }
   }
   root.querySelector('[data-block-search]').addEventListener('input',renderBlocks);
   // Populate only public profile fields, without creating a second profile-edit form.
