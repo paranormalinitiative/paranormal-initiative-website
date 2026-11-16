@@ -6442,7 +6442,7 @@ async function handleCommunityFeed(request, env) {
         a.subtitle AS description,
         a.href,
         a.article_type AS contributionType,
-        a.created_at AS createdAt,
+        COALESCE(a.updated_at, a.created_at) AS createdAt,
         c.username AS authorUsername,
         c.display_name AS authorName,
         c.photo_url AS authorPhotoUrl
@@ -6580,7 +6580,7 @@ async function handleUserFeed(request, env) {
         a.subtitle AS description,
         a.href,
         a.article_type AS contributionType,
-        a.created_at AS createdAt,
+        COALESCE(a.updated_at, a.created_at) AS createdAt,
         c.username AS authorUsername,
         c.display_name AS authorName,
         c.photo_url AS authorPhotoUrl

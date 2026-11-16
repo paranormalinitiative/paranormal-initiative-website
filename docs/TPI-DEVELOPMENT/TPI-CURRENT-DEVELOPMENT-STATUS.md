@@ -1,5 +1,27 @@
 # TPI Current Development Status
 
+## 2026-11-16 — Nova Education publication feed integration
+
+Status: **SOURCE REPAIRED; GUARDED PRODUCTION RELEASE IN PROGRESS.** Nova
+already published the authoritative Education Center article, and the backend
+already had a safe article-card projection. Member Home was requesting the
+discussion-only feed scope, so members did not see a newly published article
+in the shared discovery feed.
+
+Member Home now requests the complete public discovery stream for its shared
+activity feed, profile feed, load-more action, and refresh check. A published
+Nova article appears once with the contributor identity, article type, title,
+summary, and canonical Education Center link. Draft, review-only, and removed
+articles remain excluded. The explicit posts-only `scope=community` API view is
+preserved, and no duplicate Community Feed post is created.
+
+The Nova publication verifier passed **66/66**, member interaction contracts
+passed **33/33**, local member/profile/feed acceptance passed **47/47**, syntax
+and diff checks passed, and a disposable publication-to-feed check passed on
+the maintained port-8787 Worker. StudioFlow, Creator Studio, Nova storage,
+private media, and owner data were not modified. See [Nova Education Publication
+Feed Integration](300-COMPLETED-WORK/2026-11-16-NOVA-EDUCATION-PUBLICATION-FEED-INTEGRATION.md).
+
 ## 2026-11-16 — Messenger profile targeting and direct New Chat repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Clicking

@@ -30,7 +30,7 @@ function check(name, fn) {
 // ---- Throwaway database ----
 const sqlite = new DatabaseSync(":memory:");
 sqlite.exec(`
-  CREATE TABLE contributors (id TEXT PRIMARY KEY, username TEXT, display_name TEXT NOT NULL DEFAULT '', role TEXT, active INTEGER DEFAULT 1, notification_prefs TEXT NOT NULL DEFAULT '{}');
+  CREATE TABLE contributors (id TEXT PRIMARY KEY, username TEXT, display_name TEXT NOT NULL DEFAULT '', role TEXT, active INTEGER DEFAULT 1, notification_prefs TEXT NOT NULL DEFAULT '{}', photo_url TEXT, chat_color TEXT);
   CREATE TABLE sessions (token TEXT PRIMARY KEY, contributor_id TEXT, expires_at TEXT);
   CREATE TABLE member_notifications (
     id TEXT PRIMARY KEY, contributor_id TEXT, title TEXT, body TEXT, action_href TEXT, type TEXT, created_by TEXT,
@@ -695,6 +695,20 @@ check("destination filtering exposes the new snapshot", async () => {
   const other = await call("GET", "/articles?destination=research", null);
   assert.equal(other.status, 200);
   assert.equal(other.body.articles.some(article => article.id === firstPublished.articleId), false);
+});
+check("a published Nova Education article is automatically discoverable in the shared feed", async () => {
+  const res = await call("GET", "/feed?limit=50&offset=0", null);
+  assert.equal(res.status, 200, JSON.stringify(res.body));
+  const matches = (res.body.items || []).filter(item => item.type === "article" && item.id === firstPublished.articleId);
+  assert.equal(matches.length, 1, `the published article must appear exactly once: ${JSON.stringify(res.body)}`);
+  assert.equal(matches[0].title, "First Publication Article");
+  assert.equal(matches[0].href, "published-article.html?id=first-publication");
+  assert.equal(matches[0].authorUsername, "alice");
+});
+check("the intentional posts-only feed scope still excludes Education articles", async () => {
+  const res = await call("GET", "/feed?limit=50&offset=0&scope=community", null);
+  assert.equal(res.status, 200, JSON.stringify(res.body));
+  assert.equal((res.body.items || []).some(item => item.type === "article" && item.id === firstPublished.articleId), false);
 });
 check("an approved but unpublished article never appears in the public listing", async () => {
   const { articleId, title } = await approvedArticle({ title: "Approved But Not Public" });

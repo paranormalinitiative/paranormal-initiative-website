@@ -3648,12 +3648,21 @@
         if (!profileUser || currentTab !== "activity") return;
         feedRefreshCheckInFlight = true;
         try {
+            // The member-home activity stream is the shared discovery feed. It
+            // must include published Education Center articles as well as
+            // community posts, videos, and other public items. The optional
+            // `scope=community` API view remains available for callers that
+            // intentionally need discussion posts only.
             var latestData = profileMode
-                ? await window.TPIApi.userFeed(profileUser.username, 1, 0, "community")
-                : await window.TPIApi.communityFeed(1, 0, "community");
-            var latest = (latestData.items || []).find(function(item) { return item.type === "community_post"; });
-            var visibleLatest = feedContainer.querySelector("[data-feed-type='community'][data-post-id]");
-            if (latest && visibleLatest && latest.postId !== visibleLatest.getAttribute("data-post-id")) {
+                ? await window.TPIApi.userFeed(profileUser.username, 1, 0)
+                : await window.TPIApi.communityFeed(1, 0);
+            var latest = (latestData.items || [])[0];
+            var visibleLatest = feedContainer.querySelector("[data-feed-type]");
+            var latestKey = latest ? String(latest.type || "") + ":" + String(latest.id || latest.postId || "") : "";
+            var visibleKey = visibleLatest
+                ? String(visibleLatest.getAttribute("data-feed-type") || "") + ":" + String(visibleLatest.getAttribute("data-post-id") || visibleLatest.getAttribute("data-article-id") || visibleLatest.getAttribute("data-video-id") || "")
+                : "";
+            if (latestKey && visibleKey && latestKey !== visibleKey) {
                 feedRefreshPending = true;
                 showFeedRefreshNotice();
             }
@@ -4865,13 +4874,13 @@
 
         try {
             if (profileMode) {
-                var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset, "community", requestedPostId);
+                var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset, undefined, requestedPostId);
                 var items = feedData.items || [];
                 renderFeed(items, false);
                 feedOffset = items.length;
                 loadMoreWrap.hidden = items.length < FEED_LIMIT;
             } else {
-                var ownFeedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community", requestedPostId);
+                var ownFeedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, undefined, requestedPostId);
                 var ownItems = ownFeedData.items || [];
                 renderFeed(ownItems, false);
                 feedOffset = ownItems.length;
@@ -4908,8 +4917,8 @@
             loadMoreBtn.textContent = "Loading...";
             try {
                 var feedData = profileMode
-                    ? await window.TPIApi.userFeed(profileUser.username, FEED_LIMIT, feedOffset, "community")
-                    : await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community");
+                    ? await window.TPIApi.userFeed(profileUser.username, FEED_LIMIT, feedOffset)
+                    : await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset);
                 var items = feedData.items || [];
                 renderFeed(items, true);
                 feedOffset += items.length;
