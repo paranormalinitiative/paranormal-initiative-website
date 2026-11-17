@@ -60,6 +60,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic opens but returns “I don’t have a verified member Help Center answer” for a documented question | [Mystic knowledge catalog loading](#inc-2026-11-14-21--mystic-knowledge-catalog-loading) | Shared shell dependency loading, public article catalog, profile-question regression |
 | Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
 | Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
+| Mystic sends “What is a thoughtform?”, “thought form”, or “tulpa” to a glossary or gives inconsistent guidance | [Mystic thoughtform retrieval repair](#inc-2026-11-16-48--mystic-thoughtform-retrieval-and-six-source-cross-reference) | Public terminology book, deterministic aliases, six-source retrieval, empty-source fallback |
 | Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
 | A member cannot tell whether to ask Mystic or Nova, or Nova is missing from a site page | [Mystic and Nova identity separation](#inc-2026-11-16-42--mystic-and-nova-identity-separation-and-sitewide-coverage) | Assistant identity copy, shared site loader, public/internal knowledge boundary |
 | Mystic and Nova appear in the wrong launcher order, or Nova has the wrong icon | [Assistant launcher order and Nova artwork](#inc-2026-11-16-43--assistant-launcher-order-and-nova-artwork) | Shared assistant positioning, Nova artwork, cache version |
@@ -81,6 +82,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Authorized staff need one assistant for Help Desk procedures and internal policy | [Nova protected internal Help Desk](#inc-2026-11-15-41--nova-protected-internal-help-desk) | Active staff gate, separate private index, role-safe retrieval, no-mutation boundary |
 
 ## Incident and fix register
+
+### INC-2026-11-16-48 — Mystic thoughtform retrieval and six-source cross-reference
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 19:08 EST** |
+| What happened | Mystic was asked what a thoughtform was. It first redirected the member to the glossary, and a repeated question produced a different broad route instead of a direct, stable answer. |
+| Root cause | The public terminology reference did not contain explicit Thoughtform or Tulpa entries, and the server accepted an AI Search answer even when Cloudflare returned zero usable public source chunks. That allowed an unhelpful “look in the glossary” response to pass as if it were grounded. |
+| Fix | Added public glossary entries for **Thoughtform / Thought Form** and **Tulpa** with TPI’s evidence-aware wording. Added deterministic aliases for thoughtform, thought form, tulpa, and plural forms. Mystic now shows six public TPI references for this concept: Terminology, Field Encyclopedia, Investigation, Evidence, Forensic Analysis, and Ghostology 101. The server prompt now requests direct answers and up to six distinct public sources for research concepts. |
+| Safeguards | The public client and API share the same verified fallback. The API no longer returns an AI answer with no usable public source; it falls back only for the documented thoughtform/tulpa concept and otherwise returns the honest knowledge-base fallback. Internal Help Desk/Admin content remains excluded. |
+| Verification | Pending the guarded production release and live Firefox/API verification. Focused source contracts cover aliases, six references, public-only retrieval, and the empty-source guard. |
+| Status | **IMPLEMENTED; RELEASE VERIFICATION IN PROGRESS.** See [Mystic Thoughtform Retrieval Repair](300-COMPLETED-WORK/2026-11-16-MYSTIC-THOUGHTFORM-RETRIEVAL-REPAIR.md). |
 
 ### INC-2026-11-16-47 — Community Feed composer shape repair
 

@@ -454,6 +454,7 @@ const MYSTIC_PUBLIC_SYSTEM_PROMPT = [
   "You are Mystic, the public member assistant for The Paranormal Initiative (TPI).",
   "Answer only from the retrieved public TPI website context provided by AI Search.",
   "Be warm, clear, concise, and practical. Use TPI's own terminology and guidance.",
+  "Answer the member's question directly when the retrieved context contains the answer. For terminology and research-concept questions, cross-check as many as six distinct public TPI sources when available and synthesize them instead of sending the member to search elsewhere.",
   "Never invent a policy, feature, person, location, book, or instruction.",
   "If the retrieved context does not answer the question, say that you do not have a verified public answer yet and direct the member to the public Help Center or member support.",
   "Never reveal or summarize internal Help Desk, Administration Center, moderator, staff, owner, credential, or private member information.",
@@ -471,6 +472,41 @@ const MYSTIC_PRIVATE_PATHS = [
   /^\/paper-editor/i,
   /^\/nova[-/]/i
 ];
+
+const MYSTIC_PUBLIC_TERM_FALLBACKS = [
+  {
+    patterns: [
+      "what is a thoughtform",
+      "what is a thought form",
+      "define thoughtform",
+      "define thought form",
+      "thoughtform meaning",
+      "thought form meaning",
+      "what is a tulpa",
+      "define tulpa",
+      "tulpas",
+      "thoughtforms"
+    ],
+    answer: "A thoughtform is a concept from esoteric and paranormal traditions describing an apparent form, presence, or agent associated with sustained thought, expectation, emotion, imagination, or group belief. Tulpa is a related term whose meaning varies across Tibetan Buddhist, modern occult, and internet subcultures; it should not be treated as a single universally defined phenomenon. At TPI, these are research and report terms—not proof that an independently existing entity has been created. Document the witness account, circumstances, expectations, environmental conditions, and repeatability, then test ordinary explanations before drawing a conclusion.",
+    sources: [
+      { title: "Complete Paranormal Terminology", url: "/TPI_Terminology_Reference_Unified.html" },
+      { title: "Official Field Encyclopedia", url: "/TPI_Field_Encyclopedia.html" },
+      { title: "Investigation Compendium", url: "/TPI_Investigation_Compendium.html" },
+      { title: "Evidence Compendium", url: "/TPI_Evidence_Compendium.html" },
+      { title: "Forensic Analysis Compendium", url: "/TPI_Forensic_Analysis_Compendium.html" },
+      { title: "Ghostology 101", url: "/ghostology-101.html" }
+    ]
+  }
+];
+
+function normalizeMysticQuestion(value) {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9\s-]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function mysticPublicTermFallback(question) {
+  const normalized = normalizeMysticQuestion(question);
+  return MYSTIC_PUBLIC_TERM_FALLBACKS.find(entry => entry.patterns.some(pattern => normalized.includes(pattern))) || null;
+}
 
 function mysticPublicSource(key, metadata = {}) {
   let url;
@@ -520,7 +556,11 @@ async function handleMysticAsk(request, env) {
       sources.push(source);
       if (sources.length === 3) break;
     }
-    if (!answer) return json({ ok: false, error: "Mystic did not receive a verified answer from the public knowledge base." }, 503);
+    if (!answer || !sources.length) {
+      const fallback = mysticPublicTermFallback(question);
+      if (fallback) return json({ ok: true, answer: fallback.answer, sources: fallback.sources }, 200, { "Cache-Control": "no-store" });
+      return json({ ok: false, error: "Mystic did not receive a verified answer from the public knowledge base." }, 503);
+    }
     return json({ ok: true, answer, sources }, 200, { "Cache-Control": "no-store" });
   } catch (error) {
     console.error("Mystic public AI Search request failed", error);

@@ -110,10 +110,18 @@
 
   function directAnswerMessage(match) {
     var answer = match.answer;
-    var source = publicSources().find(function (item) { return item.id === answer.sourceId; });
+    var sources = publicSources();
+    var sourceIds = Array.isArray(answer.sourceIds) && answer.sourceIds.length ? answer.sourceIds : [answer.sourceId];
+    var sourceMatches = sourceIds.map(function (sourceId) {
+      return sources.find(function (item) { return item.id === sourceId; });
+    }).filter(Boolean);
+    var sourceMarkup = sourceMatches.length ? '<p><strong>TPI references checked</strong></p><ul>' + sourceMatches.map(function (source) {
+      return '<li><a href="' + escapeHtml(source.url) + '">' + escapeHtml(source.title) + '</a></li>';
+    }).join("") + '</ul>' : "";
+    var source = sourceMatches[0];
     if (!source) return "";
     return '<p>Here is a verified public TPI answer:</p>' +
-      '<div class="hc-mystic-result"><strong>' + escapeHtml(answer.title) + '</strong><p>' + escapeHtml(answer.answer) + '</p><a href="' + escapeHtml(source.url) + '">Open the full source: ' + escapeHtml(source.title) + ' <span aria-hidden="true">›</span></a></div>' +
+      '<div class="hc-mystic-result"><strong>' + escapeHtml(answer.title) + '</strong><p>' + escapeHtml(answer.answer) + '</p>' + sourceMarkup + '<a href="' + escapeHtml(source.url) + '">Open the primary source: ' + escapeHtml(source.title) + ' <span aria-hidden="true">›</span></a></div>' +
       '<p>Mystic will separate a reported experience from a proven conclusion.</p>';
   }
 

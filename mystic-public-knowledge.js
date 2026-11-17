@@ -4,7 +4,7 @@
   // Public/member-facing sources only. Internal Help Desk and Administration
   // material must never be added to this index.
   window.TPI_MYSTIC_PUBLIC_KNOWLEDGE = {
-    version: 1,
+    version: 2,
     audience: "public-member",
     answers: [
       {
@@ -48,6 +48,32 @@
           "tell me about ghosts"
         ],
         answer: "At TPI, a ghost is a perceived manifestation, presence, or appearance believed to be associated with a deceased individual. We treat ghost as a working description of a report, not as a proven conclusion. A careful investigation documents what was observed and checks environmental explanations, witness contamination, suggestion, folklore influence, and perceptual error before assigning the label."
+      },
+      {
+        id: "thoughtform-definition",
+        sourceId: "terminology-reference",
+        sourceIds: [
+          "terminology-reference",
+          "field-encyclopedia",
+          "investigation-compendium",
+          "evidence-compendium",
+          "forensic-analysis-compendium",
+          "ghostology-101"
+        ],
+        title: "What TPI means by thoughtform and tulpa",
+        patterns: [
+          "what is a thoughtform",
+          "what is a thought form",
+          "define thoughtform",
+          "define thought form",
+          "thoughtform meaning",
+          "thought form meaning",
+          "what is a tulpa",
+          "define tulpa",
+          "tulpas",
+          "thoughtforms"
+        ],
+        answer: "A thoughtform is a concept from esoteric and paranormal traditions describing an apparent form, presence, or agent associated with sustained thought, expectation, emotion, imagination, or group belief. Tulpa is a related term whose meaning varies across Tibetan Buddhist, modern occult, and internet subcultures; it should not be treated as a single universally defined phenomenon. At TPI, these are research and report terms—not proof that an independently existing entity has been created. Document the witness account, circumstances, expectations, environmental conditions, and repeatability, then test ordinary explanations before drawing a conclusion."
       }
     ],
     sources: [
@@ -81,7 +107,7 @@
         title: "Complete Paranormal Terminology",
         url: "/TPI_Terminology_Reference_Unified.html",
         summary: "An A-Z reference for paranormal research language, evidence classification, field methodology, entity theory, psychology, and analysis.",
-        keywords: ["terminology", "definition", "term", "what does", "glossary", "language", "ghost", "ghosts", "spirit", "apparition"]
+        keywords: ["terminology", "definition", "term", "what does", "glossary", "language", "ghost", "ghosts", "spirit", "apparition", "thoughtform", "thought form", "tulpa", "tulpas"]
       },
       {
         id: "investigation-compendium",
