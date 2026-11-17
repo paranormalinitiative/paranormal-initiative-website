@@ -37,14 +37,14 @@ check("member profiles receive Board Member data", api.includes("boardMembership
 check("Board Member library is server-resolved", library.includes("getBoardMembership") && library.includes("listBoardMembers"));
 check("Admin Center includes appointment form", admin.includes("Appoint a Board Member") && admin.includes("/admin/board-members"));
 check("Admin Center includes revoke control", admin.includes("/admin/board-members/${encodeURIComponent(row.id)}/revoke"));
-check("Admin Center keeps authority boundaries visible", admin.includes("does not grant account access or Founding Membership benefits") || admin.includes("Free-text rank assignments are not permitted"));
+check("Admin Center keeps authority boundaries visible", admin.includes("Separate records") && admin.includes("Board appointments, Founding Memberships, medallions, and account roles are stored and authorized separately"));
 check("profile UI renders Board Member artwork", profile.includes("renderRecognitionShelf") && profile.includes("boardMembership.badgePath"));
 check("profile styling includes the centered recognition shelf", css.includes(".profile-recognition-card") && css.includes(".profile-recognition-art"));
 check("Board Member master is excluded from public package", /^assets\/board-members\/masters\/$/m.test(ignore));
 check("256px derivative is a real PNG", existsSync(badge256) && readFileSync(badge256).subarray(0, 8).equals(PNG_SIGNATURE));
 check("512px derivative is a real PNG", existsSync(badge512) && readFileSync(badge512).subarray(0, 8).equals(PNG_SIGNATURE));
 check("rank metadata migration is additive", rankMigration.includes("ALTER TABLE board_members ADD COLUMN role_code") && rankMigration.includes("ALTER TABLE board_members ADD COLUMN medallion_code"));
-check("board role catalog derives medallion rank", library.includes("BOARD_ROLE_CATALOG") && library.includes("boardRolePayload") && library.includes('medallionCode: "gold"'));
+check("board role catalog uses one universal Board Member medallion", library.includes("BOARD_MEMBER_MEDALLION") && library.includes('code: "board-member"') && !library.includes('medallionCode: "gold"') && !library.includes('medallionCode: "silver"') && !library.includes('medallionCode: "bronze"') && admin.includes("universal Board Member medallion"));
 check("board domains cover paranormal umbrella", library.includes("research-investigation") && library.includes("ethics-professional-conduct") && library.includes("community-outreach"));
 check("board API rejects free-text rank assignment", api.includes("Choose an approved Board role") && api.includes("boardRolePayload(data.roleCode, data.domainCode)"));
 
