@@ -1681,13 +1681,6 @@
             background: radial-gradient(circle at 50% 35%, rgba(247, 2, 2, 0.16), transparent 58%), #071017;
         }
 
-        .external-page-preview-live {
-            display: block;
-            min-height: 320px;
-            padding: 0;
-            background: #000;
-        }
-
         .external-page-preview-media img {
             position: absolute;
             inset: 0;
@@ -1704,10 +1697,6 @@
             background: linear-gradient(180deg, rgba(7, 16, 23, 0.1), rgba(7, 16, 23, 0.82));
         }
 
-        .external-page-preview-live::after {
-            display: none;
-        }
-
         .external-page-preview-action {
             position: relative;
             z-index: 1;
@@ -1716,31 +1705,6 @@
             align-items: center;
             gap: 8px;
             text-align: center;
-        }
-
-        .external-page-preview-media button {
-            border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
-            border-radius: 999px;
-            padding: 12px 18px;
-            background: color-mix(in srgb, var(--accent) 18%, #071017);
-            color: #fff;
-            font: inherit;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .external-page-preview-media button:hover,
-        .external-page-preview-media button:focus-visible {
-            background: color-mix(in srgb, var(--accent) 30%, #071017);
-        }
-
-        .external-page-preview-frame {
-            display: block;
-            width: 100%;
-            min-height: 320px;
-            height: 320px;
-            border: 0;
-            background: #000;
         }
 
         .youtube-preview-play {
@@ -1807,6 +1771,26 @@
             height: 36px;
             fill: currentColor;
             opacity: 0.8;
+        }
+
+        .external-page-preview-unavailable {
+            flex-direction: column;
+            gap: 8px;
+            min-height: 180px;
+            padding: 24px;
+            color: #aebdcc;
+            text-align: center;
+        }
+
+        .external-page-preview-unavailable svg {
+            width: 34px;
+            height: 34px;
+        }
+
+        .external-page-preview-unavailable span {
+            max-width: 360px;
+            font-size: 13px;
+            line-height: 1.45;
         }
 
         .link-preview-info {
@@ -5180,11 +5164,14 @@
                 '<img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();">' +
             '</div>';
         } else if (externalPageUrl) {
-            // JavaScript-rendered pages such as Chimera may not publish an
-            // og:image, but the existing sandboxed preview still renders. Show
-            // it inline so members do not need an extra click.
-            media = '<div class="link-preview-media external-page-preview-media external-page-preview-live" data-external-page-media>' +
-                '<iframe class="external-page-preview-frame" src="' + escapeAttr(externalPageUrl) + '" title="Interactive external link preview" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts" allow="autoplay; fullscreen; picture-in-picture"></iframe>' +
+            // A script-driven page without a source-provided image is not a
+            // reliable embeddable preview. Some hosts block framing, return a
+            // security/interstitial page, or render a blank frame. Do not show
+            // a misleading black rectangle; explain the limitation and keep a
+            // direct source link below.
+            media = '<div class="link-preview-media link-preview-noimg external-page-preview-unavailable" data-external-page-media data-preview-state="image-unavailable">' +
+                LINK_ICON_SVG +
+                '<span>Preview image unavailable. This source did not provide an image that TPI can safely display here.</span>' +
             '</div>';
         } else if (meta.image) {
             media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\').classList.add(\'link-preview-noimg\'); this.remove();"></div>';
@@ -5225,8 +5212,8 @@
                 '<div class="link-preview-info">' +
                     (host ? '<span class="link-preview-host">' + escapeHtml(host) + '</span>' : "") +
                     '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
-                    (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : '<span class="link-preview-desc">External preview shown when the source permits it. Open the source for the complete experience.</span>') +
-                    '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open interactive preview</a>' +
+                    (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : '<span class="link-preview-desc">This source did not provide a preview image. Open the source to view the complete experience.</span>') +
+                    '<a class="youtube-preview-external" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">Open source</a>' +
                 '</div>' +
             '</div>';
         }

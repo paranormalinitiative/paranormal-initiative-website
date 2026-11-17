@@ -39,6 +39,21 @@ query passed **4/4** with six references returned each time. Release
 Workspace, private media, and owner data were not modified. See [Mystic
 Thoughtform Retrieval Repair](300-COMPLETED-WORK/2026-11-16-MYSTIC-THOUGHTFORM-RETRIEVAL-REPAIR.md).
 
+## 2026-11-16 — External link preview unavailable state
+
+Status: **IMPLEMENTED; RELEASE VERIFICATION PENDING.** Community Feed external
+links that provide a real image continue to show that image. A script-driven
+external page with no source-provided image no longer renders as a large blank
+or black interactive frame. It now tells the member that a preview image is
+unavailable and provides a direct **Open source** link. This is the truthful
+behavior when the external page does not publish an image that TPI can safely
+display; TPI does not fabricate thumbnails or bypass framing/security rules.
+
+Link-preview regression passed **18/18** and member interaction contracts
+passed **35/35**. StudioFlow, Creator Studio, Nova Workspace, private media,
+and owner data were not modified. See [External Link Preview Unavailable
+State](300-COMPLETED-WORK/2026-11-16-EXTERNAL-LINK-PREVIEW-UNAVAILABLE-STATE.md).
+
 ## 2026-11-16 — Community Feed composer shape repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The shared Community Feed composer had pill/circular presentation

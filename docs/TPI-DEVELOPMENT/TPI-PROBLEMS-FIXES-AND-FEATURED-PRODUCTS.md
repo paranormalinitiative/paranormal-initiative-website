@@ -61,6 +61,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Mystic cannot point a public research question toward TPI books, repository guides, education, or haunted-location material | [Mystic public knowledge expansion](#inc-2026-11-15-22--mystic-public-knowledge-expansion) | Public source index, source matching, internal-content exclusion |
 | Mystic sends a definition question such as “What is a ghost?” to a broad guide instead of answering it | [Mystic direct definition answer](#inc-2026-11-15-23--mystic-definition-answer-ranking) | Public knowledge intent matching, Terminology Reference, source-grounded answer |
 | Mystic sends “What is a thoughtform?”, “thought form”, or “tulpa” to a glossary or gives inconsistent guidance | [Mystic thoughtform retrieval repair](#inc-2026-11-16-48--mystic-thoughtform-retrieval-and-six-source-cross-reference) | Public terminology book, deterministic aliases, six-source retrieval, empty-source fallback |
+| A Community Feed external link shows a black panel instead of a useful image preview | [External link preview unavailable state](#inc-2026-11-16-49--external-link-preview-unavailable-state) | Source metadata availability, safe external rendering, honest fallback state |
 | Mystic needs to answer broader public TPI questions from the live knowledge base | [Mystic Cloudflare AI Search integration](#inc-2026-11-15-24--mystic-cloudflare-ai-search-integration) | Public website crawl, AI Search retrieval, public-only server boundary, deterministic fallback |
 | A member cannot tell whether to ask Mystic or Nova, or Nova is missing from a site page | [Mystic and Nova identity separation](#inc-2026-11-16-42--mystic-and-nova-identity-separation-and-sitewide-coverage) | Assistant identity copy, shared site loader, public/internal knowledge boundary |
 | Mystic and Nova appear in the wrong launcher order, or Nova has the wrong icon | [Assistant launcher order and Nova artwork](#inc-2026-11-16-43--assistant-launcher-order-and-nova-artwork) | Shared assistant positioning, Nova artwork, cache version |
@@ -94,6 +95,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Safeguards | The public client and API share the same verified fallback. The API no longer returns an AI answer with no usable public source; it falls back only for the documented thoughtform/tulpa concept and otherwise returns the honest knowledge-base fallback. Internal Help Desk/Admin content remains excluded. |
 | Verification | Local authentication lifecycle **38/38**; Help Center/Mystic protection contracts **34/34**; member boundary **48/48**; focused member/profile/feed browser **57/57**; Messenger browser **27/27**; MP4/ZIP media round trip **PASS**; exact candidate certified with **14 gates**; production smoke **10/10**; live thoughtform/thought form/tulpa queries and repeat **4/4 direct, consistent answers**, each returning six public TPI references. |
 | Status | **DEPLOYED AND LIVE VERIFIED** in release `rel-711a9fbd8d0d-e68627783f29`; Worker `74c14f0d-7cfd-4570-9567-db467673bd2b` serves 100% of traffic; rollback `90170296-2208-473f-9563-0007e7159ca6`. See [Mystic Thoughtform Retrieval Repair](300-COMPLETED-WORK/2026-11-16-MYSTIC-THOUGHTFORM-RETRIEVAL-REPAIR.md). |
+
+### INC-2026-11-16-49 — External link preview unavailable state
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 19:30 EST** |
+| What happened | Bill Heiland's Battery Drain Experiment link showed a black external preview area without a useful image. |
+| Root cause | The linked page provided a title but no usable preview image. The renderer treated the script-driven page as an embeddable interactive page, even though external sites may block framing, return an interstitial, or render blank. |
+| Fix | Kept source-provided images as static previews, but replaced image-less external frames with an explicit **Preview image unavailable** state and a direct **Open source** link. Removed the misleading interactive-preview wording and unused blank-frame styling. |
+| Safeguards | Safe URL validation, bounded external metadata fetching, redirect limits, and the external-content boundary remain unchanged. TPI does not fabricate a thumbnail or bypass a source's security/framing policy. |
+| Verification | Link-preview regression **18/18**; member interaction contracts **35/35**; `git diff --check` passed; guarded production release and live acceptance pending. |
+| Status | **IMPLEMENTED; RELEASE VERIFICATION PENDING.** See [External Link Preview Unavailable State](300-COMPLETED-WORK/2026-11-16-EXTERNAL-LINK-PREVIEW-UNAVAILABLE-STATE.md). |
 
 ### INC-2026-11-16-47 — Community Feed composer shape repair
 
