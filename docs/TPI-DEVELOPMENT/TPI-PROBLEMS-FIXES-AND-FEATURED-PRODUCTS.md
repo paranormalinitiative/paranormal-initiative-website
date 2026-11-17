@@ -1093,6 +1093,28 @@ guards, sandbox restrictions, and fallback behavior remain protected.
 **Completion record:**
 [`2026-11-16-EXTERNAL-PAGE-PREVIEW-IMAGE-REPAIR.md`](300-COMPLETED-WORK/2026-11-16-EXTERNAL-PAGE-PREVIEW-IMAGE-REPAIR.md)
 
+### INC-2026-11-16-02 — Opening a notification did not reliably mark it read
+
+| Field | Record |
+| --- | --- |
+| Detected | **2026-11-16**, member notification behavior report |
+| Root cause confirmed | **2026-11-16**, notification link lifecycle inspection |
+| Fixed in source | **2026-11-16**, navigation-safe read acknowledgement |
+| Status | **Implemented in source; guarded production release pending verification** |
+
+**What happened:** A member could open a notification and arrive at the right
+post while the notification still appeared unread. The read request was
+best-effort and could be canceled when the browser navigated away.
+
+**How it was fixed:** Normal notification opens now queue the read mutation with
+`navigator.sendBeacon` before following the destination. Browsers that cannot
+queue the beacon use a `keepalive` request with a short fallback timeout. The
+notification remains in the list after being marked read, and alternate-click
+behavior remains native.
+
+**Completion record:**
+[`2026-11-16-NOTIFICATION-OPEN-MARK-READ-REPAIR.md`](300-COMPLETED-WORK/2026-11-16-NOTIFICATION-OPEN-MARK-READ-REPAIR.md)
+
 ### INC-2026-11-14-16 — Owner Admin authorization mismatch
 
 | Field | Record |

@@ -2671,16 +2671,57 @@
     window.location.href = "/member-home?username=" + encodeURIComponent(username);
   });
 
+  function markNotificationReadBeforeNavigation(notificationId, href) {
+    const encodedId = encodeURIComponent(String(notificationId || ""));
+    const destination = String(href || "");
+    if (!encodedId || !destination) {
+      window.location.assign(destination || "member-notifications.html");
+      return;
+    }
+
+    const readUrl = `/api/notifications/${encodedId}/read`;
+    // Queue the state change before the browser leaves the page. Beacon is
+    // designed for exactly this navigation/unload case and keeps the normal
+    // link fast without losing the read event.
+    if (typeof navigator.sendBeacon === "function") {
+      const queued = navigator.sendBeacon(readUrl, new Blob(["{}"], { type: "application/json" }));
+      if (queued) {
+        window.location.assign(destination);
+        return;
+      }
+    }
+
+    // Keepalive is the fallback for browsers that cannot queue a beacon. It
+    // gets a short opportunity to complete, but never traps the member on the
+    // notification page if the service is slow or unavailable.
+    let navigated = false;
+    const navigate = () => {
+      if (navigated) return;
+      navigated = true;
+      window.location.assign(destination);
+    };
+    const timeout = window.setTimeout(navigate, 1200);
+    fetch(readUrl, {
+      method: "POST",
+      credentials: "same-origin",
+      cache: "no-store",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    }).catch(() => {}).finally(() => {
+      window.clearTimeout(timeout);
+      navigate();
+    });
+  }
+
   document.addEventListener("click", async event => {
     const notificationOpenButton = event.target.closest("[data-notification-open]");
     if (notificationOpenButton) {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const notificationId = notificationOpenButton.dataset.notificationOpen;
-      // Keep this a normal same-origin link so Chrome, Firefox, and a
-      // partially initialized member shell all reach the destination. Marking
-      // the item read is best-effort and must never block the deep link.
-      if (notificationId && window.TPIApi && typeof window.TPIApi.markNotificationRead === "function") {
-        Promise.resolve(window.TPIApi.markNotificationRead(notificationId)).catch(() => {});
-      }
+      const destination = notificationOpenButton.getAttribute("href") || "member-dashboard.html";
+      event.preventDefault();
+      markNotificationReadBeforeNavigation(notificationId, destination);
       return;
     }
 
