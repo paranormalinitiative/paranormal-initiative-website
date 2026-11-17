@@ -61,6 +61,7 @@ const migrations = [
   { file: "migrations/0014_tpi_videos_content.sql", tables: ["tpi_videos"] },
   { file: "migrations/0015_video_reactions_saves_reports.sql", columns: ["viewing_access"], table: "tpi_videos", tables: ["video_reactions", "video_saves", "video_reports"] },
   { file: "migrations/0016_member_contact_fields.sql", columns: ["contact_name", "phone", "address_line1", "address_line2", "city", "state", "postal_code", "email_verified", "phone_verified"] },
+  { file: "migrations/0026_email_verification.sql", tables: ["email_verification_tokens"] },
   { file: "migrations/0017_member_notifications.sql", tables: ["member_notifications"] },
   { file: "migrations/0018_member_access_controls.sql", columns: ["can_post", "can_comment", "can_message"], tables: ["site_settings"] },
   { file: "migrations/0019_messenger_d1_sync.sql", tables: ["conversations", "conversation_participants", "messages", "message_read_state"] },

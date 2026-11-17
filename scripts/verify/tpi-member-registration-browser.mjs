@@ -54,11 +54,54 @@ try {
   const session = await driver.executeAsyncScript((done) => {
     fetch("/api/auth/me", { credentials: "same-origin", cache: "no-store" })
       .then(response => response.json())
-      .then(payload => done(payload?.user?.username || ""))
-      .catch(() => done(""));
+      .then(payload => done(payload?.user || null))
+      .catch(() => done(null));
   });
-  assert.equal(session, username, "the signup response did not establish the member session");
-  console.log("PASS Firefox local member registration creates an account, establishes a session, and opens Member Home");
+  assert.equal(session?.username, username, "the signup response did not establish the member session");
+  const verificationRoute = await driver.executeAsyncScript((done) => {
+    fetch("/api/auth/verify-email/request", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    })
+      .then(async response => ({ status: response.status, body: await response.json().catch(() => ({})) }))
+      .then(done)
+      .catch(() => done({ status: 0, body: null }));
+  });
+  assert.equal(verificationRoute.status, 503, "the authenticated verification route did not return the controlled local email-provider response");
+  assert.notEqual(verificationRoute.body?.error, "Not found.", "the authenticated verification route is missing");
+  const savedProfile = await driver.executeAsyncScript((profile, done) => {
+    fetch("/api/contributors/me/profile", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(profile)
+    })
+      .then(async response => ({ status: response.status, body: await response.json().catch(() => ({})) }))
+      .then(done)
+      .catch(() => done({ status: 0, body: null }));
+  }, {
+    displayName: "TPI Signup Probe Updated",
+    title: "Member",
+    correspondence: email,
+    contactName: "TPI Signup Probe Updated",
+    bio: "Signup profile persistence probe.",
+    commentSignatureEnabled: true,
+    photoUrl: "",
+    profileBannerUrl: ""
+  });
+  assert.equal(savedProfile.status, 200, "the newly registered member could not save a profile");
+  assert.equal(savedProfile.body?.user?.bio, "Signup profile persistence probe.", "the saved profile bio was not returned");
+  const persistedProfile = await driver.executeAsyncScript((done) => {
+    fetch("/api/auth/me", { credentials: "same-origin", cache: "no-store" })
+      .then(response => response.json())
+      .then(payload => done(payload?.user || null))
+      .catch(() => done(null));
+  });
+  assert.equal(persistedProfile?.displayName, "TPI Signup Probe Updated", "the profile display name was not retained");
+  assert.equal(persistedProfile?.bio, "Signup profile persistence probe.", "the profile bio was not retained after reload");
+  console.log("PASS Firefox local member registration creates an account, establishes a session, opens Member Home, and retains profile edits");
 } finally {
   try { await driver.quit(); } finally { cleanupLocalProbe(); }
 }

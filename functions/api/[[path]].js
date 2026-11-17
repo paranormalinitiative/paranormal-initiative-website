@@ -10,7 +10,7 @@ import { buildPublicationSnapshot, novaDocumentFromContent, novaDocHasPublishabl
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
-import { passwordResetEmail, randomCode, sendEmail } from "../../lib/email.js";
+import { passwordResetEmail, randomCode, sendEmail, verificationEmail } from "../../lib/email.js";
 import { hashPassword, hashRateLimitKey, isLegacyPasswordHash, verifyPassword } from "../../lib/passwords.js";
 import {
   CAPABILITY,
@@ -97,7 +97,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/auth/logout") return handleLogout(request, env);
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
     if (request.method === "POST" && path === "/auth/password-reset/confirm") return handlePasswordResetConfirm(request, env);
-    if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
+    if (request.method === "POST" && path === "/auth/verify-email/request") return requireMember(request, env, user => handleVerifyEmailRequest(request, env, user));
+    if (request.method === "POST" && path === "/auth/verify-email/confirm") return requireMember(request, env, user => handleVerifyEmailConfirm(request, env, user));
+    if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env, context);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/admin/staff-roles") return requireExecutive(request, env, user => handleAdminStaffRoles(request, env, user));
     if (request.method === "POST" && path === "/admin/staff-roles") return requireExecutive(request, env, user => handleAdminSetStaffRole(request, env, user));
@@ -845,6 +847,78 @@ async function handlePasswordResetConfirm(request, env) {
   });
 }
 
+async function handleVerifyEmailRequest(request, env, user) {
+  const email = clean(user.correspondence).toLowerCase();
+  if (!email || !email.includes("@")) return json({ error: "No email address is set on your account." }, 400);
+  if (user.email_verified) return json({ ok: true, alreadyVerified: true });
+
+  const clientIp = request.headers.get("CF-Connecting-IP") || (isLocalEnvironment(env) ? "local-test" : "");
+  if (!clientIp) return json({ error: "Email verification is temporarily unavailable. Please try again." }, 503);
+  const ipAllowed = await recoveryRateAllowed(env, "verification-request-ip", clientIp);
+  if (ipAllowed === null) return json({ error: "Email verification is temporarily unavailable. Please try again." }, 503);
+  if (!ipAllowed) return json({ error: "Too many verification requests. Wait a minute and try again." }, 429);
+
+  try {
+    const recent = await env.TPI_DB.prepare(`
+      SELECT COUNT(*) AS count FROM email_verification_tokens
+      WHERE contributor_id = ? AND created_at >= datetime('now', '-1 hour')
+    `).bind(user.id).first();
+    if (Number(recent?.count || 0) >= 6) {
+      return json({ error: "Too many verification requests. Wait a while and try again." }, 429);
+    }
+
+    // Only one current code remains usable. This prevents an older email from
+    // unexpectedly verifying an address after a member requests a newer code.
+    await env.TPI_DB.prepare("UPDATE email_verification_tokens SET used = 1 WHERE contributor_id = ? AND used = 0").bind(user.id).run();
+    const code = randomCode();
+    const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
+    await env.TPI_DB.prepare(`
+      INSERT INTO email_verification_tokens (token, contributor_id, expires_at)
+      VALUES (?, ?, ?)
+    `).bind(code, user.id, expires).run();
+    const content = verificationEmail(code);
+    const result = await sendEmail(env, { to: email, ...content });
+    if (!result.ok) {
+      await env.TPI_DB.prepare("DELETE FROM email_verification_tokens WHERE token = ? AND contributor_id = ?").bind(code, user.id).run();
+      if (result.error !== "email-not-configured") console.error("verify-email send failed", result.error || "unknown-error");
+      return json({ error: result.error === "email-not-configured" ? "Email delivery is not configured yet. Please try again later." : "The verification email could not be sent right now. Please try again later." }, 503);
+    }
+    return json({ ok: true, sentTo: email });
+  } catch (error) {
+    console.error("verify-email request failed", error.message || error);
+    return json({ error: "Email verification is temporarily unavailable. Please try again." }, 503);
+  }
+}
+
+async function handleVerifyEmailConfirm(request, env, user) {
+  const data = await readJson(request);
+  const code = clean(data.code).replace(/\s+/g, "");
+  if (!/^\d{8}$/.test(code)) return json({ error: "Enter the 8-digit verification code from your email." }, 400);
+
+  const clientIp = request.headers.get("CF-Connecting-IP") || (isLocalEnvironment(env) ? "local-test" : "");
+  if (!clientIp) return json({ error: "Email verification is temporarily unavailable. Please try again." }, 503);
+  const attemptAllowed = await recoveryRateAllowed(env, "verification-confirm-ip", clientIp);
+  if (attemptAllowed === null) return json({ error: "Email verification is temporarily unavailable. Please try again." }, 503);
+  if (!attemptAllowed) return json({ error: "Too many verification attempts. Wait a minute and try again." }, 429);
+
+  const row = await env.TPI_DB.prepare(`
+    SELECT token FROM email_verification_tokens
+    WHERE token = ? AND contributor_id = ? AND used = 0 AND datetime(expires_at) > CURRENT_TIMESTAMP
+    LIMIT 1
+  `).bind(code, user.id).first();
+  if (!row) return json({ error: "That code is invalid or has expired. Request a new one." }, 400);
+
+  // Consume the code only after the member update succeeds. The conditional
+  // update keeps a code single-use even if two browser tabs submit together.
+  const verified = await env.TPI_DB.prepare("UPDATE contributors SET email_verified = 1 WHERE id = ? AND email_verified = 0").bind(user.id).run();
+  if (!verified?.meta?.changes && !user.email_verified) {
+    const refreshed = await env.TPI_DB.prepare("SELECT email_verified FROM contributors WHERE id = ?").bind(user.id).first();
+    if (!refreshed?.email_verified) return json({ error: "Your email could not be verified right now. Please try again." }, 503);
+  }
+  await env.TPI_DB.prepare("UPDATE email_verification_tokens SET used = 1 WHERE token = ? AND contributor_id = ?").bind(code, user.id).run();
+  return json({ ok: true, emailVerified: true });
+}
+
 async function recoveryRateAllowed(env, category, identity) {
   if (!env.TPI_AUTH_RATE_LIMITER?.limit) {
     if (isLocalEnvironment(env)) return true;
@@ -1025,7 +1099,7 @@ async function handleMe(request, env) {
 // published articles/papers. Following / Live Streams have no feature
 // yet, so they report 0 until those features exist.
 
-async function handleMemberRegister(request, env) {
+async function handleMemberRegister(request, env, context = null) {
   const data = await readJson(request);
   const username = clean(data.username);
   const password = String(data.password || "");
@@ -1112,6 +1186,32 @@ async function handleMemberRegister(request, env) {
     console.error("member registration failed", message || "unknown database error");
     return json({ error: "Account creation is temporarily unavailable. Please try again in a moment." }, 503);
   }
+
+  // Registration remains atomic and does not depend on outbound email. The
+  // welcome verification is queued after the response so a slow mail provider
+  // cannot turn a successful signup into a generic mobile "Request failed".
+  const sendWelcomeVerification = async () => {
+    try {
+      const code = randomCode();
+      const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
+      await env.TPI_DB.prepare(`
+        INSERT INTO email_verification_tokens (token, contributor_id, expires_at)
+        VALUES (?, ?, ?)
+      `).bind(code, id, expires).run();
+      const content = verificationEmail(code);
+      const result = await sendEmail(env, { to: email, ...content });
+      if (!result.ok) {
+        await env.TPI_DB.prepare("DELETE FROM email_verification_tokens WHERE token = ? AND contributor_id = ?").bind(code, id).run();
+        if (result.error !== "email-not-configured") console.error("welcome verification email failed", result.error || "unknown-error");
+      }
+    } catch (error) {
+      // Mail delivery is a follow-up convenience. The account/session already
+      // committed atomically and the member can request a fresh code in Home.
+      console.error("welcome verification setup failed", error.message || error);
+    }
+  };
+  if (typeof context?.waitUntil === "function") context.waitUntil(sendWelcomeVerification());
+  else void sendWelcomeVerification();
 
   // Return the first session in the same response as account creation. The
   // browser no longer has to perform a second login and a third session probe,
