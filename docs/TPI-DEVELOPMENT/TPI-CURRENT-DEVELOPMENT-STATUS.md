@@ -14,6 +14,31 @@ workflow retain their recorded state until a separate migration decision is
 made. The older review-and-publisher records below are historical evidence, not
 the current default for new Education Center work.
 
+## 2026-11-16 — Mystic thoughtform retrieval and six-source cross-reference
+
+Status: **DEPLOYED AND LIVE VERIFIED.** Mystic now answers “What is a
+thoughtform?”, “What is a thought form?”, and “What is a tulpa?” directly and
+consistently instead of sending the member to the glossary or changing routes
+on a repeat question. The public terminology reference contains explicit
+Thoughtform / Thought Form and Tulpa entries, and the public API has a
+fail-closed empty-source boundary so an ungrounded generated answer cannot be
+presented as verified. The verified answer cross-references six public TPI
+references: Complete Paranormal Terminology, Official Field Encyclopedia,
+Investigation Compendium, Evidence Compendium, Forensic Analysis Compendium,
+and Ghostology 101.
+
+Local authentication lifecycle passed **38/38**; Mystic/Help Center protection
+contracts passed **34/34**; member boundary **48/48**; focused member/profile/feed
+browser **57/57**; Messenger browser **27/27**; MP4/ZIP media round trip passed;
+the exact candidate passed **14 guarded certification gates**; production smoke
+passed **10/10**; and live production checks for all three aliases plus a repeat
+query passed **4/4** with six references returned each time. Release
+`rel-711a9fbd8d0d-e68627783f29` serves Worker
+`74c14f0d-7cfd-4570-9567-db467673bd2b` at 100% traffic; rollback is
+`90170296-2208-473f-9563-0007e7159ca6`. StudioFlow, Creator Studio, Nova
+Workspace, private media, and owner data were not modified. See [Mystic
+Thoughtform Retrieval Repair](300-COMPLETED-WORK/2026-11-16-MYSTIC-THOUGHTFORM-RETRIEVAL-REPAIR.md).
+
 ## 2026-11-16 — Community Feed composer shape repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The shared Community Feed composer had pill/circular presentation

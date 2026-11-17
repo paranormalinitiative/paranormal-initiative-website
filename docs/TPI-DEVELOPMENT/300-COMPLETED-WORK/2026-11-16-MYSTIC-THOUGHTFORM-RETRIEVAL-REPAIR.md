@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-16 19:08 EST  
 **Scope:** Public Mystic, public terminology reference, Cloudflare AI Search  
-**Status:** Implementation complete; guarded release verification in progress.
+**Status:** DEPLOYED AND LIVE VERIFIED.
 
 ## What happened
 
@@ -60,8 +60,7 @@ The Help Center separation verifier now checks that:
 
 ## Verification
 
-Release and live verification will be recorded here after the maintained
-sequence completes:
+The maintained release sequence completed successfully:
 
 ```text
 npm run verify:local-auth-lifecycle
@@ -69,6 +68,29 @@ npm run release:preflight
 TPI_PRODUCTION_DEPLOY=approved npm run release:production
 ```
 
-The live checks must include the exact questions “What is a thoughtform?”,
-“What is a thought form?”, and “What is a tulpa?” plus a repeat of the first
-question to confirm stable routing and six public references.
+Results:
+
+- Local authentication lifecycle: **38/38**.
+- Help Center separation and Mystic protection contracts: **34/34**.
+- Member boundary regression: **48/48**.
+- Focused member/profile/feed browser acceptance: **57/57**.
+- Targeted Messenger browser regression: **27/27**.
+- Messenger MP4 and ZIP media round trip: **PASS**.
+- Guarded release preflight: **READY**, exact candidate certified with **14
+  gates**.
+- Production anonymous smoke: **10/10**.
+- Live production queries for “What is a thoughtform?”, “What is a thought
+  form?”, “What is a tulpa?”, and a repeat thoughtform query: **4/4 direct,
+  consistent answers**, each returning the six public TPI references.
+
+Production release:
+
+- Release: `rel-711a9fbd8d0d-e68627783f29`
+- Worker version: `74c14f0d-7cfd-4570-9567-db467673bd2b`
+- Source commit: `711a9fbd8d0d210d7b28aabc31d95261c4f67dfa`
+- Traffic: **100% production**
+- Rollback version: `90170296-2208-473f-9563-0007e7159ca6`
+
+StudioFlow, Creator Studio, Nova Workspace, private media, and owner data
+were not modified. The release used the shared-API profile and retained the
+protected application byte guard.
