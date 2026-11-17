@@ -35,7 +35,7 @@ const assigned = await request("/api/admin/board-members", { method: "POST", hea
 check("admin can appoint an existing member", assigned.response.status === 201 && assigned.body?.boardMember?.username === "local_member");
 const id = assigned.body?.boardMember?.id;
 check("appointment returns a stable id and badge", typeof id === "string" && id.length > 10 && assigned.body.boardMember.badgePath.endsWith("board-member-256.png"));
-check("appointment derives the Bronze medallion from its role", assigned.body?.boardMember?.medallion?.code === "bronze" && assigned.body?.boardMember?.roleCode === "board-member");
+check("appointment derives the universal Board Member medallion", assigned.body?.boardMember?.medallion?.code === "board-member" && assigned.body?.boardMember?.medallion?.label === "Board Member Medallion" && assigned.body?.boardMember?.roleCode === "board-member");
 
 const profile = await request("/api/contributors/profile?username=local_member");
 check("public profile exposes Board Member badge", profile.response.status === 200 && profile.body?.boardMembership?.status === "active");
