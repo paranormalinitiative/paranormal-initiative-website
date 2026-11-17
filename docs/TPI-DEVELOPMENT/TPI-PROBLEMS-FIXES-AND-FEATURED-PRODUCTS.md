@@ -212,7 +212,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Fix | The actual `Create Member Account` button now disables immediately after valid form submission, sets `aria-busy="true"`, and remains locked until navigation succeeds or a controlled error is shown. Controlled failures release the button for a legitimate retry. The browser regression now physically clicks the visible button and reports the page's exact status instead of hiding it behind a generic timeout. |
 | Safeguards | Duplicate in-flight signup requests are prevented at the UI boundary; server-side duplicate detection remains active; the account/session transaction remains atomic; the button and status are covered by source contracts and fresh-browser interaction checks. |
 | Verification | Registration source contracts **14/14**; sequential physical Firefox signup-button clicks **3/3 PASS**; profile persistence and verification route **PASS**; release safety, auth lifecycle, targeted member interactions, and the guarded release gates remain required. |
-| Status | **REPAIR VERIFIED LOCALLY; INCLUDED IN THE NEXT GUARDED PRODUCTION RELEASE.** |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-6f86d2e34192-e2d62b6bae9a`; Worker `89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c` at 100% traffic; rollback `3c2674b2-bb00-4820-820e-f65dd54f028e`. Production smoke **10/10**. |
 
 ### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
 

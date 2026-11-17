@@ -82,11 +82,11 @@ path also lacked a dedicated browser regression.
 - Focused profile/feed acceptance: **57/57 PASS** after a transient first-run
   browser timeout was rerun standalone; focused Messenger acceptance:
   **27/27 PASS**; Messenger media roundtrip: **PASS**.
-- Full guarded preflight: **14/14 certified gates PASS** for the shared-API
-  release `rel-8143c0defd1a-8e60528ca287`.
+- Full guarded preflight: **11/11 certified gates PASS** for the website
+  release `rel-6f86d2e34192-e2d62b6bae9a`.
 - Production smoke: **10/10 PASS**; Worker version
-  `3c2674b2-bb00-4820-820e-f65dd54f028e` reached 100% traffic. Rollback target
-  remains `fe7d3561-708d-4c4f-8bf0-a5ef88882e8e`.
+  `89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c` reached 100% traffic. Rollback target
+  is `3c2674b2-bb00-4820-820e-f65dd54f028e`.
 - Live boundary checks: anonymous verification request returns the expected
   controlled **401**, the maintained synthetic login returns **200**, and an
   invalid eight-digit confirmation returns the expected controlled **400**.

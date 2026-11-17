@@ -210,7 +210,7 @@ signup, and keeps profile edits across a fresh authenticated session.
 
 The protected regression now covers signup → Member Home → profile save → fresh
 session profile read, plus the verification route. Registration contracts passed
-**13/13**, member interactions **35/35**, password recovery **24/24**, local
+**14/14**, member interactions **35/35**, password recovery **24/24**, local
 authentication **38/38** at each checkpoint, profile/feed **57/57** after a
 transient first-run browser timeout was rerun standalone, Messenger **27/27**,
 release safety **38/38**, and impact classification **15/15**. Guarded preflight
@@ -228,8 +228,10 @@ The registration interaction was then hardened against the recurring “button
 did nothing” symptom: after valid submission, the visible button locks on the
 first tap, reports busy state, blocks duplicate in-flight requests, and only
 reopens after a controlled failure. The source contract is now **14/14**, and
-three sequential fresh Firefox click tests passed **3/3**. This repair is
-included in the next guarded application release.
+three sequential fresh Firefox click tests passed **3/3**. The repair is live
+in release `rel-6f86d2e34192-e2d62b6bae9a`, serving Worker
+`89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c` at 100% traffic with rollback target
+`3c2674b2-bb00-4820-820e-f65dd54f028e`; production smoke passed **10/10**.
 
 ## 2026-11-16 — Connected destination authorization foundation
 
