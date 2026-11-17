@@ -48,9 +48,17 @@ try {
   await fill("username", username);
   await fill("password", "sample-password-123");
   await fill("confirmPassword", "sample-password-123");
-  await driver.findElement(By.css('[data-member-register] button[type="submit"]')).click();
+  const submitButton = await driver.findElement(By.css('[data-member-register] button[type="submit"]'));
+  await submitButton.click();
 
-  await driver.wait(async () => /member-home/.test(await driver.getCurrentUrl()), 15000, "successful registration did not open Member Home");
+  await driver.wait(async () => {
+    if (/member-home/.test(await driver.getCurrentUrl())) return true;
+    const status = await driver.findElement(By.css("[data-member-register-status]")).getText().catch(() => "");
+    if (status && /failed|required|already|unavailable|refresh|error/i.test(status)) {
+      throw new Error(`registration button submitted but the page reported: ${status}`);
+    }
+    return false;
+  }, 15000, "signup button did not open Member Home or report a controlled error");
   const session = await driver.executeAsyncScript((done) => {
     fetch("/api/auth/me", { credentials: "same-origin", cache: "no-store" })
       .then(response => response.json())

@@ -16,9 +16,10 @@ const checks = [
   ["signup maps duplicate races to a controlled conflict", /unique constraint\|unique failed\|already exists/.test(api) && api.includes("That username or email is already connected")],
   ["signup maps unexpected database failures to a safe retry message", api.includes("Account creation is temporarily unavailable")],
   ["browser uses the returned signup session without a second login", client.includes("registration?.signedIn") && !client.includes("await window.TPIApi.login(username, password);" )],
+  ["registration submit button locks during the request and reopens after a controlled error", client.includes("registerSubmitButton.disabled = true") && client.includes("releaseRegisterSubmitButton()") && client.includes('setAttribute("aria-busy", "true")')],
   ["signup aliases redirect to the canonical form", worker.includes('"/register", "/signup", "/sign-up", "/members/register"') && worker.includes("#register")],
   ["canonical form contains a registration form and inline status", html.includes("data-member-register") && html.includes("data-member-register-status")],
-  ["registration script cache version is refreshed", html.includes('member-login.js?v=52')],
+  ["registration script cache version is refreshed", html.includes('member-login.js?v=53')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

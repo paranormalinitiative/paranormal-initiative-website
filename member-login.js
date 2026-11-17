@@ -2477,6 +2477,8 @@
     }
 
     if (memberRegisterForm) {
+      const registerSubmitButton = memberRegisterForm.querySelector("button[type='submit']");
+      if (registerSubmitButton?.disabled) return;
       const username = String(data.get("username") || "").trim();
       const password = String(data.get("password") || "");
       const confirmPassword = String(data.get("confirmPassword") || "");
@@ -2503,6 +2505,20 @@
         return;
       }
 
+      // Mobile taps can arrive twice while a slow network request is still in
+      // flight. Lock the actual submit control immediately so the first
+      // successful account creation cannot be followed by a misleading
+      // duplicate-account error from a second request.
+      if (registerSubmitButton) {
+        registerSubmitButton.disabled = true;
+        registerSubmitButton.setAttribute("aria-busy", "true");
+      }
+      const releaseRegisterSubmitButton = () => {
+        if (!registerSubmitButton) return;
+        registerSubmitButton.disabled = false;
+        registerSubmitButton.removeAttribute("aria-busy");
+      };
+
       if (await cloudflareReady()) {
         try {
           if (!window.TPIApi) throw new Error("The live member service did not load. Refresh this page and try again.");
@@ -2521,16 +2537,19 @@
           window.location.href = "/member-home?username=" + encodeURIComponent(registration.user?.username || username);
         } catch (error) {
           setMemberRegisterStatus(error.message || "Account creation failed. Please try again.", true);
+          releaseRegisterSubmitButton();
         }
         return;
       }
 
       if (users.some(user => user.username === username)) {
         setMemberRegisterStatus("That username already exists.", true);
+        releaseRegisterSubmitButton();
         return;
       }
       if (users.some(user => String(user.correspondence || user.email || "").toLowerCase() === email.toLowerCase())) {
         setMemberRegisterStatus("That email is already connected to an account.", true);
+        releaseRegisterSubmitButton();
         return;
       }
       users.push({

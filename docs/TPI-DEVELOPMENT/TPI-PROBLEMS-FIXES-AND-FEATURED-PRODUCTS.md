@@ -27,7 +27,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 
 | If you see this | Check first | Likely area |
 | --- | --- | --- |
-| A visitor cannot create a member account, email verification returns not found, or a new member believes profile edits disappeared | [Member registration and email verification recurrence](#inc-2026-11-16-50--member-registration-and-email-verification-recurrence) and [Member registration repair](#inc-2026-11-16-03--member-registration-request-failed) | Public registration form, verification routes, atomic account/session creation, profile persistence, browser cache |
+| A visitor cannot create a member account, the signup button appears to do nothing, email verification returns not found, or a new member believes profile edits disappeared | [Signup button and verification recurrence](#inc-2026-11-16-51--signup-button-and-verification-recurrence), [Member registration and email verification recurrence](#inc-2026-11-16-50--member-registration-and-email-verification-recurrence), and [Member registration repair](#inc-2026-11-16-03--member-registration-request-failed) | Public registration form, mobile tap handling, duplicate-submit protection, verification routes, profile persistence, browser cache |
 | A member cannot save a profile photo or banner | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | Member Profile, R2 upload, shared profile API |
 | A new image previews but disappears after saving | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | File-input cleanup, object URL, cache version |
 | A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
@@ -201,6 +201,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Safeguards | Signup remains an atomic account/session operation; email delivery cannot block account creation; confirmation updates the member before consuming the code; all routes are member-only; no production account or profile was modified. |
 | Verification | Registration **13/13**; browser signup/profile/verification-route test **PASS**; local auth **38/38** at each checkpoint; profile/feed **57/57** after a transient first-run timeout; Messenger **27/27**; media roundtrip **PASS**; release safety **38/38**; impact **15/15**; guarded preflight **14/14**; production smoke **10/10**; live anonymous verification **401**; synthetic login **200**; invalid code **400**. |
 | Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-8143c0defd1a-8e60528ca287`; Worker `3c2674b2-bb00-4820-820e-f65dd54f028e`; rollback `fe7d3561-708d-4c4f-8bf0-a5ef88882e8e`. See [Member Registration and Email Verification Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md). |
+
+### INC-2026-11-16-51 — Signup button and verification recurrence
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 20:20–20:27 EST** |
+| What happened | A fresh Firefox click test once timed out after the signup button was pressed. Repeated checks showed the underlying account request could succeed, but the visible submit control had no in-flight lock. On a slow phone connection or double tap, overlapping requests could make the first successful signup look like a failed button. |
+| Root cause | The registration form handled the submit event but left the submit button active while the network request was in flight. A second tap could race the first request and return a duplicate-account response after the account had already been created. |
+| Fix | The actual `Create Member Account` button now disables immediately after valid form submission, sets `aria-busy="true"`, and remains locked until navigation succeeds or a controlled error is shown. Controlled failures release the button for a legitimate retry. The browser regression now physically clicks the visible button and reports the page's exact status instead of hiding it behind a generic timeout. |
+| Safeguards | Duplicate in-flight signup requests are prevented at the UI boundary; server-side duplicate detection remains active; the account/session transaction remains atomic; the button and status are covered by source contracts and fresh-browser interaction checks. |
+| Verification | Registration source contracts **14/14**; sequential physical Firefox signup-button clicks **3/3 PASS**; profile persistence and verification route **PASS**; release safety, auth lifecycle, targeted member interactions, and the guarded release gates remain required. |
+| Status | **REPAIR VERIFIED LOCALLY; INCLUDED IN THE NEXT GUARDED PRODUCTION RELEASE.** |
 
 ### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
 

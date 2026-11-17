@@ -224,6 +224,13 @@ invalid verification code returns the expected controlled **400**. The live
 check intentionally did not send email or modify a real member account. See
 [Member Registration and Email Verification Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md).
 
+The registration interaction was then hardened against the recurring “button
+did nothing” symptom: after valid submission, the visible button locks on the
+first tap, reports busy state, blocks duplicate in-flight requests, and only
+reopens after a controlled failure. The source contract is now **14/14**, and
+three sequential fresh Firefox click tests passed **3/3**. This repair is
+included in the next guarded application release.
+
 ## 2026-11-16 — Connected destination authorization foundation
 
 Status: **DEPLOYED AND LIVE VERIFIED; PRODUCTION SCHEMA APPLIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**

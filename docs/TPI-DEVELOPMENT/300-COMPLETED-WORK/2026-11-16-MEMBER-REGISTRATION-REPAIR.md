@@ -42,10 +42,14 @@ path also lacked a dedicated browser regression.
   creation.
 - Confirmation updates the member first and consumes the token only after the
   update succeeds; invalid and expired codes return controlled errors.
+- The member registration submit button now locks immediately on the first
+  tap, exposes `aria-busy`, prevents duplicate in-flight signup requests, and
+  reopens after a controlled failure so a slow phone connection cannot create a
+  misleading second-request error.
 - Added the existing email-verification migration to the maintained local
   schema verifier and added a real Firefox regression for signup, profile save,
   fresh-session profile retention, and the protected verification route.
-- The shared registration script cache version was advanced to `v52` so stale
+- The shared registration script cache version was advanced to `v53` so stale
   browser copies are not reused.
 
 ## Safeguards
@@ -64,7 +68,7 @@ path also lacked a dedicated browser regression.
 
 ## Verification
 
-- Registration source contract: **13/13 PASS**.
+- Registration source contract: **14/14 PASS**.
 - Firefox local end-to-end signup/profile test: **PASS** — account creation,
   atomic session, Member Home redirect, protected verification route, profile
   save, and fresh-session profile retention verified with a temporary local-only
@@ -88,5 +92,8 @@ path also lacked a dedicated browser regression.
   invalid eight-digit confirmation returns the expected controlled **400**.
   The live test intentionally did not send email or modify a real member
   account.
+
+The physical signup-button interaction was repeated in three sequential fresh
+Firefox sessions after the busy-state repair: **3/3 PASS**.
 
 No real production account was created during diagnosis or verification.
