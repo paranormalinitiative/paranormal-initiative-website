@@ -46,6 +46,9 @@ path also lacked a dedicated browser regression.
   tap, exposes `aria-busy`, prevents duplicate in-flight signup requests, and
   reopens after a controlled failure so a slow phone connection cannot create a
   misleading second-request error.
+- Every member-facing page now loads the same current `member-login.js?v=53`
+  asset. Profile editing, verification controls, notifications, contributor
+  pages, and protected member tools no longer drift onto an older script copy.
 - Added the existing email-verification migration to the maintained local
   schema verifier and added a real Firefox regression for signup, profile save,
   fresh-session profile retention, and the protected verification route.

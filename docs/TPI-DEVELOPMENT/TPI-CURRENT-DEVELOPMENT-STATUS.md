@@ -233,6 +233,12 @@ in release `rel-6f86d2e34192-e2d62b6bae9a`, serving Worker
 `89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c` at 100% traffic with rollback target
 `3c2674b2-bb00-4820-820e-f65dd54f028e`; production smoke passed **10/10**.
 
+The follow-up audit found a separate stale-asset issue: `member-profile.html`
+and several other member pages were still loading `member-login.js?v=51` while
+the repaired login page had moved to `v53`. The next release standardizes all
+11 maintained member-facing surfaces on `v53`, with a source contract that
+fails if any page drifts behind.
+
 ## 2026-11-16 — Connected destination authorization foundation
 
 Status: **DEPLOYED AND LIVE VERIFIED; PRODUCTION SCHEMA APPLIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**

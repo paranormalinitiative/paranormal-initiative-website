@@ -28,6 +28,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | If you see this | Check first | Likely area |
 | --- | --- | --- |
 | A visitor cannot create a member account, the signup button appears to do nothing, email verification returns not found, or a new member believes profile edits disappeared | [Signup button and verification recurrence](#inc-2026-11-16-51--signup-button-and-verification-recurrence), [Member registration and email verification recurrence](#inc-2026-11-16-50--member-registration-and-email-verification-recurrence), and [Member registration repair](#inc-2026-11-16-03--member-registration-request-failed) | Public registration form, mobile tap handling, duplicate-submit protection, verification routes, profile persistence, browser cache |
+| Profile save or email verification works on one member page but not another | [Member-page script freshness](#inc-2026-11-16-52--member-page-script-freshness) | Shared member JavaScript versioning, profile editor, verification panel, stale browser/CDN assets |
 | A member cannot save a profile photo or banner | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | Member Profile, R2 upload, shared profile API |
 | A new image previews but disappears after saving | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | File-input cleanup, object URL, cache version |
 | A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
@@ -213,6 +214,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Safeguards | Duplicate in-flight signup requests are prevented at the UI boundary; server-side duplicate detection remains active; the account/session transaction remains atomic; the button and status are covered by source contracts and fresh-browser interaction checks. |
 | Verification | Registration source contracts **14/14**; sequential physical Firefox signup-button clicks **3/3 PASS**; profile persistence and verification route **PASS**; release safety, auth lifecycle, targeted member interactions, and the guarded release gates remain required. |
 | Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-6f86d2e34192-e2d62b6bae9a`; Worker `89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c` at 100% traffic; rollback `3c2674b2-bb00-4820-820e-f65dd54f028e`. Production smoke **10/10**. |
+
+### INC-2026-11-16-52 — Member-page script freshness
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 20:28–20:36 EST** |
+| What happened | A member could sign up on a laptop but could not save the profile or complete email verification. The current login page had the repaired script, while the profile page and several other member-facing pages still requested `member-login.js?v=51`. |
+| Root cause | Cache-busting was updated on the canonical login page only. Other pages continued loading an older cached copy of the shared member script, so their profile and verification controls did not contain the current repair. |
+| Fix | Standardized all member-facing HTML surfaces on `member-login.js?v=53`: login, profile, dashboard, notifications, contributor pages, Admin/Moderation, Explore, and Reels. Added a source contract that checks every maintained surface for the same version. |
+| Safeguards | The shared script version must be updated across the complete member-surface list, not just the page where a bug was first observed. Firefox profile/feed acceptance now exercises visible profile editing, media save, profile persistence, and shared navigation. |
+| Verification | Registration source contracts **15/15**; Firefox profile/feed acceptance **57/57**; Firefox signup/profile persistence **PASS**; all 11 maintained member surfaces reference `v53`. |
+| Status | **REPAIR VERIFIED LOCALLY; INCLUDED IN THE NEXT GUARDED PRODUCTION RELEASE.** |
 
 ### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
 

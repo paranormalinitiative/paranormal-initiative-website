@@ -4,6 +4,20 @@ const api = readFileSync(new URL("../../functions/api/[[path]].js", import.meta.
 const client = readFileSync(new URL("../../member-login.js", import.meta.url), "utf8");
 const worker = readFileSync(new URL("../../worker.js", import.meta.url), "utf8");
 const html = readFileSync(new URL("../../member-login.html", import.meta.url), "utf8");
+const memberSurfaceFiles = [
+  "member-login.html",
+  "member-profile.html",
+  "member-dashboard.html",
+  "member-notifications.html",
+  "contributor-profile.html",
+  "contributor-invite.html",
+  "admin-panel.html",
+  "admin-advanced-settings.html",
+  "moderation.html",
+  "explore.html",
+  "reels.html",
+];
+const memberSurfaces = memberSurfaceFiles.map(file => readFileSync(new URL(`../../${file}`, import.meta.url), "utf8"));
 
 const checks = [
   ["member registration route remains public POST", api.includes('path === "/members/register"') && api.includes("handleMemberRegister(request, env, context)")],
@@ -20,6 +34,7 @@ const checks = [
   ["signup aliases redirect to the canonical form", worker.includes('"/register", "/signup", "/sign-up", "/members/register"') && worker.includes("#register")],
   ["canonical form contains a registration form and inline status", html.includes("data-member-register") && html.includes("data-member-register-status")],
   ["registration script cache version is refreshed", html.includes('member-login.js?v=53')],
+  ["member-facing profile and support pages use the same current script version", memberSurfaces.every(surface => surface.includes('member-login.js?v=53'))],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);
