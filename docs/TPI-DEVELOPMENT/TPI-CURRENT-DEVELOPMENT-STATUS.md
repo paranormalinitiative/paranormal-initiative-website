@@ -198,6 +198,32 @@ gates**; production smoke passed **10/10** and live isolated Firefox passed
 `36cffaa9-1ac6-4dc1-93c4-a7f767cac648` at 100% traffic. No production account
 was created during diagnosis or verification. See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md).
 
+## 2026-11-16 — Member registration and email verification recurrence
+
+Status: **DEPLOYED AND LIVE VERIFIED.** A later Worker API consolidation had
+removed the email-verification route handlers while the public UI and token
+table remained, so members could receive a generic signup failure on mobile or
+reach Member Home without a working verification request. The repaired flow
+restores both verification routes, uses expiring single-use codes with rate
+limits and delivery-failure cleanup, schedules the welcome message after
+signup, and keeps profile edits across a fresh authenticated session.
+
+The protected regression now covers signup → Member Home → profile save → fresh
+session profile read, plus the verification route. Registration contracts passed
+**13/13**, member interactions **35/35**, password recovery **24/24**, local
+authentication **38/38** at each checkpoint, profile/feed **57/57** after a
+transient first-run browser timeout was rerun standalone, Messenger **27/27**,
+release safety **38/38**, and impact classification **15/15**. Guarded preflight
+passed **14/14** certified gates; production smoke passed **10/10**.
+
+Release `rel-8143c0defd1a-8e60528ca287` is live on Worker
+`3c2674b2-bb00-4820-820e-f65dd54f028e` at 100% traffic, with rollback target
+`fe7d3561-708d-4c4f-8bf0-a5ef88882e8e`. Anonymous verification access returns
+the expected **401**, the maintained synthetic login returns **200**, and an
+invalid verification code returns the expected controlled **400**. The live
+check intentionally did not send email or modify a real member account. See
+[Member Registration and Email Verification Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md).
+
 ## 2026-11-16 — Connected destination authorization foundation
 
 Status: **DEPLOYED AND LIVE VERIFIED; PRODUCTION SCHEMA APPLIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**

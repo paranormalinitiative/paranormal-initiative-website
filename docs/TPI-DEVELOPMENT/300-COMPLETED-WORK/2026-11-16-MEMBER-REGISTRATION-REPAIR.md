@@ -1,16 +1,22 @@
-# Member Registration Repair
+# Member Registration and Email Verification Repair
 
-Date/time: **2026-11-16 13:36–13:48 EST**
+Date/time: **2026-11-16 13:36–20:12 EST**
 Status: **DEPLOYED AND LIVE VERIFIED**
 
 ## What happened
 
 Members reported that attempting to join TPI from the public community path
-could fail with a generic request or signup-widget error. The existing public
-flow created the account first, then made a separate login request, then made a
-third session check before opening Member Home. A failure in either follow-up
-request could leave the member unsure whether the account existed and unable to
-continue.
+could fail with a generic request or signup-widget error. A later report added
+that a laptop-created account could reach Member Home but could not complete
+email verification, and profile information appeared not to remain after the
+account was created.
+
+The original atomic signup repair was still present. The recurrence was caused
+by a later Worker API consolidation that removed the email-verification route
+registrations and handlers while leaving the member UI, verification table, and
+client calls in place. The client therefore received a route-not-found response
+when it requested verification. The signup-to-profile-save-to-fresh-session
+path also lacked a dedicated browser regression.
 
 ## Fix
 
@@ -26,7 +32,20 @@ continue.
   SQL details or credentials.
 - `/register`, `/signup`, `/sign-up`, and `/members/register` GET links now
   redirect to the canonical registration form and focus it.
-- The shared registration script cache version was advanced to `v51` so stale
+- Restored authenticated `/api/auth/verify-email/request` and
+  `/api/auth/verify-email/confirm` routes using the existing verification table.
+- Verification uses a branded one-time eight-digit code with a 30-minute
+  expiry, invalidates older active codes, applies IP and account limits, and
+  removes the token when email delivery fails.
+- Email verification is scheduled after successful signup when the Worker
+  context supports it, so an email provider problem cannot undo account/session
+  creation.
+- Confirmation updates the member first and consumes the token only after the
+  update succeeds; invalid and expired codes return controlled errors.
+- Added the existing email-verification migration to the maintained local
+  schema verifier and added a real Firefox regression for signup, profile save,
+  fresh-session profile retention, and the protected verification route.
+- The shared registration script cache version was advanced to `v52` so stale
   browser copies are not reused.
 
 ## Safeguards
@@ -38,27 +57,36 @@ continue.
 - The session cookie continues to use the existing secure hosted-cookie policy.
 - No production account was created during diagnosis or verification.
 - The maintained full release preflight now includes both registration source
-  contracts and a Firefox end-to-end local signup test.
+  contracts, email-verification route coverage, and a Firefox end-to-end local
+  signup/profile-retention test.
+- Email verification remains member-only and cannot grant staff, administrator,
+  Creator Studio, or internal Help Desk access.
 
 ## Verification
 
-- Registration source contract: **9/9 PASS**.
-- Firefox local end-to-end signup: **PASS** — account creation, atomic session,
-  and Member Home redirect verified with a temporary local-only account that
-  was cleaned up after the test.
-- Member interaction contracts: **29/29 PASS**.
-- Password recovery contracts: **23/23 PASS**.
+- Registration source contract: **13/13 PASS**.
+- Firefox local end-to-end signup/profile test: **PASS** — account creation,
+  atomic session, Member Home redirect, protected verification route, profile
+  save, and fresh-session profile retention verified with a temporary local-only
+  account that was cleaned up after the test.
+- Member interaction contracts: **35/35 PASS**.
+- Password recovery contracts: **24/24 PASS**.
 - Release safety: **38/38 PASS**.
 - Release impact classification: **15/15 PASS**.
 - Local authentication lifecycle: **38/38 PASS** at each checkpoint;
   isolated Firefox acceptance: **65/65 PASS**.
-- Full guarded preflight: **40/40 gates PASS**; certified release
-  `rel-fe8c882100f9-f8d876e3d386`.
-- Production smoke: **10/10 PASS**; live isolated Firefox acceptance:
-  **65/65 PASS**; Worker version
-  `36cffaa9-1ac6-4dc1-93c4-a7f767cac648` reached 100% traffic.
-- Live read-only boundary checks: `/register` and `/signup` redirect to the
-  canonical form, an empty signup request returns the controlled 400 response,
-  and the live page serves `member-login.js?v=51`.
+- Focused profile/feed acceptance: **57/57 PASS** after a transient first-run
+  browser timeout was rerun standalone; focused Messenger acceptance:
+  **27/27 PASS**; Messenger media roundtrip: **PASS**.
+- Full guarded preflight: **14/14 certified gates PASS** for the shared-API
+  release `rel-8143c0defd1a-8e60528ca287`.
+- Production smoke: **10/10 PASS**; Worker version
+  `3c2674b2-bb00-4820-820e-f65dd54f028e` reached 100% traffic. Rollback target
+  remains `fe7d3561-708d-4c4f-8bf0-a5ef88882e8e`.
+- Live boundary checks: anonymous verification request returns the expected
+  controlled **401**, the maintained synthetic login returns **200**, and an
+  invalid eight-digit confirmation returns the expected controlled **400**.
+  The live test intentionally did not send email or modify a real member
+  account.
 
 No real production account was created during diagnosis or verification.

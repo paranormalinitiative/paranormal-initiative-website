@@ -27,7 +27,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 
 | If you see this | Check first | Likely area |
 | --- | --- | --- |
-| A visitor cannot create a member account, receives a signup request error, or a join link opens the wrong place | [Member registration repair](#inc-2026-11-16-03--member-registration-request-failed) | Public registration form, atomic account/session creation, signup aliases, browser cache |
+| A visitor cannot create a member account, email verification returns not found, or a new member believes profile edits disappeared | [Member registration and email verification recurrence](#inc-2026-11-16-50--member-registration-and-email-verification-recurrence) and [Member registration repair](#inc-2026-11-16-03--member-registration-request-failed) | Public registration form, verification routes, atomic account/session creation, profile persistence, browser cache |
 | A member cannot save a profile photo or banner | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | Member Profile, R2 upload, shared profile API |
 | A new image previews but disappears after saving | [Profile media update](#inc-2026-11-14-01--profile-photo-or-banner-would-not-update) | File-input cleanup, object URL, cache version |
 | A member without an account email cannot save uploaded profile media | [Profile media permissions recurrence](#inc-2026-11-14-07--profile-media-permissions-and-email-gate-recurrence) | Member boundary, profile save validation, R2 media |
@@ -189,6 +189,18 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Safeguards | Public registration creates only the normal `member` role. It cannot grant administrative, staff, Creator Studio, or internal Help Desk access. Password hashing, secure hosted cookies, and server-side authorization remain unchanged. |
 | Verification | Registration source contracts **9/9**; Firefox local end-to-end signup **PASS**; member interactions **29/29**; password recovery **23/23**; release safety **38/38**; local auth lifecycle **38/38** with Firefox **65/65**; full preflight **40/40**; production smoke **10/10**; live Firefox **65/65**. |
 | Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-fe8c882100f9-f8d876e3d386` is serving Worker `36cffaa9-1ac6-4dc1-93c4-a7f767cac648` at 100% traffic. No production account was created during verification. See [Member Registration Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md). |
+
+### INC-2026-11-16-50 — Member registration and email verification recurrence
+
+| Field | Record |
+| --- | --- |
+| Date/time | **2026-11-16 19:55–20:12 EST** |
+| What happened | Stephanie could still receive a generic signup failure on a phone. A laptop-created account reached Member Home but email verification failed, and profile information appeared not to remain. |
+| Root cause | A later Worker API consolidation removed the email-verification route registrations and handlers even though the UI, client calls, and token table remained. The verification request therefore returned a route-not-found response. Signup → profile save → fresh-session read also lacked a dedicated browser regression. |
+| Fix | Restored `/api/auth/verify-email/request` and `/api/auth/verify-email/confirm`; added branded one-time eight-digit codes, 30-minute expiry, single-use consumption, stale-code invalidation, IP/account limits, delivery-failure cleanup, and post-response welcome scheduling. Added the existing migration to the local schema verifier, advanced the cache to `v52`, and added Firefox coverage for signup, profile persistence, and the protected verification route. |
+| Safeguards | Signup remains an atomic account/session operation; email delivery cannot block account creation; confirmation updates the member before consuming the code; all routes are member-only; no production account or profile was modified. |
+| Verification | Registration **13/13**; browser signup/profile/verification-route test **PASS**; local auth **38/38** at each checkpoint; profile/feed **57/57** after a transient first-run timeout; Messenger **27/27**; media roundtrip **PASS**; release safety **38/38**; impact **15/15**; guarded preflight **14/14**; production smoke **10/10**; live anonymous verification **401**; synthetic login **200**; invalid code **400**. |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-8143c0defd1a-8e60528ca287`; Worker `3c2674b2-bb00-4820-820e-f65dd54f028e`; rollback `fe7d3561-708d-4c4f-8bf0-a5ef88882e8e`. See [Member Registration and Email Verification Repair](300-COMPLETED-WORK/2026-11-16-MEMBER-REGISTRATION-REPAIR.md). |
 
 ### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
 
