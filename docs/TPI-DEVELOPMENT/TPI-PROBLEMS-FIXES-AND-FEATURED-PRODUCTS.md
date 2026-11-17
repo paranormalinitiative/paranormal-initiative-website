@@ -105,8 +105,8 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Root cause | The linked page provided a title but no usable preview image. The renderer treated the script-driven page as an embeddable interactive page, even though external sites may block framing, return an interstitial, or render blank. |
 | Fix | Kept source-provided images as static previews, but replaced image-less external frames with an explicit **Preview image unavailable** state and a direct **Open source** link. Removed the misleading interactive-preview wording and unused blank-frame styling. |
 | Safeguards | Safe URL validation, bounded external metadata fetching, redirect limits, and the external-content boundary remain unchanged. TPI does not fabricate a thumbnail or bypass a source's security/framing policy. |
-| Verification | Link-preview regression **18/18**; member interaction contracts **35/35**; `git diff --check` passed; guarded production release and live acceptance pending. |
-| Status | **IMPLEMENTED; RELEASE VERIFICATION PENDING.** See [External Link Preview Unavailable State](300-COMPLETED-WORK/2026-11-16-EXTERNAL-LINK-PREVIEW-UNAVAILABLE-STATE.md). |
+| Verification | Link-preview regression **18/18**; member interaction contracts **35/35**; `git diff --check` passed; exact candidate certified with **11 gates**; focused Firefox profile/feed acceptance **57/57**; production smoke **10/10**; live Bill URL response confirmed no source image and the deployed bundle served the unavailable-preview state without an iframe. |
+| Status | **DEPLOYED AND LIVE VERIFIED** in release `rel-2de944d38363-c0615bf4976b`; Worker `fe7d3561-708d-4c4f-8bf0-a5ef88882e8e` serves 100% of traffic; rollback `74c14f0d-7cfd-4570-9563-db467673bd2b`. See [External Link Preview Unavailable State](300-COMPLETED-WORK/2026-11-16-EXTERNAL-LINK-PREVIEW-UNAVAILABLE-STATE.md). |
 
 ### INC-2026-11-16-47 — Community Feed composer shape repair
 

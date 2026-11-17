@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-16 19:30 EST  
 **Scope:** Public Community Feed external-link previews  
-**Status:** Implementation complete; guarded release verification pending.
+**Status:** DEPLOYED AND LIVE VERIFIED.
 
 ## What happened
 
@@ -43,8 +43,23 @@ outside this change.
 - Link-preview regression: **18/18**.
 - Member interaction contracts: **35/35**.
 - `git diff --check`: passed.
-- Production release and live acceptance: pending the maintained release
-  sequence.
+- Guarded release preflight: **READY**, exact candidate certified with **11
+  gates**.
+- Focused Firefox profile/feed acceptance: **57/57**.
+- Production anonymous smoke: **10/10**.
+- Live Bill URL preview response: confirmed `image: ""`; the deployed Member
+  Home bundle contains the unavailable-preview state and no interactive iframe.
+
+Production release:
+
+- Release: `rel-2de944d38363-c0615bf4976b`
+- Worker version: `fe7d3561-708d-4c4f-8bf0-a5ef88882e8e`
+- Source commit: `2de944d383635b285eb5f970040340e7b09e59a4`
+- Traffic: **100% production**
+- Rollback version: `74c14f0d-7cfd-4570-9563-db467673bd2b`
+
+StudioFlow, Creator Studio, Nova Workspace, private media, and owner data
+were not modified. The protected-application integrity guard passed.
 
 ## Expected member behavior
 
