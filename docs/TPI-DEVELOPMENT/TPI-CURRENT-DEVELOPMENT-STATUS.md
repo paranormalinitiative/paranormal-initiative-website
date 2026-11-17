@@ -239,6 +239,11 @@ the repaired login page had moved to `v53`. The next release standardizes all
 11 maintained member-facing surfaces on `v53`, with a source contract that
 fails if any page drifts behind.
 
+The freshness repair is live in release `rel-406da3f0cf64-ea56526811d7`,
+serving Worker `15ba2065-c061-49aa-aafd-bc0d097d8542` at 100% traffic with
+rollback target `89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c`; production smoke passed
+**10/10**.
+
 ## 2026-11-16 — Connected destination authorization foundation
 
 Status: **DEPLOYED AND LIVE VERIFIED; PRODUCTION SCHEMA APPLIED; PROVIDER CONFIGURATION AND HOSTED LIVE RELAY REMAIN.**

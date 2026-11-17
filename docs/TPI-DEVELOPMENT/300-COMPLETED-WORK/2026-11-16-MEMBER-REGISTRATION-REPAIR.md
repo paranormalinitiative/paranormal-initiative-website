@@ -99,4 +99,9 @@ path also lacked a dedicated browser regression.
 The physical signup-button interaction was repeated in three sequential fresh
 Firefox sessions after the busy-state repair: **3/3 PASS**.
 
+The follow-up member-page freshness repair is live in release
+`rel-406da3f0cf64-ea56526811d7`, serving Worker
+`15ba2065-c061-49aa-aafd-bc0d097d8542` at 100% traffic. Its rollback target is
+`89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c`; production smoke passed **10/10**.
+
 No real production account was created during diagnosis or verification.

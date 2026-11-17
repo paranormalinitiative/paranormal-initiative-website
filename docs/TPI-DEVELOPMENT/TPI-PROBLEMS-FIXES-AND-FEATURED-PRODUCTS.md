@@ -225,7 +225,7 @@ grant as a first response. Confirm the exact scope and preserve owner data.
 | Fix | Standardized all member-facing HTML surfaces on `member-login.js?v=53`: login, profile, dashboard, notifications, contributor pages, Admin/Moderation, Explore, and Reels. Added a source contract that checks every maintained surface for the same version. |
 | Safeguards | The shared script version must be updated across the complete member-surface list, not just the page where a bug was first observed. Firefox profile/feed acceptance now exercises visible profile editing, media save, profile persistence, and shared navigation. |
 | Verification | Registration source contracts **15/15**; Firefox profile/feed acceptance **57/57**; Firefox signup/profile persistence **PASS**; all 11 maintained member surfaces reference `v53`. |
-| Status | **REPAIR VERIFIED LOCALLY; INCLUDED IN THE NEXT GUARDED PRODUCTION RELEASE.** |
+| Status | **DEPLOYED AND LIVE VERIFIED.** Release `rel-406da3f0cf64-ea56526811d7`; Worker `15ba2065-c061-49aa-aafd-bc0d097d8542` at 100% traffic; rollback `89be4f97-0d2c-4af4-9fc8-c3a2dd3f718c`; production smoke **10/10**. |
 
 ### INC-2026-11-16-02 — StudioFlow acceptance shell false positive
 
