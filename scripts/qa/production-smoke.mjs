@@ -18,12 +18,31 @@ const checks = [
 ];
 
 let failed = 0;
+const transientStatuses = new Set([502, 503, 504]);
+const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+async function fetchSmokeCheck(url, check) {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(url, { redirect: "manual", signal: AbortSignal.timeout(8_000) });
+      const body = await response.text();
+      if (transientStatuses.has(response.status) && attempt < 3) {
+        await sleep(1_000 * attempt);
+        continue;
+      }
+      return { response, body };
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) await sleep(1_000 * attempt);
+    }
+  }
+  throw lastError;
+}
 console.log(`Read-only production smoke: ${base}`);
 for (const check of checks) {
   const url = `${base}${check.path}`;
   try {
-    const response = await fetch(url, { redirect: "manual" });
-    const body = await response.text();
+    const { response, body } = await fetchSmokeCheck(url, check);
     const statusOk = check.statuses.includes(response.status);
     const contentOk = !check.includes || check.includes.test(body);
     const ok = statusOk && contentOk;
