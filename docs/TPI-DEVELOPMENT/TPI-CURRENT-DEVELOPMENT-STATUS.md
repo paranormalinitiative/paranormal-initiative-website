@@ -16,15 +16,18 @@ the current default for new Education Center work.
 
 ## 2026-11-18 — Nova Editorial Workspace content controls
 
-Source implementation now gives a member edit and remove controls for their
-own articles and research papers. Owner, Executive, Full Administrator, and
-Administrator staff appointments receive an all-content management view with
-server-enforced edit and removal authority. Removal is a recoverable soft
-delete that removes the article from public lists, preserves the linked Nova
-document and revision history, and writes an audit record. Workflow-native
-documents remain locked while submitted, in review, or approved; those changes
-continue through the protected Editorial Review boundary. The implementation
-record is [Nova Editorial Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md).
+Source implementation now gives a member edit and document-removal controls
+for their own articles and research papers. Owner, Executive, Full
+Administrator, and Administrator staff appointments receive an all-content
+management view with server-enforced edit and removal authority. Unpublished
+workspace removal is a recoverable soft delete; published workspace removal
+archives only the linked Nova working document and preserves the published
+Education Center article, public URL, feed item, and snapshot. Intentional
+removal from public view remains a separate Administration Center moderation
+action. Workflow-native documents remain locked while submitted, in review, or
+approved; those changes continue through the protected Editorial Review
+boundary. The implementation record is [Nova Editorial Workspace Content
+Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md).
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The maintained release completed with
 full-platform preflight **40/40**, live anonymous smoke **10/10**, and direct

@@ -7,11 +7,13 @@
 
 ## User-facing requirement
 
-Members who create an article or paper must be able to edit it and remove it
-from public view. The Owner, Executive, Full Administrator, and Administrator
-roles must be able to manage any article or paper when their effective server-
-side staff appointment grants that authority. This includes removing
-derogatory content while preserving an accountable record.
+Members who create an article or paper must be able to edit it and remove its
+editable Nova working document. The Owner, Executive, Full Administrator, and
+Administrator roles must be able to manage any document when their effective
+server-side staff appointment grants that authority. A published Education
+Center article is a separate public snapshot: removing its Nova working
+document must not remove the published article. Intentional public removal
+remains an Administration Center moderation action.
 
 ## Repair applied
 
@@ -21,9 +23,17 @@ derogatory content while preserving an accountable record.
 - Authorized editorial managers can review all article records from the
   protected content library, edit content that is not locked in the editorial
   workflow, and remove any article through the protected admin endpoint.
-- Author and manager removal now uses a recoverable `status = 'deleted'`
-  transition. It removes the article from public lists without hard-deleting
-  the article row, linked Nova document, or revision history.
+- Unpublished author and manager removal uses a recoverable
+  `articles.status = 'deleted'` transition. It removes the working article from
+  public lists without hard-deleting the article row, linked Nova document, or
+  revision history.
+- Published workspace removal is document-scoped: it archives the linked Nova
+  working document, leaves `articles.status = 'published'`, preserves the
+  public Education Center snapshot and feed item, and records the distinction
+  in the audit log.
+- Administration Center moderation retains its separate explicit behavior: an
+  authorized administrator can intentionally remove a published article from
+  public view through the protected moderation route.
 - Removal and elevated edits are written to the existing administrative audit
   log with the actor, target article, previous state, and owner-preservation
   metadata.
@@ -47,9 +57,13 @@ The manager set is intentionally limited to `owner`, `executive`,
 authority but do not receive blanket editorial ownership or deletion rights.
 The server rechecks this boundary on every protected request.
 
-“Delete” in the member workspace means remove from public view and preserve
-history. Permanent deletion is not exposed through this article control, so a
+“Delete” in the Nova workspace is document-scoped. For unpublished work it
+moves the article into recoverable Removed state; for published work it removes
+only the editable Nova document and keeps the Education Center publication
+live. Permanent deletion is not exposed through this article control, so a
 mistake can be investigated and recovered through authorized administration.
+The Administration Center moderation control remains the deliberate path for
+removing a published article from public view.
 
 Workflow-native public content cannot be edited by a direct body write while it
 is locked for review. It must continue through the protected Editorial Review
@@ -65,6 +79,7 @@ publication boundary.
 - `node --check lib/nova.js`
 - `git diff --check`
 - `npm run verify:nova-editorial-content-controls`
+- `node scripts/verify/tpi-nova-004r6e-publish.mjs`
 - `node scripts/qa/tpi-dev-011-admin-functional.mjs`
 
 ### Release evidence

@@ -2162,8 +2162,8 @@ ${articleHtml}
   // TPI-NOVA-005A2: Nova Documents home. One data source (loadEditorArticles, which reads
   // /api/contributors/me/articles); sidebar filters and counts are derived in memory.
   const NOVA_FILTERS = {
-    all: a => a.status !== "deleted",
-    mine: a => a.status !== "deleted",
+    all: a => a.status !== "deleted" && a.status !== "published",
+    mine: a => a.status !== "deleted" && a.status !== "published",
     draft: a => a.status !== "deleted" && a.editorialStatus === "draft",
     submitted: a => a.status !== "deleted" && a.editorialStatus === "submitted",
     in_review: a => a.status !== "deleted" && a.editorialStatus === "in_review",
@@ -2591,18 +2591,30 @@ ${articleHtml}
       setStatus("Open a document before moving it to Trash");
       return;
     }
-    if (!window.confirm("Move this document to Trash? It will leave public view while TPI preserves its history for recovery.")) return;
+    const article = novaHomeArticles.find(item => item.id === articleId) || await findEditorArticle(articleId);
+    const published = article?.status === "published";
+    const confirmation = published
+      ? "Remove this editable Nova working document? The published Education Center article will remain live and unchanged."
+      : "Move this document to Trash? TPI will preserve its history for recovery.";
+    if (!window.confirm(confirmation)) return;
     const wasCurrentDocument = currentArticleId === articleId;
+    let result = null;
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
-        if (hasEditorialManagerAccess()) await window.TPIApi.deleteAdminArticle(articleId);
-        else await window.TPIApi.deleteArticle(articleId);
+        // Workspace removal is document-scoped. Administration Center keeps
+        // the separate admin moderation route for intentionally unpublishing
+        // an Education Center article.
+        result = await window.TPIApi.deleteArticle(articleId);
       } catch (error) {
         setStatus(error.message || "Delete failed");
         return;
       }
     } else {
-      savePublishedArticles(getPublishedArticles().filter(article => article.id !== articleId));
+      if (published) {
+        setStatus("The published Education Center article remains live; its editable document is not available offline.");
+        return;
+      }
+      savePublishedArticles(getPublishedArticles().filter(item => item.id !== articleId));
     }
     if (wasCurrentDocument) {
       currentArticleId = null;
@@ -2610,7 +2622,9 @@ ${articleHtml}
     } else {
       await renderContentLibraryList();
     }
-    setStatus("Document moved to Trash");
+    setStatus(result?.publicEducationCenterPreserved
+      ? "Working document removed; published Education Center article remains live"
+      : "Document moved to Trash");
   }
 
   async function writeClipboard(value, message) {

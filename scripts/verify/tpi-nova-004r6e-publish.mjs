@@ -756,6 +756,20 @@ check("the legacy direct Admin status change is refused for an enrolled publishe
   assert.equal(article.status, "published");
   assert.equal(article.body_html, "<p>LIVE SNAPSHOT</p>");
 });
+check("Nova workspace document removal preserves a published Education Center snapshot", async () => {
+  const seeded = await approvedArticle({ title: "Published Working Document Separation", status: "published", bodyHtml: "<p>LIVE WORKING SNAPSHOT</p>" });
+  const res = await call("DELETE", `/articles/${seeded.articleId}`, "tok-admin");
+  assert.equal(res.status, 200, JSON.stringify(res.body));
+  assert.equal(res.body.documentRemoved, true);
+  assert.equal(res.body.removedFromPublic, false);
+  assert.equal(res.body.publicEducationCenterPreserved, true);
+  assert.equal(articleOf(seeded.articleId).status, "published");
+  assert.equal(sqlite.prepare("SELECT status FROM nova_items WHERE id = ?").get(seeded.itemId)?.status, "archived");
+  const publicList = await call("GET", "/articles", null);
+  assert.equal(publicList.status, 200);
+  assert.ok(publicList.body.articles.some(article => article.id === seeded.articleId));
+  assert.equal(sqlite.prepare("SELECT action FROM admin_audit_logs WHERE target_id = ? ORDER BY created_at DESC LIMIT 1").get(seeded.articleId)?.action, "article.document_removed_by_manager");
+});
 check("limited Admin can remove an Education article from public view while preserving Nova and audit history", async () => {
   const seeded = await approvedArticle({ title: "Admin Moderation Removal" });
   const res = await call("DELETE", `/admin/articles/${seeded.articleId}`, "tok-admin");

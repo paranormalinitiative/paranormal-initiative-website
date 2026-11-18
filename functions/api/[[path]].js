@@ -5811,11 +5811,70 @@ async function novaPurgeDocument(env, itemId, ownerId) {
 async function handleDeleteArticle(path, env, user) {
   const id = clean(decodeURIComponent(path.replace(/^\/articles\//, "")));
   if (!id) return json({ error: "Article id is required." }, 400);
-  const article = await env.TPI_DB.prepare("SELECT id, title, status, destination, article_type AS contributionType, created_by FROM articles WHERE id = ?").bind(id).first();
+  const article = await env.TPI_DB.prepare("SELECT id, title, status, destination, article_type AS contributionType, created_by, nova_item_id AS novaItemId FROM articles WHERE id = ?").bind(id).first();
   if (!article) return json({ deleted: false });
   const editorialManager = await hasEditorialContentManagementAccess(env, user);
   if (article.created_by !== user.id && !editorialManager) {
     return json({ error: "You can only delete your own articles." }, 403);
+  }
+  // Nova workspace removal is intentionally different from Administration
+  // Center moderation. A published Education Center article is the public
+  // snapshot; removing its editable Nova working document must never remove
+  // that snapshot from the Education Center.
+  if (article.status === "published") {
+    if (!article.novaItemId) {
+      return json({
+        deleted: false,
+        changed: false,
+        id,
+        articlePublished: true,
+        documentAvailable: false,
+        removedFromPublic: false,
+        publicEducationCenterPreserved: true,
+        message: "The published Education Center article remains live. This legacy item has no separate Nova working document to remove."
+      });
+    }
+    const novaItem = await env.TPI_DB.prepare("SELECT id, owner_id AS ownerId, status, version FROM nova_items WHERE id = ? AND owner_id = ?").bind(article.novaItemId, article.created_by).first();
+    if (!novaItem) {
+      return json({
+        deleted: false,
+        changed: false,
+        id,
+        articlePublished: true,
+        documentAvailable: false,
+        removedFromPublic: false,
+        publicEducationCenterPreserved: true,
+        message: "The published Education Center article remains live. Its Nova working document is not available."
+      });
+    }
+    const archived = await env.TPI_DB.prepare(`
+      UPDATE nova_items
+      SET status = 'archived', deleted_at = NULL, trash_collection_id = NULL,
+          version = version + 1, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ? AND owner_id = ? AND status != 'trash'
+    `).bind(article.novaItemId, article.created_by).run();
+    const changed = Number(archived.meta?.changes || 0) > 0;
+    await writeAdminAuditLog(env, user, editorialManager ? "article.document_removed_by_manager" : "article.document_removed", "article", id, {
+      title: article.title,
+      articleStatus: article.status,
+      novaItemId: article.novaItemId,
+      previousNovaStatus: novaItem.status,
+      documentStatus: novaItem.status === "trash" ? novaItem.status : "archived",
+      documentOnly: true,
+      publicEducationCenterPreserved: true,
+      editorialHistoryPreserved: true
+    });
+    return json({
+      deleted: changed,
+      changed,
+      id,
+      articlePublished: true,
+      documentRemoved: true,
+      documentStatus: novaItem.status === "trash" ? novaItem.status : "archived",
+      removedFromPublic: false,
+      publicEducationCenterPreserved: true,
+      editorialHistoryPreserved: true
+    });
   }
   if (article.status === "deleted") return json({ deleted: true, changed: false, id, removedFromPublic: true, editorialHistoryPreserved: true });
   const update = await env.TPI_DB.prepare("UPDATE articles SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status != 'deleted'").bind(id).run();
@@ -5827,7 +5886,7 @@ async function handleDeleteArticle(path, env, user) {
     contributionType: article.contributionType,
     editorialHistoryPreserved: true
   });
-  return json({ deleted: true, changed: true, id, removedFromPublic: true, editorialHistoryPreserved: true });
+  return json({ deleted: true, changed: true, id, documentRemoved: true, removedFromPublic: true, publicEducationCenterPreserved: false, editorialHistoryPreserved: true });
 }
 
 // TPI-NOVA-004R6C: Contributor submission workflow. Transition rules live in
