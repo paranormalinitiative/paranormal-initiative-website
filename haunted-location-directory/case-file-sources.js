@@ -16,5 +16,11 @@ window.TPI_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/forepaughs-restaurant-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Joseph_Forepaugh_Mansion,_Exchange_Street,_Irvine_Park,_Saint_Paul,_MN.jpg',
     credit: 'w_lemay — CC BY-SA 2.0'
+  },
+  'Palmer House Hotel': {
+    image: 'case-file-photos/palmer-house-sauk-centre.jpg',
+    caseFileImage: 'case-file-photos/palmer-house-sauk-centre-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Palmer_House_Sauk_Centre_exterior.jpg',
+    credit: 'Kirs10 — CC BY-SA 3.0'
   }
 };

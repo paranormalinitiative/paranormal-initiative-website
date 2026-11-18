@@ -66,7 +66,7 @@ const rendererSource = fs.readFileSync(path.join(directory, 'state-directory.js'
 if (!rendererSource.includes('tpi-case-state-label') || !rendererSource.includes('${esc(state.name)}')) {
   failures.push('case-file renderer does not display the canonical state name on photographs');
 }
-for (const requiredImage of ['Wabasha Street Caves', 'Glensheen Mansion', 'Forepaugh’s Restaurant']) {
+for (const requiredImage of ['Wabasha Street Caves', 'Palmer House Hotel', 'Glensheen Mansion', 'Forepaugh’s Restaurant']) {
   const image = imageSources[requiredImage]?.image;
   if (!image || !imageSources[requiredImage]?.source || !imageSources[requiredImage]?.credit) {
     failures.push(`missing exact-photo attribution record for ${requiredImage}`);

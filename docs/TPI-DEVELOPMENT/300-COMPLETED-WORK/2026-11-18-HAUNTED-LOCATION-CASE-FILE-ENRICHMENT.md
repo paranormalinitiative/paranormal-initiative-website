@@ -26,10 +26,11 @@ treatment only when it does not alter the identity of the place.
   source-and-license link and credit.
 - Entries without a verified exact photograph display **Exact case-file
   photograph pending** and explicitly use no AI substitute.
-- The first exact-photo records are for Wabasha Street Caves, Glensheen
-  Mansion, and the Forepaugh mansion entry in Minnesota. Their local copies
-  retain the source, attribution, and license record; the Forepaugh image was
-  supplied as the exact-building reference for TPI's case file.
+- Minnesota is now complete for its four directory entries: Wabasha Street
+  Caves, Palmer House Hotel, Glensheen Mansion, and Forepaugh's Restaurant.
+  Their local copies retain the source, attribution, and license record; the
+  Forepaugh image was supplied as the exact-building reference for TPI's case
+  file.
 - Each of the three current exact-photo records now has a separate archival
   case-file treatment derived from that exact photo. The renderer labels each
   treatment and links to the untouched original local photo, so the
