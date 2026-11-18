@@ -1,11 +1,13 @@
 window.TPI_CASE_FILE_SOURCES = {
   'Wabasha Street Caves': {
     image: 'case-file-photos/wabasha-street-caves.jpg',
+    caseFileImage: 'case-file-photos/wabasha-street-caves-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Wabasha_Street_Caves.jpg',
     credit: 'Gobonobo — CC BY-SA 3.0'
   },
   'Glensheen Mansion': {
     image: 'case-file-photos/glensheen-mansion.jpg',
+    caseFileImage: 'case-file-photos/glensheen-mansion-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Glensheen_Mansion.jpg',
     credit: 'Ktoma — CC BY-SA 3.0'
   },
