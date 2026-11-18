@@ -21,12 +21,15 @@ treatment only when it does not alter the identity of the place.
 - The shared renderer now gives every new entry Historical Context, Activity
   Reported, Structure / Research Zones, Location Data, Classification, and
   Research Status sections.
-- Exact source photographs include a visible source-and-license link and credit.
+- Exact source photographs are stored in TPI's local
+  `haunted-location-directory/case-file-photos/` folder and include a visible
+  source-and-license link and credit.
 - Entries without a verified exact photograph display **Exact case-file
   photograph pending** and explicitly use no AI substitute.
 - The first exact-photo records are for Wabasha Street Caves, Glensheen
-  Mansion, and the Forepaugh mansion entry in Minnesota, sourced from
-  Wikimedia Commons with attribution and license information.
+  Mansion, and the Forepaugh mansion entry in Minnesota. Their local copies
+  retain the source, attribution, and license record; the Forepaugh image was
+  supplied as the exact-building reference for TPI's case file.
 - The remaining locations are intentionally pending source-by-source image
   review; no guessed image is published.
 - The maintained local Worker refresh now includes

@@ -63,8 +63,11 @@ for (const [slug, name] of allStates) {
 
 const imageSources = context.window.TPI_CASE_FILE_SOURCES || {};
 for (const requiredImage of ['Wabasha Street Caves', 'Glensheen Mansion', 'Forepaugh’s Restaurant']) {
-  if (!imageSources[requiredImage]?.image || !imageSources[requiredImage]?.source || !imageSources[requiredImage]?.credit) {
+  const image = imageSources[requiredImage]?.image;
+  if (!image || !imageSources[requiredImage]?.source || !imageSources[requiredImage]?.credit) {
     failures.push(`missing exact-photo attribution record for ${requiredImage}`);
+  } else if (image.startsWith('case-file-photos/') && !fs.existsSync(path.join(directory, image))) {
+    failures.push(`missing local case-file photo for ${requiredImage}: ${image}`);
   }
 }
 
