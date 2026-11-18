@@ -69,17 +69,18 @@ publication boundary.
 
 ### Release evidence
 
-- Source commit: `e2f03e56a8d2979880c1a6f36e4479a74f329d0a`
+- Source commit: `ee214c494aad4da0ae18332de593326385b5703f`
 - GitHub parity: pushed to `origin/codex/tpi-development`
-- Release impact profile: `website` (the public website/editorial boundary;
-  protected StudioFlow source was not modified)
-- Preflight result: certified; 10/10 impact-aware release gates passed
-- Production release: `rel-e2f03e56a8d2-cd4529f65293`
-- Production Worker version: `7472d005-6ba9-4eca-9502-42431ac3e3c3`
+- Release impact profile: `full` (the active editor surface and its protected
+  content-control regression contract were changed; protected StudioFlow
+  source was not modified)
+- Preflight result: certified; 40/40 full-platform release gates passed
+- Production release: `rel-ee214c494aad-62bb06506c39`
+- Production Worker version: `8878cf38-3e9e-4b1d-9680-9f8870ed0eb3`
 - Live anonymous production smoke: 10/10 passed
-- Firefox Developer Edition production acceptance: 65/65 passed with the
-  disposable `production_qa` account; the owner profile was not accessed
-- Rollback reference: `d34efc2e-1d22-4907-869e-4c082160de7b`
+- Firefox Developer Edition production acceptance: passed with the disposable
+  `production_qa` account; the owner profile was not accessed
+- Rollback reference: `7472d005-6ba9-4eca-9502-42431ac3e3c3`
 
 The release guard also exercised the protected application boundary. The
 direct live Firefox run confirmed that the deployed site can still authenticate

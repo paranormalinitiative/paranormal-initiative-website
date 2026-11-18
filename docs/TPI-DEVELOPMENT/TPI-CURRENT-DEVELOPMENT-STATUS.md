@@ -27,11 +27,11 @@ continue through the protected Editorial Review boundary. The implementation
 record is [Nova Editorial Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md).
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The maintained release completed with
-impact-aware preflight **10/10**, live anonymous smoke **10/10**, and direct
-Firefox Developer Edition production acceptance **65/65** using the disposable
-`production_qa` account. Release `rel-e2f03e56a8d2-cd4529f65293` serves Worker
-`7472d005-6ba9-4eca-9502-42431ac3e3c3` at 100% traffic. The rollback reference
-is `d34efc2e-1d22-4907-869e-4c082160de7b`. StudioFlow, Creator Studio, Nova
+full-platform preflight **40/40**, live anonymous smoke **10/10**, and direct
+Firefox Developer Edition production acceptance using the disposable
+`production_qa` account. Release `rel-ee214c494aad-62bb06506c39` serves Worker
+`8878cf38-3e9e-4b1d-9680-9f8870ed0eb3` at 100% traffic. The rollback reference
+is `7472d005-6ba9-4eca-9502-42431ac3e3c3`. StudioFlow, Creator Studio, Nova
 storage, private media, and owner data were not modified. See [Nova Editorial
 Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md)
 for the complete authorization, recovery, audit, and verification record.
