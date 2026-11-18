@@ -44,13 +44,14 @@ treatment only when it does not alter the identity of the place.
 - The maintained local Worker refresh now includes
   `haunted-location-directory`, preventing nested directory pages from serving
   stale staged copies after an update.
-- Michigan is the next expansion queue. Its existing directory contains 20
+- Michigan is the active expansion queue. Its existing directory contains 20
   researched locations; the first six exact-photo records now cover Detroit
   Masonic Temple, The Whitney, Elmwood Cemetery, Detroit Public Library Main
   Branch, Historic Fort Wayne, and Redford Theatre. Each has a local source
   photo, a separate TPI treatment, a Michigan label, and recorded reuse terms.
-  The remaining Michigan entries stay in the source-review queue until an exact
-  photograph and defensible reuse record are confirmed.
+  This first Michigan batch is deployed and live. The remaining 14 Michigan
+  entries stay in the source-review queue until an exact photograph and
+  defensible reuse record are confirmed.
 
 ## Verification
 
@@ -68,10 +69,10 @@ production smoke passing 10/10 and the new Worker holding 100% traffic.
 
 ## Release record
 
-- Source commit: `8f3d74cadc60dcf3294f790511394599ff48d82a`
-- Release candidate: `rel-8f3d74cadc60-048ff466f672`
-- Production Worker version: `f3ad7764-bd79-4961-8b22-f7bd7dc57a3e`
-- Rollback target: `fbc17d25-ec5d-44fc-8e44-ba759937ead4`
+- Source commit: `19b8bcf6432b49efc620e1fb0072934a54a7f342`
+- Release candidate: `rel-19b8bcf6432b-54c2fb933470`
+- Production Worker version: `71110d1d-2533-4972-8c73-c258ce2091f8`
+- Rollback target: `f3ad7764-bd79-4961-8b22-f7bd7dc57a3e`
 - Release profile: website; protected application integrity guard passed
 - Production smoke: **10/10 passed**
 - Firefox Developer Edition acceptance: not required by the website-only
