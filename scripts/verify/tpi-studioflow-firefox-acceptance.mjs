@@ -132,6 +132,41 @@ async function waitFor(description, predicate, timeout = 30_000, interval = 200)
   }
   throw new Error(`${description} timed out${detail ? `: ${detail}` : ""}`);
 }
+async function navigateWithRetry(url, description = "navigation") {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await driver.get(url);
+      return;
+    } catch (error) {
+      lastError = error;
+      const currentUrl = await driver.getCurrentUrl().catch(() => "");
+      const currentBody = await driver.findElement(By.css("body")).then(node => node.getText()).catch(() => "");
+      // Firefox can report a page-load timeout while the Worker is still
+      // completing a non-critical resource. If the target document has not
+      // produced a body yet, retry the navigation instead of treating that
+      // transient transport state as an application failure.
+      if (currentUrl.startsWith(url) && currentBody.trim()) return;
+      if (attempt < 3) await sleep(750 * attempt);
+    }
+  }
+  throw new Error(`${description} failed after retries: ${safe(lastError)}`);
+}
+async function refreshWithRetry(description = "page refresh") {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await driver.navigate().refresh();
+      return;
+    } catch (error) {
+      lastError = error;
+      const currentBody = await driver.findElement(By.css("body")).then(node => node.getText()).catch(() => "");
+      if (currentBody.trim()) return;
+      if (attempt < 3) await sleep(750 * attempt);
+    }
+  }
+  throw new Error(`${description} failed after retries: ${safe(lastError)}`);
+}
 async function authenticatedSession() {
   return asyncJs("var done=arguments[arguments.length-1]; var signedInCard=document.querySelector('[data-authenticated-login-state]:not([hidden])'); if(signedInCard){done(true);return;} fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});");
 }
@@ -165,7 +200,7 @@ async function uploadVideoSlot(index, acceptToken, path) {
 async function enterStudio() {
   let shellError;
   for (let attempt = 1; attempt <= 4; attempt += 1) {
-    await driver.get(`${base}/studio/`);
+    await navigateWithRetry(`${base}/studio/`, "StudioFlow navigation");
     try {
       await waitFor("StudioFlow shell", async () => {
         const url = new URL(await driver.getCurrentUrl());
@@ -241,7 +276,7 @@ try {
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 60_000 });
   await driver.manage().window().setRect({ width: 1280, height: 1000, x: 20, y: 20 });
 
-  await driver.get(`${base}/member-login.html`);
+  await navigateWithRetry(`${base}/member-login.html`, "member login navigation");
   check("isolated Firefox login page renders", await count('form[data-member-login]') === 1);
   if (manualLogin) {
     // Some macOS Firefox/Selenium combinations expose the Marionette window
@@ -440,7 +475,7 @@ try {
   check("original Studio remains available after restore", openedOriginal === true);
   await waitFor("switch back to original Studio", async () => js("return JSON.parse(localStorage.getItem('studioflow.activeBroadcastId')||'\"\"')===arguments[0];", studioId));
   check("My Studios switching immediately opens the selected Studio", true);
-  await driver.navigate().refresh();
+  await refreshWithRetry();
   await enterStudio();
   const afterRefresh = await asyncJs("var expected=arguments[0], done=arguments[arguments.length-1]; var id=JSON.parse(localStorage.getItem('studioflow.activeBroadcastId')||'\"\"'), slots=JSON.parse(localStorage.getItem('studioflow.videoClipSlots')||'[]').filter(Boolean), sounds=JSON.parse(localStorage.getItem('studioflow.customSounds')||'[]').filter(Boolean), music=JSON.parse(localStorage.getItem('studioflow.backgroundMusicSlots')||'[]').filter(Boolean), keys=slots.concat(sounds,music).map(function(item){return item.blobKey;}).filter(Boolean), request=indexedDB.open('studioflow-recordings'); request.onerror=function(){done({ok:false});}; request.onsuccess=function(){var db=request.result,tx=db.transaction('recordingBlobs','readonly'),found=0; keys.forEach(function(key){var get=tx.objectStore('recordingBlobs').get(key);get.onsuccess=function(){if(get.result)found+=1;};});tx.oncomplete=function(){db.close();done({ok:id===expected&&keys.length>=4&&found===keys.length,id:id,keys:keys.length,found:found});};};", studioId);
   check("studio identity and media persist after reopening", afterRefresh?.ok === true, JSON.stringify(afterRefresh));
