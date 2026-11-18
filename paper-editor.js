@@ -1070,8 +1070,9 @@
     }
   }
 
-  async function mountLinkedNovaDocument(item) {
+  async function mountLinkedNovaDocument(item, isCurrent = () => true) {
     await loadNovaScripts();
+    if (!isCurrent()) return false;
     // The API returns the stored envelope { format, version, doc }; the editor takes the bare doc.
     const doc = item.content && item.content.doc ? item.content.doc : item.content;
     const meta = item.content && item.content.meta ? item.content.meta : undefined;
@@ -1096,6 +1097,7 @@
     document.body.classList.add("nova-document-open");
     const modeSelect = document.querySelector("[data-editor-mode]");
     if (modeSelect) modeSelect.value = "nova";
+    return true;
   }
 
   // TPI-NOVA-004R6C1: Contributor workflow controls. Server state is authoritative;
@@ -1284,15 +1286,17 @@
   });
 
   // Opens a linked article in Nova mode.
-  async function openLinkedNovaArticle(articleId) {
+  async function openLinkedNovaArticle(articleId, isCurrent = () => true) {
     // TPI-NOVA-005A6E: the metadata baseline belongs to the article being opened.
     lastSavedMetadata = null;
     const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova/item`, { credentials: "same-origin", cache: "no-store" });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "Nova document could not be opened");
+    if (!isCurrent()) return false;
     // The Nova save path writes to the article it was opened from.
     currentArticleId = articleId;
-    await mountLinkedNovaDocument(data.item);
+    const mounted = await mountLinkedNovaDocument(data.item, isCurrent);
+    if (!mounted || !isCurrent()) return false;
     // TPI-NOVA-005A6E: populate the inspector from the stored article (authoritative), then baseline it.
     const stored = await findEditorArticle(articleId);
     if (stored) {
@@ -1312,11 +1316,12 @@
     lastSavedMetadata = currentMetadataSnapshot();
     await refreshWorkflowState(articleId);
     setStatus("Nova document loaded");
+    return true;
   }
 
   // Explicit conversion of a legacy article. The article body is not rewritten: the
   // Nova document is seeded from it, and the link is stored only after success.
-  async function convertLegacyArticleToNova(articleId) {
+  async function convertLegacyArticleToNova(articleId, isCurrent = () => true) {
     // Convert the stored body (not the live compose field) so the Nova document is the
     // article's own content. Unsupported markup is reported, not silently dropped.
     const stored = await findEditorArticle(articleId);
@@ -1334,7 +1339,8 @@
     });
     const linkData = await linkResponse.json().catch(() => ({}));
     if (!linkResponse.ok && linkResponse.status !== 409) throw new Error(linkData.error || "Could not convert this article");
-    await openLinkedNovaArticle(articleId);
+    if (!isCurrent()) return;
+    await openLinkedNovaArticle(articleId, isCurrent);
     if (unsupportedNotice) {
       // Persist the notice: setStatus would otherwise overwrite it after 1.8s.
       window.clearTimeout(setStatus.timer);
@@ -1346,30 +1352,34 @@
   // Nova automatically. The original article row and published HTML remain
   // untouched; the Nova document is an owner-scoped working copy linked to the
   // existing article. TPI Video stays on its specialized editor path.
-  async function openPrimaryEditorialEditor(article) {
+  async function openPrimaryEditorialEditor(article, isCurrent = () => true) {
     if (!article) return;
+    if (!isCurrent()) return;
     if (article.novaItemId) {
-      await setEditorMode("nova");
-      await openLinkedNovaArticle(article.id);
+      await openLinkedNovaArticle(article.id, isCurrent);
       return;
     }
 
-    loadArticleIntoEditor(article);
     const canMigrate = Boolean(
       !article.legacy &&
       article.contributionType !== "TPI Video" &&
       window.TPIApi &&
       await window.TPIApi.isAvailable()
     );
-    if (!canMigrate) return;
+    if (!canMigrate) {
+      // TPI Video and explicitly imported legacy pages retain their specialized
+      // compatibility editor. Normal Education Center documents never render it.
+      loadArticleIntoEditor(article);
+      return;
+    }
 
     setStatus("Preparing this document in Nova…");
     try {
-      await convertLegacyArticleToNova(article.id);
+      await convertLegacyArticleToNova(article.id, isCurrent);
     } catch (error) {
-      // Keep the compatibility editor usable if a single legacy record contains
-      // unsupported or unavailable data. No article row was changed on failure.
-      setStatus(`Nova migration unavailable: ${error.message || "try again later"}. Compatibility editor remains available.`);
+      // Do not silently switch this document to another editor. The owner sees
+      // the single Nova surface and an actionable failure instead.
+      setStatus(`Nova could not open this document: ${error.message || "try again later"}.`);
     }
   }
 
@@ -2181,6 +2191,10 @@ ${articleHtml}
   };
   let novaHomeArticles = [];
   let novaHomeFilter = "all";
+  // TPI-NOVA-005A8: only the latest document-open request may mount the editor.
+  // Older requests must not reveal an intermediate compatibility shell or replace
+  // the document selected by the owner after a rapid sequence of clicks.
+  let editorOpenRequest = 0;
 
   // Derives the two independent dimensions shown on every row. Publication never
   // implies workflow: a published article with a new revision is Published + Draft Revision.
@@ -2303,7 +2317,6 @@ ${articleHtml}
       if (!linkResponse.ok && linkResponse.status !== 409) throw new Error(linkData.error || "Nova document could not be created");
       pendingNovaDraft = null;
       document.getElementById("nova-home-error").hidden = true;
-      setNovaHomeVisible(false);
       await editContentArticle(articleId);
     } catch (error) {
       setStatus(error.message || "Document could not be created");
@@ -2337,7 +2350,6 @@ ${articleHtml}
       if (!row) return;
       const article = novaHomeArticles.find(item => item.id === row.dataset.novaOpen);
       if (!article) return;
-      setNovaHomeVisible(false);
       await editContentArticle(article.id);
     });
     document.querySelectorAll("[data-workspace-mode]").forEach(button => {
@@ -2442,13 +2454,20 @@ ${articleHtml}
   }
 
   async function editContentArticle(articleId) {
+    const requestId = ++editorOpenRequest;
+    document.body.classList.add("editor-booting");
+    setNovaHomeVisible(false);
     const article = await findEditorArticle(articleId);
+    if (requestId !== editorOpenRequest) return;
     if (!article) {
       setStatus("Article could not be found");
+      document.body.classList.remove("editor-booting");
       return;
     }
     await openPrimaryEditorialEditor(article);
+    if (requestId !== editorOpenRequest) return;
     document.getElementById("content-library-modal")?.remove();
+    document.body.classList.remove("editor-booting");
   }
 
   async function importLegacyArticle(articleId) {
