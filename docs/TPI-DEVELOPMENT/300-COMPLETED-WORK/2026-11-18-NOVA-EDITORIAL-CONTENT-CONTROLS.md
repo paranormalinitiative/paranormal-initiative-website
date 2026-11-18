@@ -60,6 +60,14 @@ remains an Administration Center moderation action.
   not painted while Nova loads. Normal Education Center documents no longer
   call the compatibility editor before migration; TPI Video and explicitly
   imported legacy pages retain only their specialized fallback path.
+- The final startup repair warms the maintained Nova bundle as soon as the
+  authenticated workspace unlocks, passes the already-loaded article record
+  from the document list into the open operation, and mounts the selected
+  document through one authoritative Nova path. Normal document opens no
+  longer refetch the article list, and workflow-state refresh runs in the
+  background instead of delaying the editor reveal. This removes the
+  sequential fetch/bootstrap chain that caused the workspace to take roughly
+  fifteen seconds and visibly pass through multiple editor states.
 - Document opens are request-guarded: if several document rows are clicked
   quickly, only the newest request can mount a Nova document. Older requests
   cannot replace the selected document after it has changed.
@@ -105,21 +113,23 @@ publication boundary.
 
 ### Release evidence
 
-- Source commit: `b0afab0a2709c5a2d009deac229259418c0323d1`
+- Source commit: `08dbcb83eea018f3807221878fed0557129b3727`
 - GitHub parity: pushed to `origin/codex/tpi-development`
 - Release impact profile: `full` (the active editor surface and its protected
   content-control regression contract were changed; protected StudioFlow
   source was not modified)
 - Preflight result: certified; 40/40 full-platform release gates passed
-- Production release: `rel-b0afab0a2709-b756cd877c1a`
-- Production Worker version: `5d9f8c32-adc0-4ddc-8fe7-240b3ce594ae`
+- Production release: `rel-08dbcb83eea0-c87f2099a19a`
+- Production Worker version: `62a795c6-cf32-45c1-bfc0-8065cf9f8829`
 - Live anonymous production smoke: 10/10 passed
-- Firefox Developer Edition production acceptance: passed with the disposable
-  `production_qa` account; the owner profile was not accessed
-- Rollback reference: `3d593a2e-437b-4fc8-aeb3-385bfec4c930`
+- Firefox Developer Edition production acceptance: 65/65 passed with the
+  disposable `production_qa` account; the owner profile was not accessed
+- Rollback reference: `5d9f8c32-adc0-4ddc-8fe7-240b3ce594ae`
 
 The release guard also exercised the protected application boundary. The
 direct live Firefox run confirmed that the deployed site can still authenticate
 the disposable QA account and load the existing StudioFlow application with
-all 65 controls and persistence checks passing.
+all 65 controls and persistence checks passing. The exact certified candidate
+was deployed without recertification drift; its sealed manifest digest was
+`d3121119c5828a03c1dcb3edc3b9b7a91302d1b9aa50fb4c8b94dcaee3385825`.
 

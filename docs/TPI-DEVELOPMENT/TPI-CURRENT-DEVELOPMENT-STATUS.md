@@ -39,15 +39,19 @@ Delete document visible in the open-document header, and keeps the legacy
 compatibility editor hidden while an existing article is being migrated into
 Nova. A second startup repair now keeps the workspace hidden until the latest
 document request has mounted Nova, prevents normal documents from rendering the
-compatibility editor at all, and ignores stale rapid-click requests. The page
-therefore opens once on the final Nova editor surface.
+compatibility editor at all, and ignores stale rapid-click requests. The final
+startup repair warms the Nova bundle at workspace unlock, reuses the selected
+article record instead of refetching the document list, mounts through one
+authoritative path, and refreshes workflow state in the background. The page
+therefore opens directly once on the final Nova editor surface rather than
+waiting through the old sequential bootstrap chain.
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The maintained follow-up release completed with
 full-platform preflight **40/40**, live anonymous smoke **10/10**, and direct
 Firefox Developer Edition production acceptance **65/65** using the disposable
-`production_qa` account. Release `rel-b0afab0a2709-b756cd877c1a` serves Worker
-`5d9f8c32-adc0-4ddc-8fe7-240b3ce594ae` at 100% traffic. The rollback reference
-is `3d593a2e-437b-4fc8-aeb3-385bfec4c930`. StudioFlow, Creator Studio, Nova
+`production_qa` account. Release `rel-08dbcb83eea0-c87f2099a19a` serves Worker
+`62a795c6-cf32-45c1-bfc0-8065cf9f8829` at 100% traffic. The rollback reference
+is `5d9f8c32-adc0-4ddc-8fe7-240b3ce594ae`. StudioFlow, Creator Studio, Nova
 storage, private media, and owner data were not modified. See [Nova Editorial
 Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md)
 for the complete authorization, recovery, audit, and verification record.
