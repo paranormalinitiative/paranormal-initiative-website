@@ -93,6 +93,11 @@ const studioTitle = `Firefox Acceptance ${Date.now()}`;
 const options = new firefox.Options()
   .setBinary(firefoxBinary)
   .setProfile(profile)
+  // Production pages can keep a non-critical resource open after the DOM is
+  // ready. The acceptance runner validates rendered controls explicitly below;
+  // waiting for the browser's full-load event makes the release gate fail on
+  // an unrelated resource instead of the application under test.
+  .setPageLoadStrategy("eager")
   // Prevent an already-running Firefox Developer Edition session from
   // absorbing this disposable profile into an invisible secondary window.
   .addArguments("-no-remote", "-new-instance")
