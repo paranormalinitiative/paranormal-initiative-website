@@ -44,14 +44,14 @@ treatment only when it does not alter the identity of the place.
 - The maintained local Worker refresh now includes
   `haunted-location-directory`, preventing nested directory pages from serving
   stale staged copies after an update.
-- Michigan is the active expansion queue. Its existing directory contains 20
-  researched locations; the first six exact-photo records now cover Detroit
-  Masonic Temple, The Whitney, Elmwood Cemetery, Detroit Public Library Main
-  Branch, Historic Fort Wayne, and Redford Theatre. Each has a local source
-  photo, a separate TPI treatment, a Michigan label, and recorded reuse terms.
-  This first Michigan batch is deployed and live. The remaining 14 Michigan
-  entries stay in the source-review queue until an exact photograph and
-  defensible reuse record are confirmed.
+- Michigan is now complete for its 20 researched directory locations. The
+  records cover Detroit civic and historic sites, former institutions, Jackson,
+  Mackinac Island, Petoskey, Marquette, and Great Lakes lighthouses. Each
+  location now has a local source image, a separate TPI case-file treatment, a
+  Michigan label, and a recorded source and reuse credit. The Terrace Inn
+  record uses a public-domain Bay View historic-district source photograph;
+  the treatment is clearly presented as a stylized research image rather than
+  an unedited documentary photograph.
 
 ## Verification
 
@@ -69,10 +69,10 @@ production smoke passing 10/10 and the new Worker holding 100% traffic.
 
 ## Release record
 
-- Source commit: `19b8bcf6432b49efc620e1fb0072934a54a7f342`
-- Release candidate: `rel-19b8bcf6432b-54c2fb933470`
-- Production Worker version: `71110d1d-2533-4972-8c73-c258ce2091f8`
-- Rollback target: `f3ad7764-bd79-4961-8b22-f7bd7dc57a3e`
+- Source commit: pending Michigan completion release
+- Release candidate: pending
+- Production Worker version: pending
+- Rollback target: pending
 - Release profile: website; protected application integrity guard passed
 - Production smoke: **10/10 passed**
 - Firefox Developer Edition acceptance: not required by the website-only

@@ -81,7 +81,14 @@ for (const requiredImage of ['Wabasha Street Caves', 'Palmer House Hotel', 'Glen
 
 const michiganSourceNames = [
   'Detroit Masonic Temple', 'The Whitney', 'Elmwood Cemetery',
-  'Detroit Public Library — Main Branch', 'Historic Fort Wayne', 'Redford Theatre'
+  'Detroit Public Library — Main Branch', 'Historic Fort Wayne', 'Redford Theatre',
+  'Eloise Asylum — Kay Beard Building',
+  'Village at Grand Traverse Commons — Former State Hospital',
+  'Michigan’s First State Prison — Armory Arts Village', 'Mission Point Resort',
+  'Grand Hotel', 'Fort Holmes', 'The Perry Hotel',
+  'Terrace Inn and 1911 Restaurant', 'Landmark Inn', 'South Haven Lighthouse',
+  'White River Light Station', 'Seul Choix Point Lighthouse',
+  'Big Bay Point Lighthouse', 'Old Presque Isle Lighthouse'
 ];
 for (const name of michiganSourceNames) {
   const image = imageSources[name];
