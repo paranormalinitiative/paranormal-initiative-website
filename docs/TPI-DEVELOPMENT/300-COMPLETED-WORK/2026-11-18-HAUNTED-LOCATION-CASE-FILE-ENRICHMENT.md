@@ -34,6 +34,10 @@ treatment only when it does not alter the identity of the place.
   case-file treatment derived from that exact photo. The renderer labels each
   treatment and links to the untouched original local photo, so the
   presentation cannot be mistaken for an unedited documentary photograph.
+- Every case-file photo now carries a visible state label rendered from the
+  page's canonical state name. This keeps Minnesota, Michigan, or any future
+  state label tied to the location data instead of relying on text baked into
+  an image or a manual label that can drift.
 - The remaining locations are intentionally pending source-by-source image
   review; no guessed image is published.
 - The maintained local Worker refresh now includes

@@ -62,6 +62,10 @@ for (const [slug, name] of allStates) {
 }
 
 const imageSources = context.window.TPI_CASE_FILE_SOURCES || {};
+const rendererSource = fs.readFileSync(path.join(directory, 'state-directory.js'), 'utf8');
+if (!rendererSource.includes('tpi-case-state-label') || !rendererSource.includes('${esc(state.name)}')) {
+  failures.push('case-file renderer does not display the canonical state name on photographs');
+}
 for (const requiredImage of ['Wabasha Street Caves', 'Glensheen Mansion', 'Forepaugh’s Restaurant']) {
   const image = imageSources[requiredImage]?.image;
   if (!image || !imageSources[requiredImage]?.source || !imageSources[requiredImage]?.credit) {
