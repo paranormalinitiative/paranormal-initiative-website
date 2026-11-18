@@ -8,6 +8,9 @@ const stateDataSource = fs.readFileSync(path.join(directory, 'state-data.js'), '
 const context = { window: {} };
 vm.createContext(context);
 vm.runInContext(stateDataSource, context);
+const imageSourcePath = path.join(directory, 'case-file-sources.js');
+const imageSourceSource = fs.readFileSync(imageSourcePath, 'utf8');
+vm.runInContext(imageSourceSource, context);
 
 const allStates = [
   ['alabama', 'Alabama'], ['alaska', 'Alaska'], ['arizona', 'Arizona'], ['arkansas', 'Arkansas'],
@@ -49,13 +52,25 @@ for (const [slug, name] of allStates) {
         failures.push(`${name}: incomplete entry ${entry[0] || '(unnamed)'}`);
       }
     }
-    if (!source.includes('state-data.js') || !source.includes('state-directory.js')) {
+    if (!source.includes('state-data.js') || !source.includes('case-file-sources.js') || !source.includes('state-directory.js')) {
       failures.push(`${name}: shared renderer is not loaded`);
     }
   } else {
     const metadata = source.match(/totalLocations\s*:\s*(\d+)/)?.[1] || source.match(/"total_locations"\s*:\s*(\d+)/)?.[1];
     if (!metadata || Number(metadata) < 1) failures.push(`${name}: established page has no location count`);
   }
+}
+
+const imageSources = context.window.TPI_CASE_FILE_SOURCES || {};
+for (const requiredImage of ['Wabasha Street Caves', 'Glensheen Mansion', 'Forepaugh’s Restaurant']) {
+  if (!imageSources[requiredImage]?.image || !imageSources[requiredImage]?.source || !imageSources[requiredImage]?.credit) {
+    failures.push(`missing exact-photo attribution record for ${requiredImage}`);
+  }
+}
+
+const localDevSource = fs.readFileSync(path.join(root, 'scripts/local-dev.mjs'), 'utf8');
+if (!localDevSource.includes('"haunted-location-directory"')) {
+  failures.push('local Worker refresh does not include haunted-location-directory assets');
 }
 
 for (const [file, expected] of [['haunted-locations.html', 50], ['haunted-location-directory/index.html', 50]]) {

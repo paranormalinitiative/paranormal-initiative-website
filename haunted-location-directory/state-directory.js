@@ -1,1 +1,93 @@
-(function(){const data=window.TPI_STATE_DATA||[];const slug=window.TPI_DIRECTORY_STATE;const state=data.find(item=>item.slug===slug);if(!state){document.body.innerHTML='<main class="tpi-page"><p class="tpi-empty">State directory data unavailable.</p></main>';return}const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const navStates=[['alabama','Alabama'],['alaska','Alaska'],['arizona','Arizona'],['arkansas','Arkansas'],['california','California'],['colorado','Colorado'],['connecticut','Connecticut'],['delaware','Delaware'],['florida','Florida'],['georgia','Georgia'],['hawaii','Hawaii'],['idaho','Idaho'],['illinois','Illinois'],['indiana','Indiana'],['iowa','Iowa'],['kansas','Kansas'],['kentucky','Kentucky'],['louisiana','Louisiana'],['maine','Maine'],['maryland','Maryland'],['massachusetts','Massachusetts'],['michigan','Michigan'],['minnesota','Minnesota'],['mississippi','Mississippi'],['missouri','Missouri'],['montana','Montana'],['nebraska','Nebraska'],['nevada','Nevada'],['new-hampshire','New Hampshire'],['new-jersey','New Jersey'],['new-mexico','New Mexico'],['new-york','New York'],['north-carolina','North Carolina'],['north-dakota','North Dakota'],['ohio','Ohio'],['oklahoma','Oklahoma'],['oregon','Oregon'],['pennsylvania','Pennsylvania'],['rhode-island','Rhode Island'],['south-carolina','South Carolina'],['south-dakota','South Dakota'],['tennessee','Tennessee'],['texas','Texas'],['utah','Utah'],['vermont','Vermont'],['virginia','Virginia'],['washington','Washington'],['west-virginia','West Virginia'],['wisconsin','Wisconsin'],['wyoming','Wyoming']];document.title='Location Reference Directory • '+state.name;document.getElementById('state-label').textContent=state.name;document.getElementById('state-badge').textContent=state.name+' • Research Leads';document.getElementById('state-count').textContent=state.entries.length;document.getElementById('state-description').textContent='A sourced '+state.name+' field-reference page covering public historic places with documented history and reported paranormal claims. Claims remain claims; this directory does not present them as proven facts.';document.getElementById('state-intro').textContent=state.name+' entries are starter research leads. TPI keeps history, folklore, reported experiences, access limits, and investigation questions separate so the directory can grow without turning a story into a fact.';document.getElementById('entry-count').textContent=state.entries.length+' locations';document.getElementById('source-note').innerHTML='Primary starting source: <a href="'+esc(state.source)+'" target="_blank" rel="noopener noreferrer">'+esc(state.sourceLabel)+'</a>. Each location remains subject to source review, operator permission, safety review, and TPI’s haunted-location criteria before deeper field planning.';document.getElementById('state-nav').innerHTML=navStates.map(([s,n])=>'<a href="'+s+'.html" '+(s===slug?'aria-current="page"':'')+'>'+n+'</a>').join('');const render=items=>{document.getElementById('entries').innerHTML=items.map(e=>'<details class="tpi-entry"><summary><div class="tpi-entry-title"><h3>'+esc(e[0])+'</h3><div class="tpi-tags"><span class="tpi-tag">'+esc(e[2])+'</span><span class="tpi-tag claim">Reported claims</span><span class="tpi-tag">Historic</span></div></div><div class="tpi-meta"><span>'+esc(e[1])+', '+esc(state.name)+'</span><span>'+esc(e[7])+'</span></div><p class="tpi-summary">'+esc(e[3])+'</p></summary><div class="tpi-details"><div class="tpi-grid"><div class="tpi-box"><h4>Activity Reported</h4><ul>'+e[4].split(';').map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div><div class="tpi-box"><h4>Structure / Research Zones</h4><ul>'+e[5].split(';').map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div><div class="tpi-box"><h4>Location Reference</h4><p><strong>Public reference:</strong> '+esc(e[6])+'</p><p><strong>Coordinates:</strong> Not published in this starter pass; verify with the official site or public map before field planning.</p><p><strong>Source:</strong> <a href="'+esc(state.source)+'" target="_blank" rel="noopener noreferrer">'+esc(state.sourceLabel)+'</a></p></div><div class="tpi-box"><h4>Classification</h4><p>'+esc(e[2])+'</p><p>Reported claims are preserved as folklore or testimony, not proof of paranormal activity.</p></div></div></div></details>').join('')||'<p class="tpi-empty">No matching entries.</p>'};render(state.entries);document.getElementById('search').addEventListener('input',event=>{const q=event.target.value.toLowerCase().trim();render(state.entries.filter(e=>e.join(' ').toLowerCase().includes(q)))});window.TPI_LocationDirectory={version:'1.0.0',state:state.name,stateCode:state.code,totalLocations:state.entries.length,lastUpdated:'2026-11-18',getAllLocations:()=>state.entries.map(e=>({name:e[0],city:e[1],state:state.name}))};})();
+(function () {
+  const data = window.TPI_STATE_DATA || [];
+  const imageSources = window.TPI_CASE_FILE_SOURCES || {};
+  const slug = window.TPI_DIRECTORY_STATE;
+  const state = data.find(item => item.slug === slug);
+  if (!state) {
+    document.body.innerHTML = '<main class="tpi-page"><p class="tpi-empty">State directory data unavailable.</p></main>';
+    return;
+  }
+
+  const esc = value => String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[character]));
+
+  const navStates = [
+    ['alabama', 'Alabama'], ['alaska', 'Alaska'], ['arizona', 'Arizona'],
+    ['arkansas', 'Arkansas'], ['california', 'California'], ['colorado', 'Colorado'],
+    ['connecticut', 'Connecticut'], ['delaware', 'Delaware'], ['florida', 'Florida'],
+    ['georgia', 'Georgia'], ['hawaii', 'Hawaii'], ['idaho', 'Idaho'],
+    ['illinois', 'Illinois'], ['indiana', 'Indiana'], ['iowa', 'Iowa'],
+    ['kansas', 'Kansas'], ['kentucky', 'Kentucky'], ['louisiana', 'Louisiana'],
+    ['maine', 'Maine'], ['maryland', 'Maryland'], ['massachusetts', 'Massachusetts'],
+    ['michigan', 'Michigan'], ['minnesota', 'Minnesota'], ['mississippi', 'Mississippi'],
+    ['missouri', 'Missouri'], ['montana', 'Montana'], ['nebraska', 'Nebraska'],
+    ['nevada', 'Nevada'], ['new-hampshire', 'New Hampshire'], ['new-jersey', 'New Jersey'],
+    ['new-mexico', 'New Mexico'], ['new-york', 'New York'], ['north-carolina', 'North Carolina'],
+    ['north-dakota', 'North Dakota'], ['ohio', 'Ohio'], ['oklahoma', 'Oklahoma'],
+    ['oregon', 'Oregon'], ['pennsylvania', 'Pennsylvania'], ['rhode-island', 'Rhode Island'],
+    ['south-carolina', 'South Carolina'], ['south-dakota', 'South Dakota'], ['tennessee', 'Tennessee'],
+    ['texas', 'Texas'], ['utah', 'Utah'], ['vermont', 'Vermont'], ['virginia', 'Virginia'],
+    ['washington', 'Washington'], ['west-virginia', 'West Virginia'], ['wisconsin', 'Wisconsin'],
+    ['wyoming', 'Wyoming']
+  ];
+
+  document.title = `Location Reference Directory • ${state.name}`;
+  document.getElementById('state-label').textContent = state.name;
+  document.getElementById('state-badge').textContent = `${state.name} • Research Leads`;
+  document.getElementById('state-count').textContent = state.entries.length;
+  document.getElementById('state-description').textContent = `A sourced ${state.name} field-reference page covering public historic places with documented history and reported paranormal claims. Claims remain claims; this directory does not present them as proven facts.`;
+  document.getElementById('state-intro').textContent = `${state.name} entries are starter research leads. TPI keeps history, folklore, reported experiences, access limits, and investigation questions separate so the directory can grow without turning a story into a fact.`;
+  document.getElementById('entry-count').textContent = `${state.entries.length} locations`;
+  document.getElementById('source-note').innerHTML = `Primary starting source: <a href="${esc(state.source)}" target="_blank" rel="noopener noreferrer">${esc(state.sourceLabel)}</a>. Each location remains subject to source review, operator permission, safety review, and TPI’s haunted-location criteria before deeper field planning.`;
+  document.getElementById('state-nav').innerHTML = navStates.map(([stateSlug, name]) => `<a href="${stateSlug}.html" ${stateSlug === slug ? 'aria-current="page"' : ''}>${name}</a>`).join('');
+
+  const renderImage = name => {
+    const image = imageSources[name];
+    if (!image) {
+      return '<div class="tpi-image-pending"><strong>Exact case-file photograph pending</strong><span>TPI will add a verified image of this location when a source photo and reuse terms are confirmed. No AI substitute is used.</span></div>';
+    }
+    return `<figure class="tpi-case-image"><img src="${esc(image.image)}" alt="Documentary photograph of ${esc(name)}" loading="lazy" referrerpolicy="no-referrer"><figcaption>Exact location photograph · <a href="${esc(image.source)}" target="_blank" rel="noopener noreferrer">source and license</a> · ${esc(image.credit)}</figcaption></figure>`;
+  };
+
+  const render = items => {
+    document.getElementById('entries').innerHTML = items.map(entry => {
+      const [name, city, type, history, claims, zones, address, access] = entry;
+      return `<details class="tpi-entry">
+        <summary>
+          <div class="tpi-entry-title"><h3>${esc(name)}</h3><div class="tpi-tags"><span class="tpi-tag">${esc(type)}</span><span class="tpi-tag claim">Reported claims</span><span class="tpi-tag">Historic</span></div></div>
+          <div class="tpi-meta"><span>${esc(city)}, ${esc(state.name)}</span><span>${esc(access)}</span></div>
+          <p class="tpi-summary">${esc(history)}</p>
+        </summary>
+        <div class="tpi-details">
+          ${renderImage(name)}
+          <div class="tpi-grid">
+            <div class="tpi-box"><h4>Historical Context</h4><p>${esc(history)}</p></div>
+            <div class="tpi-box"><h4>Activity Reported</h4><ul>${claims.split(';').map(item => `<li>${esc(item)}</li>`).join('')}</ul></div>
+            <div class="tpi-box"><h4>Structure / Research Zones</h4><ul>${zones.split(';').map(item => `<li>${esc(item)}</li>`).join('')}</ul></div>
+            <div class="tpi-box"><h4>Location Data</h4><p><strong>Public reference:</strong> ${esc(address)}</p><p><strong>Access:</strong> ${esc(access)}</p><p><strong>Coordinates:</strong> Not published in this starter pass; verify with the official site or public map before field planning.</p><p><strong>State source:</strong> <a href="${esc(state.source)}" target="_blank" rel="noopener noreferrer">${esc(state.sourceLabel)}</a></p></div>
+            <div class="tpi-box"><h4>Classification</h4><p>${esc(type)}</p><p>Reported claims are preserved as folklore or testimony, not proof of paranormal activity.</p></div>
+            <div class="tpi-box"><h4>Research Status</h4><p><strong>Starter research lead — under review.</strong></p><p>Confirm the exact site identity, source trail, public access, safety conditions, and operator permission before field planning.</p></div>
+          </div>
+        </div>
+      </details>`;
+    }).join('') || '<p class="tpi-empty">No matching entries.</p>';
+  };
+
+  render(state.entries);
+  document.getElementById('search').addEventListener('input', event => {
+    const query = event.target.value.toLowerCase().trim();
+    render(state.entries.filter(entry => entry.join(' ').toLowerCase().includes(query)));
+  });
+  window.TPI_LocationDirectory = {
+    version: '1.1.0',
+    state: state.name,
+    totalLocations: state.entries.length,
+    lastUpdated: '2026-11-18',
+    getAllLocations: () => state.entries.map(entry => ({ name: entry[0], city: entry[1], state: state.name }))
+  };
+}());

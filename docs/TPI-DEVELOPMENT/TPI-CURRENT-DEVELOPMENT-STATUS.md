@@ -25,6 +25,19 @@ state pages, 100 new starter entries, and no placeholders. See [Haunted
 Location Directory — Full State Coverage](300-COMPLETED-WORK/2026-11-18-HAUNTED-LOCATION-DIRECTORY-STATE-COVERAGE.md)
 for the research method, safety boundary, implementation, and release record.
 
+## 2026-11-18 — Haunted location case-file enrichment
+
+The new state pages now use the original TPI case-file pattern with historical
+context, reported activity, research zones, location/access data, classification,
+and research status. Exact documentary photography is source-controlled: three
+Minnesota entries currently have attributed Wikimedia Commons photographs, and
+all other entries show an explicit image-pending state until an exact reusable
+photo is verified. AI-generated landmark substitutes are not used. The local
+Worker refresh boundary now includes the nested Haunted Location directory so
+updates cannot remain stuck in stale staged assets. See [Haunted Location
+Case-File Enrichment](300-COMPLETED-WORK/2026-11-18-HAUNTED-LOCATION-CASE-FILE-ENRICHMENT.md)
+for the image rule and verification record.
+
 ## 2026-11-17 — Haunted-location member submissions and verification queue
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Members can now submit a potential
