@@ -37,14 +37,17 @@ publication.
 The follow-up repair removed the duplicate My Content collection entry, makes
 Delete document visible in the open-document header, and keeps the legacy
 compatibility editor hidden while an existing article is being migrated into
-Nova so the page opens once on the final editor surface.
+Nova. A second startup repair now keeps the workspace hidden until the latest
+document request has mounted Nova, prevents normal documents from rendering the
+compatibility editor at all, and ignores stale rapid-click requests. The page
+therefore opens once on the final Nova editor surface.
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The maintained follow-up release completed with
 full-platform preflight **40/40**, live anonymous smoke **10/10**, and direct
-Firefox Developer Edition production acceptance using the disposable
-`production_qa` account. Release `rel-ed1980ad983a-e268da6ccf7d` serves Worker
-`3d593a2e-437b-4fc8-aeb3-385bfec4c930` at 100% traffic. The rollback reference
-is `a0710145-8855-467b-b212-2cb4a6f39eda`. StudioFlow, Creator Studio, Nova
+Firefox Developer Edition production acceptance **65/65** using the disposable
+`production_qa` account. Release `rel-b0afab0a2709-b756cd877c1a` serves Worker
+`5d9f8c32-adc0-4ddc-8fe7-240b3ce594ae` at 100% traffic. The rollback reference
+is `3d593a2e-437b-4fc8-aeb3-385bfec4c930`. StudioFlow, Creator Studio, Nova
 storage, private media, and owner data were not modified. See [Nova Editorial
 Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md)
 for the complete authorization, recovery, audit, and verification record.
