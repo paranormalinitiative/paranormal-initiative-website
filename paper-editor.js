@@ -461,7 +461,9 @@
   }
 
   function hasContributorAccess(user) {
-    return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase()) || hasEditorialManagerAccess(user);
+    return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase())
+      || Boolean(user?.novaEditorialWorkspaceAccess)
+      || hasEditorialManagerAccess(user);
   }
 
   const LEADERSHIP_ONLY_DESTINATIONS = new Set(["ghostology-101.html", "ghostology.html", "tpi-videos.html"]);
@@ -581,6 +583,7 @@
           title: result.user.title,
           role: result.user.role,
           staffIdentity: result.user.staffIdentity,
+          novaEditorialWorkspaceAccess: result.user.novaEditorialWorkspaceAccess === true,
           educationLeadershipAccess: result.user.educationLeadershipAccess === true,
           correspondence: result.user.correspondence,
           affiliation: result.user.affiliation,
@@ -3114,6 +3117,7 @@ ${articleHtml}
             title: result.user.title,
             role: result.user.role,
             staffIdentity: result.user.staffIdentity,
+            novaEditorialWorkspaceAccess: result.user.novaEditorialWorkspaceAccess === true,
             educationLeadershipAccess: result.user.educationLeadershipAccess === true,
             correspondence: result.user.correspondence,
             affiliation: result.user.affiliation,

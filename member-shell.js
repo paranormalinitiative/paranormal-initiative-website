@@ -564,7 +564,11 @@
       element.hidden = !["owner", "executive", "full_administrator", "administrator", "moderator"].includes(staffRole)
         && role !== "owner" && role !== "admin";
     });
-    var canUseContentEditor = canUseAdminPanel || role === "contributor";
+    // Founding Contributor and Founding All-Access members retain the base
+    // `member` role. Use the server-derived Nova capability so their Content
+    // Tools navigation matches the same boundary enforced by the APIs.
+    var canUseContentEditor = canUseAdminPanel || role === "contributor"
+      || Boolean(user && user.novaEditorialWorkspaceAccess);
     // Match the authoritative Worker gate: owner and admin accounts have
     // Studio access even when an older session payload omits this flag.
     var canUseCreatorStudio = role === "owner" || role === "admin"
@@ -574,6 +578,9 @@
       element.hidden = !canUseAdminPanel;
     });
     document.querySelectorAll("[data-contributor-only]").forEach(function (element) {
+      element.hidden = !canUseContentEditor;
+    });
+    document.querySelectorAll("[data-nova-editor-only]").forEach(function (element) {
       element.hidden = !canUseContentEditor;
     });
     document.querySelectorAll("[data-studio-only]").forEach(function (element) {
@@ -680,6 +687,8 @@
           '<span class="mobile-nav-icon">&#9993;</span>Chat</a>' +
         '<a class="mobile-nav-link" href="/studio/" data-nav="studio" data-studio-only hidden aria-label="TPI Creator Studio">' +
           '<span class="mobile-nav-icon">&#9654;</span>TPI Creator Studio</a>' +
+        '<a class="mobile-nav-link" href="paper-editor.html" data-nav="paper-editor" data-nova-editor-only hidden aria-label="Nova Editorial Workspace">' +
+          '<span class="mobile-nav-icon">&#9998;</span>Nova Editorial Workspace</a>' +
         '<a class="mobile-nav-link" href="member-home.html" data-nav="profile" data-nav-profile-mobile>' +
           '<span class="mobile-nav-icon">&#9786;</span>Profile</a>' +
         '<a class="mobile-nav-link" href="member-notifications.html" data-nav="member-notifications">' +

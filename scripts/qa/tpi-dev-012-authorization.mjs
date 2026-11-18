@@ -3,15 +3,17 @@ import { readFileSync } from "node:fs";
 const read = path => readFileSync(new URL(`../../${path}`, import.meta.url), "utf8");
 const api = read("functions/api/[[path]].js");
 const auth = read("lib/auth.js");
+const entitlements = read("lib/membership-entitlements.js");
 const worker = read("worker.js");
 const shell = read("member-shell.js");
 const sidebar = read("member-sidebar.html");
+const paperEditor = read("paper-editor.js");
 const liveVideo = read("live-video.html");
 const podcast = read("podcast.html");
 const devConfig = read("wrangler.dev.toml");
 
 const checks = [
-  ["Creator Studio uses the existing entitlement tables", auth.includes("creator_studio_entitlements") && auth.includes("creator_partnership_memberships") && auth.includes("entitlement_state = 'active'")],
+  ["Creator Studio uses the existing entitlement tables", entitlements.includes("creator_studio_entitlements") && entitlements.includes("creator_partnership_memberships") && entitlements.includes("entitlement_state = 'active'")],
   ["Creator Studio defaults to deny when entitlement schema is unavailable", auth.includes("return false") && auth.includes("Older development databases")],
   ["owner/admin Studio access remains preserved", auth.includes('user.role === "owner" || user.role === "admin"')],
   ["Studio HTML is server-gated by the shared capability", worker.includes("hasCreatorStudioAccess(env, user)") && worker.includes('url.pathname === "/studio"')],
@@ -20,6 +22,8 @@ const checks = [
   ["Creator guest tokens remain room-owner protected", api.includes("Only the StudioFlow room host can issue guest access") && api.includes("room.host_id !== user.id")],
   ["Live broadcast operations use the Studio capability gate", api.includes('path === "/studio/live-broadcasts"') && api.includes("requireStudioAccess(request, env")],
   ["Creator Studio nav is entitlement-gated on desktop and mobile", sidebar.includes("data-studio-only hidden") && shell.includes("data-studio-only hidden") && shell.includes("user.creatorStudioAccess")],
+  ["Founding Contributor/All-Access Nova capability is returned by the server", api.includes("novaEditorialWorkspaceAccess") && api.includes("CAPABILITY.CONTRIBUTOR")],
+  ["Nova Editorial navigation uses the server-derived capability", sidebar.includes("data-nova-editor-only") && shell.includes("user.novaEditorialWorkspaceAccess") && paperEditor.includes("novaEditorialWorkspaceAccess")],
   ["Unauthorized Studio nav is hidden rather than presented as a disabled privilege", shell.includes('document.querySelectorAll("[data-studio-only]")') && shell.includes("element.hidden = !canUseCreatorStudio")],
   ["Live and podcast launch controls use Studio capability", liveVideo.includes("data-studio-only hidden") && podcast.includes("data-studio-only hidden")],
   ["Administration Center remains separate owner/admin navigation", sidebar.includes("data-admin-only hidden") && shell.includes("canUseAdminPanel") && api.includes("async function requireAdmin")],

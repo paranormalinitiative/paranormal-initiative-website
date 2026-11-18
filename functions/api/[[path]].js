@@ -750,8 +750,19 @@ async function handleLogin(request, env) {
     .bind(token, user.id, expires)
     .run();
 
+  // Return the same server-resolved product capabilities used by the
+  // protected routes. Founding members often retain the base `member` role,
+  // so client navigation must not infer access from that role alone.
+  const creatorStudioAccess = await hasCreatorStudioAccess(env, user);
+  let novaEditorialWorkspaceAccess = false;
+  try {
+    novaEditorialWorkspaceAccess = await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR);
+  } catch (error) {
+    novaEditorialWorkspaceAccess = false;
+  }
+
   return json({ user: {
-    ...privateMemberUser(user),
+    ...privateMemberUser(user, creatorStudioAccess, novaEditorialWorkspaceAccess),
     // The editor uses the same server-resolved staff appointment as the
     // Administration Center. A base member role must never hide an active
     // executive/administrator appointment from a protected workspace.
@@ -1077,17 +1088,21 @@ async function handleMe(request, env) {
   // TPI-NOVA-004R6D: navigation hints only. EDITORIAL_REVIEW is resolved from
   // active entitlements and never from the admin role; both flags are repeated
   // by the authoritative checks on every protected route.
+  let memberCapabilities = [];
   let editorialReviewAccess = false;
   try {
-    editorialReviewAccess = hasEditorialReview(await contributorCapabilities(env, user));
+    memberCapabilities = await contributorCapabilities(env, user);
+    editorialReviewAccess = hasEditorialReview(memberCapabilities);
   } catch (error) {
     editorialReviewAccess = false;
   }
   const staffRole = await effectiveStaffRole(env, user);
   const educationLeadershipAccess = await hasEducationLeadershipAccess(env, user);
+  const creatorStudioAccess = await hasCreatorStudioAccess(env, user);
+  const novaEditorialWorkspaceAccess = memberCapabilities.includes(CAPABILITY.CONTRIBUTOR);
   return json({
     user: {
-      ...privateMemberUser(user, await hasCreatorStudioAccess(env, user)),
+      ...privateMemberUser(user, creatorStudioAccess, novaEditorialWorkspaceAccess),
       staffIdentity: await publicStaffIdentity(env, user),
       editorialReviewAccess,
       adminAccess: hasAdministrationCenterRole(staffRole) || editorialReviewAccess,
@@ -12898,7 +12913,7 @@ function publicUser(user) {
   };
 }
 
-function privateMemberUser(user, creatorStudioAccess = false) {
+function privateMemberUser(user, creatorStudioAccess = false, novaEditorialWorkspaceAccess = false) {
   return {
     id: user.id,
     ...publicUser(user),
@@ -12918,7 +12933,10 @@ function privateMemberUser(user, creatorStudioAccess = false) {
     theme: user.theme,
     // This is a server-derived capability for navigation only. All protected
     // routes and APIs repeat the authoritative entitlement check.
-    creatorStudioAccess
+    creatorStudioAccess,
+    // This is a navigation hint only. Contributor APIs and Nova document
+    // operations repeat the authoritative capability check server-side.
+    novaEditorialWorkspaceAccess
   };
 }
 
