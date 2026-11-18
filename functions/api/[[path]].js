@@ -165,8 +165,8 @@ export async function onRequest(context) {
     if ((request.method === "PUT" || request.method === "PATCH") && path.match(/^\/admin\/articles\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminArticleUpdate(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/articles\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminArticleStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
-    if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger|bug)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
-    if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger|bug)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger|bug|location)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger|bug|location)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/moderation-actions") return requireAdmin(request, env, user => handleAdminModerationActions(request, env, user));
     if (request.method === "GET" && path === "/admin/appeals") return requireAdmin(request, env, user => handleAdminAppeals(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/appeals\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminAppealDetail(path, env, user));
@@ -220,6 +220,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/friends/request/decline") return requireMember(request, env, user => handleFriendRequestDecision(request, env, user, "declined"));
     if (request.method === "POST" && path === "/friends/request/cancel") return requireMember(request, env, user => handleFriendRequestDecision(request, env, user, "cancelled"));
     if (request.method === "POST" && path === "/bug-reports") return requireMember(request, env, user => handleCreateBugReport(request, env, user));
+    if (request.method === "POST" && path === "/haunted-location-submissions") return requireMember(request, env, user => handleCreateHauntedLocationSubmission(request, env, user));
     if (request.method === "POST" && path === "/messenger/presence") return requireMember(request, env, user => handlePresenceHeartbeat(request, env, user));
     if (request.method === "GET" && path === "/messenger/roster") return requireMember(request, env, user => handleMessengerRoster(request, env, user));
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
@@ -2694,7 +2695,7 @@ async function handleAdminReports(request, env) {
   const status = allowedStatuses.includes(requestedStatus) ? requestedStatus : "open";
   const search = clean(url.searchParams.get("search") || "").slice(0, 120);
   const requestedType = clean(url.searchParams.get("type") || "all").toLowerCase();
-  const reportType = ["video", "messenger", "bug", "all"].includes(requestedType) ? requestedType : "all";
+  const reportType = ["video", "messenger", "bug", "location", "all"].includes(requestedType) ? requestedType : "all";
   const from = clean(url.searchParams.get("from") || "");
   const to = clean(url.searchParams.get("to") || "");
   const requestedSort = clean(url.searchParams.get("sort") || "created").toLowerCase();
@@ -2726,7 +2727,8 @@ async function handleAdminReports(request, env) {
              reporter.display_name AS reporterName, NULL AS reportedUsername,
              NULL AS reportedName, vr.created_at AS createdAt,
              vr.reviewed_at AS reviewedAt, reviewer.username AS reviewedBy,
-             'Video report metadata only; report details are not exposed here.' AS evidenceNote
+             'Video report metadata only; report details are not exposed here.' AS evidenceNote,
+             NULL AS description
       FROM video_reports vr
       LEFT JOIN tpi_videos tv ON tv.id = vr.video_id
       LEFT JOIN contributors reporter ON reporter.id = vr.contributor_id
@@ -2738,7 +2740,8 @@ async function handleAdminReports(request, env) {
              reported.username AS reportedUsername, reported.display_name AS reportedName,
              mr.created_at AS createdAt, mr.reviewed_at AS reviewedAt,
              reviewer.username AS reviewedBy,
-             'Private conversation evidence is report-scoped and not exposed here.' AS evidenceNote
+             'Private conversation evidence is report-scoped and not exposed here.' AS evidenceNote,
+             NULL AS description
       FROM messenger_reports mr
       LEFT JOIN contributors reporter ON reporter.id = mr.reporter_id
       LEFT JOIN contributors reported ON reported.id = mr.reported_contributor_id
@@ -2750,14 +2753,28 @@ async function handleAdminReports(request, env) {
              reporter.display_name AS reporterName, NULL AS reportedUsername,
              NULL AS reportedName, br.created_at AS createdAt,
              br.reviewed_at AS reviewedAt, reviewer.username AS reviewedBy,
-             'Member bug-report details are limited to the authenticated submission metadata.' AS evidenceNote
+             'Member bug-report details are limited to the authenticated submission metadata.' AS evidenceNote,
+             br.description AS description
       FROM member_bug_reports br
       LEFT JOIN contributors reporter ON reporter.id = br.reporter_id
       LEFT JOIN contributors reviewer ON reviewer.id = br.reviewed_by
+      UNION ALL
+      SELECT hls.id, 'location' AS reportType, 'haunted-location-submission' AS contentType,
+             hls.id AS contentId, hls.location_name AS contentLabel,
+             hls.city || ', ' || hls.state || ' · ' || hls.county || ' County' AS reason,
+             hls.status, reporter.username AS reporterUsername,
+             reporter.display_name AS reporterName, NULL AS reportedUsername,
+             NULL AS reportedName, hls.created_at AS createdAt,
+             hls.reviewed_at AS reviewedAt, reviewer.username AS reviewedBy,
+             'Member-submitted location research fields are available to authorized reviewers for verification. Nothing is published automatically.' AS evidenceNote,
+             hls.description AS description
+      FROM haunted_location_submissions hls
+      LEFT JOIN contributors reporter ON reporter.id = hls.submitter_id
+      LEFT JOIN contributors reviewer ON reviewer.id = hls.reviewed_by
     ) reportQueue`;
   const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total ${queueSource} ${where}`).bind(...binds).first();
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, reportType, contentType, contentId, contentLabel, reason, status,
+    SELECT id, reportType, contentType, contentId, contentLabel, reason, description, status,
            reporterUsername, reporterName, reportedUsername, reportedName,
            createdAt, reviewedAt, reviewedBy, evidenceNote
     ${queueSource}
@@ -2769,7 +2786,7 @@ async function handleAdminReports(request, env) {
 }
 
 async function handleAdminReportDetail(path, env) {
-  const match = path.match(/^\/admin\/reports\/(video|messenger|bug)\/([^/]+)$/);
+  const match = path.match(/^\/admin\/reports\/(video|messenger|bug|location)\/([^/]+)$/);
   const reportType = match?.[1] || "";
   const reportId = clean(decodeURIComponent(match?.[2] || ""));
   if (!reportId) return json({ error: "Report id is required." }, 400);
@@ -2804,7 +2821,7 @@ async function handleAdminReportDetail(path, env) {
         LEFT JOIN contributors reviewer ON reviewer.id = mr.reviewed_by
         WHERE mr.id = ?
       `).bind(reportId).first();
-    } else {
+    } else if (reportType === "bug") {
       report = await env.TPI_DB.prepare(`
         SELECT br.id, 'bug' AS reportType, 'member-bug-report' AS contentType,
                br.page_url AS contentId, br.title AS contentLabel,
@@ -2820,6 +2837,44 @@ async function handleAdminReportDetail(path, env) {
         LEFT JOIN contributors reviewer ON reviewer.id = br.reviewed_by
         WHERE br.id = ?
       `).bind(reportId).first();
+    } else {
+      report = await env.TPI_DB.prepare(`
+        SELECT hls.id, 'location' AS reportType, 'haunted-location-submission' AS contentType,
+               hls.id AS contentId, hls.location_name AS contentLabel,
+               hls.city || ', ' || hls.state || ' · ' || hls.county || ' County' AS reason,
+               hls.description, hls.historical_context AS historicalContext,
+               hls.reported_claims AS reportedClaims,
+               hls.investigation_zones AS investigationZones,
+               hls.address, hls.coordinates, hls.access_details AS accessDetails,
+               hls.source_references AS sourceReferences,
+               hls.submitter_notes AS submitterNotes,
+               hls.status, reporter.username AS reporterUsername,
+               reporter.display_name AS reporterName,
+               hls.created_at AS createdAt, hls.reviewed_at AS reviewedAt,
+               reviewer.username AS reviewedBy,
+               'Member-submitted location research fields are available to authorized reviewers for verification. Nothing is published automatically.' AS evidenceNote
+        FROM haunted_location_submissions hls
+        LEFT JOIN contributors reporter ON reporter.id = hls.submitter_id
+        LEFT JOIN contributors reviewer ON reviewer.id = hls.reviewed_by
+        WHERE hls.id = ?
+      `).bind(reportId).first();
+      if (report) {
+        report = {
+          ...report,
+          description: [
+            `Location: ${report.contentLabel}`,
+            `City / State: ${report.reason}`,
+            `Address: ${report.address}`,
+            report.coordinates ? `Coordinates: ${report.coordinates}` : null,
+            `Access: ${report.accessDetails}`,
+            `Historical context:\n${report.historicalContext}`,
+            `Reported activity:\n${report.reportedClaims}`,
+            `Investigation zones:\n${report.investigationZones}`,
+            `Sources:\n${report.sourceReferences}`,
+            report.submitterNotes ? `Submitter notes:\n${report.submitterNotes}` : null,
+          ].filter(Boolean).join("\n\n"),
+        };
+      }
     }
     if (!report) return json({ error: "Report was not found." }, 404);
     const history = await env.TPI_DB.prepare(`
@@ -2831,14 +2886,14 @@ async function handleAdminReportDetail(path, env) {
       ORDER BY created_at DESC
       LIMIT 50
     `).bind(`${reportType}_report`, reportId).all().catch(() => ({ results: [] }));
-    return json({ report, history: (history.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })), privateEvidence: false, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+    return json({ report, history: (history.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })), privateEvidence: false, metadataOnly: reportType !== "location" }, 200, { "Cache-Control": "no-store" });
   } catch (error) {
     return json({ error: "Report details are unavailable." }, 503);
   }
 }
 
 async function handleAdminReportStatus(path, request, env, actingUser) {
-  const match = path.match(/^\/admin\/reports\/(video|messenger|bug)\/([^/]+)\/status$/);
+  const match = path.match(/^\/admin\/reports\/(video|messenger|bug|location)\/([^/]+)\/status$/);
   const reportType = match?.[1] || "";
   const reportId = clean(decodeURIComponent(match?.[2] || ""));
   const data = await readJson(request);
@@ -2853,7 +2908,7 @@ async function handleAdminReportStatus(path, request, env, actingUser) {
   if (terminalStatuses.includes(status) && reason.length < 3) {
     return json({ error: "A triage note is required when closing or actioning a report." }, 400);
   }
-  const table = reportType === "video" ? "video_reports" : reportType === "messenger" ? "messenger_reports" : "member_bug_reports";
+  const table = reportType === "video" ? "video_reports" : reportType === "messenger" ? "messenger_reports" : reportType === "location" ? "haunted_location_submissions" : "member_bug_reports";
   const current = await env.TPI_DB.prepare(`SELECT id, status FROM ${table} WHERE id = ?`).bind(reportId).first();
   if (!current) return json({ error: "Report was not found." }, 404);
   if (status === "open" || status === "pending") {
@@ -11262,6 +11317,61 @@ async function handleCreateBugReport(request, env, user) {
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `).bind(id, user.id, title, description, pageUrl, userAgent, new Date().toISOString()).run();
   return json({ ok: true, reportId: id, message: "Bug report submitted to the Administration Center." }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleCreateHauntedLocationSubmission(request, env, user) {
+  const data = await readJson(request);
+  const fields = {
+    locationName: clean(data.locationName || "").slice(0, 180),
+    city: clean(data.city || "").slice(0, 100),
+    county: clean(data.county || "").slice(0, 100),
+    state: clean(data.state || "").slice(0, 60),
+    address: clean(data.address || "").slice(0, 240),
+    coordinates: clean(data.coordinates || "").slice(0, 120),
+    description: clean(data.description || "").slice(0, 4000),
+    historicalContext: clean(data.historicalContext || "").slice(0, 4000),
+    reportedClaims: clean(data.reportedClaims || "").slice(0, 4000),
+    investigationZones: clean(data.investigationZones || "").slice(0, 2000),
+    accessDetails: clean(data.accessDetails || "").slice(0, 1000),
+    sourceReferences: clean(data.sourceReferences || "").slice(0, 3000),
+    submitterNotes: clean(data.submitterNotes || "").slice(0, 2000),
+  };
+  const required = [
+    ["location name", fields.locationName, 3],
+    ["city or area", fields.city, 2],
+    ["county", fields.county, 2],
+    ["state", fields.state, 2],
+    ["address or physical reference", fields.address, 5],
+    ["location description", fields.description, 20],
+    ["historical context", fields.historicalContext, 20],
+    ["reported activity", fields.reportedClaims, 20],
+    ["investigation zones", fields.investigationZones, 10],
+    ["sources", fields.sourceReferences, 10],
+    ["access details", fields.accessDetails, 5],
+  ];
+  const missing = required.find(([, value, minimum]) => value.length < minimum);
+  if (missing) return json({ error: `Please provide the required ${missing[0]}.` }, 400);
+  if (data.consent !== true) return json({ error: "Please confirm the research-submission guidelines." }, 400);
+  const id = crypto.randomUUID();
+  try {
+    await env.TPI_DB.prepare(`
+      INSERT INTO haunted_location_submissions (
+        id, submitter_id, location_name, city, county, state, address,
+        coordinates, description, historical_context, reported_claims,
+        investigation_zones, access_details, source_references, submitter_notes,
+        consent, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id, user.id, fields.locationName, fields.city, fields.county, fields.state,
+      fields.address, fields.coordinates || null, fields.description,
+      fields.historicalContext, fields.reportedClaims, fields.investigationZones,
+      fields.accessDetails, fields.sourceReferences, fields.submitterNotes || null,
+      1, new Date().toISOString()
+    ).run();
+  } catch (error) {
+    return json({ error: "Location submissions are temporarily unavailable. Please try again later." }, 503);
+  }
+  return json({ ok: true, submissionId: id, message: "Location submitted to the Administration Center for research review." }, 201, { "Cache-Control": "no-store" });
 }
 
 // ---- Messenger conversations and messages ----

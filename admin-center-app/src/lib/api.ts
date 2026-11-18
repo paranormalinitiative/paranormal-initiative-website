@@ -358,11 +358,12 @@ export type AdminEventRecord = {
 
 export type AdminReport = {
   id: string;
-  reportType: "video" | "messenger" | "bug" | string;
+  reportType: "video" | "messenger" | "bug" | "location" | string;
   contentType?: string;
   contentId?: string;
   contentLabel?: string;
   reason: string;
+  description?: string;
   status: string;
   reporterUsername?: string;
   reporterName?: string;

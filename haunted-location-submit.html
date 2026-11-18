@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Submit a Haunted Location | The Paranormal Initiative</title>
+  <link rel="stylesheet" href="style.css?v=92">
+  <link rel="stylesheet" href="member-shell.css?v=65">
+  <style>
+    .location-submit-workspace { max-width: 980px; margin: 0 auto; }
+    .location-submit-panel { background: #10141c; border: 1px solid #263646; border-radius: 20px; padding: 24px; }
+    .location-submit-panel h1 { margin: 0 0 8px; color: #f4f8fb; }
+    .location-submit-panel p { color: #9aa6b5; line-height: 1.55; }
+    .location-submit-notice { margin: 18px 0; padding: 14px 16px; border: 1px solid rgba(201, 168, 76, .35); border-radius: 14px; background: rgba(201, 168, 76, .08); color: #e8c97a; }
+    .location-submit-form { display: grid; gap: 16px; margin-top: 22px; }
+    .location-submit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .location-submit-form label { display: grid; gap: 7px; color: #dce5ef; font-weight: 600; }
+    .location-submit-form textarea { min-height: 120px; resize: vertical; }
+    .location-submit-form .wide { grid-column: 1 / -1; }
+    .location-submit-check { display: grid !important; grid-template-columns: auto 1fr; align-items: start; gap: 10px !important; font-weight: 400 !important; }
+    .location-submit-check input { margin-top: 4px; }
+    .location-submit-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .location-submit-status { min-height: 1.4em; color: #a8d5b6; }
+    .location-submit-help { font-size: .92rem; }
+    @media (max-width: 680px) { .location-submit-panel { padding: 16px; } .location-submit-grid { grid-template-columns: 1fr; } .location-submit-form .wide { grid-column: auto; } }
+  </style>
+</head>
+<body class="workspace-page">
+  <div id="site-header"></div>
+  <div data-member-content hidden>
+    <div class="member-main-inner location-submit-workspace">
+      <section class="location-submit-panel" aria-labelledby="location-submit-title">
+        <p class="portal-kicker">Location Research</p>
+        <h1 id="location-submit-title">Submit a Haunted Location</h1>
+        <p>Know a historic site with a documented claim tradition? Send it to TPI for research review. A submission is a candidate only; it is never published automatically.</p>
+        <div class="location-submit-notice"><strong>What happens next:</strong> TPI will verify the place, review its sources, separate history from reported claims, check access and safety concerns, and decide whether it can become a complete investigation-ready directory entry.</div>
+        <form class="location-submit-form" data-location-submit-form>
+          <div class="location-submit-grid">
+            <label>Location name <input name="locationName" required minlength="3" maxlength="180" placeholder="Historic building, cemetery, lighthouse, or other site"></label>
+            <label>State <input name="state" required minlength="2" maxlength="60" placeholder="Michigan"></label>
+            <label>City or area <input name="city" required minlength="2" maxlength="100" placeholder="City or named area"></label>
+            <label>County <input name="county" required minlength="2" maxlength="100" placeholder="County name"></label>
+            <label class="wide">Full address or physical reference <input name="address" required minlength="5" maxlength="240" placeholder="Street address, park entrance, bridge, trailhead, or landmark reference"></label>
+            <label>Coordinates, if known <input name="coordinates" maxlength="120" placeholder="Latitude, longitude"></label>
+            <label>Access status <input name="accessDetails" required minlength="5" maxlength="1000" placeholder="Public, permission required, museum hours, closed, etc."></label>
+            <label class="wide">Why is this location considered haunted? <textarea name="description" required minlength="20" maxlength="4000" placeholder="Tell us what is reported and who reports it."></textarea></label>
+            <label class="wide">Historical context <textarea name="historicalContext" required minlength="20" maxlength="4000" placeholder="Relevant history connected to the location or reported claims."></textarea></label>
+            <label class="wide">Specific reported activity <textarea name="reportedClaims" required minlength="20" maxlength="4000" placeholder="For example: footsteps on the third floor, voices near the stairwell, an apparition in the cemetery’s east section."></textarea></label>
+            <label class="wide">Rooms, areas, or investigation zones <textarea name="investigationZones" required minlength="10" maxlength="2000" placeholder="List rooms, floors, outdoor sections, trails, bridge areas, or other meaningful zones."></textarea></label>
+            <label class="wide">Sources and references <textarea name="sourceReferences" required minlength="10" maxlength="3000" placeholder="Official website, historical society, museum, government page, newspaper, book, or other source details."></textarea></label>
+            <label class="wide">Additional notes <textarea name="submitterNotes" maxlength="2000" placeholder="Optional: your experience, helpful context, or questions for the research team."></textarea></label>
+          </div>
+          <label class="location-submit-check"><input type="checkbox" name="consent" value="yes" required><span>I understand this is a research submission, not a claim that paranormal activity has been proven. I will not submit private addresses, personal information about uninvolved people, trespassing instructions, or material I do not have permission to share.</span></label>
+          <div class="location-submit-actions"><button type="submit">Submit for TPI review</button><a class="portal-button portal-button-secondary" href="haunted-locations.html">Return to Haunted Locations</a><p class="location-submit-status" data-location-submit-status role="status" aria-live="polite"></p></div>
+        </form>
+      </section>
+    </div>
+  </div>
+  <div id="site-footer"></div>
+  <script src="includes.js?v=19"></script>
+  <script src="api-client.js?v=18"></script>
+  <script src="member-shell.js?v=66"></script>
+  <script>
+    (function () {
+      var form = document.querySelector('[data-location-submit-form]');
+      var status = document.querySelector('[data-location-submit-status]');
+      if (!form) return;
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        var button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        status.textContent = 'Submitting for review…';
+        var data = Object.fromEntries(new FormData(form).entries());
+        data.consent = data.consent === 'yes';
+        try {
+          var response = await fetch('/api/haunted-location-submissions', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+          var body = {}; try { body = await response.json(); } catch (e) {}
+          if (!response.ok) throw new Error(body.error || 'The location submission could not be sent.');
+          form.reset();
+          status.textContent = 'Thank you. Your location was sent to TPI for research review.';
+        } catch (error) {
+          status.textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      });
+    }());
+  </script>
+</body>
+</html>

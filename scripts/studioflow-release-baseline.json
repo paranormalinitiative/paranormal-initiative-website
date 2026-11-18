@@ -27,7 +27,8 @@
       "0066_leadership_profiles_and_distinctions.sql",
       "0067_board_members_and_badge.sql",
       "0068_governance_role_rank_metadata.sql",
-      "0069_member_social_graph_and_profile_views.sql"
+      "0069_member_social_graph_and_profile_views.sql",
+      "0074_haunted_location_submissions.sql"
     ],
     "requiredTables": [
       "studio_notes",
@@ -40,7 +41,8 @@
       "leadership_distinctions",
       "board_members",
       "member_friend_requests",
-      "member_profile_views"
+      "member_profile_views",
+      "haunted_location_submissions"
     ]
   }
 }

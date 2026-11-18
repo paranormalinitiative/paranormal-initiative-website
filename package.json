@@ -55,6 +55,7 @@
     "verify:member-sidebar": "node scripts/verify/tpi-member-sidebar.mjs",
     "verify:member-interactions": "node scripts/verify/tpi-member-interactions.mjs",
     "verify:help-center-separation": "node scripts/verify/tpi-help-center-separation.mjs",
+    "verify:haunted-location-submissions": "node scripts/qa/tpi-haunted-location-submissions.mjs",
     "verify:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs --check",
     "update:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs",
     "verify:leadership-distinctions": "node scripts/verify/tpi-governance-004-leadership-distinctions.mjs",

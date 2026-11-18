@@ -299,6 +299,7 @@ tbody tr { cursor: pointer; }
 .activity-page-note { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 8px; border-top: 1px solid var(--border); }
 .notice-panel { border: 1px solid var(--tpi-accent-border); background: var(--tpi-accent-muted); border-radius: 12px; padding: 12px; color: var(--tpi-text-secondary); line-height: 1.5; }
 .notice-panel p { margin: 8px 0 0; }
+.report-submission-details { white-space: pre-wrap; margin: 14px 0 0; padding-top: 14px; border-top: 1px solid var(--tpi-accent-border); color: var(--tpi-text-secondary); font: inherit; line-height: 1.55; }
 .moderation-row { display: flex; justify-content: space-between; gap: 18px; padding: 15px 0; }
 .moderation-row p { margin: 7px 0; line-height: 1.45; max-width: 740px; }
 .inline-action { margin-top: 7px; min-height: 30px; font-size: .75rem; }
