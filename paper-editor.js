@@ -2163,7 +2163,6 @@ ${articleHtml}
   // /api/contributors/me/articles); sidebar filters and counts are derived in memory.
   const NOVA_FILTERS = {
     all: a => a.status !== "deleted" && a.status !== "published",
-    mine: a => a.status !== "deleted" && a.status !== "published",
     draft: a => a.status !== "deleted" && a.editorialStatus === "draft",
     submitted: a => a.status !== "deleted" && a.editorialStatus === "submitted",
     in_review: a => a.status !== "deleted" && a.editorialStatus === "in_review",
@@ -2173,7 +2172,7 @@ ${articleHtml}
     removed: a => a.status === "deleted"
   };
   const NOVA_FILTER_TITLES = {
-    all: "Documents", mine: "My Content", draft: "Drafts", submitted: "Submitted",
+    all: "Documents", draft: "Drafts", submitted: "Submitted",
     in_review: "In Review", changes_requested: "Changes Requested", approved: "Approved", published: "Published", removed: "Removed"
   };
   const NOVA_CHIP_LABELS = {
@@ -3079,6 +3078,7 @@ ${articleHtml}
         const result = await window.TPIApi.me();
         if (result.user) {
           if (!hasContributorAccess(result.user)) {
+            finishEditorBoot();
             showEditorAccessDenied(result.user);
             return;
           }
@@ -3097,6 +3097,7 @@ ${articleHtml}
             active: true
           }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
           await restoreRequestedWorkspaceMode();
+          finishEditorBoot();
           return;
         }
       } catch (error) {
@@ -3108,6 +3109,7 @@ ${articleHtml}
     if (sessionUser) {
       unlockEditor(sessionUser, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
       await restoreRequestedWorkspaceMode();
+      finishEditorBoot();
     } else if (isDevUnlocked()) {
       unlockEditor({
         username: "",
@@ -3116,9 +3118,15 @@ ${articleHtml}
         active: true
       }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
       await restoreRequestedWorkspaceMode();
+      finishEditorBoot();
     } else {
+      finishEditorBoot();
       showAccessGate();
     }
+  }
+
+  function finishEditorBoot() {
+    document.body.classList.remove("editor-booting");
   }
 
   async function loadArticleForEditing() {

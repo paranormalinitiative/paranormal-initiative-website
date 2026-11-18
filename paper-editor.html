@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=92">
+    <link rel="stylesheet" href="style.css?v=93">
     <style>
         .tpi-video-fields {
             border-top: 1px solid #1e2230;
@@ -87,7 +87,7 @@
         }
     </style>
 </head>
-<body class="paper-editor-page editor-locked">
+<body class="paper-editor-page editor-locked editor-booting">
 <header class="nova-topbar">
     <div class="nova-brand">
         <span class="nova-brand-mark" aria-hidden="true">N</span>
@@ -118,7 +118,6 @@
         <div class="nova-nav-group">
             <p class="nova-nav-title">Workspace</p>
             <button type="button" class="nova-nav-item is-active" data-nova-filter="all">Documents <span data-nova-count="all"></span></button>
-            <button type="button" class="nova-nav-item" data-nova-filter="mine">My Content <span data-nova-count="mine"></span></button>
         </div>
         <div class="nova-nav-group">
             <p class="nova-nav-title">Editorial</p>
@@ -163,12 +162,12 @@
                     <button type="button" class="nova-document-action" data-action="save-draft">Save</button>
                     <button type="button" class="nova-document-action" data-action="publish">Publish</button>
                     <button type="button" class="nova-document-action" data-action="preview">Preview</button>
+                    <button type="button" class="nova-document-action nova-document-action-danger" data-action="content-delete-current">Delete document</button>
                     <details class="nova-utility-menu nova-document-more">
                         <summary>More</summary>
                         <div class="nova-utility-panel">
                             <button type="button" data-action="contributors">Contributors</button>
-                            <button type="button" data-action="content-library">My Content</button>
-                            <button type="button" data-action="content-delete-current">Move to Trash</button>
+                            <button type="button" data-action="content-library">Content Library</button>
                             <a class="portal-button portal-button-secondary" href="creator-videos.html">My Videos</a>
                             <button type="button" data-action="comment-moderation">Comments</button>
                             <button type="button" data-action="copy">Copy HTML</button>
@@ -503,7 +502,7 @@
 <script src="api-client.js?v=18"></script>
 <script src="legacy-contributions.js"></script>
 <script src="education-subjects.js"></script>
-<script src="paper-editor.js?v=18"></script>
+<script src="paper-editor.js?v=19"></script>
 <script src="content-editor-nova-convert.js"></script>
 </body>
 </html>

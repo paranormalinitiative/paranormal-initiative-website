@@ -3269,6 +3269,13 @@ footer {
     display: none;
 }
 
+/* TPI-NOVA-005A7: do not flash the compatibility editor while an existing
+   article is being opened and linked to the primary Nova document surface. */
+.editor-booting .paper-editor-layout,
+.editor-booting .nova-home {
+    visibility: hidden;
+}
+
 .paper-editor-page,
 .paper-editor-page * {
     -webkit-touch-callout: default;
@@ -9640,6 +9647,18 @@ body.paper-editor-page.nova-home-open .workflow-feedback {
 
 .paper-editor-page .nova-document-action[data-action="save-draft"] {
     border-color: var(--nova-accent);
+}
+
+.paper-editor-page .nova-document-action-danger {
+    color: #ffd9d2;
+    border-color: #b0623b;
+    background: rgba(176, 98, 59, 0.16);
+}
+
+.paper-editor-page .nova-document-action-danger:hover {
+    color: #fff5f2;
+    border-color: #e0835b;
+    background: rgba(176, 98, 59, 0.3);
 }
 
 .paper-editor-page .nova-document-more summary {
