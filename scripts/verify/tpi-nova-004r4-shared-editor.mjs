@@ -48,9 +48,10 @@ check("Nova mode loads only the built Content Editor bundle, not /nova/", () => 
 });
 
 check("server-backed editorial articles enter Nova as the primary engine", () => {
-  assert.match(js, /async function openPrimaryEditorialEditor\(article\)/);
-  assert.match(js, /await convertLegacyArticleToNova\(article\.id\)/);
-  assert.match(js, /Compatibility editor remains available/);
+  assert.match(js, /async function openPrimaryEditorialEditor\(article(?:, [^)]+)?\)/);
+  assert.match(js, /await convertLegacyArticleToNova\(article\.id, isCurrent, article\)/);
+  assert.match(js, /if \(!canMigrate\) \{/);
+  assert.doesNotMatch(js, /Compatibility editor remains available/);
   assert.doesNotMatch(js, /Never convert an unlinked legacy article here/);
 });
 

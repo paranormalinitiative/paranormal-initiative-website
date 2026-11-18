@@ -503,6 +503,10 @@
     document.body.classList.remove("editor-locked");
     document.body.classList.add("editor-authenticated");
     document.body.dataset.editorCopyAllowed = "true";
+    // Warm the one authoritative Nova editor bundle while the document list is
+    // loading. Opening a row must mount the already-loaded editor, not start a
+    // second network/bootstrap sequence after the click.
+    void loadNovaScripts().catch(() => {});
     // Authorized and no article opened: show the Documents home (TPI-NOVA-005A2).
     if (options.initializeDraft) showNovaHome();
     if (options.applyProfile !== false) applyContributorProfile(user);
@@ -1286,7 +1290,7 @@
   });
 
   // Opens a linked article in Nova mode.
-  async function openLinkedNovaArticle(articleId, isCurrent = () => true) {
+  async function openLinkedNovaArticle(articleId, isCurrent = () => true, articleRecord = null) {
     // TPI-NOVA-005A6E: the metadata baseline belongs to the article being opened.
     lastSavedMetadata = null;
     const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova/item`, { credentials: "same-origin", cache: "no-store" });
@@ -1298,7 +1302,7 @@
     const mounted = await mountLinkedNovaDocument(data.item, isCurrent);
     if (!mounted || !isCurrent()) return false;
     // TPI-NOVA-005A6E: populate the inspector from the stored article (authoritative), then baseline it.
-    const stored = await findEditorArticle(articleId);
+    const stored = articleRecord || await findEditorArticle(articleId);
     if (stored) {
       titleInput.value = stored.title || getCurrentUntitledTitle();
       syncTitleTooltip();
@@ -1314,17 +1318,20 @@
     }
     // Baseline = the values just loaded from the stored article, so only later edits are sent.
     lastSavedMetadata = currentMetadataSnapshot();
-    await refreshWorkflowState(articleId);
     setStatus("Nova document loaded");
+    // Workflow state is secondary to opening the document. Refresh it after the
+    // editor is visible so a slow status request cannot hold the editor behind a
+    // blank transition screen.
+    void refreshWorkflowState(articleId).catch(() => {});
     return true;
   }
 
   // Explicit conversion of a legacy article. The article body is not rewritten: the
   // Nova document is seeded from it, and the link is stored only after success.
-  async function convertLegacyArticleToNova(articleId, isCurrent = () => true) {
+  async function convertLegacyArticleToNova(articleId, isCurrent = () => true, articleRecord = null) {
     // Convert the stored body (not the live compose field) so the Nova document is the
     // article's own content. Unsupported markup is reported, not silently dropped.
-    const stored = await findEditorArticle(articleId);
+    const stored = articleRecord || await findEditorArticle(articleId);
     if (!stored) throw new Error("Article could not be found");
     const sourceHtml = stored.bodyHtml || "";
     const converted = window.TPINovaConvert.htmlToNovaDoc(sourceHtml);
@@ -1340,7 +1347,7 @@
     const linkData = await linkResponse.json().catch(() => ({}));
     if (!linkResponse.ok && linkResponse.status !== 409) throw new Error(linkData.error || "Could not convert this article");
     if (!isCurrent()) return;
-    await openLinkedNovaArticle(articleId, isCurrent);
+    await openLinkedNovaArticle(articleId, isCurrent, stored);
     if (unsupportedNotice) {
       // Persist the notice: setStatus would otherwise overwrite it after 1.8s.
       window.clearTimeout(setStatus.timer);
@@ -1356,7 +1363,7 @@
     if (!article) return;
     if (!isCurrent()) return;
     if (article.novaItemId) {
-      await openLinkedNovaArticle(article.id, isCurrent);
+      await openLinkedNovaArticle(article.id, isCurrent, article);
       return;
     }
 
@@ -1375,7 +1382,7 @@
 
     setStatus("Preparing this document in Nova…");
     try {
-      await convertLegacyArticleToNova(article.id, isCurrent);
+      await convertLegacyArticleToNova(article.id, isCurrent, article);
     } catch (error) {
       // Do not silently switch this document to another editor. The owner sees
       // the single Nova surface and an actionable failure instead.
@@ -2350,7 +2357,7 @@ ${articleHtml}
       if (!row) return;
       const article = novaHomeArticles.find(item => item.id === row.dataset.novaOpen);
       if (!article) return;
-      await editContentArticle(article.id);
+      await editContentArticle(article.id, article);
     });
     document.querySelectorAll("[data-workspace-mode]").forEach(button => {
       button.addEventListener("click", () => { void setWorkspaceMode(button.dataset.workspaceMode || "documents"); });
@@ -2453,11 +2460,11 @@ ${articleHtml}
     setStatus(article.status === "published" ? "Loaded published contribution" : "Loaded draft");
   }
 
-  async function editContentArticle(articleId) {
+  async function editContentArticle(articleId, selectedArticle = null) {
     const requestId = ++editorOpenRequest;
     document.body.classList.add("editor-booting");
     setNovaHomeVisible(false);
-    const article = await findEditorArticle(articleId);
+    const article = selectedArticle || novaHomeArticles.find(item => item.id === articleId) || await findEditorArticle(articleId);
     if (requestId !== editorOpenRequest) return;
     if (!article) {
       setStatus("Article could not be found");
