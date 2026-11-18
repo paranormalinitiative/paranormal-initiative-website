@@ -1,7 +1,7 @@
 # Haunted Location Submission and Verification Workflow
 
 Date: 2026-11-17
-Status: Implemented; guarded release and live acceptance pending.
+Status: **DEPLOYED AND LIVE VERIFIED.**
 
 ## Purpose
 
@@ -93,8 +93,23 @@ state. Public publication remains a separate, verified directory edit.
 
 ## Verification record
 
-The final record must include the local schema/API checks, Admin Center build,
-Markdown-reference verification, guarded preflight, production deployment, and
-Firefox Developer Edition acceptance for the public submission page and the
-authorized review queue. No protected application should be rebuilt or
-modified by this website/Admin Center change.
+The local schema/API regression passed **7/7**, the Administration Center
+source contract passed **95/95**, the community workstation contract passed
+**21/21**, the release-safety contract passed **38/38**, and the Administration
+Center production build passed. The maintained local schema verifier applied
+0074 successfully and the live production schema check passed with all required
+tables and columns present and no pending schema requirements.
+
+The guarded release preflight classified this as Tier 1 / full shared release
+and certified the exact source commit `ac809c7bb58bf042dd738f573ce1865d9625522e`
+with **40 gates passed** in **7m 10.428s**. The immutable candidate was
+`rel-ac809c7bb58b-4e1e1c314d42` with manifest digest
+`b7525c72d54f79aaffeec8d68c2a1e848106a71ac1e69f723edcaeb7cafd5d9b`.
+
+The reviewed additive migration was applied individually to production; no
+blanket migration replay was used. The exact certified candidate then deployed
+and was live-verified at 100% traffic as Worker version
+`18efd9db-31a5-40e0-ab0a-db46f3510535`, with rollback target
+`ec48d535-7e8a-4bf6-a208-b5cda0e4c3be`. Production smoke passed **10/10** and
+isolated Firefox Developer Edition acceptance passed **65/65**. No protected
+application was rebuilt or modified by this website/Admin Center change.

@@ -14,6 +14,38 @@ workflow retain their recorded state until a separate migration decision is
 made. The older review-and-publisher records below are historical evidence, not
 the current default for new Education Center work.
 
+## 2026-11-17 — Haunted-location member submissions and verification queue
+
+Status: **DEPLOYED AND LIVE VERIFIED.** Members can now submit a potential
+haunted location from the public Haunted Locations area using the same TPI
+member-shell and directory visual language. The form collects the location
+identity, access and safety context, historical background, specific reported
+claims, investigation zones, coordinates when known, and traceable sources.
+
+Every submission is a private research candidate. It is not a published
+directory entry, is not treated as proof of paranormal activity, and is never
+automatically added to a state page. Authorized reviewers can find it under
+Administration Center → Reports & Moderation → Haunted location submissions,
+inspect the submitted fields, record a triage state, and then separately verify
+the candidate before making an intentional directory content change. The TPI
+standard requires documented location identity, history, specific claims,
+meaningful areas, access/privacy/safety review, and sources; vague, private,
+fictional, entertainment-only, or unsupported entries are rejected.
+
+The additive production migration created the private submission table and two
+indexes without replaying the incomplete historical migration ledger. Local
+submission regression passed **7/7**; Administration Center source contracts
+passed **95/95**; community workstation contracts passed **21/21**; release
+safety passed **38/38**; the exact full preflight candidate passed **40 gates**
+in **7m 10.428s**; production schema readiness passed; production smoke passed
+**10/10**; and isolated Firefox Developer Edition acceptance passed **65/65**.
+Release `rel-ac809c7bb58b-4e1e1c314d42` deployed source commit
+`ac809c7bb58bf042dd738f573ce1865d9625522e` as Worker
+`18efd9db-31a5-40e0-ab0a-db46f3510535` at 100% traffic. Rollback target is
+`ec48d535-7e8a-4bf6-a208-b5cda0e4c3be`. StudioFlow, Creator Studio, Nova
+Workspace, and unrelated owner/member data were not modified. See
+[Haunted Location Submission and Verification Workflow](300-COMPLETED-WORK/2026-11-17-HAUNTED-LOCATION-SUBMISSION-REVIEW.md).
+
 ## 2026-11-16 — Mystic thoughtform retrieval and six-source cross-reference
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Mystic now answers “What is a
