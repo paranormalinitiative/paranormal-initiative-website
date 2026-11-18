@@ -44,6 +44,13 @@ treatment only when it does not alter the identity of the place.
 - The maintained local Worker refresh now includes
   `haunted-location-directory`, preventing nested directory pages from serving
   stale staged copies after an update.
+- Michigan is the next expansion queue. Its existing directory contains 20
+  researched locations; the first six exact-photo records now cover Detroit
+  Masonic Temple, The Whitney, Elmwood Cemetery, Detroit Public Library Main
+  Branch, Historic Fort Wayne, and Redford Theatre. Each has a local source
+  photo, a separate TPI treatment, a Michigan label, and recorded reuse terms.
+  The remaining Michigan entries stay in the source-review queue until an exact
+  photograph and defensible reuse record are confirmed.
 
 ## Verification
 

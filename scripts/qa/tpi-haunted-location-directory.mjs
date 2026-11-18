@@ -79,6 +79,27 @@ for (const requiredImage of ['Wabasha Street Caves', 'Palmer House Hotel', 'Glen
   }
 }
 
+const michiganSourceNames = [
+  'Detroit Masonic Temple', 'The Whitney', 'Elmwood Cemetery',
+  'Detroit Public Library — Main Branch', 'Historic Fort Wayne', 'Redford Theatre'
+];
+for (const name of michiganSourceNames) {
+  const image = imageSources[name];
+  if (!image?.image || !image?.caseFileImage || !image?.source || !image?.credit) {
+    failures.push(`missing Michigan exact-photo attribution record for ${name}`);
+    continue;
+  }
+  for (const asset of [image.image, image.caseFileImage]) {
+    if (asset.startsWith('case-file-photos/') && !fs.existsSync(path.join(directory, asset))) {
+      failures.push(`missing local Michigan case-file asset for ${name}: ${asset}`);
+    }
+  }
+}
+const michiganSource = fs.readFileSync(path.join(directory, 'michigan.html'), 'utf8');
+if (!michiganSource.includes('case-file-sources.js') || !michiganSource.includes('mi-case-state-label')) {
+  failures.push('Michigan directory does not load the state-labeled case-file renderer');
+}
+
 const localDevSource = fs.readFileSync(path.join(root, 'scripts/local-dev.mjs'), 'utf8');
 if (!localDevSource.includes('"haunted-location-directory"')) {
   failures.push('local Worker refresh does not include haunted-location-directory assets');
