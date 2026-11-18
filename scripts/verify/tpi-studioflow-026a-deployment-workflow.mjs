@@ -34,7 +34,7 @@ check("release workflow uses isolated E2E and Firefox Developer Edition", () => 
 });
 
 check("release workflow has guarded dry-run and automatic rollback", () => {
-  assert.match(release, /deploy-production-guarded\.mjs", "--dry-run"/);
+  assert.match(release, /deploy-production-guarded\.mjs", "--stage-out", candidateRoot, "--dry-run"/);
   assert.match(release, /wrangler, \["rollback", release\.rollbackVersion/);
   assert.match(release, /TPI_PRODUCTION_DEPLOY !== "approved"/);
   assert.doesNotMatch(release, /d1 execute|migrations\//);

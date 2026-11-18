@@ -257,6 +257,18 @@ function activeProductionVersion() {
   if (!versions.length) fail("Cloudflare did not return an active 100% Worker version");
   return versions.at(-1);
 }
+async function waitForProductionVersion(expectedVersion, timeoutMs = 45_000) {
+  const deadline = Date.now() + timeoutMs;
+  let lastSeen = "unavailable";
+  while (Date.now() < deadline) {
+    try {
+      lastSeen = activeProductionVersion();
+      if (lastSeen === expectedVersion) return;
+    } catch { /* Cloudflare deployment state may be briefly unavailable */ }
+    await new Promise(resolvePromise => setTimeout(resolvePromise, 1_000));
+  }
+  fail(`Cloudflare did not report ${expectedVersion} at 100% traffic within ${timeoutMs / 1000}s (last seen: ${lastSeen})`);
+}
 function ensureCloudflareAccess(rollbackVersion) {
   const identity = output(wrangler, ["whoami"]);
   if (!identity.includes("221ea5479876fd303ddc87002b9e892d")) fail("Wrangler is not authenticated to the approved Cloudflare account");
@@ -677,7 +689,7 @@ async function deploy() {
     } else {
       mark(`Live StudioFlow acceptance skipped for ${manifest.tier.releaseProfile} profile`, { bucket: "production" });
     }
-    if (activeProductionVersion() !== deployedVersion) fail("new Worker version is not receiving 100% traffic");
+    await waitForProductionVersion(deployedVersion);
     mark("Confirm new Worker version holds 100% traffic", { bucket: "production" });
     writeFileSync(deploymentRecordPath, `${JSON.stringify({ schemaVersion: 1, releaseId: manifest.releaseId, manifestDigest: manifest.manifestDigest, sourceCommit: release.sourceCommit, releaseProfile: manifest.tier.releaseProfile || "full", worker, deployedVersion, rollbackVersion: release.rollbackVersion, deployedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
     console.log(JSON.stringify({ status: "DEPLOYED_AND_VERIFIED", releaseId: manifest.releaseId, sourceCommit: release.sourceCommit, releaseProfile: manifest.tier.releaseProfile || "full", worker, deployedVersion, rollbackVersion: release.rollbackVersion, recertified: false }, null, 2));
@@ -685,7 +697,7 @@ async function deploy() {
     console.error(`Production acceptance failed: ${error instanceof Error ? error.message : error}`);
     console.error(`Rolling back ${worker} to ${release.rollbackVersion}.`);
     run("Guarded Worker rollback", wrangler, ["rollback", release.rollbackVersion, "--name", worker, "--yes", "--message", `Automated rollback after failed acceptance of ${deployedVersion || release.sourceCommit}`], { timing: { bucket: "production" } });
-    if (activeProductionVersion() !== release.rollbackVersion) fail(`rollback did not restore ${release.rollbackVersion}`);
+    await waitForProductionVersion(release.rollbackVersion);
     throw error;
   }
 }
