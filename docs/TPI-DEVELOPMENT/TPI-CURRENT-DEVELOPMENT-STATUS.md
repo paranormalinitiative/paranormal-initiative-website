@@ -14,6 +14,17 @@ workflow retain their recorded state until a separate migration decision is
 made. The older review-and-publisher records below are historical evidence, not
 the current default for new Education Center work.
 
+## 2026-11-18 — Haunted Location Directory state coverage
+
+All 50 state pages now have directory coverage. The 25 previously reserved
+pages contain 100 shared-rendered starter research leads, and the directory
+total is 563 entries. New leads are explicitly marked **Under review** and
+retain a public source note; they are not claims of proven paranormal activity
+or fully verified investigation-ready records. The focused guard passes 50
+state pages, 100 new starter entries, and no placeholders. See [Haunted
+Location Directory — Full State Coverage](300-COMPLETED-WORK/2026-11-18-HAUNTED-LOCATION-DIRECTORY-STATE-COVERAGE.md)
+for the research method, safety boundary, implementation, and release record.
+
 ## 2026-11-17 — Haunted-location member submissions and verification queue
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Members can now submit a potential
