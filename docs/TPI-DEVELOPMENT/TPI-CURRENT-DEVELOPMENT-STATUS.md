@@ -71,6 +71,14 @@ hidden, and suppresses the duplicate heading for this form. Release
 `1500b0a3-c7db-4050-95a7-e38dffbb4fd0` at 100% traffic; production smoke
 passed **10/10**.
 
+The remaining internal card-padding problem was traced to the shared member
+stylesheet’s generic `section { padding: 0; }` reset. The submission card now
+uses a page-scoped `body.member-mode` selector so its own TPI padding wins the
+cascade without changing shared member behavior. Release
+`rel-5e8c3d5a4110-8b1a03db45a4` deployed Worker
+`9b5a8be5-7ce8-407b-8fa8-1a8c6e734aed` at 100% traffic; production smoke
+passed **10/10**.
+
 ## 2026-11-16 — Mystic thoughtform retrieval and six-source cross-reference
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Mystic now answers “What is a

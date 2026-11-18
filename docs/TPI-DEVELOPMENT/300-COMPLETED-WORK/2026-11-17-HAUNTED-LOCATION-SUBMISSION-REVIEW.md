@@ -148,3 +148,15 @@ form. Release `rel-5b4564dd52ac-04290b2ba2fb` deployed source commit
 `1500b0a3-c7db-4050-95a7-e38dffbb4fd0` at 100% traffic; production smoke
 passed **10/10** and rollback target is
 `036e8a3c-13d8-4dc4-b63e-6d706f8488f2`.
+
+The next live visual review found the remaining cause of the edge-to-edge
+content: the shared member stylesheet intentionally resets generic section
+padding to zero. The form card’s original class selector therefore lost the
+cascade, even though its padding was present in the page source. The permanent
+repair scopes the card rule under `body.member-mode`, giving the TPI submission
+card higher, page-specific specificity without changing the shared member
+reset. Release `rel-5e8c3d5a4110-8b1a03db45a4` deployed source commit
+`5e8c3d5a411097c658951414a4ca4ede98527caa` as Worker
+`9b5a8be5-7ce8-407b-8fa8-1a8c6e734aed` at 100% traffic; production smoke
+passed **10/10** and rollback target is
+`1500b0a3-c7db-4050-95a7-e38dffbb4fd0`.
