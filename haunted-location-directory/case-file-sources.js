@@ -85,61 +85,61 @@ window.TPI_CASE_FILE_SOURCES = {
   },
   'Grand Hotel': {
     image: 'case-file-photos/grand-hotel-mackinac-island.jpg',
-    caseFileImage: 'case-file-photos/grand-hotel-mackinac-island-case-file.png',
+    caseFileImage: 'case-file-photos/grand-hotel-mackinac-island-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Grand_Hotel_(Mackinac_Island).jpg',
     credit: 'Mnanian — CC BY-SA 4.0'
   },
   'Fort Holmes': {
     image: 'case-file-photos/fort-holmes.jpg',
-    caseFileImage: 'case-file-photos/fort-holmes-case-file.png',
+    caseFileImage: 'case-file-photos/fort-holmes-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Fort_Holmes_2016.jpg',
     credit: 'Notorious4life — CC0'
   },
   'The Perry Hotel': {
     image: 'case-file-photos/perry-hotel-petoskey.jpg',
-    caseFileImage: 'case-file-photos/perry-hotel-petoskey-case-file.png',
+    caseFileImage: 'case-file-photos/perry-hotel-petoskey-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Stafford%27s_Perry_Hotel,_Petoskey,_Michigan.jpg',
     credit: 'rboed* — CC BY 2.0'
   },
   'Terrace Inn and 1911 Restaurant': {
     image: 'case-file-photos/terrace-inn-bay-view.jpg',
-    caseFileImage: 'case-file-photos/terrace-inn-bay-view-case-file.png',
+    caseFileImage: 'case-file-photos/terrace-inn-bay-view-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:BayViewPetoskyMI.jpg',
     credit: 'Brian Conway / NPS Focus — Public domain'
   },
   'Landmark Inn': {
     image: 'case-file-photos/landmark-inn-marquette.jpg',
-    caseFileImage: 'case-file-photos/landmark-inn-marquette-case-file.png',
+    caseFileImage: 'case-file-photos/landmark-inn-marquette-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Landmark_Inn_2016.jpg',
     credit: 'Landmark Inn — CC BY-SA 4.0'
   },
   'South Haven Lighthouse': {
     image: 'case-file-photos/south-haven-lighthouse.jpg',
-    caseFileImage: 'case-file-photos/south-haven-lighthouse-case-file.png',
+    caseFileImage: 'case-file-photos/south-haven-lighthouse-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:South_Pier_Lighthouse_at_South_Haven,_MI.jpg',
     credit: 'Nanamac47 — CC BY-SA 3.0'
   },
   'White River Light Station': {
     image: 'case-file-photos/white-river-light-station.jpg',
-    caseFileImage: 'case-file-photos/white-river-light-station-case-file.png',
+    caseFileImage: 'case-file-photos/white-river-light-station-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:White_River_Light_Station_2011_01.jpg',
     credit: 'Michael Barera — CC BY-SA 4.0'
   },
   'Seul Choix Point Lighthouse': {
     image: 'case-file-photos/seul-choix-point-lighthouse.jpg',
-    caseFileImage: 'case-file-photos/seul-choix-point-lighthouse-case-file.png',
+    caseFileImage: 'case-file-photos/seul-choix-point-lighthouse-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Seul_Choix_Point.jpg',
     credit: 'National Park Service — Public domain'
   },
   'Big Bay Point Lighthouse': {
     image: 'case-file-photos/big-bay-point-light-station.jpg',
-    caseFileImage: 'case-file-photos/big-bay-point-light-station-case-file.png',
+    caseFileImage: 'case-file-photos/big-bay-point-light-station-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Bigbaypoint.jpg',
     credit: 'U.S. Coast Guard source — Public domain'
   },
   'Old Presque Isle Lighthouse': {
     image: 'case-file-photos/old-presque-isle-lighthouse.jpg',
-    caseFileImage: 'case-file-photos/old-presque-isle-lighthouse-case-file.png',
+    caseFileImage: 'case-file-photos/old-presque-isle-lighthouse-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Old_Presque_Isle_Light.JPG',
     credit: 'Doug Coldwell — CC BY-SA 4.0'
   }
