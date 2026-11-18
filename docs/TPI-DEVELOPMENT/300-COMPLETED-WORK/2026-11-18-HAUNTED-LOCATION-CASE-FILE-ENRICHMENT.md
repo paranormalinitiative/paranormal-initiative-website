@@ -1,7 +1,7 @@
 # Haunted Location Case-File Enrichment
 
 Date: 2026-11-18
-Status: **IMPLEMENTED; RELEASE PENDING FINAL GUARD AND LIVE ACCEPTANCE.**
+Status: **DEPLOYED AND LIVE VERIFIED.**
 
 ## Direction
 
@@ -44,17 +44,21 @@ TPI haunted-location-directory verification passed: 50 state pages, 100 new star
 ```
 
 The official local Worker was refreshed and served the updated renderer and
-case-file source layer. Production deployment identifiers will be added below
-after the guarded release completes.
+case-file source layer. The guarded production release completed with
+production smoke passing 10/10 and the new Worker holding 100% traffic.
 
 ## Release record
 
-- Source commit: pending
-- Release candidate: pending
-- Production Worker version: pending
-- Rollback target: pending
-- Production smoke: pending
-- Firefox Developer Edition acceptance: pending
+- Source commit: `bbc7823c165d20f19867bbd3e15148d0af224aa1`
+- Release candidate: `rel-bbc7823c165d-a7b42bdc3290`
+- Production Worker version: `cf3d08e4-1908-456c-9506-ca2f1976c7c5`
+- Rollback target: `81ab46b7-e287-4580-9f83-2a32884b23d7`
+- Release profile: website; protected application integrity guard passed
+- Production smoke: **10/10 passed**
+- Firefox Developer Edition acceptance: not required by the website-only
+  profile; the existing protected-application guard passed and StudioFlow live
+  acceptance was skipped without changing StudioFlow.
+- Final release state: **DEPLOYED_AND_VERIFIED**
 
 ## Remaining image work
 
