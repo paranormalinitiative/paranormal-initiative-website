@@ -128,3 +128,12 @@ workstation contract passed **22/22**. CSS-aligned release
 passed **10/10** and rollback target is
 `18efd9db-31a5-40e0-ab0a-db46f3510535`. StudioFlow, Nova Workspace, Creator
 Studio, and unrelated data were not modified.
+
+The follow-up page-frame correction removed the ordinary member-sidebar
+offset from this dedicated form and added balanced top, bottom, left, and right
+viewport padding, with a separate mobile frame rule. The focused contract
+remained **22/22**. Release `rel-f6fdb91df9a0-9d3a9965821e` deployed source
+commit `f6fdb91df9a0735b2025b0aa29d75c3c6273759e` as Worker
+`036e8a3c-13d8-4dc4-b63e-6d706f8488f2` at 100% traffic; production smoke
+passed **10/10** and rollback target is
+`7459531a-e4d6-4274-a304-ed7397de0850`.

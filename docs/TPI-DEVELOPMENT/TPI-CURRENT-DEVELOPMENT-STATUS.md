@@ -55,6 +55,13 @@ release `rel-ca3c4f688af3-81b1df3d77f4` deployed Worker
 `7459531a-e4d6-4274-a304-ed7397de0850` at 100% traffic; production smoke
 passed **10/10**. No protected application or unrelated data was changed.
 
+The page-frame follow-up then removed the ordinary member-sidebar offset and
+added balanced top, bottom, left, and right viewport padding so the submission
+card is centered consistently on desktop and mobile. Release
+`rel-f6fdb91df9a0-9d3a9965821e` deployed Worker
+`036e8a3c-13d8-4dc4-b63e-6d706f8488f2` at 100% traffic; production smoke
+passed **10/10**.
+
 ## 2026-11-16 — Mystic thoughtform retrieval and six-source cross-reference
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Mystic now answers “What is a
