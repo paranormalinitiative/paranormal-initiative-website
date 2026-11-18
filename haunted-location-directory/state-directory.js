@@ -55,7 +55,7 @@
     const treatment = image.caseFileImage
       ? `Styled case-file treatment of the exact location · <a href="${esc(image.image)}" target="_blank" rel="noopener noreferrer">original photo</a> · `
       : 'Exact location photograph · ';
-    return `<figure class="tpi-case-image"><div class="tpi-case-state-label">${esc(state.name)}</div><img src="${esc(displayedImage)}" alt="${esc(image.caseFileImage ? `Styled case-file treatment of ${name}` : `Documentary photograph of ${name}`)}" loading="lazy" referrerpolicy="no-referrer"><figcaption>${treatment}<a href="${esc(image.source)}" target="_blank" rel="noopener noreferrer">source and license</a> · ${esc(image.credit)}</figcaption></figure>`;
+    return `<figure class="tpi-case-image"><div class="tpi-case-state-label">${esc(state.name)}</div><button class="tpi-case-image-trigger" type="button" aria-label="View ${esc(name)} image larger"><img src="${esc(displayedImage)}" alt="${esc(image.caseFileImage ? `Styled case-file treatment of ${name}` : `Documentary photograph of ${name}`)}" loading="lazy" referrerpolicy="no-referrer"></button><figcaption>${treatment}<a href="${esc(image.source)}" target="_blank" rel="noopener noreferrer">source and license</a> · ${esc(image.credit)}</figcaption></figure>`;
   };
 
   const render = items => {

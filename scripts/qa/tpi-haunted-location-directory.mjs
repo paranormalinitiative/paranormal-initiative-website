@@ -66,6 +66,17 @@ const rendererSource = fs.readFileSync(path.join(directory, 'state-directory.js'
 if (!rendererSource.includes('tpi-case-state-label') || !rendererSource.includes('${esc(state.name)}')) {
   failures.push('case-file renderer does not display the canonical state name on photographs');
 }
+if (!rendererSource.includes('tpi-case-image-trigger')) {
+  failures.push('case-file renderer does not provide a full-image viewer trigger');
+}
+const caseFileCss = fs.readFileSync(path.join(directory, 'state-directory.css'), 'utf8');
+if (!caseFileCss.includes('object-fit:contain') || !caseFileCss.includes('tpi-image-lightbox')) {
+  failures.push('case-file CSS does not preserve the full image or provide lightbox styling');
+}
+const caseFileViewer = fs.readFileSync(path.join(directory, 'case-file-viewer.js'), 'utf8');
+if (!caseFileViewer.includes('tpi-image-lightbox') || !caseFileViewer.includes("event.key === 'Escape'")) {
+  failures.push('case-file viewer is missing its expanded view or Escape close behavior');
+}
 for (const requiredImage of ['Wabasha Street Caves', 'Palmer House Hotel', 'Glensheen Mansion', 'Forepaugh’s Restaurant']) {
   const image = imageSources[requiredImage]?.image;
   if (!image || !imageSources[requiredImage]?.source || !imageSources[requiredImage]?.credit) {
@@ -105,6 +116,15 @@ for (const name of michiganSourceNames) {
 const michiganSource = fs.readFileSync(path.join(directory, 'michigan.html'), 'utf8');
 if (!michiganSource.includes('case-file-sources.js') || !michiganSource.includes('mi-case-state-label')) {
   failures.push('Michigan directory does not load the state-labeled case-file renderer');
+}
+if (!michiganSource.includes('mi-case-image-trigger') || !michiganSource.includes('case-file-viewer.js')) {
+  failures.push('Michigan directory does not load the shared full-image viewer');
+}
+for (const file of fs.readdirSync(directory).filter(name => name.endsWith('.html'))) {
+  const source = fs.readFileSync(path.join(directory, file), 'utf8');
+  if (source.includes('case-file-sources.js') && !source.includes('case-file-viewer.js')) {
+    failures.push(`${file}: case-file page does not load the shared full-image viewer`);
+  }
 }
 
 const localDevSource = fs.readFileSync(path.join(root, 'scripts/local-dev.mjs'), 'utf8');
