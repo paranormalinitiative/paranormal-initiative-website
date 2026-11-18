@@ -1,7 +1,7 @@
 # Haunted Location Directory — Full State Coverage
 
 Date: 2026-11-18
-Status: **IMPLEMENTED; RELEASE PENDING FINAL GUARD AND LIVE ACCEPTANCE.**
+Status: **DEPLOYED AND LIVE VERIFIED.**
 
 ## Request and outcome
 
@@ -72,17 +72,23 @@ TPI haunted-location-directory verification passed: 50 state pages, 100 new star
 ```
 
 The supporting JavaScript syntax checks and `git diff --check` also pass.
-The guarded release preflight and production live acceptance must record their
-results below before this work is considered deployed and complete.
+The guarded release preflight and production live acceptance completed for the
+exact candidate below.
 
 ## Release record
 
-- Source commit: pending
-- Release candidate: pending
-- Production Worker version: pending
-- Rollback target: pending
-- Production smoke: pending
-- Firefox Developer Edition acceptance: pending
+- Source commit: `0321c60ee20c2ac7556d57b7beee6c7940c25ee8`
+- Release candidate: `rel-0321c60ee20c-92e30fe336f7`
+- Production Worker version: `81ab46b7-e287-4580-9f83-2a32884b23d7`
+- Rollback target: `9b5a8be5-7ce8-407b-8fa8-1a8c6e734aed`
+- Release profile: full / Tier 1 because the verification tooling and package
+  script changed
+- Preflight: 40 gates passed; exact candidate certified with manifest digest
+  `db10cb815ababfc16547a0a15f65e6db9f17a062cc1037082be8b7f3dc8fbdc7`
+- Production smoke: **10/10 passed**
+- Firefox Developer Edition acceptance: **65/65 passed** in an isolated
+  disposable profile
+- Final deployment status: `DEPLOYED_AND_VERIFIED` at 100% traffic
 - Protected applications: StudioFlow, Nova Workspace, Creator Studio, and
   unrelated owner/member data were not intentionally changed.
 
