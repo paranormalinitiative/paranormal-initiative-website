@@ -8,11 +8,18 @@
   <link rel="stylesheet" href="style.css?v=92">
   <link rel="stylesheet" href="member-shell.css?v=65">
   <style>
+    /* Keep this dedicated form centered in the viewport instead of inheriting
+       the ordinary member sidebar offset. The card needs equal page-level
+       breathing room on every side. */
+    body.workspace-page .member-main {
+      margin-left: 0;
+      padding: clamp(34px, 5vw, 64px) clamp(18px, 4vw, 48px) clamp(52px, 7vw, 88px);
+    }
+    body.workspace-page #site-footer { margin-left: 0; }
     .location-submit-workspace {
       width: 100%;
       max-width: 1120px;
       margin: 0 auto;
-      padding-inline: clamp(18px, 3.5vw, 44px);
       box-sizing: border-box;
     }
     .location-submit-panel {
@@ -124,7 +131,7 @@
     .location-submit-status { flex: 1 1 220px; min-height: 1.4em; margin: 0; color: var(--text-secondary); }
     .location-submit-status:not(:empty) { color: #a8d5b6; }
     @media (max-width: 680px) {
-      .location-submit-workspace { padding-inline: 14px; }
+      body.workspace-page .member-main { padding: 24px 14px 64px; }
       .location-submit-panel { padding: 24px 18px; }
       .location-submit-grid { grid-template-columns: 1fr; }
       .location-submit-form .wide { grid-column: auto; }
