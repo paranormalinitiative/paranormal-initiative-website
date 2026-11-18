@@ -69,10 +69,10 @@ production smoke passing 10/10 and the new Worker holding 100% traffic.
 
 ## Release record
 
-- Source commit: pending Michigan completion release
-- Release candidate: pending
-- Production Worker version: pending
-- Rollback target: pending
+- Source commit: `3f9425e2490ebf7ff0e8629398050fddb752518e`
+- Release candidate: `rel-3f9425e2490e-e2399f37bddc`
+- Production Worker version: `37db4ee7-e211-468b-a5fe-624fda8a6018`
+- Rollback target: `71110d1d-2533-4972-8c73-c258ce2091f8`
 - Release profile: website; protected application integrity guard passed
 - Production smoke: **10/10 passed**
 - Firefox Developer Edition acceptance: not required by the website-only
