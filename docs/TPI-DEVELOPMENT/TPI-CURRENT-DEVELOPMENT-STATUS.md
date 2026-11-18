@@ -62,6 +62,15 @@ card is centered consistently on desktop and mobile. Release
 `036e8a3c-13d8-4dc4-b63e-6d706f8488f2` at 100% traffic; production smoke
 passed **10/10**.
 
+Owner review then caught the member-shell overlap: the form was beneath the
+visible left navigation and the generic `Hello, Todd` page heading was
+redundant. The final correction restored the normal sidebar offset on desktop,
+added the tablet breakpoint, keeps mobile spacing correct when the sidebar is
+hidden, and suppresses the duplicate heading for this form. Release
+`rel-5b4564dd52ac-04290b2ba2fb` deployed Worker
+`1500b0a3-c7db-4050-95a7-e38dffbb4fd0` at 100% traffic; production smoke
+passed **10/10**.
+
 ## 2026-11-16 — Mystic thoughtform retrieval and six-source cross-reference
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Mystic now answers “What is a

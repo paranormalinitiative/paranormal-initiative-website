@@ -137,3 +137,14 @@ commit `f6fdb91df9a0735b2025b0aa29d75c3c6273759e` as Worker
 `036e8a3c-13d8-4dc4-b63e-6d706f8488f2` at 100% traffic; production smoke
 passed **10/10** and rollback target is
 `7459531a-e4d6-4274-a304-ed7397de0850`.
+
+Owner review then identified that the form was still being laid out beneath
+the visible member sidebar and that the shared automatic `Hello, Todd` heading
+was redundant. The final correction restored the normal desktop sidebar offset,
+added the tablet breakpoint, keeps zero sidebar offset only on mobile where the
+sidebar is hidden, and suppresses the duplicate page heading on this dedicated
+form. Release `rel-5b4564dd52ac-04290b2ba2fb` deployed source commit
+`5b4564dd52acc7615ae636be23c2ae9a0ce0e249` as Worker
+`1500b0a3-c7db-4050-95a7-e38dffbb4fd0` at 100% traffic; production smoke
+passed **10/10** and rollback target is
+`036e8a3c-13d8-4dc4-b63e-6d706f8488f2`.
