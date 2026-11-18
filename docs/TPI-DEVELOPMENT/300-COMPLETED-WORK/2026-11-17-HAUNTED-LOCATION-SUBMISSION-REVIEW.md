@@ -113,3 +113,18 @@ and was live-verified at 100% traffic as Worker version
 `ec48d535-7e8a-4bf6-a208-b5cda0e4c3be`. Production smoke passed **10/10** and
 isolated Firefox Developer Edition acceptance passed **65/65**. No protected
 application was rebuilt or modified by this website/Admin Center change.
+
+### Follow-up visual alignment — 2026-11-17
+
+The member submission page was brought into the shared TPI design system after
+owner review showed insufficient side padding and native browser form controls.
+It now uses the active TPI theme tokens, the same card and control surfaces as
+the member site, consistent button treatment, readable internal spacing, and a
+responsive one-column layout on narrow screens. The focused community
+workstation contract passed **22/22**. CSS-aligned release
+`rel-ca3c4f688af3-81b1df3d77f4` deployed source commit
+`ca3c4f688af39f84f3271ed4de3d14607d4d7f9f` as Worker
+`7459531a-e4d6-4274-a304-ed7397de0850` at 100% traffic; production smoke
+passed **10/10** and rollback target is
+`18efd9db-31a5-40e0-ab0a-db46f3510535`. StudioFlow, Nova Workspace, Creator
+Studio, and unrelated data were not modified.

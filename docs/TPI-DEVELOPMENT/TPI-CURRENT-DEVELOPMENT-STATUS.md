@@ -46,6 +46,15 @@ Release `rel-ac809c7bb58b-4e1e1c314d42` deployed source commit
 Workspace, and unrelated owner/member data were not modified. See
 [Haunted Location Submission and Verification Workflow](300-COMPLETED-WORK/2026-11-17-HAUNTED-LOCATION-SUBMISSION-REVIEW.md).
 
+The submission page then received a site-wide visual alignment pass after
+owner review: side padding now follows the TPI content rhythm, the card and
+notice use theme tokens, fields and textareas match shared member controls,
+buttons use the portal treatment, and the layout collapses cleanly on mobile.
+The focused community workstation contract passed **22/22**; CSS-aligned
+release `rel-ca3c4f688af3-81b1df3d77f4` deployed Worker
+`7459531a-e4d6-4274-a304-ed7397de0850` at 100% traffic; production smoke
+passed **10/10**. No protected application or unrelated data was changed.
+
 ## 2026-11-16 — Mystic thoughtform retrieval and six-source cross-reference
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Mystic now answers “What is a
