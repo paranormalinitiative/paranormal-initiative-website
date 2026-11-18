@@ -3,7 +3,7 @@
 **Date:** 2026-11-18  
 **Scope:** Nova Editorial Workspace articles and research papers  
 **Protected applications changed:** None. StudioFlow and the Creator Studio application were not modified.  
-**Status:** Implemented in source; release and live acceptance are recorded below.
+**Status:** Deployed and live verified.
 
 ## User-facing requirement
 
@@ -66,13 +66,20 @@ publication boundary.
 
 ### Release evidence
 
-To be filled after the maintained runbook completes:
+- Source commit: `e2f03e56a8d2979880c1a6f36e4479a74f329d0a`
+- GitHub parity: pushed to `origin/codex/tpi-development`
+- Release impact profile: `website` (the public website/editorial boundary;
+  protected StudioFlow source was not modified)
+- Preflight result: certified; 10/10 impact-aware release gates passed
+- Production release: `rel-e2f03e56a8d2-cd4529f65293`
+- Production Worker version: `7472d005-6ba9-4eca-9502-42431ac3e3c3`
+- Live anonymous production smoke: 10/10 passed
+- Firefox Developer Edition production acceptance: 65/65 passed with the
+  disposable `production_qa` account; the owner profile was not accessed
+- Rollback reference: `d34efc2e-1d22-4907-869e-4c082160de7b`
 
-- Source commit:
-- GitHub parity:
-- Release impact profile:
-- Preflight result:
-- Production Worker version:
-- Firefox Developer Edition acceptance:
-- Rollback reference:
+The release guard also exercised the protected application boundary. The
+direct live Firefox run confirmed that the deployed site can still authenticate
+the disposable QA account and load the existing StudioFlow application with
+all 65 controls and persistence checks passing.
 
