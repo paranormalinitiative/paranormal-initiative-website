@@ -46,6 +46,15 @@ remains an Administration Center moderation action.
   in the dedicated **Published** navigation section, so the workspace list
   clearly separates editable working documents from public Education Center
   publications.
+- The duplicate collection navigation was removed: **Documents** is now the
+  single workspace collection, while **Published**, **Removed**, and the
+  workflow sections remain distinct views.
+- The current document now exposes **Delete document** directly in the header;
+  the action still uses the recoverable, document-scoped behavior described
+  above rather than deleting a public Education Center article.
+- Existing articles that still need the Nova link are migrated behind an
+  editor-booting state, so the compatibility editor no longer flashes before
+  the Nova surface opens.
 - Linked Nova documents remain owned by their author when an authorized manager
   edits them. Revisions continue to use the author's Nova owner identity, and
   locked submitted/in-review/approved documents remain read-only until the
@@ -88,18 +97,18 @@ publication boundary.
 
 ### Release evidence
 
-- Source commit: `3e7bf5cdb4f2facc5b8c2e0c73135623fd7a71d5`
+- Source commit: `ed1980ad983a6b9d93a14fe7486bde74eae480ea`
 - GitHub parity: pushed to `origin/codex/tpi-development`
 - Release impact profile: `full` (the active editor surface and its protected
   content-control regression contract were changed; protected StudioFlow
   source was not modified)
 - Preflight result: certified; 40/40 full-platform release gates passed
-- Production release: `rel-3e7bf5cdb4f2-f02b4ab29878`
-- Production Worker version: `a0710145-8855-467b-b212-2cb4a6f39eda`
+- Production release: `rel-ed1980ad983a-e268da6ccf7d`
+- Production Worker version: `3d593a2e-437b-4fc8-aeb3-385bfec4c930`
 - Live anonymous production smoke: 10/10 passed
 - Firefox Developer Edition production acceptance: passed with the disposable
   `production_qa` account; the owner profile was not accessed
-- Rollback reference: `8878cf38-3e9e-4b1d-9680-9f8870ed0eb3`
+- Rollback reference: `a0710145-8855-467b-b212-2cb4a6f39eda`
 
 The release guard also exercised the protected application boundary. The
 direct live Firefox run confirmed that the deployed site can still authenticate

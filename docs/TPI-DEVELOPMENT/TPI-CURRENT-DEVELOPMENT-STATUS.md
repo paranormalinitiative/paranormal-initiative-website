@@ -34,12 +34,17 @@ and are shown in the dedicated Published section, so removing an editable
 working document cannot be confused with removing its public Education Center
 publication.
 
-Status: **DEPLOYED AND LIVE VERIFIED.** The maintained release completed with
+The follow-up repair removed the duplicate My Content collection entry, makes
+Delete document visible in the open-document header, and keeps the legacy
+compatibility editor hidden while an existing article is being migrated into
+Nova so the page opens once on the final editor surface.
+
+Status: **DEPLOYED AND LIVE VERIFIED.** The maintained follow-up release completed with
 full-platform preflight **40/40**, live anonymous smoke **10/10**, and direct
 Firefox Developer Edition production acceptance using the disposable
-`production_qa` account. Release `rel-3e7bf5cdb4f2-f02b4ab29878` serves Worker
-`a0710145-8855-467b-b212-2cb4a6f39eda` at 100% traffic. The rollback reference
-is `8878cf38-3e9e-4b1d-9680-9f8870ed0eb3`. StudioFlow, Creator Studio, Nova
+`production_qa` account. Release `rel-ed1980ad983a-e268da6ccf7d` serves Worker
+`3d593a2e-437b-4fc8-aeb3-385bfec4c930` at 100% traffic. The rollback reference
+is `a0710145-8855-467b-b212-2cb4a6f39eda`. StudioFlow, Creator Studio, Nova
 storage, private media, and owner data were not modified. See [Nova Editorial
 Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md)
 for the complete authorization, recovery, audit, and verification record.
