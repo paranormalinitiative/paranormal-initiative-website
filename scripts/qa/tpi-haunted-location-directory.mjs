@@ -69,6 +69,10 @@ for (const requiredImage of ['Wabasha Street Caves', 'Glensheen Mansion', 'Forep
   } else if (image.startsWith('case-file-photos/') && !fs.existsSync(path.join(directory, image))) {
     failures.push(`missing local case-file photo for ${requiredImage}: ${image}`);
   }
+  const treatment = imageSources[requiredImage]?.caseFileImage;
+  if (treatment && !fs.existsSync(path.join(directory, treatment))) {
+    failures.push(`missing local case-file treatment for ${requiredImage}: ${treatment}`);
+  }
 }
 
 const localDevSource = fs.readFileSync(path.join(root, 'scripts/local-dev.mjs'), 'utf8');

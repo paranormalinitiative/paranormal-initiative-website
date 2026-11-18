@@ -30,6 +30,10 @@ treatment only when it does not alter the identity of the place.
   Mansion, and the Forepaugh mansion entry in Minnesota. Their local copies
   retain the source, attribution, and license record; the Forepaugh image was
   supplied as the exact-building reference for TPI's case file.
+- Forepaugh's also has a separate archival case-file treatment derived from
+  that exact photo. The renderer labels it as a styled treatment and links to
+  the untouched original local photo, so the presentation cannot be mistaken
+  for an unedited documentary photograph.
 - The remaining locations are intentionally pending source-by-source image
   review; no guessed image is published.
 - The maintained local Worker refresh now includes

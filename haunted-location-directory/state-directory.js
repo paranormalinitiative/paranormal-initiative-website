@@ -51,7 +51,11 @@
     if (!image) {
       return '<div class="tpi-image-pending"><strong>Exact case-file photograph pending</strong><span>TPI will add a verified image of this location when a source photo and reuse terms are confirmed. No AI substitute is used.</span></div>';
     }
-    return `<figure class="tpi-case-image"><img src="${esc(image.image)}" alt="Documentary photograph of ${esc(name)}" loading="lazy" referrerpolicy="no-referrer"><figcaption>Exact location photograph · <a href="${esc(image.source)}" target="_blank" rel="noopener noreferrer">source and license</a> · ${esc(image.credit)}</figcaption></figure>`;
+    const displayedImage = image.caseFileImage || image.image;
+    const treatment = image.caseFileImage
+      ? `Styled case-file treatment of the exact location · <a href="${esc(image.image)}" target="_blank" rel="noopener noreferrer">original photo</a> · `
+      : 'Exact location photograph · ';
+    return `<figure class="tpi-case-image"><img src="${esc(displayedImage)}" alt="${esc(image.caseFileImage ? `Styled case-file treatment of ${name}` : `Documentary photograph of ${name}`)}" loading="lazy" referrerpolicy="no-referrer"><figcaption>${treatment}<a href="${esc(image.source)}" target="_blank" rel="noopener noreferrer">source and license</a> · ${esc(image.credit)}</figcaption></figure>`;
   };
 
   const render = items => {
