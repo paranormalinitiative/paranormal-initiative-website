@@ -42,6 +42,10 @@ remains an Administration Center moderation action.
 - The active `paper-editor.html` surface now exposes **Move to Trash** from the
   document's More menu, returns to the document list after removal, and keeps
   removed items available under a dedicated Removed filter.
+- Published items are excluded from **Documents** and **My Content** and appear
+  in the dedicated **Published** navigation section, so the workspace list
+  clearly separates editable working documents from public Education Center
+  publications.
 - Linked Nova documents remain owned by their author when an authorized manager
   edits them. Revisions continue to use the author's Nova owner identity, and
   locked submitted/in-review/approved documents remain read-only until the
@@ -84,18 +88,18 @@ publication boundary.
 
 ### Release evidence
 
-- Source commit: `ee214c494aad4da0ae18332de593326385b5703f`
+- Source commit: `3e7bf5cdb4f2facc5b8c2e0c73135623fd7a71d5`
 - GitHub parity: pushed to `origin/codex/tpi-development`
 - Release impact profile: `full` (the active editor surface and its protected
   content-control regression contract were changed; protected StudioFlow
   source was not modified)
 - Preflight result: certified; 40/40 full-platform release gates passed
-- Production release: `rel-ee214c494aad-62bb06506c39`
-- Production Worker version: `8878cf38-3e9e-4b1d-9680-9f8870ed0eb3`
+- Production release: `rel-3e7bf5cdb4f2-f02b4ab29878`
+- Production Worker version: `a0710145-8855-467b-b212-2cb4a6f39eda`
 - Live anonymous production smoke: 10/10 passed
 - Firefox Developer Edition production acceptance: passed with the disposable
   `production_qa` account; the owner profile was not accessed
-- Rollback reference: `7472d005-6ba9-4eca-9502-42431ac3e3c3`
+- Rollback reference: `8878cf38-3e9e-4b1d-9680-9f8870ed0eb3`
 
 The release guard also exercised the protected application boundary. The
 direct live Firefox run confirmed that the deployed site can still authenticate

@@ -29,12 +29,17 @@ approved; those changes continue through the protected Editorial Review
 boundary. The implementation record is [Nova Editorial Workspace Content
 Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md).
 
+Published items are now excluded from the main Documents and My Content lists
+and are shown in the dedicated Published section, so removing an editable
+working document cannot be confused with removing its public Education Center
+publication.
+
 Status: **DEPLOYED AND LIVE VERIFIED.** The maintained release completed with
 full-platform preflight **40/40**, live anonymous smoke **10/10**, and direct
 Firefox Developer Edition production acceptance using the disposable
-`production_qa` account. Release `rel-ee214c494aad-62bb06506c39` serves Worker
-`8878cf38-3e9e-4b1d-9680-9f8870ed0eb3` at 100% traffic. The rollback reference
-is `7472d005-6ba9-4eca-9502-42431ac3e3c3`. StudioFlow, Creator Studio, Nova
+`production_qa` account. Release `rel-3e7bf5cdb4f2-f02b4ab29878` serves Worker
+`a0710145-8855-467b-b212-2cb4a6f39eda` at 100% traffic. The rollback reference
+is `8878cf38-3e9e-4b1d-9680-9f8870ed0eb3`. StudioFlow, Creator Studio, Nova
 storage, private media, and owner data were not modified. See [Nova Editorial
 Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md)
 for the complete authorization, recovery, audit, and verification record.
