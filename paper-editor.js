@@ -2162,18 +2162,19 @@ ${articleHtml}
   // TPI-NOVA-005A2: Nova Documents home. One data source (loadEditorArticles, which reads
   // /api/contributors/me/articles); sidebar filters and counts are derived in memory.
   const NOVA_FILTERS = {
-    all: () => true,
-    mine: () => true,
-    draft: a => a.editorialStatus === "draft",
-    submitted: a => a.editorialStatus === "submitted",
-    in_review: a => a.editorialStatus === "in_review",
-    changes_requested: a => a.editorialStatus === "changes_requested",
-    approved: a => a.editorialStatus === "approved",
-    published: a => a.publicationState === "published"
+    all: a => a.status !== "deleted",
+    mine: a => a.status !== "deleted",
+    draft: a => a.status !== "deleted" && a.editorialStatus === "draft",
+    submitted: a => a.status !== "deleted" && a.editorialStatus === "submitted",
+    in_review: a => a.status !== "deleted" && a.editorialStatus === "in_review",
+    changes_requested: a => a.status !== "deleted" && a.editorialStatus === "changes_requested",
+    approved: a => a.status !== "deleted" && a.editorialStatus === "approved",
+    published: a => a.status !== "deleted" && a.publicationState === "published",
+    removed: a => a.status === "deleted"
   };
   const NOVA_FILTER_TITLES = {
     all: "Documents", mine: "My Content", draft: "Drafts", submitted: "Submitted",
-    in_review: "In Review", changes_requested: "Changes Requested", approved: "Approved", published: "Published"
+    in_review: "In Review", changes_requested: "Changes Requested", approved: "Approved", published: "Published", removed: "Removed"
   };
   const NOVA_CHIP_LABELS = {
     draft: "Draft", submitted: "Submitted", in_review: "In Review",
@@ -2247,7 +2248,7 @@ ${articleHtml}
           <span class="nova-doc-meta">${escapeHtml([article.contributionType || article.articleType || "Article", article.destination || ""].filter(Boolean).join(" · "))}</span>
         </span>
         <span class="nova-doc-states">
-          <span class="nova-chip nova-chip-${article.publicationState === "published" ? "published" : "muted"}">${escapeHtml(novaPublicationLabel(article.publicationState))}</span>
+          <span class="nova-chip nova-chip-${article.status === "deleted" ? "muted" : article.publicationState === "published" ? "published" : "muted"}">${escapeHtml(article.status === "deleted" ? "Removed" : novaPublicationLabel(article.publicationState))}</span>
           <span class="nova-chip nova-chip-workflow-${escapeHtml(article.workflowState)}">${escapeHtml(novaWorkflowLabel(article.workflowState))}</span>
         </span>
         <span class="nova-doc-time">${escapeHtml(formatNovaTime(article.updatedAt) || "")}</span>
@@ -2586,7 +2587,12 @@ ${articleHtml}
   }
 
   async function deleteContentArticle(articleId) {
-    if (!window.confirm("Remove this contribution from public view? TPI keeps its history so the removal is safe and auditable.")) return;
+    if (!articleId) {
+      setStatus("Open a document before moving it to Trash");
+      return;
+    }
+    if (!window.confirm("Move this document to Trash? It will leave public view while TPI preserves its history for recovery.")) return;
+    const wasCurrentDocument = currentArticleId === articleId;
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
         if (hasEditorialManagerAccess()) await window.TPIApi.deleteAdminArticle(articleId);
@@ -2598,9 +2604,13 @@ ${articleHtml}
     } else {
       savePublishedArticles(getPublishedArticles().filter(article => article.id !== articleId));
     }
-    if (currentArticleId === articleId) currentArticleId = null;
-    await renderContentLibraryList();
-    setStatus("Contribution removed from public view");
+    if (wasCurrentDocument) {
+      currentArticleId = null;
+      await showNovaHome();
+    } else {
+      await renderContentLibraryList();
+    }
+    setStatus("Document moved to Trash");
   }
 
   async function writeClipboard(value, message) {
@@ -2919,6 +2929,7 @@ ${articleHtml}
     if (action === "content-import-legacy") importLegacyArticle(button.dataset.articleId);
     if (action === "content-import-all-legacy") bulkConvertLegacyArticles();
     if (action === "content-delete") deleteContentArticle(button.dataset.articleId);
+    if (action === "content-delete-current") deleteContentArticle(currentArticleId);
     if (action === "writing-guides") openWritingGuides();
     if (action === "writing-guides-close") writingGuidesModal.hidden = true;
     if (action === "spellcheck-toggle") toggleSpellcheck(button);

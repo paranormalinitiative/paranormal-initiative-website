@@ -29,6 +29,9 @@ derogatory content while preserving an accountable record.
   metadata.
 - A removed article is separated into a Removed section in the workspace and
   is not offered as an editable draft.
+- The active `paper-editor.html` surface now exposes **Move to Trash** from the
+  document's More menu, returns to the document list after removal, and keeps
+  removed items available under a dedicated Removed filter.
 - Linked Nova documents remain owned by their author when an authorized manager
   edits them. Revisions continue to use the author's Nova owner identity, and
   locked submitted/in-review/approved documents remain read-only until the
