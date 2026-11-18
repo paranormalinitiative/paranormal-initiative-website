@@ -194,7 +194,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/contributors/me/profile") return requireMember(request, env, user => handleUpdateProfile(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/username") return requireMember(request, env, user => handleUpdateUsername(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
-    if (request.method === "GET" && path === "/contributors/me/articles") return requireContributor(request, env, user => handleContributorArticles(env, user));
+    if (request.method === "GET" && path === "/contributors/me/articles") return requireEditorialWorkspaceAccess(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/notifications") return requireMember(request, env, user => handleListNotifications(env, user));
     if (request.method === "GET" && path === "/notifications/unread-count") return requireMember(request, env, user => handleNotificationUnreadCount(env, user));
     if (request.method === "POST" && path === "/notifications/read-all") return requireMember(request, env, user => handleMarkAllNotificationsRead(request, env, user));
@@ -314,9 +314,9 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
-    if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
+    if (request.method === "POST" && path === "/articles") return requireEditorialWorkspaceAccess(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/nova$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleNovaLink(path, request, env, user));
-    if (request.method === "GET" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItem(path, env, user));
+    if (request.method === "GET" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleNovaItem(path, env, user));
     if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleNovaItemUpdate(path, request, env, user));
     if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/metadata$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleMetadataUpdate(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/resubmit$/)) return requireContributorArticleAccess(request, env, path, user => handleArticleResubmission(path, env, user));
@@ -750,7 +750,14 @@ async function handleLogin(request, env) {
     .bind(token, user.id, expires)
     .run();
 
-  return json({ user: privateMemberUser(user) }, 200, {
+  return json({ user: {
+    ...privateMemberUser(user),
+    // The editor uses the same server-resolved staff appointment as the
+    // Administration Center. A base member role must never hide an active
+    // executive/administrator appointment from a protected workspace.
+    staffIdentity: await publicStaffIdentity(env, user),
+    educationLeadershipAccess: await hasEducationLeadershipAccess(env, user),
+  } }, 200, {
     "Set-Cookie": `${SESSION_COOKIE}=${token}; ${sessionCookieAttributes(request, env, 60 * 60 * 24 * 14)}`
   });
 }
@@ -5188,9 +5195,11 @@ async function handleCreateArticle(request, env, user) {
   // Standard Education contributions publish directly by owner choice; they do
   // not need a reviewer/publisher approval round. Keep existing enrolled drafts
   // on their current workflow state while new content remains outside it.
-  // An existing article may only be changed by the contributor who created it.
-  // Ownership is never transferred through this endpoint.
-  if (existingArticle && existingArticle.created_by !== user.id) {
+  const editorialManager = await hasEditorialContentManagementAccess(env, user);
+  // Members keep ownership of their own work. Owner, Executive, Full
+  // Administrator, and Administrator appointments may manage another author's
+  // content, but ownership is never transferred through this endpoint.
+  if (existingArticle && existingArticle.created_by !== user.id && !editorialManager) {
     return json({ error: "This article belongs to another contributor." }, 403);
   }
   // TPI-NOVA-004R6C: enrolled articles cannot be published or edited outside the
@@ -5219,7 +5228,7 @@ async function handleCreateArticle(request, env, user) {
       labels = excluded.labels,
       status = excluded.status,
       updated_at = CURRENT_TIMESTAMP
-    WHERE articles.created_by = excluded.created_by
+    WHERE articles.created_by = excluded.created_by OR ? = 1
   `).bind(
     id,
     destination,
@@ -5233,7 +5242,8 @@ async function handleCreateArticle(request, env, user) {
     String(data.articleHtml || ""),
     labels,
     status,
-    user.id
+    user.id,
+    editorialManager ? 1 : 0
   ).run();
   // The conditional WHERE above blocks a race where another account claims the
   // id between the ownership check and the write.
@@ -5252,11 +5262,21 @@ async function handleCreateArticle(request, env, user) {
     });
   }
 
+  if (editorialManager && existingArticle && existingArticle.created_by !== user.id) {
+    await writeAdminAuditLog(env, user, "article.updated_by_manager", "article", id, {
+      title,
+      ownerId: existingArticle.created_by,
+      status,
+      editorialHistoryPreserved: true
+    });
+  }
+
   return json({ article: { id, href, destination, title, subtitle, contributionType, author, source, labels, status } });
 }
 
 async function handleAdminArticles(request, env, actingUser) {
   const url = new URL(request.url);
+  const includeContent = url.searchParams.get("includeContent") === "1";
   const search = clean(url.searchParams.get("search")).slice(0, 120);
   const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
   const status = ["draft", "published", "deleted", "all"].includes(requestedStatus) ? requestedStatus : "all";
@@ -5279,7 +5299,10 @@ async function handleAdminArticles(request, env, actingUser) {
     SELECT a.id, a.destination, a.href, a.title, a.subtitle,
            a.article_type AS contributionType, a.author,
            c.username AS authorUsername, c.display_name AS authorDisplayName,
-           a.source, a.labels, a.status, a.created_at AS createdAt, a.updated_at AS updatedAt
+           a.created_by AS createdBy, a.source, a.labels, a.status,
+           a.nova_item_id AS novaItemId, a.editorial_status AS editorialStatus,
+           ${includeContent ? "a.body_html AS bodyHtml, a.article_html AS articleHtml," : ""}
+           a.created_at AS createdAt, a.updated_at AS updatedAt
     FROM articles a
     LEFT JOIN contributors c ON c.id = a.created_by
     ${whereSql}
@@ -5292,8 +5315,8 @@ async function handleAdminArticles(request, env, actingUser) {
     search,
     status,
     pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
-    metadataOnly: true,
-    mutationBoundary: "Article publication status uses the protected administrative contract; article bodies remain on the contributor publishing workflow."
+    metadataOnly: !includeContent,
+    mutationBoundary: "Article ownership and deletion are server-enforced. Workflow-native public content remains protected by the editorial review boundary."
   }, 200, { "Cache-Control": "no-store" });
 }
 
@@ -5469,12 +5492,21 @@ async function handleListArticles(request, env) {
 }
 
 async function handleContributorArticles(env, user) {
+  const editorialManager = await hasEditorialContentManagementAccess(env, user);
+  const ownershipFilter = editorialManager ? "" : "WHERE a.created_by = ?";
+  const ownershipBinds = editorialManager ? [] : [user.id];
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, affiliation, organization, correspondence, website, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, nova_item_id AS novaItemId, created_at AS createdAt, updated_at AS updatedAt
-    FROM articles
-    WHERE created_by = ?
-    ORDER BY COALESCE(updated_at, created_at) DESC
-  `).bind(user.username, user.id).all();
+    SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author,
+      a.affiliation, a.organization, a.correspondence, a.website, c.username AS authorUsername,
+      c.display_name AS authorDisplayName, a.created_by AS createdBy, a.source,
+      a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status,
+      a.nova_item_id AS novaItemId, a.created_at AS createdAt, a.updated_at AS updatedAt,
+      a.editorial_status AS editorialStatus
+    FROM articles a
+    LEFT JOIN contributors c ON c.id = a.created_by
+    ${ownershipFilter}
+    ORDER BY COALESCE(a.updated_at, a.created_at) DESC
+  `).bind(...ownershipBinds).all();
   // TPI-NOVA-004R6C: a Contributor-safe workflow read model. It carries the state
   // and their own submission timing only; reviewer identity and notes stay private.
   const { results: workflow } = await env.TPI_DB.prepare(`
@@ -5487,8 +5519,8 @@ async function handleContributorArticles(env, user) {
       (SELECT n.version FROM nova_items n WHERE n.id = a.nova_item_id AND n.owner_id = a.created_by AND n.deleted_at IS NULL AND n.status <> 'deleted') AS currentNovaVersion,
       (SELECT e.note FROM article_editorial_events e WHERE e.article_id = a.id AND e.event_type = 'changes_requested' AND e.visible_to_contributor = 1 ORDER BY e.created_at DESC, e.rowid DESC LIMIT 1) AS reviewFeedback,
       (SELECT e.created_at FROM article_editorial_events e WHERE e.article_id = a.id AND e.event_type = 'changes_requested' AND e.visible_to_contributor = 1 ORDER BY e.created_at DESC, e.rowid DESC LIMIT 1) AS reviewFeedbackAt
-    FROM articles a WHERE a.created_by = ?
-  `).bind(user.id).all();
+    FROM articles a ${ownershipFilter}
+  `).bind(...ownershipBinds).all();
   const byId = new Map(workflow.map(row => [row.id, row]));
   const articles = results.map(article => {
     const flow = byId.get(article.id) || {};
@@ -5519,7 +5551,9 @@ async function handleContributorArticles(env, user) {
       publishedAt: flow.publishedAt || null,
       reviewFeedback: showFeedback ? flow.reviewFeedback || null : null,
       reviewFeedbackAt: showFeedback ? flow.reviewFeedbackAt || null : null,
-      locked: isNovaLocked(flow.editorialStatus)
+      locked: isNovaLocked(flow.editorialStatus),
+      canManage: editorialManager || article.createdBy === user.id,
+      isEditorialManager: editorialManager
     };
   });
   return json({ articles });
@@ -5573,11 +5607,13 @@ async function resolveArticleNovaItem(path, env, user) {
   if (!articleId) return { response: json({ error: "Article id is required." }, 400) };
   const article = await env.TPI_DB.prepare("SELECT id, created_by, nova_item_id FROM articles WHERE id = ?").bind(articleId).first();
   if (!article) return { response: json({ error: "Article not found." }, 404) };
-  if (article.created_by !== user.id) return { response: json({ error: "This article belongs to another contributor." }, 403) };
+  const editorialManager = await hasEditorialContentManagementAccess(env, user);
+  if (article.created_by !== user.id && !editorialManager) return { response: json({ error: "This article belongs to another contributor." }, 403) };
   if (!article.nova_item_id) return { response: json({ error: "This article is not linked to a Nova document.", code: "nova_not_linked" }, 409) };
-  const item = await getOwnedNovaItem(env, article.nova_item_id, user.id);
+  const itemOwnerId = article.created_by;
+  const item = await getOwnedNovaItem(env, article.nova_item_id, itemOwnerId);
   if (!item) return { response: json({ error: "The linked Nova document is not available to this contributor.", code: "nova_item_not_found" }, 404) };
-  return { article, item };
+  return { article, item, itemOwnerId, editorialManager };
 }
 
 async function handleArticleNovaItem(path, env, user) {
@@ -5593,7 +5629,14 @@ async function handleArticleNovaItemUpdate(path, request, env, user) {
   if (resolved.response) return resolved.response;
   let data;
   try { data = await request.json(); } catch { return json({ error: "Invalid Nova document." }, 400); }
-  const response = await updateNovaItemForOwner(env, user, resolved.article.nova_item_id, data || {});
+  const response = await updateNovaItemForOwner(env, user, resolved.article.nova_item_id, data || {}, { ownerId: resolved.itemOwnerId });
+  if (resolved.editorialManager && response.ok) {
+    await writeAdminAuditLog(env, user, "article.nova_document_updated_by_manager", "article", resolved.article.id, {
+      ownerId: resolved.article.created_by,
+      novaItemId: resolved.article.nova_item_id,
+      editorialHistoryPreserved: true
+    });
+  }
   return response;
 }
 
@@ -5628,11 +5671,36 @@ async function hasEducationLeadershipAccess(env, user) {
   }
 }
 
+// TPI-NOVA-EDITORIAL-CONTENT-CONTROLS: these roles may manage any article or
+// paper through the protected editorial surface. The effective appointment is
+// resolved server-side; a client-supplied title or base role is never trusted.
+const EDITORIAL_CONTENT_MANAGER_ROLES = new Set(["owner", "executive", "full_administrator", "administrator"]);
+
+async function hasEditorialContentManagementAccess(env, user) {
+  if (!user?.id) return false;
+  try {
+    return EDITORIAL_CONTENT_MANAGER_ROLES.has(await effectiveStaffRole(env, user));
+  } catch {
+    return false;
+  }
+}
+
+async function requireEditorialWorkspaceAccess(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Contributor login required." }, 401);
+  if (await hasEditorialContentManagementAccess(env, user)
+      || await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR)) {
+    return handler(user);
+  }
+  return json({ error: "Contributor or authorized editorial manager access is required." }, 403);
+}
+
 async function requireContributorArticleAccess(request, env, path, handler) {
   const user = await getSessionUser(request, env);
   if (!user) return json({ error: "Contributor login required." }, 401);
-  if (!(await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR))) {
-    return json({ error: "Contributor access is required." }, 403);
+  const editorialManager = await hasEditorialContentManagementAccess(env, user);
+  if (!editorialManager && !(await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR))) {
+    return json({ error: "Contributor or authorized editorial manager access is required." }, 403);
   }
   const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").split("/")[0] || ""));
   if (articleId) {
@@ -5663,9 +5731,17 @@ const ARTICLE_METADATA_MAX_LENGTH = Object.freeze({ title: 300, subtitle: 300, d
 async function handleArticleMetadataUpdate(path, request, env, user) {
   const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/metadata$/, "")));
   if (!articleId) return json({ error: "Article id is required." }, 400);
-  const loaded = await loadOwnedArticleForWorkflow(env, articleId, user);
-  if (loaded.response) return loaded.response;
-  const { article } = loaded;
+  const editorialManager = await hasEditorialContentManagementAccess(env, user);
+  let article;
+  if (editorialManager) {
+    article = await env.TPI_DB.prepare("SELECT id, destination, article_type, created_by, nova_item_id, status, editorial_status FROM articles WHERE id = ?").bind(articleId).first();
+    if (!article) return json({ error: "Article not found." }, 404);
+    if (article.status === "deleted") return json({ error: "This article was removed and cannot be edited.", code: "article_moderation_removed" }, 409);
+  } else {
+    const loaded = await loadOwnedArticleForWorkflow(env, articleId, user);
+    if (loaded.response) return loaded.response;
+    article = loaded.article;
+  }
   if (!article.nova_item_id) return json({ error: "Only Nova-linked articles accept metadata through this route.", code: "nova_link_required" }, 409);
   if (isNovaLocked(article.editorial_status)) {
     return json({ error: "Metadata is locked while this article is submitted, in review or approved.", code: "workflow_locked" }, 409);
@@ -5692,9 +5768,16 @@ async function handleArticleMetadataUpdate(path, request, env, user) {
     values.push(value);
   }
   if (!sets.length) return json({ error: "No metadata fields were provided.", code: "field_invalid" }, 400);
-  await env.TPI_DB.prepare(`UPDATE articles SET ${sets.join(", ")}, updated_at = ? WHERE id = ? AND created_by = ?`)
-    .bind(...values, new Date().toISOString(), articleId, user.id).run();
+  await env.TPI_DB.prepare(`UPDATE articles SET ${sets.join(", ")}, updated_at = ? WHERE id = ? AND (created_by = ? OR ? = 1)`)
+    .bind(...values, new Date().toISOString(), articleId, user.id, editorialManager ? 1 : 0).run();
   const row = await env.TPI_DB.prepare("SELECT id, title, subtitle, destination, article_type AS contributionType, author FROM articles WHERE id = ?").bind(articleId).first();
+  if (editorialManager && article.created_by !== user.id) {
+    await writeAdminAuditLog(env, user, "article.metadata_updated_by_manager", "article", articleId, {
+      ownerId: article.created_by,
+      fields: Object.keys(data),
+      editorialHistoryPreserved: true
+    });
+  }
   return json({ article: row });
 }
 
@@ -5728,13 +5811,23 @@ async function novaPurgeDocument(env, itemId, ownerId) {
 async function handleDeleteArticle(path, env, user) {
   const id = clean(decodeURIComponent(path.replace(/^\/articles\//, "")));
   if (!id) return json({ error: "Article id is required." }, 400);
-  const article = await env.TPI_DB.prepare("SELECT id, created_by FROM articles WHERE id = ?").bind(id).first();
+  const article = await env.TPI_DB.prepare("SELECT id, title, status, destination, article_type AS contributionType, created_by FROM articles WHERE id = ?").bind(id).first();
   if (!article) return json({ deleted: false });
-  if (article.created_by !== user.id && !["owner", "admin"].includes(user.role)) {
+  const editorialManager = await hasEditorialContentManagementAccess(env, user);
+  if (article.created_by !== user.id && !editorialManager) {
     return json({ error: "You can only delete your own articles." }, 403);
   }
-  await env.TPI_DB.prepare("DELETE FROM articles WHERE id = ?").bind(id).run();
-  return json({ deleted: true, id });
+  if (article.status === "deleted") return json({ deleted: true, changed: false, id, removedFromPublic: true, editorialHistoryPreserved: true });
+  const update = await env.TPI_DB.prepare("UPDATE articles SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status != 'deleted'").bind(id).run();
+  if (!Number(update.meta?.changes || 0)) return json({ error: "This article changed before removal completed. Refresh and try again.", code: "ARTICLE_DELETE_CONFLICT" }, 409);
+  await writeAdminAuditLog(env, user, editorialManager ? "article.moderation_removed" : "article.author_removed", "article", id, {
+    title: article.title,
+    previousStatus: article.status,
+    destination: article.destination,
+    contributionType: article.contributionType,
+    editorialHistoryPreserved: true
+  });
+  return json({ deleted: true, changed: true, id, removedFromPublic: true, editorialHistoryPreserved: true });
 }
 
 // TPI-NOVA-004R6C: Contributor submission workflow. Transition rules live in

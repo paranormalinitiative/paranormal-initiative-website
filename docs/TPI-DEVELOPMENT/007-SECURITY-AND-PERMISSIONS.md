@@ -167,3 +167,17 @@ live Education Center item.
 Every administrative and editorial API must continue to enforce authorization
 server-side. No entitlement change may be implemented from client-side state
 alone.
+
+### Nova Editorial Workspace content controls
+
+Article and research-paper ownership remains attached to the creating member.
+That member may edit and remove their own work. Removal is a recoverable
+`deleted` state that removes the item from public lists while preserving the
+article row, linked Nova document, revisions, and an audit record.
+
+The effective `owner`, `executive`, `full_administrator`, and `administrator`
+staff roles may manage any article through the protected editorial surface.
+Moderators do not receive blanket article ownership or deletion authority.
+Linked Nova documents keep their original owner when an authorized manager
+edits them, and documents locked by the editorial review workflow remain
+server-side read-only until that workflow permits changes.

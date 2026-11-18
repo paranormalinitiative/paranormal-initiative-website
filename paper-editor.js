@@ -454,8 +454,14 @@
     savedSelection = range.cloneRange();
   }
 
+  const EDITORIAL_MANAGER_ROLES = new Set(["owner", "executive", "full_administrator", "administrator"]);
+  function hasEditorialManagerAccess(user = currentUser) {
+    const staffRole = String(user?.staffIdentity?.role || user?.staffRole || "").toLowerCase();
+    return String(user?.role || "").toLowerCase() === "owner" || EDITORIAL_MANAGER_ROLES.has(staffRole);
+  }
+
   function hasContributorAccess(user) {
-    return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase());
+    return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase()) || hasEditorialManagerAccess(user);
   }
 
   const LEADERSHIP_ONLY_DESTINATIONS = new Set(["ghostology-101.html", "ghostology.html", "tpi-videos.html"]);
@@ -570,6 +576,7 @@
           displayName: result.user.displayName,
           title: result.user.title,
           role: result.user.role,
+          staffIdentity: result.user.staffIdentity,
           educationLeadershipAccess: result.user.educationLeadershipAccess === true,
           correspondence: result.user.correspondence,
           affiliation: result.user.affiliation,
@@ -2004,7 +2011,9 @@ ${articleHtml}
     let articles = [];
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
-        const data = await window.TPIApi.contributorArticles();
+        const data = hasEditorialManagerAccess()
+          ? await window.TPIApi.adminArticles({ status: "all", includeContent: true, pageSize: 100 })
+          : await window.TPIApi.contributorArticles();
         articles = data.articles || [];
       } catch (error) {
         setStatus(error.message || "Could not load content");
@@ -2039,12 +2048,12 @@ ${articleHtml}
     modal.innerHTML = `
       <div class="media-modal-card content-library-card" data-floating-modal-card role="dialog" aria-modal="true" aria-labelledby="content-library-title">
         <div class="media-modal-header">
-          <h3 id="content-library-title">My Content</h3>
+          <h3 id="content-library-title">${hasEditorialManagerAccess() ? "All Content" : "My Content"}</h3>
           <span class="modal-drag-handle" data-modal-drag-handle>Move</span>
           <button type="button" data-action="content-library-close">Close</button>
         </div>
         <div class="media-modal-body content-library-body">
-          <p class="access-note">Open drafts and published articles to edit them here. Legacy pages are a conversion queue: once a legacy page is saved or published from the editor, it leaves the legacy list.</p>
+          <p class="access-note">${hasEditorialManagerAccess() ? "Authorized editorial managers can review, edit, or safely remove any article. Workflow-native documents remain subject to the protected review boundary." : "Open drafts and published articles to edit them here. Legacy pages are a conversion queue: once a legacy page is saved or published from the editor, it leaves the legacy list."}</p>
           <div id="content-library-list" class="content-library-list"><p class="access-note">Loading content...</p></div>
         </div>
       </div>
@@ -2340,12 +2349,14 @@ ${articleHtml}
     const host = document.getElementById("content-library-list");
     if (!host) return;
     const articles = await loadEditorArticles();
-    const drafts = articles.filter(article => article.status !== "published" && article.status !== "legacy-published");
+    const removed = articles.filter(article => article.status === "deleted");
+    const drafts = articles.filter(article => article.status !== "published" && article.status !== "legacy-published" && article.status !== "deleted");
     const published = articles.filter(article => article.status === "published");
     const legacy = articles.filter(article => article.status === "legacy-published");
     host.innerHTML = `
       ${renderContentLibrarySection("Drafts", drafts)}
       ${renderContentLibrarySection("Published", published)}
+      ${renderContentLibrarySection("Removed", removed)}
       ${renderContentLibrarySection("Legacy Conversion Queue", legacy)}
     `;
   }
@@ -2355,6 +2366,7 @@ ${articleHtml}
     const emptyMessages = {
       Drafts: "No drafts yet. Saved drafts will appear here so you can keep working on them.",
       Published: "No published articles yet. Once you publish from the editor, those articles will appear here.",
+      Removed: "No removed articles. Removed content is kept out of public pages with its history preserved.",
       "Legacy Conversion Queue": "No remaining legacy pages found for this profile."
     };
     if (!items.length) {
@@ -2387,9 +2399,9 @@ ${articleHtml}
           ${!article.legacy && getLegacySourceTitle(article.source) ? `<em class="legacy-archive-note">Converted from legacy page: ${escapeHtml(getLegacySourceTitle(article.source))}</em>` : ""}
             </div>
             <div class="content-library-actions">
-              <button type="button" data-action="${article.legacy ? "content-import-legacy" : "content-edit"}" data-article-id="${escapeHtml(article.id)}">${article.legacy ? "Convert" : "Edit"}</button>
+              ${article.status === "deleted" ? `<span class="access-note">Removed from public view</span>` : `<button type="button" data-action="${article.legacy ? "content-import-legacy" : "content-edit"}" data-article-id="${escapeHtml(article.id)}">${article.legacy ? "Convert" : "Edit"}</button>`}
               ${article.status === "published" ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open</a>` : ""}
-              ${article.legacy ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href)}">Open</a>` : `<button type="button" data-action="content-delete" data-article-id="${escapeHtml(article.id)}">Delete</button>`}
+              ${article.status === "deleted" ? "" : article.legacy ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href)}">Open</a>` : `<button type="button" data-action="content-delete" data-article-id="${escapeHtml(article.id)}">Delete</button>`}
             </div>
           </div>
         `).join("")}
@@ -2574,10 +2586,11 @@ ${articleHtml}
   }
 
   async function deleteContentArticle(articleId) {
-    if (!window.confirm("Delete this contribution? This removes it from your dashboard and published lists.")) return;
+    if (!window.confirm("Remove this contribution from public view? TPI keeps its history so the removal is safe and auditable.")) return;
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
-        await window.TPIApi.deleteArticle(articleId);
+        if (hasEditorialManagerAccess()) await window.TPIApi.deleteAdminArticle(articleId);
+        else await window.TPIApi.deleteArticle(articleId);
       } catch (error) {
         setStatus(error.message || "Delete failed");
         return;
@@ -2587,7 +2600,7 @@ ${articleHtml}
     }
     if (currentArticleId === articleId) currentArticleId = null;
     await renderContentLibraryList();
-    setStatus("Contribution deleted");
+    setStatus("Contribution removed from public view");
   }
 
   async function writeClipboard(value, message) {
@@ -3049,6 +3062,7 @@ ${articleHtml}
             displayName: result.user.displayName,
             title: result.user.title,
             role: result.user.role,
+            staffIdentity: result.user.staffIdentity,
             educationLeadershipAccess: result.user.educationLeadershipAccess === true,
             correspondence: result.user.correspondence,
             affiliation: result.user.affiliation,

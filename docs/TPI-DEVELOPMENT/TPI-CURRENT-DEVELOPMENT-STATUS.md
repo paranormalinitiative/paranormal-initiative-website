@@ -14,6 +14,21 @@ workflow retain their recorded state until a separate migration decision is
 made. The older review-and-publisher records below are historical evidence, not
 the current default for new Education Center work.
 
+## 2026-11-18 — Nova Editorial Workspace content controls
+
+Source implementation now gives a member edit and remove controls for their
+own articles and research papers. Owner, Executive, Full Administrator, and
+Administrator staff appointments receive an all-content management view with
+server-enforced edit and removal authority. Removal is a recoverable soft
+delete that removes the article from public lists, preserves the linked Nova
+document and revision history, and writes an audit record. Workflow-native
+documents remain locked while submitted, in review, or approved; those changes
+continue through the protected Editorial Review boundary. The implementation
+record is [Nova Editorial Workspace Content Controls](300-COMPLETED-WORK/2026-11-18-NOVA-EDITORIAL-CONTENT-CONTROLS.md).
+
+Release and live Firefox acceptance evidence will be added to that record after
+the maintained production runbook completes.
+
 ## 2026-11-18 — Haunted Location Directory state coverage
 
 All 50 state pages now have directory coverage. The 25 previously reserved

@@ -101,6 +101,7 @@
     "verify:nova-004r6e": "node scripts/verify/tpi-nova-004r6e-publish.mjs",
     "verify:nova-004r6f": "node scripts/verify/tpi-nova-004r6f-revision.mjs",
   "verify:nova-editorial-production-schema": "node scripts/verify/tpi-nova-editorial-production-schema.mjs",
+    "verify:nova-editorial-content-controls": "node scripts/verify/tpi-nova-editorial-content-controls.mjs",
     "build:nova": "npm --prefix nova-app run build",
     "build:content-editor-nova": "npm --prefix nova-app run build:content-editor"
   },

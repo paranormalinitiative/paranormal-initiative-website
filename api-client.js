@@ -97,6 +97,15 @@
     uploadMessengerMedia: file => upload("/uploads/messenger-media", file),
     uploadArticleMedia: file => upload("/uploads/article-media", file),
     contributorArticles: () => request("/contributors/me/articles"),
+    adminArticles: (options = {}) => {
+      const params = new URLSearchParams({
+        status: options.status || "all",
+        includeContent: options.includeContent ? "1" : "0",
+        page: String(options.page || 1),
+        pageSize: String(options.pageSize || 100)
+      });
+      return request(`/admin/articles?${params.toString()}`);
+    },
     publicProfile: username => request(`/contributors/profile?username=${encodeURIComponent(username)}`),
     memberProfile: username => request(`/members/profile?username=${encodeURIComponent(username || "")}`),
     discoverMembers: () => request("/members/discover"),
@@ -110,6 +119,7 @@
     listArticles: destination => request(`/articles${destination ? `?destination=${encodeURIComponent(destination)}` : ""}`),
     createArticle: payload => request("/articles", { method: "POST", body: payload }),
     deleteArticle: id => request(`/articles/${encodeURIComponent(id)}`, { method: "DELETE" }),
+    deleteAdminArticle: id => request(`/admin/articles/${encodeURIComponent(id)}`, { method: "DELETE" }),
     articleReactions: pageId => request(`/articles/reactions?pageId=${encodeURIComponent(pageId)}`),
     setArticleReaction: (pageId, reaction) => request("/articles/reactions", { method: "POST", body: { pageId, reaction } }),
     communityFeed: (limit, offset, scope, postId) => request(`/feed?limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}${scope ? `&scope=${encodeURIComponent(scope)}` : ""}${postId ? `&postId=${encodeURIComponent(postId)}` : ""}`),
