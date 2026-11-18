@@ -39,6 +39,11 @@ treatment only when it does not alter the identity of the place.
   page's canonical state name. This keeps Minnesota, Michigan, or any future
   state label tied to the location data instead of relying on text baked into
   an image or a manual label that can drift.
+- The shared case-file viewer now keeps the complete image inside its display
+  frame with `object-fit: contain`; clicking the image opens a larger
+  lightbox, and Escape or outside-click closes it. The viewer is loaded on
+  every state page that uses case-file imagery, including the custom Michigan
+  renderer, so images are not cropped on one page and fixed on another.
 - The remaining locations are intentionally pending source-by-source image
   review; no guessed image is published.
 - The maintained local Worker refresh now includes
@@ -58,6 +63,7 @@ treatment only when it does not alter the identity of the place.
 ```text
 node --check haunted-location-directory/state-directory.js
 node --check haunted-location-directory/case-file-sources.js
+node --check haunted-location-directory/case-file-viewer.js
 node --check scripts/qa/tpi-haunted-location-directory.mjs
 npm run verify:haunted-location-directory
 TPI haunted-location-directory verification passed: 50 state pages, 100 new starter entries, no placeholders.
@@ -69,10 +75,10 @@ production smoke passing 10/10 and the new Worker holding 100% traffic.
 
 ## Release record
 
-- Source commit: `3f9425e2490ebf7ff0e8629398050fddb752518e`
-- Release candidate: `rel-3f9425e2490e-e2399f37bddc`
-- Production Worker version: `37db4ee7-e211-468b-a5fe-624fda8a6018`
-- Rollback target: `71110d1d-2533-4972-8c73-c258ce2091f8`
+- Source commit: `5dc2ea40f970fae940e9acf0dc43a18da7bcccc1`
+- Release candidate: `rel-5dc2ea40f970-38385d60d9d9`
+- Production Worker version: `d34efc2e-1d22-4907-869e-4c082160de7b`
+- Rollback target: `37db4ee7-e211-468b-a5fe-624fda8a6018`
 - Release profile: website; protected application integrity guard passed
 - Production smoke: **10/10 passed**
 - Firefox Developer Edition acceptance: not required by the website-only
