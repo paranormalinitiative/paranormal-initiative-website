@@ -14,6 +14,32 @@ workflow retain their recorded state until a separate migration decision is
 made. The older review-and-publisher records below are historical evidence, not
 the current default for new Education Center work.
 
+## 2026-11-18 — Founding member application access repair
+
+Status: **DEPLOYED AND LIVE VERIFIED.** Active founding memberships now drive
+application navigation and access through the shared server entitlement
+resolver. Founding Creator members receive StudioFlow, Founding Contributor
+members receive Nova Editorial Workspace, and Founding All-Access members
+receive both. Future assignments use the same dynamic resolver; no member-
+specific navigation exception is required.
+
+Bill Heiland's active production `FAA-002` record was correct and resolved to
+both capabilities. The defect was that the member shell and Nova editor used
+the legacy base `member` role instead of the server-derived capability flags.
+The repair changed the shared session payload and client gates while keeping
+the server route/API checks authoritative. No production membership,
+entitlement, owner account, or member data was changed.
+
+The release-consistency safeguard now waits for Cloudflare's settled 100%
+traffic state before accepting a deployment or rolling back. Focused
+authorization passed **18/18**; full preflight passed **40 gates**; local
+authentication passed **38/38**; live anonymous smoke passed **10/10**; and
+isolated production Firefox acceptance passed **65/65**. Release
+`rel-5bb583755b75-4f082098b483` deployed Worker
+`abe9b70b-115f-4dd0-a773-d4ebd195b39c` at 100% traffic. Rollback reference:
+`351b5e6a-1d83-4283-8a2d-e9e48820eb41`. See [Founding Member Product Access
+Repair](300-COMPLETED-WORK/2026-11-18-FOUNDING-MEMBER-PRODUCT-ACCESS-REPAIR.md).
+
 ## 2026-11-18 — Nova Editorial Workspace content controls
 
 Source implementation now gives a member edit and document-removal controls
