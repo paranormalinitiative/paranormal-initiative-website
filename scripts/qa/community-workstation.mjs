@@ -14,6 +14,7 @@ const shell = readFileSync(resolve(root, "member-shell.js"), "utf8");
 const memberShellCss = readFileSync(resolve(root, "member-shell.css"), "utf8");
 const migration = readFileSync(resolve(root, "migrations/0065_member_social_and_bug_reports.sql"), "utf8");
 const locationMigration = readFileSync(resolve(root, "migrations/0074_haunted_location_submissions.sql"), "utf8");
+const locationSubmitPage = readFileSync(resolve(root, "haunted-location-submit.html"), "utf8");
 const friends = readFileSync(resolve(root, "friends.html"), "utf8");
 
 check("Friends page exists", existsSync(resolve(root, "friends.html")));
@@ -24,6 +25,7 @@ check("Friends routes are authenticated", api.includes('path === "/friends"') &&
 check("Bug reports are authenticated", api.includes('path === "/bug-reports"') && api.includes('requireMember'));
 check("Bug reports enter the protected admin queue", api.includes("'bug' AS reportType") && api.includes("member_bug_reports") && api.includes("reportType === \"messenger\""));
 check("Haunted location submissions are member-only research candidates", existsSync(resolve(root, "haunted-location-submit.html")) && api.includes('path === "/haunted-location-submissions"') && api.includes("requireMember") && api.includes("Nothing is published automatically") && locationMigration.includes("CREATE TABLE IF NOT EXISTS haunted_location_submissions") && locationMigration.includes("status TEXT NOT NULL DEFAULT 'open'"));
+check("Haunted location submission form follows shared TPI styling", locationSubmitPage.includes("var(--bg-card)") && locationSubmitPage.includes("var(--border-default)") && locationSubmitPage.includes("padding-inline: clamp(18px, 3.5vw, 44px)") && locationSubmitPage.includes("input:not([type=\"checkbox\"])") && locationSubmitPage.includes("accent-color: var(--accent)") && locationSubmitPage.includes("@media (max-width: 680px)"));
 check("Messenger identities preserve a readable name and username", shell.includes("chatMemberName") && shell.includes("chatMemberUsername") && shell.includes("member-chat-author-username"));
 check("Chat navigation is the authenticated Messenger home", sidebar.includes('data-nav="chat"') && sidebar.includes('data-messenger-trigger') && sidebar.includes('aria-controls="member-floating-chat"'));
 check("Chat navigation opens and restores Messenger", shell.includes("setupMessengerNavigation") && shell.includes("window.TPIMessenger.show") && shell.includes("isOpen"));
