@@ -14,6 +14,13 @@ change under `functions/`, `lib/`, `worker.js`, or Wrangler configuration. This
 keeps the protection strong without allowing a broad risk tier to imply that
 stable applications must be touched on every release.
 
+The lock is **DEPLOYED AND LIVE VERIFIED**. Release
+`rel-5cb78d002c46-17f52656cb12` deployed Worker version
+`f0538997-789a-4857-ad2d-0e1cc2cd359f` to 100% traffic. Production smoke passed
+**10/10**. The production upload contained only release metadata; no protected
+StudioFlow or Nova application asset changed. See [Protected Application
+Maintenance Lock](300-COMPLETED-WORK/2026-11-18-PROTECTED-APPLICATION-MAINTENANCE-LOCK.md).
+
 ## 2026-11-18 — Nova login-return and transient session repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.**

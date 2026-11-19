@@ -67,20 +67,24 @@ finish with `READY`. `release:production` must finish with
 ## Latest verified release record
 
 The latest successful application deployment used website source commit
-`710b6c9126f5d387a09632bc1263af2ea40375d7` and authoritative StudioFlow source
-commit `2c7c651f34839b0115596d632f1009214e4cd63d`. It deployed Worker version
-`6c84d19b-6e50-4d5d-a6d7-75da5152cf12` on 2026-11-14. The immediate rollback
-reference is `aabd3b01-6769-4402-b05a-b06cbe964c1c`. The detailed record is
-`300-COMPLETED-WORK/2026-11-14-PASSWORD-HASH-MODERNIZATION.md`.
+`5cb78d002c4692b51f1de99ae940eed4d5a93523` and the unchanged authoritative
+StudioFlow source commit `882237ae1944f09a4f529ef94905917910c52eff`. It
+deployed Worker version `f0538997-789a-4857-ad2d-0e1cc2cd359f` on 2026-11-19
+with the protected application maintenance lock active. The immediate rollback
+reference is `6c6738b2-d2e5-433a-abde-c08a52ed498f`. The detailed record is
+`300-COMPLETED-WORK/2026-11-18-PROTECTED-APPLICATION-MAINTENANCE-LOCK.md`.
 
-That release passed the full Tier-1 certified preflight with 35 gates,
+That release passed the full Tier-1 certified preflight with 20 recorded gates,
 including password-hash compatibility, legacy Admin and recovery checks,
-isolated D1/R2 E2E, StudioFlow lifecycle/browser acceptance, Cloudflare and
-rollback checks, and the guarded Wrangler dry-run. Production then passed
-anonymous smoke 10/10 and isolated Firefox Developer Edition acceptance 65/65
-with the synthetic production QA account. It made no D1 migration, R2 object
-deletion, Crossroads mutation, or owner-browser storage change. Every future
-release must execute the commands above again.
+isolated D1/R2 E2E, shared Worker/API checks, Cloudflare and rollback checks,
+and the guarded Wrangler dry-run. The protected application maintenance lock
+intentionally skipped the optional StudioFlow workspace build and protected
+application browser suite while the immutable byte-integrity guard passed.
+Production then passed anonymous smoke 10/10. The earlier Nova login repair
+remains the latest separate release with isolated Firefox acceptance 65/65.
+This release made no D1 migration, R2 object deletion, Crossroads mutation, or
+owner-browser storage change. Every future release must execute the commands
+above again.
 
 The production command opens a new isolated Firefox Developer Edition profile
 and authenticates with the dedicated synthetic `qa-studioflow-*` member account

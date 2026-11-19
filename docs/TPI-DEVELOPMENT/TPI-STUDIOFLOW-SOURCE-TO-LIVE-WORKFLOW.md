@@ -41,6 +41,10 @@ What changed is the *order of work*, not the workflow.
   suite. A direct application change or shared Worker/runtime change reopens
   those checks automatically.
 
+The maintenance lock is live as of the 2026-11-19 release: Worker
+`f0538997-789a-4857-ad2d-0e1cc2cd359f` is at 100% traffic, the production upload
+changed only release metadata, and anonymous production smoke passed 10/10.
+
 ## 2026-11-16 destination and library audit
 
 The approved StudioFlow source is the release-lineage commit
