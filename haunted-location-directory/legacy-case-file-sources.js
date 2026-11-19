@@ -52,5 +52,59 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/gaines-ridge-dinner-club-case-file.png',
     source: 'Owner-supplied source photograph',
     credit: 'Provided by the TPI owner for TPI use'
+  },
+  'al-marion-kenworthy': {
+    image: 'case-file-photos/kenworthy-hall.jpg',
+    caseFileImage: 'case-file-photos/kenworthy-hall-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Kenworthy_Hall.jpg',
+    credit: 'RuralSWAlabama — CC BY-SA 3.0'
+  },
+  'al-florence-sweetwater': {
+    image: 'case-file-photos/sweetwater-mansion.jpg',
+    caseFileImage: 'case-file-photos/sweetwater-mansion-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Sweetwater_Mansion_Florence.jpg',
+    credit: 'E.W. Burkhardt and W. N. Manning — public domain'
+  },
+  'al-birmingham-tutwiler': {
+    image: 'case-file-photos/tutwiler-hotel.jpg',
+    caseFileImage: 'case-file-photos/tutwiler-hotel-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Tutwiler_Hotel,_Birmingham,_AL.jpg',
+    credit: 'Charlie Brenner — CC BY-SA 2.0'
+  },
+  'al-huntsville-deadchildrens': {
+    image: 'case-file-photos/dead-childrens-playground.jpg',
+    caseFileImage: 'case-file-photos/dead-childrens-playground-case-file.png',
+    source: 'https://www.huntsville.org/blog/list/post/ghosts-of-the-rocket-city-huntsvilles-haunted-history/',
+    credit: 'Visit Huntsville source image; reuse terms not stated on retrieved page'
+  },
+  'al-tuscaloosa-drishhouse': {
+    image: 'case-file-photos/drish-house.jpg',
+    caseFileImage: 'case-file-photos/drish-house-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Drish_House_Tuscaloosa_01.jpg',
+    credit: 'Carol M. Highsmith — public domain'
+  },
+  'al-carrollton-pickens': {
+    image: 'case-file-photos/pickens-county-courthouse.jpg',
+    caseFileImage: 'case-file-photos/pickens-county-courthouse-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Pickens_County_Courthouse_2.jpg',
+    credit: 'Calvin Beale — public domain'
+  },
+  'al-montgomery-capitol': {
+    image: 'case-file-photos/alabama-state-capitol.jpg',
+    caseFileImage: 'case-file-photos/alabama-state-capitol-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Alabama_State_Capitol,_Montgomery,_West_view_20160713_1.jpg',
+    credit: 'DXR — CC BY-SA 4.0'
+  },
+  'al-montgomery-pratthall': {
+    image: 'case-file-photos/pratt-hall.jpg',
+    caseFileImage: 'case-file-photos/pratt-hall-case-file.png',
+    source: 'https://leepeacock2010.blogspot.com/2014/02/bucket-list-update-no-126-visit-pratt.html',
+    credit: 'Lee Peacock source image; reuse terms not stated on retrieved page'
+  },
+  'al-huntsville-cedarhurst': {
+    image: 'case-file-photos/cedarhurst-mansion.jpg',
+    caseFileImage: 'case-file-photos/cedarhurst-mansion-case-file.png',
+    source: 'https://www.huntsville.org/blog/list/post/ghosts-of-the-rocket-city-huntsvilles-haunted-history/',
+    credit: 'Visit Huntsville source image; reuse terms not stated on retrieved page'
   }
 };

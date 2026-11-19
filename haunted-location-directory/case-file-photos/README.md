@@ -27,6 +27,24 @@ license obligations.
 - `old-cahawba-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
 - `gaines-ridge-dinner-club.jpg` — exact owner-supplied source photograph.
 - `gaines-ridge-dinner-club-case-file.png` — stylized TPI case-file treatment derived from the owner-supplied exact source photograph.
+- `kenworthy-hall.jpg` — RuralSWAlabama, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Kenworthy_Hall.jpg>
+- `kenworthy-hall-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `sweetwater-mansion.jpg` — E.W. Burkhardt and W. N. Manning, public domain. Source: <https://commons.wikimedia.org/wiki/File:Sweetwater_Mansion_Florence.jpg>
+- `sweetwater-mansion-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `tutwiler-hotel.jpg` — Charlie Brenner, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Tutwiler_Hotel,_Birmingham,_AL.jpg>
+- `tutwiler-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `dead-childrens-playground.jpg` — Visit Huntsville source image. Source: <https://www.huntsville.org/blog/list/post/ghosts-of-the-rocket-city-huntsvilles-haunted-history/>; reuse terms were not stated on the retrieved page.
+- `dead-childrens-playground-case-file.png` — stylized TPI case-file treatment derived from the exact local site photo; retain the source-rights note.
+- `drish-house.jpg` — Carol M. Highsmith, public domain. Source: <https://commons.wikimedia.org/wiki/File:Drish_House_Tuscaloosa_01.jpg>
+- `drish-house-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `pickens-county-courthouse.jpg` — Calvin Beale, public domain. Source: <https://commons.wikimedia.org/wiki/File:Pickens_County_Courthouse_2.jpg>
+- `pickens-county-courthouse-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `alabama-state-capitol.jpg` — DXR, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Alabama_State_Capitol,_Montgomery,_West_view_20160713_1.jpg>
+- `alabama-state-capitol-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `pratt-hall.jpg` — Lee Peacock source image. Source: <https://leepeacock2010.blogspot.com/2014/02/bucket-list-update-no-126-visit-pratt.html>; reuse terms were not stated on the retrieved page.
+- `pratt-hall-case-file.png` — stylized TPI case-file treatment derived from the exact local photo; retain the source-rights note.
+- `cedarhurst-mansion.jpg` — Visit Huntsville source image. Source: <https://www.huntsville.org/blog/list/post/ghosts-of-the-rocket-city-huntsvilles-haunted-history/>; reuse terms were not stated on the retrieved page.
+- `cedarhurst-mansion-case-file.png` — stylized TPI case-file treatment derived from the exact local photo; retain the source-rights note.
 
 - `wabasha-street-caves.jpg` — Gobonobo, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Wabasha_Street_Caves.jpg>
 - `wabasha-street-caves-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo; it is labeled as a treatment in the directory.

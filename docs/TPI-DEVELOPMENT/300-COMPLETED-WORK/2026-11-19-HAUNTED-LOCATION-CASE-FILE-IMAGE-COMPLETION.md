@@ -116,7 +116,7 @@ Every legacy entry now shows either its verified case-file image or an explicit
 wrong-location image from being silently substituted while the source audit
 continues.
 
-The first Alabama batch is recorded for nine exact locations:
+The Alabama batch is now complete for all 18 exact locations:
 
 - Sloss Furnaces — DXR, CC BY-SA 4.0.
 - Fort Morgan — Ermattox9, public domain.
@@ -127,10 +127,21 @@ The first Alabama batch is recorded for nine exact locations:
 - Redmont Hotel — Chris Pruitt, CC BY-SA 3.0.
 - Old Cahawba (Arthur–Fambro House) — Brian.S.W, CC BY-SA 4.0.
 - Gaines Ridge Dinner Club — owner-supplied exact source photograph.
+- Kenworthy Hall — RuralSWAlabama, CC BY-SA 3.0.
+- Sweetwater Mansion — E.W. Burkhardt and W. N. Manning, public domain.
+- Tutwiler Hotel — Charlie Brenner, CC BY-SA 2.0.
+- Dead Children’s Playground — Visit Huntsville source image; reuse terms not stated on retrieved page.
+- Dr. John R. Drish House — Carol M. Highsmith, public domain.
+- Pickens County Courthouse — Calvin Beale, public domain.
+- Alabama State Capitol — DXR, CC BY-SA 4.0.
+- Pratt Hall — Lee Peacock source image; reuse terms not stated on retrieved page.
+- Cedarhurst Mansion — Visit Huntsville source image; reuse terms not stated on retrieved page.
 
 The original source photographs and TPI case-file treatments are stored under
 `haunted-location-directory/case-file-photos/`; the mappings and attribution
-are maintained in `legacy-case-file-sources.js`. The remaining 393 legacy
-locations stay visibly pending until exact identity and reuse terms are
-verified. This pass is intentionally incremental so the directory never shows
-an attractive but incorrect landmark image.
+are maintained in `legacy-case-file-sources.js`. Alabama now has no pending
+case-file image entries. The remaining 384 legacy locations stay visibly
+pending until exact identity and reuse terms are verified. Three Alabama
+source records retain an explicit rights-review note because the retrieved
+pages did not state reuse terms; they are not represented as TPI-owned
+documentary photographs.
