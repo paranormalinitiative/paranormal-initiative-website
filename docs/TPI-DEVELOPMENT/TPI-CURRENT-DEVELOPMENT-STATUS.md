@@ -34,6 +34,35 @@ confirmed Worker `33209fd1-f5ca-410a-a98c-b5770be8f166` at 100% traffic.
 Release `rel-ee9e83bb4957-1d2331cfe75b` is recorded in [Member Session
 Resilience Repair](300-COMPLETED-WORK/2026-11-18-MEMBER-SESSION-RESILIENCE-REPAIR.md).
 
+## 2026-11-18 — Advisory Board cleanup and site-wide component boundary audit
+
+Status: **DEPLOYED AND LIVE VERIFIED.** Michelle and Rick Hale no longer appear
+on the public Advisory Board. A read-only production query confirmed that
+neither person has an active Board Member appointment; the authoritative live
+appointments are Todd Wayne — Board Chair — Research & Investigation and Keith
+J. Clark — Advisory Board Member — Ethics & Professional Conduct. The stale
+hard-coded public cards were removed from `advisory-board.html`, and the Board
+Member source contract now guards against their reintroduction.
+
+The site-wide audit mapped the identity/session, member shell, Community Feed,
+profile media, Messenger, Nova publication, StudioFlow, Administration Center,
+and Mystic/Nova assistant boundaries. It records which changes remain isolated
+and which must trigger shared or full certification. The audit also identifies
+Nova's legacy article compatibility path as intentional until the remaining
+legacy records are migrated; it must not be deleted blindly. See [Site-Wide
+Component Boundary Audit](200-AUDITS/2026-11-18-SITE-WIDE-COMPONENT-BOUNDARY-AUDIT.md).
+
+Focused Board governance verification passed **22/22**. Before release, local
+authentication passed **38/38** at all maintained checkpoints, member
+profile/Home/feed Firefox passed **57/57**, Nova editor acceptance passed
+**134/134**, community services passed **41/41**, registration and recovery
+browser checks passed, and the maintained Nova publication contracts passed
+R6B **47**, R6C **23**, R6D **47**, R6E **67**, and R6F **30**. The exact
+website candidate passed **10 guarded gates**; live anonymous production smoke
+passed **10/10**; and Cloudflare confirmed Worker
+`1ed3035c-b2d1-4ab1-8a24-239e2cc2e0fc` at 100% traffic. Release
+`rel-d1a4429ad5eb-13429c9f2697` is the recorded deployment.
+
 ## 2026-11-18 — Founding member application access repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Active founding memberships now drive
