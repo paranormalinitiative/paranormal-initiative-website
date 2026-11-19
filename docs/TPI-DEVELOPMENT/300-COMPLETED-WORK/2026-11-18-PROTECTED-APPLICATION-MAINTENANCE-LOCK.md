@@ -39,4 +39,3 @@ passed.
 
 This release did not modify StudioFlow data, Nova documents, owner accounts,
 member content, or browser storage.
-
