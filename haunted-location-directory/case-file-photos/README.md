@@ -217,6 +217,24 @@ license obligations.
 - `fort-abraham-lincoln-state-park-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
 - `fargo-theatre.jpg` — Andrew Filer, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Fargo_Theatre_-_Fargo.jpg>
 - `fargo-theatre-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+
+### Arkansas legacy batch
+
+- `crescent-hotel.jpg` / `crescent-hotel-case-file.jpg` — Crescent Hotel, Eureka Springs; TXphotolady, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Crescent_Hotel_from_Magnetic_Mountain,_Eureaka_Springs_Arkansas.jpg>
+- `basin-park-hotel.jpg` / `basin-park-hotel-case-file.jpg` — Basin Park Hotel, Eureka Springs; official Basin Park Hotel source image. Source: <https://basinpark.com/media-press/>; reuse terms were not stated on the retrieved page.
+- `fort-smith-national-historic-site.jpg` / `fort-smith-national-historic-site-case-file.jpg` — Fort Smith National Historic Site gallows; Mcumpston, public domain. Source: <https://commons.wikimedia.org/wiki/File:Gallows_at_Fort_Smith_Arkansas.jpg>
+- `old-state-house-museum.jpg` / `old-state-house-museum-case-file.jpg` — Old State House Museum, Little Rock; Abishtatum, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Old_State_House_(Little_Rock).JPG>
+- `arlington-resort-hotel.jpg` / `arlington-resort-hotel-case-file.jpg` — Arlington Resort Hotel & Spa, Hot Springs; Chris Light, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Arlington_Resort_and_Bathhouse_P6200130.jpg>
+- `clayton-house.jpg` / `clayton-house-case-file.jpg` — W.H.H. Clayton House, Fort Smith; Hakbak, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:W.H.H._Clayton_House.JPG>
+- `gurdon-light.jpg` / `gurdon-light-case-file.jpg` — Gurdon Light; Americafyeah2013, CC0. Source: <https://commons.wikimedia.org/wiki/File:Gurdon_Light.png>
+- `pea-ridge-national-military-park.jpg` / `pea-ridge-national-military-park-case-file.jpg` — Pea Ridge National Military Park; Ser Amantio di Nicolao, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Pea_Ridge_National_Military_Park_-_parking_area_and_circular_wall.jpg>
+- `rush-historic-district.jpg` / `rush-historic-district-case-file.jpg` — Rush Historic District; National Park Service inventory, public domain. Source: <https://commons.wikimedia.org/wiki/File:White_Eagle_New_Mill_Piers.jpg>
+- `allen-house.jpg` / `allen-house-case-file.jpg` — Allen House, Monticello; David Snoddy / dbs1953 source photograph. Source: <https://www.flickr.com/photos/134070082@N02/33365070212>; Flickr marks the photograph all rights reserved, so permission review is required before external redistribution.
+- `captain-henderson-house.jpg` / `captain-henderson-house-case-file.jpg` — Captain Henderson House, Arkadelphia; Brandonrush, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Captain_Charles_C._Henderson_House_004.jpg>
+
+The Haxan House entry remains visibly pending. Its official site was
+unreachable during the Arkansas source pass, and no exact property photograph
+could be verified. No generic or AI-invented substitute is used.
 - `chateau-de-mores.jpg` — Podruznik, public domain. Source: <https://commons.wikimedia.org/wiki/File:Chateau_de_mores_in_medora.jpg>
 - `chateau-de-mores-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
 - `eastern-state-penitentiary.jpg` — Mike Graham, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Eastern_State_Penitentiary.jpg>

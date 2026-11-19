@@ -47,6 +47,11 @@ No AI-generated landmark substitute is used for any of these six entries.
 
 ## Added in this pass
 
+- Arkansas: 11 of 12 directory entries now have exact source photographs and
+  matching TPI case-file treatments. The Haxan House remains intentionally
+  pending because its official site was unreachable during the source pass and
+  no exact property photograph could be verified. No generic or AI-invented
+  substitute is used for that entry.
 - Washington: Pike Place Market, Northern State Recreation Area, Arctic Club
   Building, and Thornewood Castle.
 - Nebraska: Museum of Shadows, using the exact Christian Specht Building at
@@ -59,6 +64,13 @@ Each new source is stored in
 `haunted-location-directory/case-file-photos/`, with the untouched source
 photograph, the TPI case-file treatment, source URL, credit, and reuse terms
 recorded in `case-file-sources.js` and the photo README.
+
+The Arkansas source set includes exact location references from Wikimedia
+Commons, the National Park Service inventory, and the Basin Park Hotel official
+media page. The Allen House photograph is retained with an explicit
+all-rights-reserved permission-review note; it is not represented as a TPI-owned
+documentary photograph. The official Haxan House property image remains
+unverified and is still visibly pending in the directory.
 
 ## Protection and verification
 

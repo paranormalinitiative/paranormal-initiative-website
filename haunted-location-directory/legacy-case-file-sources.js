@@ -197,6 +197,72 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     source: 'https://commons.wikimedia.org/wiki/File:Bisbee_Arizona.jpg',
     credit: 'Willjay — CC BY-SA 3.0 / GFDL'
   },
+  'ar-eurekasprings-crescent': {
+    image: 'case-file-photos/crescent-hotel.jpg',
+    caseFileImage: 'case-file-photos/crescent-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Crescent_Hotel_from_Magnetic_Mountain,_Eureaka_Springs_Arkansas.jpg',
+    credit: 'TXphotolady — CC BY-SA 4.0'
+  },
+  'ar-eurekasprings-basinpark': {
+    image: 'case-file-photos/basin-park-hotel.jpg',
+    caseFileImage: 'case-file-photos/basin-park-hotel-case-file.jpg',
+    source: 'https://basinpark.com/media-press/',
+    credit: 'Basin Park Hotel official source image; reuse terms not stated on retrieved page'
+  },
+  'ar-fortsmith-national': {
+    image: 'case-file-photos/fort-smith-national-historic-site.jpg',
+    caseFileImage: 'case-file-photos/fort-smith-national-historic-site-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Gallows_at_Fort_Smith_Arkansas.jpg',
+    credit: 'Mcumpston — public domain'
+  },
+  'ar-littlerock-oldstate': {
+    image: 'case-file-photos/old-state-house-museum.jpg',
+    caseFileImage: 'case-file-photos/old-state-house-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Old_State_House_(Little_Rock).JPG',
+    credit: 'Abishtatum — CC BY-SA 3.0'
+  },
+  'ar-hotsprings-arlington': {
+    image: 'case-file-photos/arlington-resort-hotel.jpg',
+    caseFileImage: 'case-file-photos/arlington-resort-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Arlington_Resort_and_Bathhouse_P6200130.jpg',
+    credit: 'Chris Light — CC BY-SA 4.0'
+  },
+  'ar-fortsmith-claytonhouse': {
+    image: 'case-file-photos/clayton-house.jpg',
+    caseFileImage: 'case-file-photos/clayton-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:W.H.H._Clayton_House.JPG',
+    credit: 'Hakbak — CC BY-SA 3.0'
+  },
+  'ar-gurdon-light': {
+    image: 'case-file-photos/gurdon-light.jpg',
+    caseFileImage: 'case-file-photos/gurdon-light-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Gurdon_Light.png',
+    credit: 'Americafyeah2013 — CC0'
+  },
+  'ar-garfield-pearidge': {
+    image: 'case-file-photos/pea-ridge-national-military-park.jpg',
+    caseFileImage: 'case-file-photos/pea-ridge-national-military-park-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Pea_Ridge_National_Military_Park_-_parking_area_and_circular_wall.jpg',
+    credit: 'Ser Amantio di Nicolao — CC BY-SA 4.0'
+  },
+  'ar-rush-historicdistrict': {
+    image: 'case-file-photos/rush-historic-district.jpg',
+    caseFileImage: 'case-file-photos/rush-historic-district-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:White_Eagle_New_Mill_Piers.jpg',
+    credit: 'National Park Service inventory — public domain'
+  },
+  'ar-monticello-allenhouse': {
+    image: 'case-file-photos/allen-house.jpg',
+    caseFileImage: 'case-file-photos/allen-house-case-file.jpg',
+    source: 'https://www.flickr.com/photos/134070082@N02/33365070212',
+    credit: 'David Snoddy / dbs1953 — All rights reserved; permission review required before external redistribution'
+  },
+  'ar-arkadelphia-captainhenderson': {
+    image: 'case-file-photos/captain-henderson-house.jpg',
+    caseFileImage: 'case-file-photos/captain-henderson-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Captain_Charles_C._Henderson_House_004.jpg',
+    credit: 'Brandonrush — CC BY-SA 3.0'
+  },
   'ak-skagway-goldennorth': {
     image: 'case-file-photos/golden-north-hotel.jpg',
     caseFileImage: 'case-file-photos/golden-north-hotel-case-file.png',
