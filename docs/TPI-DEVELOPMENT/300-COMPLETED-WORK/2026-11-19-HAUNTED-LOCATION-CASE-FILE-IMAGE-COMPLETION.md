@@ -98,10 +98,10 @@ StudioFlow source or shared runtime changed.
 
 ## Release record
 
-- Source commit: `6727874517500321452bdd7efee1a469d9de7fd8`
-- Release candidate: `rel-672787451750-6f7d3f8f3d80`
-- Production Worker version: `64527314-059c-4036-b5c3-3b4f770739eb`
-- Rollback target: `f0538997-789a-4857-ad2d-0e1cc2cd359f`
+- Source commit: `7c857452f396a22812d193a74840a4d0749e68b6`
+- Release candidate: `rel-7c857452f396-ce5369976eb1`
+- Production Worker version: `84081e8a-3615-4cd7-9b65-fcf765ecc9ec`
+- Rollback target: `21f7f0a5-8c23-4195-8b87-a775b8e78e63`
 - Release profile: website; protected application maintenance lock preserved
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
