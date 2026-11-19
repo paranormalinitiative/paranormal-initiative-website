@@ -203,3 +203,33 @@ expanded or labeled as “Paranormal Investigations.” The remaining legacy cou
 after Alabama, Alaska, and Arizona is 358. Alaska source records with unclear reuse terms
 remain explicitly marked for rights review and are not represented as TPI-owned
 documentary photographs.
+
+## California legacy batch — completed
+
+California contains 15 directory entries. All 15 now have an exact source
+photograph, a matching TPI case-file treatment, local asset copies, and a
+source/credit record:
+
+- Winchester Mystery House
+- The Queen Mary
+- Whaley House Museum
+- Hotel del Coronado
+- Alcatraz Island
+- Preston Castle
+- Bodie State Historic Park
+- Mission Inn
+- Brookdale Lodge
+- Moss Beach Distillery
+- Black Diamond Mines Regional Preserve
+- Calico Ghost Town
+- Columbia State Historic Park
+- Fort Humboldt State Historic Park
+- Point Sur Lighthouse
+
+The treatments use **The Paranormal Initiative** branding and a **CALIFORNIA**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+The untouched source photographs and transformed case-file images are stored
+under `haunted-location-directory/case-file-photos/`, with mappings in
+`legacy-case-file-sources.js`. All 15 California sources have recorded reuse
+terms; the local derivative treatment does not erase the original attribution
+or license obligations.

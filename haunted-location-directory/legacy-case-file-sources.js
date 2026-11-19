@@ -263,6 +263,96 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     source: 'https://commons.wikimedia.org/wiki/File:Captain_Charles_C._Henderson_House_004.jpg',
     credit: 'Brandonrush — CC BY-SA 3.0'
   },
+  'ca-sanjose-winchester': {
+    image: 'case-file-photos/winchester-mystery-house.jpg',
+    caseFileImage: 'case-file-photos/winchester-mystery-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Winchester_Mystery_House_exterior.JPG',
+    credit: 'Ariel E Barry — CC BY-SA 3.0'
+  },
+  'ca-longbeach-queenmary': {
+    image: 'case-file-photos/queen-mary.jpg',
+    caseFileImage: 'case-file-photos/queen-mary-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:R.M.S._Queen_Mary_in_Long_Beach,_California;_October_2019.jpg',
+    credit: 'Bernard Spragg. NZ — CC0'
+  },
+  'ca-sandiego-whaley': {
+    image: 'case-file-photos/whaley-house-museum.jpg',
+    caseFileImage: 'case-file-photos/whaley-house-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Old_Town_San_Diego_024_-_Whaley_House.jpg',
+    credit: 'Andrek02 — CC0'
+  },
+  'ca-coronado-hoteldel': {
+    image: 'case-file-photos/hotel-del-coronado.jpg',
+    caseFileImage: 'case-file-photos/hotel-del-coronado-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Hotel_del_Coronado.JPG',
+    credit: 'Djh57 — CC BY 3.0'
+  },
+  'ca-sanfrancisco-alcatraz': {
+    image: 'case-file-photos/alcatraz-island.jpg',
+    caseFileImage: 'case-file-photos/alcatraz-island-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Alcatraz_Island.jpg',
+    credit: 'Edward Z. Yang — public domain'
+  },
+  'ca-ione-prestoncastle': {
+    image: 'case-file-photos/preston-castle.jpg',
+    caseFileImage: 'case-file-photos/preston-castle-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Preston_Castle_(Ione).jpg',
+    credit: 'There is always more mystery — CC BY-SA 2.0'
+  },
+  'ca-bodie-statepark': {
+    image: 'case-file-photos/bodie-state-historic-park.jpg',
+    caseFileImage: 'case-file-photos/bodie-state-historic-park-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Overview_of_Bodie_State_Historical_Park_-_Flickr_-_daveynin.jpg',
+    credit: 'daveynin — CC BY 2.0'
+  },
+  'ca-riverside-missioninn': {
+    image: 'case-file-photos/mission-inn.jpg',
+    caseFileImage: 'case-file-photos/mission-inn-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Facade_of_Mission_Inn_-_Riverside,_CA_-_USA_-_01_(6773598698).jpg',
+    credit: 'Adam Jones — CC BY-SA 2.0'
+  },
+  'ca-brookdale-lodge': {
+    image: 'case-file-photos/brookdale-lodge.jpg',
+    caseFileImage: 'case-file-photos/brookdale-lodge-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Brookdale_Lodge_in_Brookdale,_California.JPG',
+    credit: 'John Pilge — public domain'
+  },
+  'ca-mossbeach-distillery': {
+    image: 'case-file-photos/moss-beach-distillery.jpg',
+    caseFileImage: 'case-file-photos/moss-beach-distillery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Moss_Beach_Distillery_08-15-2009.jpg',
+    credit: 'Lupislune — CC BY-SA 3.0'
+  },
+  'ca-antioch-blackdiamond': {
+    image: 'case-file-photos/black-diamond-mines.jpg',
+    caseFileImage: 'case-file-photos/black-diamond-mines-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:California_-_Black_Diamond_Mines_Regional_Preserve_-_20180707112530.jpg',
+    credit: 'Peterquinn925 — CC BY-SA 4.0'
+  },
+  'ca-yermo-calico': {
+    image: 'case-file-photos/calico-ghost-town.jpg',
+    caseFileImage: 'case-file-photos/calico-ghost-town-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Calico_Ghost_Town_2012.jpg',
+    credit: 'PIERRE ANDRE LECLERCQ — CC BY-SA 4.0'
+  },
+  'ca-columbia-statepark': {
+    image: 'case-file-photos/columbia-state-historic-park.jpg',
+    caseFileImage: 'case-file-photos/columbia-state-historic-park-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Columbia_State_Historic_Park,_California_in_2022_-_1.jpg',
+    credit: 'bilbord99 — CC BY 2.0'
+  },
+  'ca-eureka-forthumboldt': {
+    image: 'case-file-photos/fort-humboldt-state-historic-park.jpg',
+    caseFileImage: 'case-file-photos/fort-humboldt-state-historic-park-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Fort_Humboldt_House.JPG',
+    credit: 'JP Smith — public domain'
+  },
+  'ca-bigsur-pointsur': {
+    image: 'case-file-photos/point-sur-lighthouse.jpg',
+    caseFileImage: 'case-file-photos/point-sur-lighthouse-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Point_Sur_Lighthouse_(5063709302).jpg',
+    credit: 'Bjorn — CC BY-SA 2.0'
+  },
   'ak-skagway-goldennorth': {
     image: 'case-file-photos/golden-north-hotel.jpg',
     caseFileImage: 'case-file-photos/golden-north-hotel-case-file.png',
