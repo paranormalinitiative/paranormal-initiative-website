@@ -233,3 +233,40 @@ under `haunted-location-directory/case-file-photos/`, with mappings in
 `legacy-case-file-sources.js`. All 15 California sources have recorded reuse
 terms; the local derivative treatment does not erase the original attribution
 or license obligations.
+
+## Colorado legacy batch — 20 completed, 2 pending
+
+Colorado contains 22 directory entries. Twenty now have an exact source
+photograph, a matching TPI case-file treatment, local asset copies, and a
+source/credit record:
+
+- The Stanley Hotel
+- The Brown Palace Hotel
+- The Oxford Hotel
+- Hotel Colorado
+- Museum of Colorado Prisons
+- Central City Opera House
+- Molly Brown House Museum
+- Croke-Patterson Mansion
+- Cheesman Park
+- St. Elmo Ghost Town
+- Ashcroft Ghost Town
+- Independence Ghost Town
+- Georgetown Loop Railroad
+- Gold Camp Road Tunnels
+- Riverside Cemetery
+- Fort Logan National Cemetery
+- Camp Hale
+- Grand Imperial Hotel
+- Cripple Creek District Museum
+- Buckhorn Exchange
+
+The treatments use **The Paranormal Initiative** branding and a **COLORADO**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Each treatment is derived from the exact location reference and is labeled as
+a stylized case-file presentation rather than an unedited documentary photo.
+
+Central City Cemetery and Third Bridge remain visibly pending. The exact
+photographs located for those two entries were Flickr pages marked all rights
+reserved, so they were not copied or transformed. No generic or AI-invented
+landmark substitute is used for either entry.

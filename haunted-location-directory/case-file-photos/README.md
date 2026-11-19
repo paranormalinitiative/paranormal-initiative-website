@@ -218,6 +218,54 @@ license obligations.
 - `fargo-theatre.jpg` — Andrew Filer, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Fargo_Theatre_-_Fargo.jpg>
 - `fargo-theatre-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
 
+### Colorado legacy batch
+
+- `stanley-hotel.jpg` — Renoman58, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:The_Stanley_Hotel.JPG>
+- `stanley-hotel-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `brown-palace-hotel.jpg` — exact Brown Palace Hotel reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/Category:Brown_Palace_Hotel_(Denver,_Colorado)>; license recorded on the selected file page.
+- `brown-palace-hotel-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `oxford-hotel.jpg` — exact Oxford Hotel reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/Category:The_Oxford_Hotel_(Denver,_Colorado)>; license recorded on the selected file page.
+- `oxford-hotel-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `hotel-colorado.jpg` — exact Hotel Colorado reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/Category:Hotel_Colorado>; license recorded on the selected file page.
+- `hotel-colorado-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `museum-colorado-prisons.jpg` — exact Museum of Colorado Prisons reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/Category:Museum_of_Colorado_Prisons>; license recorded on the selected file page.
+- `museum-colorado-prisons-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `central-city-opera-house.jpg` — exact Central City Opera House reference from the Historic American Buildings Survey / Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/Category:Central_City_Opera_House>; license recorded on the selected file page.
+- `central-city-opera-house-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `molly-brown-house.jpg` — Apw250, CC0. Source: <https://commons.wikimedia.org/wiki/File:MollyBrownHouseMuseum_exterior.jpg>
+- `molly-brown-house-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `croke-patterson-mansion.jpg` — Jeffrey Beall, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Croke-Patterson-Campbell_Mansion.JPG>
+- `croke-patterson-mansion-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `cheesman-park.jpg` — exact Cheesman Park reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/Category:Cheesman_Park_(Denver)>; license recorded on the selected file page.
+- `cheesman-park-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `st-elmo.jpg` — Dariusz Kowalczyk, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:St._Elmo_ghost_town.jpg>
+- `st-elmo-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `ashcroft.jpg` — exact Ashcroft Ghost Town reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/File:Ashcroft_Ghost_Town,_Aspen_Colorado_(35452900496).jpg>; license recorded on the file page.
+- `ashcroft-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `independence.jpg` — exact Independence Ghost Town reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/File:Independence,_Colorado.JPG>; license recorded on the file page.
+- `independence-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `georgetown-loop.jpg` — exact Georgetown Loop Railroad reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/File:20070902_19_Georgetown_Loop_RR.jpg>; license recorded on the file page.
+- `georgetown-loop-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `gold-camp-tunnel.jpg` — exact Gold Camp Road Tunnel reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/File:Lower_Gold_Camp_Road_Tunnel_(28515678077).jpg>; license recorded on the file page.
+- `gold-camp-tunnel-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `riverside-cemetery.jpg` — U.S. Air Force source photograph, public domain. Source: <https://commons.wikimedia.org/wiki/File:Denver_Riverside_cemetery.jpg>
+- `riverside-cemetery-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-logan.jpg` — National Cemetery Administration / VA official source photograph. Source: <https://cem.va.gov/cems/nchp/FtLogan.asp>; reuse terms recorded with the source.
+- `fort-logan-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `camp-hale.jpg` — U.S. federal source image, public domain. Source: <https://commons.wikimedia.org/wiki/File:Camp_Hale,_Colorado.jpg>
+- `camp-hale-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `grand-imperial.jpg` — Historic American Buildings Survey / National Park Service, public domain source photograph. Source: <https://commons.wikimedia.org/wiki/File:SilvertonHotel.jpg>
+- `grand-imperial-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `cripple-creek-museum.jpg` — Jeffrey Beall, CC BY 3.0. Source: <https://commons.wikimedia.org/wiki/File:Cripple_Creek_District_Museum.JPG>
+- `cripple-creek-museum-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `buckhorn-exchange.jpg` — exact Buckhorn Exchange reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/File:Buckhorn_Exchange,_Denver,_Colorado_(2025).jpg>; license recorded on the file page.
+- `buckhorn-exchange-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+
+Central City Cemetery and Third Bridge remain pending. The exact photographs
+located for those two entries were Flickr pages marked all rights reserved, so
+they are not copied or transformed until TPI has a compatible source or direct
+permission.
+
 ### Arkansas legacy batch
 
 - `crescent-hotel.jpg` / `crescent-hotel-case-file.jpg` — Crescent Hotel, Eureka Springs; TXphotolady, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Crescent_Hotel_from_Magnetic_Mountain,_Eureaka_Springs_Arkansas.jpg>

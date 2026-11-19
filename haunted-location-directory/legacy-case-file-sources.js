@@ -418,5 +418,125 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/tongass-national-forest-case-file.png',
     source: 'https://commons.wikimedia.org/wiki/File:TongasNF.jpg',
     credit: 'USDA Forest Service — public domain government source'
+  },
+  'co-estespark-stanley': {
+    image: 'case-file-photos/stanley-hotel.jpg',
+    caseFileImage: 'case-file-photos/stanley-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:The_Stanley_Hotel.JPG',
+    credit: 'Renoman58 — CC BY-SA 3.0'
+  },
+  'co-denver-brownpalace': {
+    image: 'case-file-photos/brown-palace-hotel.jpg',
+    caseFileImage: 'case-file-photos/brown-palace-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/Category:Brown_Palace_Hotel_(Denver,_Colorado)',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-denver-oxford': {
+    image: 'case-file-photos/oxford-hotel.jpg',
+    caseFileImage: 'case-file-photos/oxford-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/Category:The_Oxford_Hotel_(Denver,_Colorado)',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-glenwoodsprings-hotelcolorado': {
+    image: 'case-file-photos/hotel-colorado.jpg',
+    caseFileImage: 'case-file-photos/hotel-colorado-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/Category:Hotel_Colorado',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-canoncity-prisonmuseum': {
+    image: 'case-file-photos/museum-colorado-prisons.jpg',
+    caseFileImage: 'case-file-photos/museum-colorado-prisons-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/Category:Museum_of_Colorado_Prisons',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-centralcity-operahouse': {
+    image: 'case-file-photos/central-city-opera-house.jpg',
+    caseFileImage: 'case-file-photos/central-city-opera-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/Category:Central_City_Opera_House',
+    credit: 'Historic American Buildings Survey / Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-denver-mollybrown': {
+    image: 'case-file-photos/molly-brown-house.jpg',
+    caseFileImage: 'case-file-photos/molly-brown-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:MollyBrownHouseMuseum_exterior.jpg',
+    credit: 'Apw250 — CC0'
+  },
+  'co-denver-crokepatterson': {
+    image: 'case-file-photos/croke-patterson-mansion.jpg',
+    caseFileImage: 'case-file-photos/croke-patterson-mansion-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Croke-Patterson-Campbell_Mansion.JPG',
+    credit: 'Jeffrey Beall — CC BY-SA 3.0'
+  },
+  'co-denver-cheesman': {
+    image: 'case-file-photos/cheesman-park.jpg',
+    caseFileImage: 'case-file-photos/cheesman-park-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/Category:Cheesman_Park_(Denver)',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-nathrop-stelmo': {
+    image: 'case-file-photos/st-elmo.jpg',
+    caseFileImage: 'case-file-photos/st-elmo-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:St._Elmo_ghost_town.jpg',
+    credit: 'Dariusz Kowalczyk — CC BY-SA 3.0'
+  },
+  'co-aspen-ashcroft': {
+    image: 'case-file-photos/ashcroft.jpg',
+    caseFileImage: 'case-file-photos/ashcroft-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Ashcroft_Ghost_Town,_Aspen_Colorado_(35452900496).jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-aspen-independence': {
+    image: 'case-file-photos/independence.jpg',
+    caseFileImage: 'case-file-photos/independence-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Independence,_Colorado.JPG',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-georgetown-loop': {
+    image: 'case-file-photos/georgetown-loop.jpg',
+    caseFileImage: 'case-file-photos/georgetown-loop-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:20070902_19_Georgetown_Loop_RR.jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-coloradosprings-goldcamp': {
+    image: 'case-file-photos/gold-camp-tunnel.jpg',
+    caseFileImage: 'case-file-photos/gold-camp-tunnel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Lower_Gold_Camp_Road_Tunnel_(28515678077).jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-denver-riversidecemetery': {
+    image: 'case-file-photos/riverside-cemetery.jpg',
+    caseFileImage: 'case-file-photos/riverside-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Denver_Riverside_cemetery.jpg',
+    credit: 'U.S. Air Force source photograph — public domain'
+  },
+  'co-denver-fortlogan': {
+    image: 'case-file-photos/fort-logan.jpg',
+    caseFileImage: 'case-file-photos/fort-logan-case-file.jpg',
+    source: 'https://cem.va.gov/cems/nchp/FtLogan.asp',
+    credit: 'National Cemetery Administration / VA official source photograph; reuse terms recorded with source'
+  },
+  'co-leadville-camphale': {
+    image: 'case-file-photos/camp-hale.jpg',
+    caseFileImage: 'case-file-photos/camp-hale-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Camp_Hale,_Colorado.jpg',
+    credit: 'U.S. federal source image — public domain'
+  },
+  'co-silverton-grandimperial': {
+    image: 'case-file-photos/grand-imperial.jpg',
+    caseFileImage: 'case-file-photos/grand-imperial-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:SilvertonHotel.jpg',
+    credit: 'Historic American Buildings Survey / National Park Service — public domain source photograph'
+  },
+  'co-cripplecreek-districtmuseum': {
+    image: 'case-file-photos/cripple-creek-museum.jpg',
+    caseFileImage: 'case-file-photos/cripple-creek-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Cripple_Creek_District_Museum.JPG',
+    credit: 'Jeffrey Beall — CC BY 3.0'
+  },
+  'co-denver-buckhornexchange': {
+    image: 'case-file-photos/buckhorn-exchange.jpg',
+    caseFileImage: 'case-file-photos/buckhorn-exchange-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Buckhorn_Exchange,_Denver,_Colorado_(2025).jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
   }
 };
