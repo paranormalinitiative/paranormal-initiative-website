@@ -28,6 +28,21 @@ could be confirmed:
 - Tennessee — Old South Pittsburg Hospital: the exact building photographs
   located were credited to a current photographer without a reuse grant.
 
+## Follow-up catalog audit
+
+A second source pass on 2026-11-19 found that the Montana entry itself needs
+verification before an image can be attached. Searches for a Montana Gold Hill
+Hotel did not produce a matching operating hotel; the well-documented Gold Hill
+Hotel references resolve to Nevada. Montana’s documented historic hotel
+candidate is The Pollard Hotel in Red Lodge, but the readily located exterior
+photographs are also restricted. The Montana record must therefore be corrected
+or confirmed before a case-file image is created.
+
+This prevents a location-name collision from showing the Nevada Gold Hill Hotel
+photograph on a Montana page. The six pending entries remain intentionally
+image-free until TPI has an exact, permission-cleared source or a corrected
+catalog record.
+
 No AI-generated landmark substitute is used for any of these six entries.
 
 ## Added in this pass
