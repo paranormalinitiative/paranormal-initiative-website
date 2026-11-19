@@ -244,6 +244,29 @@ This command preserves the maintained TPI bridge layer. Never edit a generated
 StudioFlow JavaScript or CSS bundle manually and never put different bytes
 under an unchanged hashed filename.
 
+### Protected application maintenance lock
+
+StudioFlow and Nova Editorial Workspace are stable applications in maintenance
+mode. Every candidate still hashes their published bytes and the protected
+integrity guard refuses unexpected changes, but ordinary website,
+documentation, test, and release-record changes do not rebuild them or run
+their full browser acceptance suites. The release candidate carries their
+existing bytes forward unchanged.
+
+The lock reopens only when one of these conditions is present:
+
+- StudioFlow or Nova application files changed (`studio/`, `nova/`,
+  `nova-app/`, or `content-editor-nova/`); or
+- a shared Worker/runtime boundary changed (`functions/`, `lib/`, `worker.js`,
+  or Wrangler configuration), because that can affect an otherwise unchanged
+  application at runtime.
+
+This is why a shared authentication or API repair may still test the protected
+applications, while a feed-only, profile-only, documentation-only, or
+verification-only release leaves them frozen. A full risk tier may still be
+selected for release tooling, but risk classification no longer means that
+StudioFlow or Nova is rebuilt automatically.
+
 Open local development in Firefox Developer Edition and verify the actual
 workflow. Do not use or modify Crossroads for destructive testing.
 

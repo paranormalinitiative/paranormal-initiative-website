@@ -2,7 +2,7 @@
 
 // TPI-OPS-006 — release-impact classifier regression.
 
-import { classifyReleaseImpact, protectedApplicationDifferences } from "../release-impact.mjs";
+import { classifyReleaseImpact, protectedApplicationDifferences, protectedApplicationScope } from "../release-impact.mjs";
 
 const cases = [
   ["website HTML stays website-only", ["member-home.html"], "website"],
@@ -43,9 +43,32 @@ try {
   console.error(`FAIL matching explicit profile: ${error.message}`);
 }
 
+const lockedWebsite = protectedApplicationScope(["member-home.html", "scripts/verify/tpi-paper-editor-to-feed-firefox.mjs"]);
+if (lockedWebsite.verify) {
+  failures += 1;
+  console.error("FAIL website/test-only changes reopen protected application verification");
+} else {
+  console.log("PASS website/test-only changes keep StudioFlow and Nova in maintenance lock");
+}
+const sharedRuntime = protectedApplicationScope(["functions/api/[[path]].js"]);
+if (!sharedRuntime.verify || !sharedRuntime.runtimeFiles.includes("functions/api/[[path]].js")) {
+  failures += 1;
+  console.error("FAIL shared Worker runtime changes do not reopen protected application verification");
+} else {
+  console.log("PASS shared Worker runtime changes reopen protected application verification");
+}
+const directApplication = protectedApplicationScope(["nova-app/src/App.tsx"]);
+if (!directApplication.verify || !directApplication.sourceFiles.includes("nova-app/src/App.tsx")) {
+  failures += 1;
+  console.error("FAIL direct Nova source changes do not reopen protected application verification");
+} else {
+  console.log("PASS direct Nova source changes reopen protected application verification");
+}
+
 const protectedBaseline = [
   { path: "studio/index.html", bytes: 10, sha256: "studio-old" },
   { path: "nova/index.html", bytes: 10, sha256: "nova-old" },
+  { path: "content-editor-nova/content-editor.html", bytes: 10, sha256: "content-editor-old" },
   { path: "admin-center-preview/index.html", bytes: 10, sha256: "admin-old" },
   { path: "admin-center-preview/release.json", bytes: 10, sha256: "admin-release-old" },
 ];
@@ -65,6 +88,13 @@ if (!protectedChanged.includes("studio/index.html")) {
   console.error("FAIL protected app guard detects changed StudioFlow bytes");
 } else {
   console.log("PASS protected app guard detects changed StudioFlow bytes");
+}
+const contentEditorChanged = protectedApplicationDifferences(protectedBaseline, protectedBaseline.map(entry => entry.path === "content-editor-nova/content-editor.html" ? { ...entry, sha256: "content-editor-new" } : entry));
+if (!contentEditorChanged.includes("content-editor-nova/content-editor.html")) {
+  failures += 1;
+  console.error("FAIL protected Nova Editorial Workspace bytes are not guarded");
+} else {
+  console.log("PASS protected Nova Editorial Workspace bytes are guarded");
 }
 const allowedAdminChange = protectedApplicationDifferences(protectedBaseline, protectedBaseline.map(entry => entry.path === "admin-center-preview/index.html" ? { ...entry, sha256: "admin-new" } : entry), { allowedPrefixes: ["admin-center-preview/"] });
 if (allowedAdminChange.length) {

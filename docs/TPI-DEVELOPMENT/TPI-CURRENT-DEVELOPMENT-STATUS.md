@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## Protected application maintenance lock — 2026-11-18
+
+StudioFlow and Nova Editorial Workspace are explicitly in maintenance mode.
+The release system continues to hash and guard their published bytes, but
+website-only, documentation-only, test-only, and release-record changes carry
+the approved `/studio/`, `/nova/`, and `/content-editor-nova/` assets forward
+unchanged. They are not rebuilt or reopened for full browser acceptance merely
+because another part of the site changed.
+
+The lock reopens for direct StudioFlow/Nova changes or a shared Worker/runtime
+change under `functions/`, `lib/`, `worker.js`, or Wrangler configuration. This
+keeps the protection strong without allowing a broad risk tier to imply that
+stable applications must be touched on every release.
+
 ## 2026-11-18 — Nova login-return and transient session repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.**

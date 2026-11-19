@@ -12,7 +12,10 @@ from source code to the live website. It supplements the mandatory
 
 **STUDIOFLOW CORE — STABLE / MAINTENANCE MODE.** The verified production release
 remains **TPI-STUDIOFLOW-137R — COMPLETE — PRODUCTION VERIFIED**. StudioFlow is
-not the active primary development track.
+not the active primary development track. Nova Editorial Workspace is under
+the same maintenance lock: its `/nova/` and `/content-editor-nova/` published
+bytes remain frozen unless Nova itself or a shared Worker/runtime boundary
+changes.
 
 The process described here is unchanged and remains fully valid for any future
 StudioFlow change, including maintenance repairs and the deferred phases below.
@@ -32,6 +35,11 @@ What changed is the *order of work*, not the workflow.
   change that alters the built bundle also changes the certified deployable
   bytes, so it requires a fresh certification — the production command will
   refuse an old one.
+- **Maintenance lock:** website-only, documentation-only, test-only, and
+  release-record changes carry the approved StudioFlow and Nova bytes forward
+  unchanged. They do not rebuild or run the full protected-application browser
+  suite. A direct application change or shared Worker/runtime change reopens
+  those checks automatically.
 
 ## 2026-11-16 destination and library audit
 

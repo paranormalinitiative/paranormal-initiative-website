@@ -42,7 +42,7 @@ import {
   verifyCertification,
   writeCertification,
 } from "./release-certification.mjs";
-import { classifyReleaseImpact, protectedApplicationDifferences } from "./release-impact.mjs";
+import { classifyReleaseImpact, protectedApplicationDifferences, protectedApplicationScope } from "./release-impact.mjs";
 import { classifyReleaseTier, previousCertifiedCommit } from "./release-tier.mjs";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
@@ -164,10 +164,14 @@ function allowedProtectedApplicationPrefixes(changedFiles = []) {
   const allowed = [];
   if (changedFiles.some(path => path.startsWith("studio/"))) allowed.push("studio/");
   if (changedFiles.some(path => path.startsWith("nova/") || path.startsWith("nova-app/"))) allowed.push("nova/");
+  if (changedFiles.some(path => path.startsWith("nova-app/") || path.startsWith("content-editor-nova/"))) allowed.push("content-editor-nova/");
   if (changedFiles.some(path => path.startsWith("admin-center-app/") || path.startsWith("admin-center-preview/") || path === "admin-center.js" || path === "admin-center.css" || path === "admin-panel.html" || path === "admin-advanced-settings.html" || path === "admin-events.html" || path === "teams/admin.html")) {
     allowed.push("admin-center-preview/");
   }
   return allowed;
+}
+function protectedApplicationVerificationRequired(changedFiles = []) {
+  return protectedApplicationScope(changedFiles).verify;
 }
 function assertProtectedApplicationIntegrity(previousManifest, stagedCandidateRoot, profile, changedFiles = []) {
   if (!previousManifest?.deployable?.assets) {
@@ -285,7 +289,12 @@ function startIsolatedE2E() {
 function stopIsolatedE2E() {
   try { spawnSync("bash", ["scripts/e2e/isolated-launchagent.sh", "stop"], { cwd: repoRoot, stdio: "inherit" }); } catch { /* best effort */ }
 }
-async function verifyAuthLifecycle() {
+async function verifyAuthLifecycle(impact) {
+  const protectedScope = protectedApplicationScope(impact?.changedFiles || []);
+  if (!protectedScope.verify) {
+    console.log("Protected application maintenance lock: StudioFlow and Nova source/build/acceptance are skipped; immutable byte integrity remains enforced.");
+    return;
+  }
   const before = localAdminFingerprint();
   await waitForLocalReleaseSurfaces();
   await runLocalAuthCheck("local_admin authentication before restart");
@@ -343,7 +352,7 @@ async function preflight() {
   // refresh as `npm run dev:local:refresh` before browser gates; protected
   // application directories remain untouched by the local launcher.
   run("Refresh running local Worker assets", process.execPath, ["scripts/local-dev.mjs", "refresh"], { timing: { bucket: "staging" } });
-  if (impact.profile === "full" || impact.profile === "studioflow") await verifyAuthLifecycle();
+  if (impact.profile === "full" || impact.profile === "studioflow") await verifyAuthLifecycle(impact);
   if (impact.profile === "full") {
     run("Legacy Admin session and staff-role regression", process.execPath, ["scripts/verify/tpi-staff-roles.mjs"], { timing: { bucket: "certification" } });
     run("Password hash compatibility and upgrade regression", process.execPath, ["scripts/verify/tpi-password-hash.mjs"], { timing: { bucket: "certification" } });
@@ -435,7 +444,7 @@ async function preflight() {
       run("Targeted Help Center separation regression", "npm", ["run", "verify:help-center-separation"], { timing: { bucket: "certification" } });
     }
   }
-  if (impact.profile === "full" || impact.profile === "studioflow") {
+  if (protectedApplicationVerificationRequired(impact.changedFiles)) {
     run("Firefox Developer Edition release acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
       env: { TPI_FIREFOX_ACCOUNT: "test_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
       timing: { bucket: "certification", browser: true },
@@ -537,13 +546,15 @@ async function preflight() {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
     timing: { bucket: "certification", browser: true },
   });
-  run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
+    run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   // Approved-feature continuity and release-lineage guard (TPI-STUDIOFLOW-137):
   // a new approved commit must descend from the previous one and must still
   // contain the approved Notes entry points and bundle markers. This is the
   // check that would have failed at TPI-STUDIOFLOW-130 instead of silently
   // removing the workspace from production.
     run("Approved feature continuity and release lineage guard", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-continuity.mjs"]);
+  } else if (impact.profile === "full" || impact.profile === "studioflow") {
+    mark("Protected application maintenance lock (StudioFlow/Nova gates skipped; bytes remain guarded)", { bucket: "certification" });
   }
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
@@ -569,7 +580,7 @@ async function preflight() {
   const manifest = buildManifest({
     candidateRoot,
     source: certifiedSource,
-    tier: { level: tier.level, label: tier.label, reasons: tier.reasons, baseCommit: tier.baseCommit, baseSource: tier.baseSource, requiredGateSet: impact.profile, releaseProfile: impact.profile },
+      tier: { level: tier.level, label: tier.label, reasons: tier.reasons, baseCommit: tier.baseCommit, baseSource: tier.baseSource, requiredGateSet: impact.profile, releaseProfile: impact.profile, protectedApplicationVerification: protectedApplicationVerificationRequired(impact.changedFiles) },
     gates: gateRecords.slice(),
     schema: {
       database: "tpi_contributor_portal",
@@ -636,7 +647,7 @@ async function deploy() {
   // TPI-STUDIOFLOW-137: a release that depends on StudioFlow schema must refuse
   // to deploy while that schema is absent. Website and shared-API releases
   // preserve the already-certified StudioFlow bytes and do not reopen this gate.
-  if (manifest.tier.releaseProfile === "full" || manifest.tier.releaseProfile === "studioflow") {
+  if (manifest.tier.protectedApplicationVerification === true) {
     run("Production schema readiness (live, read-only)", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "production" } });
   }
   // Rollback metadata is live production state and is captured now, not reused
@@ -675,7 +686,7 @@ async function deploy() {
     deployedVersion = (result.stdout || "").match(/Current Version ID:\s*([0-9a-f-]{36})/)?.[1] || "";
     if (!deployedVersion) fail("deployment completed without a readable Worker version ID");
     run("Live anonymous production smoke", process.execPath, ["scripts/qa/production-smoke.mjs"], { timing: { bucket: "production" } });
-    if (manifest.tier.releaseProfile === "full" || manifest.tier.releaseProfile === "studioflow") {
+    if (manifest.tier.protectedApplicationVerification === true) {
       run("Live isolated Firefox Developer Edition acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
         env: {
           TPI_FIREFOX_BASE_URL: "https://paranormalinitiative.com",
@@ -687,7 +698,7 @@ async function deploy() {
         timing: { bucket: "production", browser: true },
       });
     } else {
-      mark(`Live StudioFlow acceptance skipped for ${manifest.tier.releaseProfile} profile`, { bucket: "production" });
+      mark("Live StudioFlow acceptance skipped by protected application maintenance lock", { bucket: "production" });
     }
     await waitForProductionVersion(deployedVersion);
     mark("Confirm new Worker version holds 100% traffic", { bucket: "production" });

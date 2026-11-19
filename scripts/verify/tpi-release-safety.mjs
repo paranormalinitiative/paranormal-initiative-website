@@ -40,10 +40,16 @@ check("runbook requires commit, push, preflight and guarded deployment", () => {
   assert.match(runbook, /TPI_PRODUCTION_DEPLOY=approved npm run release:production/);
 });
 check("release preflight makes the local_admin lifecycle impact-aware", () => {
-  assert.match(release, /await verifyAuthLifecycle\(\)/);
+  assert.match(release, /await verifyAuthLifecycle\(impact\)/);
   assert.match(release, /impact\.profile === "full" \|\| impact\.profile === "studioflow"/);
   assert.match(release, /Website release shared authentication smoke/);
   assert.match(release, /tpi-website-surface-smoke\.mjs/);
+});
+check("protected applications stay locked unless their source or shared runtime changes", () => {
+  assert.match(releaseImpact, /protectedApplicationScope/);
+  assert.match(release, /Protected application maintenance lock/);
+  assert.match(release, /protectedApplicationVerificationRequired/);
+  assert.match(release, /protectedApplicationVerification: protectedApplicationVerificationRequired/);
 });
 check("Administration Center has a dedicated impact-aware release boundary", () => {
   assert.match(releaseImpact, /admin-center/);
@@ -182,8 +188,8 @@ check("production deployment verifies the certification instead of recertifying"
 });
 check("website and shared-api deployment keep smoke but skip StudioFlow live acceptance", () => {
   assert.match(release, /Live anonymous production smoke/);
-  assert.match(release, /manifest\.tier\.releaseProfile === "full" \|\| manifest\.tier\.releaseProfile === "studioflow"/);
-  assert.match(release, /Live StudioFlow acceptance skipped for \$\{manifest\.tier\.releaseProfile\} profile/);
+  assert.match(release, /manifest\.tier\.protectedApplicationVerification === true/);
+  assert.match(release, /Live StudioFlow acceptance skipped by protected application maintenance lock/);
 });
 check("shared-api releases retain the protected-application byte guard", () => {
   assert.match(release, /allowedProtectedApplicationPrefixes/);
@@ -191,8 +197,8 @@ check("shared-api releases retain the protected-application byte guard", () => {
   assert.match(release, /protected application bytes changed during a \$\{profile\} release/);
 });
 check("admin-center deployment keeps anonymous smoke but skips StudioFlow live acceptance", () => {
-  assert.match(release, /manifest\.tier\.releaseProfile === "full" \|\| manifest\.tier\.releaseProfile === "studioflow"/);
-  assert.match(release, /Live StudioFlow acceptance skipped for \$\{manifest\.tier\.releaseProfile\} profile/);
+  assert.match(release, /manifest\.tier\.protectedApplicationVerification === true/);
+  assert.match(release, /Live StudioFlow acceptance skipped by protected application maintenance lock/);
 });
 check("production deployment deploys the certified candidate directory", () => {
   assert.match(release, /"--candidate", candidateRoot/);

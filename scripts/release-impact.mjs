@@ -16,7 +16,26 @@ export const RELEASE_PROFILES = {
   full: { name: "FULL PLATFORM", rank: 3 },
 };
 
-export const PROTECTED_APPLICATION_PREFIXES = ["studio/", "nova/", "admin-center-preview/"];
+export const PROTECTED_APPLICATION_PREFIXES = ["studio/", "nova/", "content-editor-nova/", "admin-center-preview/"];
+
+// StudioFlow and Nova are maintained applications, not incidental build
+// outputs. A release may still prove their bytes are unchanged, but it should
+// not rebuild or reopen their browser acceptance merely because a website
+// document, test, or release record changed. Only an application source change
+// or a shared runtime boundary can justify reopening this maintenance lock.
+const PROTECTED_APPLICATION_SOURCE_PATTERNS = [
+  /^studio\//,
+  /^nova\//,
+  /^nova-app\//,
+  /^content-editor-nova\//,
+];
+
+const PROTECTED_APPLICATION_RUNTIME_PATTERNS = [
+  /^functions\//,
+  /^lib\//,
+  /^worker\.js$/,
+  /^wrangler\.(?:toml|jsonc)$/,
+];
 
 const FULL_PATTERNS = [
   /^migrations\//,
@@ -134,6 +153,17 @@ export function classifyReleaseImpact({ changedFiles = [], requestedProfile = nu
 
 export function isWebsiteOnlyImpact(impact) {
   return impact?.profile === "website";
+}
+
+export function protectedApplicationScope(changedFiles = []) {
+  const files = [...new Set(changedFiles.filter(Boolean))].sort();
+  const sourceFiles = files.filter(path => matchesAny(path, PROTECTED_APPLICATION_SOURCE_PATTERNS));
+  const runtimeFiles = files.filter(path => matchesAny(path, PROTECTED_APPLICATION_RUNTIME_PATTERNS));
+  return {
+    sourceFiles,
+    runtimeFiles,
+    verify: sourceFiles.length > 0 || runtimeFiles.length > 0,
+  };
 }
 
 export function protectedApplicationDifferences(previousAssets = [], currentAssets = [], { allowedPrefixes = [] } = {}) {
