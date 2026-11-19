@@ -2,7 +2,7 @@
 
 ## 2026-11-18 — Nova login-return and transient session repair
 
-Status: **IMPLEMENTED AND VERIFIED IN ISOLATED FIREFOX — RELEASE PENDING.**
+Status: **DEPLOYED AND LIVE VERIFIED.**
 Bill's reported trail — Paper Editor → Member Login → Member Home — was caused
 by two related client behaviors. The shared member shell treated one transient
 `/api/auth/me` failure as a signed-out member and rewrote the protected Nova
@@ -19,6 +19,15 @@ login route to Nova, the contributor opens a new Nova paper, saves it, publishes
 it to Investigation Science, and sees exactly one matching Member Feed card.
 The legacy compatibility editor remains protected. No production account,
 membership, post, article, or owner browser storage was used or changed.
+The guarded full-platform release preflight passed **40/40** gates for source
+commit `a99ccfe814a06990613bc292493c46ba90bc2637`. Live anonymous smoke passed
+**10/10**, and isolated Firefox Developer Edition acceptance passed **65/65**
+against the deployed Worker. Release `rel-a99ccfe814a0-bca2b2352004` is live
+at 100% traffic on Worker version
+`6c6738b2-d2e5-433a-abde-c08a52ed498f`. The first deployment attempt was
+automatically rolled back after a one-time browser navigation timeout; a
+disposable rerun passed all 65 live checks before the unchanged certified
+candidate was deployed successfully.
 See [Nova Login Return and Session Repair](300-COMPLETED-WORK/2026-11-18-NOVA-LOGIN-RETURN-SESSION-REPAIR.md).
 
 ## Current owner publication policy — 2026-11-16

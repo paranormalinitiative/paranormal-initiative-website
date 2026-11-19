@@ -90,8 +90,10 @@ The repair is deliberately boundary-safe:
 
 The isolated Firefox regression passes **13/13**, including the exact guest
 link → login return path and the existing Nova publication → Member Feed
-journey. Production acceptance remains a separate release gate; this audit
-does not treat the isolated result as live verification.
+journey. The guarded full-platform release preflight passed **40/40** gates;
+live anonymous smoke passed **10/10** and live isolated Firefox acceptance
+passed **65/65**. Release `rel-a99ccfe814a0-bca2b2352004` is deployed at 100%
+traffic on Worker version `6c6738b2-d2e5-433a-abde-c08a52ed498f`.
 
 The owner-requested journey was checked through maintained local and isolated
 verification rather than the owner's browser or production account:

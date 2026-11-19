@@ -51,9 +51,24 @@ post, or owner browser storage was changed.
 
 ## Release state
 
-Source implementation and regression are ready for the mandatory shared/API
-release preflight. Production deployment and live Firefox acceptance must be
-recorded here before this repair is called live-verified.
+Status: **DEPLOYED AND LIVE VERIFIED.**
+
+The guarded full-platform release preflight passed **40/40** gates for the
+exact source commit `a99ccfe814a06990613bc292493c46ba90bc2637`. The first
+deployment attempt was automatically rolled back after a one-time Firefox
+navigation timeout while the authenticated Member Home document was being
+replaced. A disposable rerun against the rolled-back site passed **65/65**;
+the unchanged certified candidate was then deployed successfully.
+
+- Release ID: `rel-a99ccfe814a0-bca2b2352004`
+- Deployed Worker version: `6c6738b2-d2e5-433a-abde-c08a52ed498f`
+- Live anonymous smoke: **10/10 PASS**
+- Live isolated Firefox Developer Edition acceptance: **65/65 PASS**
+- Traffic confirmation: **100% on the new Worker version**
+- Rollback version retained: `1ed3035c-b2d1-4ab1-8a24-239e2cc2e0fc`
+
+The temporary Firefox profiles and synthetic acceptance data were isolated;
+no owner account, member content, or owner browser storage was used.
 
 ## Files
 
