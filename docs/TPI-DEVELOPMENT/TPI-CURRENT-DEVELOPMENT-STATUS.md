@@ -14,6 +14,26 @@ workflow retain their recorded state until a separate migration decision is
 made. The older review-and-publisher records below are historical evidence, not
 the current default for new Education Center work.
 
+## 2026-11-18 — Member session resilience repair
+
+Status: **DEPLOYED AND LIVE VERIFIED.** The shared member authentication
+boundary now keeps a valid session usable when optional capability, staff,
+membership-recognition, or distinction lookups are unavailable. Legacy login
+alias resolution is awaited correctly as well. This prevents a successful
+member sign-in from being stranded without a session payload and returned to
+the public home page. Core authorization remains server-enforced; no optional
+lookup failure can grant access, and no member account or production data was
+changed during diagnosis.
+
+The regression passed **24/24** for the auth boundary, member registration
+passed **15/15**, password hashing passed **10/10**, local member Firefox
+acceptance passed **57/57**, the maintained auth lifecycle passed **38/38** at
+each checkpoint, and the impact-aware shared-API preflight passed **13 guarded
+gates**. Live anonymous production smoke passed **10/10**, and Cloudflare
+confirmed Worker `33209fd1-f5ca-410a-a98c-b5770be8f166` at 100% traffic.
+Release `rel-ee9e83bb4957-1d2331cfe75b` is recorded in [Member Session
+Resilience Repair](300-COMPLETED-WORK/2026-11-18-MEMBER-SESSION-RESILIENCE-REPAIR.md).
+
 ## 2026-11-18 — Founding member application access repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Active founding memberships now drive
