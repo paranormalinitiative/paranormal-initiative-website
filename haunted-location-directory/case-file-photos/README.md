@@ -260,11 +260,14 @@ license obligations.
 - `cripple-creek-museum-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
 - `buckhorn-exchange.jpg` — exact Buckhorn Exchange reference from Wikimedia Commons. Source: <https://commons.wikimedia.org/wiki/File:Buckhorn_Exchange,_Denver,_Colorado_(2025).jpg>; license recorded on the file page.
 - `buckhorn-exchange-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `central-city-cemetery.jpg` — owner-supplied exact Central City Cemetery photograph.
+- `central-city-cemetery-case-file.jpg` — stylized TPI case-file treatment derived from the owner-supplied exact local photo.
+- `third-bridge.jpg` — owner-supplied exact Third Bridge photograph.
+- `third-bridge-case-file.jpg` — stylized TPI case-file treatment derived from the owner-supplied exact local photo.
 
-Central City Cemetery and Third Bridge remain pending. The exact photographs
-located for those two entries were Flickr pages marked all rights reserved, so
-they are not copied or transformed until TPI has a compatible source or direct
-permission.
+The owner supplied exact source photographs for Central City Cemetery and Third
+Bridge. Both are now copied with TPI-use attribution and have matching case-file
+treatments; no generic or AI-invented landmark substitute is used.
 
 ### Arkansas legacy batch
 

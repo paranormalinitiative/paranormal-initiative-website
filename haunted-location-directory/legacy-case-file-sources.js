@@ -538,5 +538,17 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/buckhorn-exchange-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Buckhorn_Exchange,_Denver,_Colorado_(2025).jpg',
     credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'co-centralcity-cemetery': {
+    image: 'case-file-photos/central-city-cemetery.jpg',
+    caseFileImage: 'case-file-photos/central-city-cemetery-case-file.jpg',
+    source: 'Owner-supplied source photograph',
+    credit: 'Provided by the TPI owner for TPI use'
+  },
+  'co-blackhawk-thirdbridge': {
+    image: 'case-file-photos/third-bridge.jpg',
+    caseFileImage: 'case-file-photos/third-bridge-case-file.jpg',
+    source: 'Owner-supplied source photograph',
+    credit: 'Provided by the TPI owner for TPI use'
   }
 };
