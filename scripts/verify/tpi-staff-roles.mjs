@@ -6,6 +6,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { effectiveStaffRole, hasAdministrationCenterRole, mayUseAdminRoute, publicStaffIdentity, STAFF_ROLE_CATALOG } from "../../lib/staff-roles.js";
 import { hasCreatorStudioAccess } from "../../lib/auth.js";
+import { hashPassword } from "../../lib/passwords.js";
 import { onRequest } from "../../functions/api/[[path]].js";
 
 const root = resolve(import.meta.dirname, "../..");
@@ -39,6 +40,34 @@ check("appointed Executive, Full Administrator, and Moderator resolve server-sid
 const missingAppointmentTableDb = { TPI_DB: { prepare: () => { throw new Error("D1_ERROR: no such table: staff_role_appointments"); } } };
 check("missing additive appointment table preserves auth-safe legacy roles", await effectiveStaffRole(missingAppointmentTableDb, legacyAdmin) === "administrator" && await effectiveStaffRole(missingAppointmentTableDb, member) === "member" && await effectiveStaffRole(missingAppointmentTableDb, owner) === "owner");
 check("missing appointment table preserves the Admin's public session identity", (await publicStaffIdentity(missingAppointmentTableDb, legacyAdmin))?.role === "administrator");
+const resilientPassword = "TPI-session-resilience-test-password";
+const resilientHash = await hashPassword(resilientPassword);
+let resilientSessionCreated = false;
+const optionalLookupFailureDb = {
+  TPI_DB: {
+    prepare(sql) {
+      if (sql.includes("FROM contributors WHERE lower(username) = lower(?)")) {
+        return { bind: () => ({ first: async () => ({ id: "member-1", username: "BillH", display_name: "Bill Heiland", role: "member", active: 1, password_hash: resilientHash }) }) };
+      }
+      if (sql.startsWith("INSERT INTO sessions")) {
+        return { bind: () => ({ run: async () => { resilientSessionCreated = true; } }) };
+      }
+      throw new Error("D1_ERROR: optional TPI capability table is unavailable");
+    }
+  }
+};
+const resilientLogin = await onRequest({
+  request: new Request("https://example.test/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: "BillH", password: resilientPassword })
+  }),
+  env: optionalLookupFailureDb,
+  params: { path: "auth/login" }
+});
+const resilientLoginBody = await resilientLogin.json();
+check("optional capability failures cannot strand a valid member login", resilientLogin.status === 200 && resilientSessionCreated && resilientLoginBody.user?.username === "BillH" && Boolean(resilientLogin.headers.get("set-cookie")));
+check("legacy login alias fallback is awaited before authentication continues", api.includes("const byUsername = await getUserByUsername(env, value);") && api.includes("return byUsername || await getUserByLegacyLoginAlias(env, value);"));
 const legacySessionDb = { TPI_DB: { prepare(sql) {
   if (sql.includes("staff_role_appointments")) throw new Error("D1_ERROR: no such table: staff_role_appointments");
   return { bind() { return this; }, first: async () => sql.includes("FROM sessions s") ? { id: "legacy-admin", username: "legacy_admin", role: "admin", active: 1 } : null, all: async () => ({ results: [] }) };

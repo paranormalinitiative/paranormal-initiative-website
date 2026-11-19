@@ -753,21 +753,31 @@ async function handleLogin(request, env) {
   // Return the same server-resolved product capabilities used by the
   // protected routes. Founding members often retain the base `member` role,
   // so client navigation must not infer access from that role alone.
-  const creatorStudioAccess = await hasCreatorStudioAccess(env, user);
+  let creatorStudioAccess = false;
   let novaEditorialWorkspaceAccess = false;
   try {
+    creatorStudioAccess = await hasCreatorStudioAccess(env, user);
     novaEditorialWorkspaceAccess = await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR);
   } catch (error) {
+    // Product navigation hints are optional. A missing additive table or a
+    // transient capability lookup must never turn a valid password into a
+    // failed login after the session has already been created.
+    creatorStudioAccess = false;
     novaEditorialWorkspaceAccess = false;
   }
+
+  let staffIdentity = null;
+  let educationLeadershipAccess = false;
+  try { staffIdentity = await publicStaffIdentity(env, user); } catch (error) {}
+  try { educationLeadershipAccess = await hasEducationLeadershipAccess(env, user); } catch (error) {}
 
   return json({ user: {
     ...privateMemberUser(user, creatorStudioAccess, novaEditorialWorkspaceAccess),
     // The editor uses the same server-resolved staff appointment as the
     // Administration Center. A base member role must never hide an active
     // executive/administrator appointment from a protected workspace.
-    staffIdentity: await publicStaffIdentity(env, user),
-    educationLeadershipAccess: await hasEducationLeadershipAccess(env, user),
+    staffIdentity,
+    educationLeadershipAccess,
   } }, 200, {
     "Set-Cookie": `${SESSION_COOKIE}=${token}; ${sessionCookieAttributes(request, env, 60 * 60 * 24 * 14)}`
   });
@@ -1096,20 +1106,31 @@ async function handleMe(request, env) {
   } catch (error) {
     editorialReviewAccess = false;
   }
-  const staffRole = await effectiveStaffRole(env, user);
-  const educationLeadershipAccess = await hasEducationLeadershipAccess(env, user);
-  const creatorStudioAccess = await hasCreatorStudioAccess(env, user);
+  let staffRole = user.role === "admin" ? "administrator" : (user.role || "member");
+  try { staffRole = await effectiveStaffRole(env, user); } catch (error) {}
+  let educationLeadershipAccess = false;
+  try { educationLeadershipAccess = await hasEducationLeadershipAccess(env, user); } catch (error) {}
+  let creatorStudioAccess = false;
+  try { creatorStudioAccess = await hasCreatorStudioAccess(env, user); } catch (error) {}
   const novaEditorialWorkspaceAccess = memberCapabilities.includes(CAPABILITY.CONTRIBUTOR);
+  let staffIdentity = null;
+  let foundingMembership = null;
+  let leadershipDistinctions = [];
+  let boardMembership = null;
+  try { staffIdentity = await publicStaffIdentity(env, user); } catch (error) {}
+  try { foundingMembership = await publicMembershipIdentity(env, user.id); } catch (error) {}
+  try { leadershipDistinctions = await listLeadershipDistinctions(env, "member", user.id); } catch (error) {}
+  try { boardMembership = await getBoardMembership(env, user.id); } catch (error) {}
   return json({
     user: {
       ...privateMemberUser(user, creatorStudioAccess, novaEditorialWorkspaceAccess),
-      staffIdentity: await publicStaffIdentity(env, user),
+      staffIdentity,
       editorialReviewAccess,
       adminAccess: hasAdministrationCenterRole(staffRole) || editorialReviewAccess,
       educationLeadershipAccess,
-      foundingMembership: await publicMembershipIdentity(env, user.id),
-      leadershipDistinctions: await listLeadershipDistinctions(env, "member", user.id),
-      boardMembership: await getBoardMembership(env, user.id),
+      foundingMembership,
+      leadershipDistinctions,
+      boardMembership,
     },
   }, 200, { "Cache-Control": "no-store" });
 }
@@ -12550,9 +12571,14 @@ async function getUserByUsername(env, username) {
 async function getUserByLoginIdentifier(env, identifier) {
   const value = clean(identifier);
   if (!value) return null;
-  if (!value.includes("@")) return getUserByUsername(env, value) || getUserByLegacyLoginAlias(env, value);
+  if (!value.includes("@")) {
+    const byUsername = await getUserByUsername(env, value);
+    return byUsername || await getUserByLegacyLoginAlias(env, value);
+  }
   const byEmail = await getUserByEmail(env, value.toLowerCase());
-  return byEmail || getUserByUsername(env, value) || getUserByLegacyLoginAlias(env, value);
+  if (byEmail) return byEmail;
+  const byUsername = await getUserByUsername(env, value);
+  return byUsername || await getUserByLegacyLoginAlias(env, value);
 }
 
 async function getUserByEmail(env, email) {
