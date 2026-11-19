@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## 2026-11-18 — Nova login-return and transient session repair
+
+Status: **IMPLEMENTED AND VERIFIED IN ISOLATED FIREFOX — RELEASE PENDING.**
+Bill's reported trail — Paper Editor → Member Login → Member Home — was caused
+by two related client behaviors. The shared member shell treated one transient
+`/api/auth/me` failure as a signed-out member and rewrote the protected Nova
+link to Member Login. The login page then discarded the requested workspace and
+sent the member to Home after sign-in. The repair retries transient Worker,
+network, and rate-limit failures before changing the shell to guest mode, and
+preserves a same-origin `next` destination for Nova through the login handoff.
+Nova and every destination page still enforce their own server-side access
+checks; the redirect state grants no permission.
+
+The exact browser guard now passes **13/13** in disposable Firefox: guest Nova
+link preserves `/paper-editor.html`, an authenticated session returns from the
+login route to Nova, the contributor opens a new Nova paper, saves it, publishes
+it to Investigation Science, and sees exactly one matching Member Feed card.
+The legacy compatibility editor remains protected. No production account,
+membership, post, article, or owner browser storage was used or changed.
+See [Nova Login Return and Session Repair](300-COMPLETED-WORK/2026-11-18-NOVA-LOGIN-RETURN-SESSION-REPAIR.md).
+
 ## Current owner publication policy — 2026-11-16
 
 Standard Contributor articles in open Education Center subjects are not sent
@@ -20,7 +41,8 @@ Status: **VERIFIED IN ISOLATED FIREFOX — NO PRODUCTION CODE CHANGE REQUIRED.**
 The exact browser journey is now a maintained regression: Member Home → Nova
 Editorial Workspace → New document → edit title, Investigation Science
 destination, and body → Save → Publish → return to Member Home. It passed
-**11/11** against a disposable Worker and D1 state. The test proved that the
+**13/13** against a disposable Worker and D1 state, including the login-return
+and guest-link checks. The test proved that the
 paper opens in Nova, saves its metadata and linked document, creates one live
 Education Center article, and renders exactly one matching article card in the
 Member Feed with its canonical article link. The disposable article and test

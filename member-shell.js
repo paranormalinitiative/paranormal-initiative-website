@@ -170,17 +170,37 @@
   }
 
   async function quickSessionCheck() {
-    try {
-      var resp = await fetch("/api/auth/me", { credentials: "same-origin" });
-      if (resp.ok) {
-        var data = await resp.json();
-        return data.user || null;
-      }
-    } catch (e) {}
+    var hostedUser = await fetchSessionUser();
+    if (hostedUser !== undefined) return hostedUser;
     if (!isLocalPreviewOrigin()) return null;
     var username = null;
     try { username = localStorage.getItem("tpiEditorSession"); } catch (e) {}
     return username ? true : null;
+  }
+
+  // A transient Worker/D1 response must not turn an authenticated member into
+  // a guest during shell boot. The old single request could rewrite protected
+  // links to Member Login for one bad response, then the login page sent the
+  // member back to Home. Return undefined only when the hosted check never
+  // produced a trustworthy answer; a valid 200 response with user:null is a
+  // confirmed signed-out state.
+  async function fetchSessionUser() {
+    var lastTransientFailure = false;
+    for (var attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        var resp = await fetch("/api/auth/me", { credentials: "same-origin", cache: "no-store" });
+        if (resp.ok) {
+          var data = await resp.json();
+          return data.user || null;
+        }
+        lastTransientFailure = resp.status >= 500 || resp.status === 429;
+      } catch (e) {
+        lastTransientFailure = true;
+      }
+      if (!lastTransientFailure || attempt === 2) break;
+      await delay(attempt === 0 ? 120 : 300);
+    }
+    return undefined;
   }
 
   function isLocalPreviewOrigin() {
@@ -531,7 +551,9 @@
   function setupProfileLink(user) {
     if (user && user.guest) {
       document.querySelectorAll('[data-nav="profile"], [data-nav="settings"], [data-nav="logout"], [data-nav="member-notifications"], [data-nav="explore"], [data-nav="paper-editor"]').forEach(function(link) {
-        link.href = "member-login.html";
+        link.href = link.getAttribute("data-nav") === "paper-editor"
+          ? "member-login.html?next=%2Fpaper-editor.html"
+          : "member-login.html";
       });
       return;
     }
@@ -5138,15 +5160,8 @@
   // ---- User Session ----
 
   async function getSignedInUser() {
-    try {
-      var response = await fetch("/api/auth/me", { credentials: "same-origin" });
-      if (response.ok) {
-        var data = await response.json();
-        // The server session is authoritative on hosted origins. A stale
-        // local preview identity must never make the shell look signed in.
-        return data.user || null;
-      }
-    } catch (error) {}
+    var hostedUser = await fetchSessionUser();
+    if (hostedUser !== undefined) return hostedUser;
     if (!isLocalPreviewOrigin()) return null;
     var username = null;
     try { username = localStorage.getItem("tpiEditorSession"); } catch (e) {}

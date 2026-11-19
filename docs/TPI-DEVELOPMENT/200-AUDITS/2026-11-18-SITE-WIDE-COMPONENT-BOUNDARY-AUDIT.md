@@ -66,6 +66,33 @@ publication path.
 
 ## Requested member journey and evidence
 
+### Nova access handoff incident
+
+The Bill Heiland report exposed a shared identity/navigation boundary defect,
+not a Nova document or publication failure. A one-shot `/api/auth/me` read
+could make the shared shell treat a real member as a guest during a transient
+Worker, network, or rate-limit failure. The shell then rewrote the Nova link to
+Member Login, while the login page always returned to Member Home and discarded
+the intended workspace. This explains the observed trail:
+
+```text
+Nova Editorial Workspace -> Member Login -> Member Home
+```
+
+The repair is deliberately boundary-safe:
+
+- `member-shell.js` retries transient session failures before guest fallback;
+- the Nova link carries a same-origin `/paper-editor.html` return destination;
+- `member-login.js` validates that destination and returns there after a
+  confirmed session, while preserving Member Home as the default;
+- `paper-editor.js` and the Worker continue to perform independent Nova access
+  checks, so a return URL cannot grant contributor access.
+
+The isolated Firefox regression passes **13/13**, including the exact guest
+link → login return path and the existing Nova publication → Member Feed
+journey. Production acceptance remains a separate release gate; this audit
+does not treat the isolated result as live verification.
+
 The owner-requested journey was checked through maintained local and isolated
 verification rather than the owner's browser or production account:
 

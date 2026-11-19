@@ -168,6 +168,22 @@ try {
   driver = await new Builder().forBrowser("firefox").setFirefoxOptions(options).setFirefoxService(new firefox.ServiceBuilder(geckodriver)).build();
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 30_000 });
   await driver.manage().window().setRect({ width: 1440, height: 1000 });
+
+  // TPI-NOVA-AUTH-REDIRECT: a transient session read must not strand a
+  // protected workspace link at Member Home. When the shared shell has to
+  // send a visitor through login, it preserves Nova as the intended return
+  // destination; the login page still performs its own authorization check.
+  await driver.get(`${base}/education-center.html`);
+  await waitFor(() => driver.findElements(By.css(".member-sidebar")).then(items => items.length === 1), "public shared shell did not render");
+  const guestEditorLinks = await driver.findElements(By.css('a[data-nav="paper-editor"]'));
+  const guestEditorHref = guestEditorLinks.length ? await guestEditorLinks[0].getAttribute("href") : "";
+  check("guest Nova link preserves the editor return destination", guestEditorHref.includes("member-login.html?next=%2Fpaper-editor.html"), guestEditorHref);
+
+  await setSession(author.token);
+  await driver.get(`${base}/member-login.html?next=%2Fpaper-editor.html`);
+  await waitFor(() => driver.getCurrentUrl().then(url => /paper-editor\.html/.test(url)), "login did not return to the requested Nova workspace");
+  check("an authenticated session returns from Member Login to Nova", /paper-editor\.html/.test(await driver.getCurrentUrl()));
+
   await setSession(author.token);
   await driver.get(`${base}/member-home.html`);
   await waitFor(() => driver.findElements(By.css(".member-sidebar")).then(items => items.length === 1), "Member Home did not render the shared member shell");

@@ -30,6 +30,22 @@
   const authenticatedUserName = document.querySelector("[data-authenticated-user-name]");
   const switchAccountButton = document.querySelector("[data-switch-account]");
 
+  function getSafeLoginDestination() {
+    const requested = new URLSearchParams(window.location.search).get("next");
+    if (!requested) return "/member-home?member=1";
+    try {
+      const url = new URL(requested, window.location.origin);
+      if (url.origin !== window.location.origin) return "/member-home?member=1";
+      const path = `${url.pathname}${url.search}${url.hash}`;
+      // Only preserve same-origin application routes. The destination is
+      // navigation state, never an authorization decision; the destination
+      // page still performs its own server-side access check.
+      return path.startsWith("/") ? path : "/member-home?member=1";
+    } catch (error) {
+      return "/member-home?member=1";
+    }
+  }
+
   function revealAdminToolHost(host) {
     if (!host) return;
     if (host.closest("[data-admin-center]") && host.dataset.adminView) {
@@ -213,7 +229,7 @@
 
     // A signed-in member should land on the shared member Home instead of
     // being left on a separate-looking login screen with a redundant CTA.
-    window.location.replace("/member-home?member=1");
+    window.location.replace(getSafeLoginDestination());
 
     if (authenticatedUserName) {
       authenticatedUserName.textContent = user.displayName || user.username || "this account";
@@ -2453,7 +2469,10 @@
           } catch (storageError) {}
           const loginUsername = result.user?.username || identifier;
           setLoginStatus("Signed in. Opening Member Home…", false);
-          window.location.href = "/member-home?username=" + encodeURIComponent(loginUsername);
+          const destination = getSafeLoginDestination();
+          window.location.href = destination === "/member-home?member=1"
+            ? "/member-home?username=" + encodeURIComponent(loginUsername)
+            : destination;
         } catch (error) {
           setLoginStatus(error.message || "Sign-in failed. Please try again.", true);
         }
@@ -2534,7 +2553,10 @@
           if (!registration?.signedIn) throw new Error("Account was created, but the sign-in session was not ready. Use Member Login above.");
           setMemberRegisterStatus("Account created. Opening Member Home…", false);
           try { localStorage.setItem(ACCESS_SESSION_KEY, registration.user?.username || username); } catch (storageError) {}
-          window.location.href = "/member-home?username=" + encodeURIComponent(registration.user?.username || username);
+          const destination = getSafeLoginDestination();
+          window.location.href = destination === "/member-home?member=1"
+            ? "/member-home?username=" + encodeURIComponent(registration.user?.username || username)
+            : destination;
         } catch (error) {
           setMemberRegisterStatus(error.message || "Account creation failed. Please try again.", true);
           releaseRegisterSubmitButton();
