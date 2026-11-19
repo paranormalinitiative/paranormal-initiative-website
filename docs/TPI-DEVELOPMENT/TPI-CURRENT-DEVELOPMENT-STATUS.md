@@ -227,7 +227,7 @@ for the image rule and verification record.
 
 ## 2026-11-19 — Haunted location case-file image completion pass
 
-Status: **LOCALLY COMPLETE AND VERIFIED — production release pending repository transport recovery.** The owner-authorized continuation
+Status: **DEPLOYED AND LIVE VERIFIED.** The owner-authorized continuation
 completed the exact-source image pass for the newer 25-state starter cohort:
 94 of 100 entries now have an exact locally stored source photograph, a
 separate TPI case-file treatment, and a recorded source/license entry. The
@@ -238,9 +238,9 @@ image. Six entries remain explicitly image-pending because no exact source with
 clear reuse terms was verified: Montana — Gold Hill Hotel; New York — Hinsdale
 House; North Dakota — Hotel Donaldson; Oklahoma — Gilcrease Museum; South
 Dakota — Sica Hollow State Park; and Tennessee — Old South Pittsburg Hospital.
-No AI landmark substitute is used. The focused local checks pass; production
-smoke and live acceptance remain pending because GitHub is resetting the
-branch upload before the guarded release can begin. See [Haunted Location Case-File Image
+No AI landmark substitute is used. The guarded website release completed with
+production smoke passing 10/10 and the new Worker holding 100% traffic; the
+protected StudioFlow maintenance lock remained in place. See [Haunted Location Case-File Image
 Completion](300-COMPLETED-WORK/2026-11-19-HAUNTED-LOCATION-CASE-FILE-IMAGE-COMPLETION.md)
 for the source decisions and release verification.
 

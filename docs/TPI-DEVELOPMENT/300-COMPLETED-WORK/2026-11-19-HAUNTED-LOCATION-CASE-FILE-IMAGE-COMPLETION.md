@@ -1,7 +1,7 @@
 # Haunted Location Case-File Image Completion Pass
 
 Date: 2026-11-19
-Status: **LOCALLY COMPLETE AND VERIFIED — production release pending repository transport recovery.**
+Status: **DEPLOYED AND LIVE VERIFIED.**
 
 ## Scope
 
@@ -64,10 +64,20 @@ TPI haunted-location-directory verification passed: 50 state pages, 100 new star
 ```
 
 The focused local checks completed without touching StudioFlow, Nova Editorial
-Workspace, member data, or the owner account. The guarded production release
-has not been claimed: GitHub is currently resetting the branch upload before
-the remote can accept the commits, so production smoke and live acceptance
-remain pending.
+Workspace, member data, or the owner account. The guarded website release
+completed with production smoke passing 10/10 and the new Worker holding 100%
+traffic. StudioFlow live acceptance remained locked and skipped because no
+StudioFlow source or shared runtime changed.
+
+## Release record
+
+- Source commit: `6727874517500321452bdd7efee1a469d9de7fd8`
+- Release candidate: `rel-672787451750-6f7d3f8f3d80`
+- Production Worker version: `64527314-059c-4036-b5c3-3b4f770739eb`
+- Rollback target: `f0538997-789a-4857-ad2d-0e1cc2cd359f`
+- Release profile: website; protected application maintenance lock preserved
+- Production smoke: **10/10 passed**
+- Final release state: **DEPLOYED_AND_VERIFIED**
 
 ## Source rule
 
