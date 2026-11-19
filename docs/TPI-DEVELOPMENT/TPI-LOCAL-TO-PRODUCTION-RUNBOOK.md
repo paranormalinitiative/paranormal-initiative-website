@@ -251,7 +251,9 @@ mode. Every candidate still hashes their published bytes and the protected
 integrity guard refuses unexpected changes, but ordinary website,
 documentation, test, and release-record changes do not rebuild them or run
 their full browser acceptance suites. The release candidate carries their
-existing bytes forward unchanged.
+existing bytes forward unchanged. The complete isolated QA harness also skips
+its optional StudioFlow build in this case; it continues to run all shared
+Worker, authentication, API, and public-surface checks.
 
 The lock reopens only when one of these conditions is present:
 

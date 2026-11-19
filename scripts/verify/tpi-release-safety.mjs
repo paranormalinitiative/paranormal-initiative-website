@@ -154,6 +154,8 @@ check("StudioFlow staging preserves maintained media bridges", () => {
 check("complete QA runs the StudioFlow request-budget guard", () => {
   assert.match(qaRunner, /StudioFlow production request-budget guard/);
   assert.match(qaRunner, /check:request-budget/);
+  assert.match(qaRunner, /skip-studioflow/);
+  assert.match(release, /isolatedQaArgs/);
 });
 check("complete QA runs the member profile media source contracts", () => {
   assert.match(qaRunner, /tpi-member-interactions\.mjs/);

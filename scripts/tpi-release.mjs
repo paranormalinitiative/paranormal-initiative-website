@@ -376,7 +376,10 @@ async function preflight() {
     startIsolatedE2E();
     try {
       await waitFor("http://127.0.0.1:8789/api/community/categories");
-      run("Complete isolated QA and API E2E", process.execPath, ["scripts/qa/run-qa.mjs", "--e2e", "--studioflow-root", studioFlowRoot, "--production-smoke"], {
+      const isolatedQaArgs = ["scripts/qa/run-qa.mjs", "--e2e", "--production-smoke"];
+      if (protectedApplicationVerificationRequired(impact.changedFiles)) isolatedQaArgs.push("--studioflow-root", studioFlowRoot);
+      else isolatedQaArgs.push("--skip-studioflow");
+      run("Complete isolated QA and API E2E", process.execPath, isolatedQaArgs, {
         env: { TPI_E2E_ISOLATED: "1", TPI_WRANGLER_BIN: wrangler, WRANGLER_BIN: wrangler },
       });
     } finally {

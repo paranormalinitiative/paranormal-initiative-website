@@ -22,6 +22,7 @@ const value = (flag, fallback = "") => {
 };
 const e2e = has("--e2e");
 const productionSmoke = has("--production-smoke");
+const skipStudioFlow = has("--skip-studioflow") || process.env.TPI_PROTECTED_APPLICATION_MAINTENANCE_LOCK === "1";
 const studioflowRoot = value("--studioflow-root", process.env.STUDIOFLOW_ROOT || "");
 const reportPath = value("--report", "");
 const results = [];
@@ -77,7 +78,10 @@ if (e2e) {
   console.log("BLOCKED TPI local multi-user API E2E — not requested; pass --e2e");
 }
 
-if (studioflowRoot) {
+if (skipStudioFlow) {
+  results.push({ name: "StudioFlow workspace checks", status: "SKIPPED", detail: "protected application maintenance lock; immutable release bytes are checked by the release runner" });
+  console.log("SKIP StudioFlow workspace checks — protected application maintenance lock is active");
+} else if (studioflowRoot) {
   const resolvedStudioFlow = resolve(studioflowRoot);
   if (existsSync(resolve(resolvedStudioFlow, "package.json"))) {
     run("StudioFlow production build", "npm", ["run", "build"], { cwd: resolvedStudioFlow });
@@ -104,7 +108,7 @@ const failed = results.filter((result) => result.status === "FAIL");
 const output = {
   generatedAt: new Date().toISOString(),
   repository: root,
-  options: { e2e, productionSmoke, studioflowRoot: studioflowRoot || null },
+  options: { e2e, productionSmoke, skipStudioFlow, studioflowRoot: studioflowRoot || null },
   results,
   summary: {
     pass: results.filter((result) => result.status === "PASS").length,
