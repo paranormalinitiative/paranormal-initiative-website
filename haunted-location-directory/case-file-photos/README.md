@@ -25,6 +25,8 @@ license obligations.
 - `redmont-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
 - `old-cahawba.jpg` — Brian.S.W, CC BY-SA 4.0; exact Arthur–Fambro House reference at Old Cahawba. Source: <https://commons.wikimedia.org/wiki/File:Arthur-Fambro_House.jpg>
 - `old-cahawba-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
+- `gaines-ridge-dinner-club.jpg` — exact owner-supplied source photograph.
+- `gaines-ridge-dinner-club-case-file.png` — stylized TPI case-file treatment derived from the owner-supplied exact source photograph.
 
 - `wabasha-street-caves.jpg` — Gobonobo, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Wabasha_Street_Caves.jpg>
 - `wabasha-street-caves-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo; it is labeled as a treatment in the directory.

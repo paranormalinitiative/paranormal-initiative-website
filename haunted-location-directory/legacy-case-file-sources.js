@@ -46,5 +46,11 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/old-cahawba-case-file.png',
     source: 'https://commons.wikimedia.org/wiki/File:Arthur-Fambro_House.jpg',
     credit: 'Brian.S.W — CC BY-SA 4.0'
+  },
+  'al-camden-gainesridge': {
+    image: 'case-file-photos/gaines-ridge-dinner-club.jpg',
+    caseFileImage: 'case-file-photos/gaines-ridge-dinner-club-case-file.png',
+    source: 'Owner-supplied source photograph',
+    credit: 'Provided by the TPI owner for TPI use'
   }
 };
