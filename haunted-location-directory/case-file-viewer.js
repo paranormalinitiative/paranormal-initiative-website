@@ -49,7 +49,7 @@
   };
 
   document.addEventListener('click', event => {
-    const trigger = event.target.closest('.tpi-case-image-trigger');
+    const trigger = event.target.closest('.tpi-case-image-trigger, .legacy-case-image-trigger');
     if (!trigger) return;
     event.preventDefault();
     const image = trigger.querySelector('img');

@@ -7,6 +7,17 @@ license obligations.
 
 ## Current photo records
 
+### Alabama legacy batch
+
+- `sloss-furnaces.jpg` — DXR, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Sloss_Furnaces,_Birmingham_AL,_Southwest_view_20160714_1.jpg>
+- `sloss-furnaces-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-morgan.jpg` — Ermattox9, public domain. Source: <https://commons.wikimedia.org/wiki/File:Fort_Morgan_AL.jpg>
+- `fort-morgan-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `sturdivant-hall.jpg` — Jeffrey Reed / Altairisfar, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Sturdivant_Hall_Front_Facade.jpg>
+- `sturdivant-hall-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `uss-alabama.jpg` — JSA0332, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:USS_Alabama_01.jpg>
+- `uss-alabama-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+
 - `wabasha-street-caves.jpg` — Gobonobo, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Wabasha_Street_Caves.jpg>
 - `wabasha-street-caves-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo; it is labeled as a treatment in the directory.
 - `glensheen-mansion.jpg` — Ktoma, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Glensheen_Mansion.jpg>

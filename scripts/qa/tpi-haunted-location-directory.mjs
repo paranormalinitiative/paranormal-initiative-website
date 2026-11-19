@@ -32,6 +32,13 @@ const failures = [];
 const data = context.window.TPI_STATE_DATA || [];
 const dataBySlug = new Map(data.map(state => [state.slug, state]));
 
+const legacyStateSlugs = [
+  'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado',
+  'connecticut', 'delaware', 'florida', 'georgia', 'hawaii', 'idaho',
+  'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana',
+  'maine', 'maryland', 'massachusetts'
+];
+
 if (data.length !== 25) failures.push(`expected 25 new state data records, found ${data.length}`);
 
 for (const [slug, name] of allStates) {
@@ -58,10 +65,30 @@ for (const [slug, name] of allStates) {
   } else {
     const metadata = source.match(/totalLocations\s*:\s*(\d+)/)?.[1] || source.match(/"total_locations"\s*:\s*(\d+)/)?.[1];
     if (!metadata || Number(metadata) < 1) failures.push(`${name}: established page has no location count`);
+    if (legacyStateSlugs.includes(slug)) {
+      for (const requiredAsset of ['legacy-case-file.css', 'legacy-case-file-sources.js', 'legacy-case-file.js', 'case-file-viewer.js']) {
+        if (!source.includes(requiredAsset)) failures.push(`${name}: legacy case-file layer is missing ${requiredAsset}`);
+      }
+      const entryCount = (source.match(/class="entry"\s+data-location-id=/g) || []).length;
+      if (entryCount < 1) failures.push(`${name}: legacy page has no location entries`);
+    }
   }
 }
 
 const imageSources = context.window.TPI_CASE_FILE_SOURCES || {};
+const legacySourceContext = { window: {} };
+vm.createContext(legacySourceContext);
+vm.runInContext(fs.readFileSync(path.join(directory, 'legacy-case-file-sources.js'), 'utf8'), legacySourceContext);
+const legacyImageSources = legacySourceContext.window.TPI_LEGACY_CASE_FILE_SOURCES || {};
+for (const [id, image] of Object.entries(legacyImageSources)) {
+  for (const asset of [image.image, image.caseFileImage]) {
+    if (asset?.startsWith('case-file-photos/') && !fs.existsSync(path.join(directory, asset))) {
+      failures.push(`missing legacy case-file asset for ${id}: ${asset}`);
+    }
+  }
+  if (!image.source || !image.credit) failures.push(`missing legacy attribution record for ${id}`);
+}
+if (Object.keys(legacyImageSources).length < 4) failures.push('legacy Alabama image batch has fewer than four verified mappings');
 const rendererSource = fs.readFileSync(path.join(directory, 'state-directory.js'), 'utf8');
 if (!rendererSource.includes('tpi-case-state-label') || !rendererSource.includes('${esc(state.name)}')) {
   failures.push('case-file renderer does not display the canonical state name on photographs');

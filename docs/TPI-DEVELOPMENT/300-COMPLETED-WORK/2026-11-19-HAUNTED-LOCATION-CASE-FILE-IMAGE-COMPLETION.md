@@ -102,3 +102,30 @@ is a presentation treatment of that exact source; it is not presented as an
 unedited documentary photograph. If those conditions cannot be verified, the
 pending state stays visible until TPI receives a compatible source or direct
 permission.
+
+## Legacy Alabama–Massachusetts image pass — in progress
+
+The original static block from Alabama through Massachusetts contains 21 state
+pages and 402 existing location records. Those pages previously had no shared
+case-file image layer at all. They now load one maintained image layer with the
+same full-image viewer behavior used by the newer state pages. Existing
+location text and research claims were not rewritten.
+
+Every legacy entry now shows either its verified case-file image or an explicit
+**Exact case-file photograph pending** message. This prevents a generic or
+wrong-location image from being silently substituted while the source audit
+continues.
+
+The first Alabama batch is recorded for four exact locations:
+
+- Sloss Furnaces — DXR, CC BY-SA 4.0.
+- Fort Morgan — Ermattox9, public domain.
+- Sturdivant Hall — Jeffrey Reed / Altairisfar, CC BY-SA 3.0.
+- USS Alabama Battleship — JSA0332, CC BY-SA 3.0.
+
+The original source photographs and TPI case-file treatments are stored under
+`haunted-location-directory/case-file-photos/`; the mappings and attribution
+are maintained in `legacy-case-file-sources.js`. The remaining 398 legacy
+locations stay visibly pending until exact identity and reuse terms are
+verified. This pass is intentionally incremental so the directory never shows
+an attractive but incorrect landmark image.
