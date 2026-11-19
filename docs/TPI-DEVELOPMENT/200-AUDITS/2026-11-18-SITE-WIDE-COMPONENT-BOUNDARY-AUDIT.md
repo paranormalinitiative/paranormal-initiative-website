@@ -1,7 +1,7 @@
 # TPI Site-Wide Component Boundary Audit
 
 Date: 2026-11-18  
-Status: **AUDITED — BOARD CLEANUP READY FOR RELEASE**
+Status: **AUDITED — COMBINED PUBLISHING JOURNEY VERIFIED**
 
 ## Purpose
 
@@ -81,10 +81,15 @@ verification rather than the owner's browser or production account:
    acceptance passed **134/134**, including access gates, creation, editing,
    autosave, reload, recovery, revisions, trash/restore, permanent-delete
    confirmation, and responsive behavior.
-4. **Create and publish Education Center work** — editorial workflow and
-   publication verification passed: R6B **47**, R6C **23**, R6D **47**, R6E
-   **67**, and R6F **30**. The publication contract confirms that a published
-   Education article enters shared Member Feed discovery exactly once.
+4. **Create, publish, and return to the feed** — the exact combined Firefox
+   journey now passes **11/11** in a disposable Worker: Member Home opens Nova,
+   New document creates a Nova-linked paper, the author edits its title,
+   Education Center destination, and body, Save persists both metadata and the
+   linked document, Publish writes one live Investigation Science article, and
+   returning to Member Home renders exactly one matching article feed card with
+   the canonical published-article link. The existing editorial workflow
+   contracts also pass: R6B **47**, R6C **23**, R6D **47**, R6E **67**, and R6F
+   **30**.
 5. **Profile updates for members** — Firefox acceptance covered Update Profile,
    short bio, avatar preview/save, banner preview/save, session round-trip, and
    the public profile view. Signup browser acceptance also passed for account
@@ -119,9 +124,11 @@ to remove their public Board status.
 There is one intentional compatibility boundary in Nova: the legacy article
 editor remains available only for migration of older article records. Normal
 documents open directly in Nova, and the compatibility surface is hidden until
-the authoritative Nova editor is ready. It should not be deleted until the
-remaining legacy article inventory is migrated and verified; deleting it now
-would risk making older published or editable records inaccessible.
+the authoritative Nova editor is ready. The combined browser journey explicitly
+checks that new papers open in Nova and that this legacy boundary remains in
+source. It should not be deleted until the remaining legacy article inventory
+is migrated and verified; deleting it now would risk making older published or
+editable records inaccessible.
 
 The same rule applies to other older routes: preserve a compatibility path only
 when a current record or public URL still depends on it, mark it explicitly,

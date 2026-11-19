@@ -88,6 +88,7 @@
     "verify:release-certification": "node scripts/verify/tpi-ops-005-certification.mjs",
     "verify:nova-003": "node scripts/verify/tpi-nova-003-foundation.mjs",
     "verify:nova-004": "node scripts/verify/tpi-nova-004-editor.mjs",
+    "verify:paper-editor-feed-firefox": "node scripts/verify/tpi-paper-editor-to-feed-firefox.mjs",
     "verify:nova-005b2a": "node scripts/verify/tpi-nova-005b2a-foundation.mjs",
   "verify:nova-005b1": "node scripts/verify/tpi-nova-005b1-home-ribbon.mjs",
     "verify:nova-005b2b": "node scripts/verify/tpi-nova-005b2b-tables.mjs",

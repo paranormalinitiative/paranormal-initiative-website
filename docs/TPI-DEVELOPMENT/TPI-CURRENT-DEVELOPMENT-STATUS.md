@@ -14,6 +14,24 @@ workflow retain their recorded state until a separate migration decision is
 made. The older review-and-publisher records below are historical evidence, not
 the current default for new Education Center work.
 
+## 2026-11-18 — Combined Nova publication-to-feed journey
+
+Status: **VERIFIED IN ISOLATED FIREFOX — NO PRODUCTION CODE CHANGE REQUIRED.**
+The exact browser journey is now a maintained regression: Member Home → Nova
+Editorial Workspace → New document → edit title, Investigation Science
+destination, and body → Save → Publish → return to Member Home. It passed
+**11/11** against a disposable Worker and D1 state. The test proved that the
+paper opens in Nova, saves its metadata and linked document, creates one live
+Education Center article, and renders exactly one matching article card in the
+Member Feed with its canonical article link. The disposable article and test
+accounts were removed after the run.
+
+The legacy compatibility editor remains intentionally protected for older
+records and is checked as a source boundary. It will not be removed until the
+remaining legacy inventory is migrated and verified. This change adds the
+browser guard and documentation only; it does not require a Worker deployment.
+See [Site-Wide Component Boundary Audit](200-AUDITS/2026-11-18-SITE-WIDE-COMPONENT-BOUNDARY-AUDIT.md).
+
 ## 2026-11-18 — Member session resilience repair
 
 Status: **DEPLOYED AND LIVE VERIFIED.** The shared member authentication
