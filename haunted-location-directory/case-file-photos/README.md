@@ -17,6 +17,14 @@ license obligations.
 - `sturdivant-hall-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
 - `uss-alabama.jpg` — JSA0332, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:USS_Alabama_01.jpg>
 - `uss-alabama-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `maple-hill-cemetery.jpg` — LonelyPilgrim, CC BY 2.5. Source: <https://commons.wikimedia.org/wiki/File:Maple_Hill_Cemetery_Huntsville_Alabama_Front1.jpg>
+- `maple-hill-cemetery-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `gaineswood.jpg` — Carol M. Highsmith / Library of Congress, public domain. Source: <https://commons.wikimedia.org/wiki/File:Gaineswood_by_Highsmith_001.jpg>
+- `gaineswood-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `redmont-hotel.jpg` — Chris Pruitt, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Redmont_Hotel_Nov_2011_01.jpg>
+- `redmont-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `old-cahawba.jpg` — Brian.S.W, CC BY-SA 4.0; exact Arthur–Fambro House reference at Old Cahawba. Source: <https://commons.wikimedia.org/wiki/File:Arthur-Fambro_House.jpg>
+- `old-cahawba-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
 
 - `wabasha-street-caves.jpg` — Gobonobo, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Wabasha_Street_Caves.jpg>
 - `wabasha-street-caves-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo; it is labeled as a treatment in the directory.

@@ -116,16 +116,20 @@ Every legacy entry now shows either its verified case-file image or an explicit
 wrong-location image from being silently substituted while the source audit
 continues.
 
-The first Alabama batch is recorded for four exact locations:
+The first Alabama batch is recorded for eight exact locations:
 
 - Sloss Furnaces — DXR, CC BY-SA 4.0.
 - Fort Morgan — Ermattox9, public domain.
 - Sturdivant Hall — Jeffrey Reed / Altairisfar, CC BY-SA 3.0.
 - USS Alabama Battleship — JSA0332, CC BY-SA 3.0.
+- Maple Hill Cemetery — LonelyPilgrim, CC BY 2.5.
+- Gaineswood — Carol M. Highsmith / Library of Congress, public domain.
+- Redmont Hotel — Chris Pruitt, CC BY-SA 3.0.
+- Old Cahawba (Arthur–Fambro House) — Brian.S.W, CC BY-SA 4.0.
 
 The original source photographs and TPI case-file treatments are stored under
 `haunted-location-directory/case-file-photos/`; the mappings and attribution
-are maintained in `legacy-case-file-sources.js`. The remaining 398 legacy
+are maintained in `legacy-case-file-sources.js`. The remaining 394 legacy
 locations stay visibly pending until exact identity and reuse terms are
 verified. This pass is intentionally incremental so the directory never shows
 an attractive but incorrect landmark image.

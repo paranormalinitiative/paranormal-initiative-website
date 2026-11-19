@@ -22,5 +22,29 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/uss-alabama-case-file.png',
     source: 'https://commons.wikimedia.org/wiki/File:USS_Alabama_01.jpg',
     credit: 'JSA0332 — CC BY-SA 3.0'
+  },
+  'al-huntsville-maplehill': {
+    image: 'case-file-photos/maple-hill-cemetery.jpg',
+    caseFileImage: 'case-file-photos/maple-hill-cemetery-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Maple_Hill_Cemetery_Huntsville_Alabama_Front1.jpg',
+    credit: 'LonelyPilgrim — CC BY 2.5'
+  },
+  'al-demopolis-gaineswood': {
+    image: 'case-file-photos/gaineswood.jpg',
+    caseFileImage: 'case-file-photos/gaineswood-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Gaineswood_by_Highsmith_001.jpg',
+    credit: 'Carol M. Highsmith / Library of Congress — Public domain'
+  },
+  'al-birmingham-redmont': {
+    image: 'case-file-photos/redmont-hotel.jpg',
+    caseFileImage: 'case-file-photos/redmont-hotel-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Redmont_Hotel_Nov_2011_01.jpg',
+    credit: 'Chris Pruitt — CC BY-SA 3.0'
+  },
+  'al-dallascounty-cahawba': {
+    image: 'case-file-photos/old-cahawba.jpg',
+    caseFileImage: 'case-file-photos/old-cahawba-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Arthur-Fambro_House.jpg',
+    credit: 'Brian.S.W — CC BY-SA 4.0'
   }
 };
