@@ -271,3 +271,33 @@ a stylized case-file presentation rather than an unedited documentary photo.
 The owner supplied exact source photographs for Central City Cemetery and Third
 Bridge. All 22 Colorado entries now have exact source photographs and matching
 TPI case-file treatments; no generic or AI-invented landmark substitute is used.
+
+## Connecticut legacy batch — 13 completed, 1 pending
+
+Connecticut contains 14 directory entries. Thirteen now have an exact source
+photograph, a matching TPI case-file treatment, local asset copies, and a
+source/credit record:
+
+- Union Cemetery
+- Captain Grant's 1754
+- Fairfield Hills Campus
+- Seaside Sanatorium
+- Mark Twain House
+- Nathan Hale Homestead
+- Lockwood-Mathews Mansion Museum
+- New Haven Green
+- Sterling Opera House
+- Norwich State Hospital
+- Gillette Castle State Park
+- Wadsworth Atheneum Museum of Art
+- The Griswold Inn
+
+The treatments use **The Paranormal Initiative** branding and a **CONNECTICUT**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Each treatment preserves the exact source subject and is presented as a
+stylized case-file image, not an unedited documentary photograph.
+
+Dudleytown remains visibly **Exact case-file photograph pending**. It is private
+property, and no exact source photograph with compatible reuse terms was
+confirmed during this pass. No different Dudleytown-named place, generic
+landmark, or AI-invented substitute is used.

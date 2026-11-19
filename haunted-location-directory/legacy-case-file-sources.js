@@ -550,5 +550,83 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/third-bridge-case-file.jpg',
     source: 'Owner-supplied source photograph',
     credit: 'Provided by the TPI owner for TPI use'
+  },
+  'ct-easton-unioncemetery': {
+    image: 'case-file-photos/union-cemetery.jpg',
+    caseFileImage: 'case-file-photos/union-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Unioncemetery01.jpg',
+    credit: '2112guy — Public domain'
+  },
+  'ct-preston-captaingrants': {
+    image: 'case-file-photos/captain-grants-1754.jpg',
+    caseFileImage: 'case-file-photos/captain-grants-1754-case-file.jpg',
+    source: 'https://captaingrants.com/',
+    credit: "Official Captain Grant's 1754 source image; reuse terms not stated"
+  },
+  'ct-newtown-fairfieldhills': {
+    image: 'case-file-photos/fairfield-hills.jpg',
+    caseFileImage: 'case-file-photos/fairfield-hills-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Main_building_at_abandoned_Fairfield_Hills_Hospital,_Newtown,_CT_(November_2017).jpg',
+    credit: 'Marty Aligata — CC BY-SA 4.0'
+  },
+  'ct-waterford-seaside': {
+    image: 'case-file-photos/seaside-sanatorium.jpg',
+    caseFileImage: 'case-file-photos/seaside-sanatorium-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Seaside_Sanatorium_(front)_in_Waterford,_CT_(August_2024).jpg',
+    credit: 'Marty Aligata — CC BY-SA 4.0'
+  },
+  'ct-hartford-marktwain': {
+    image: 'case-file-photos/mark-twain-house.jpg',
+    caseFileImage: 'case-file-photos/mark-twain-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Mark_Twain_House_%26_Museum_%2855618783510%29.jpg',
+    credit: 'ajay_suresh — CC BY 4.0'
+  },
+  'ct-coventry-nathanhale': {
+    image: 'case-file-photos/nathan-hale-homestead.jpg',
+    caseFileImage: 'case-file-photos/nathan-hale-homestead-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Nathan_Hale_Homestead_original.JPG',
+    credit: 'Sphilbrick — CC BY-SA 3.0/GFDL'
+  },
+  'ct-norwalk-lockwoodmathews': {
+    image: 'case-file-photos/lockwood-mathews.jpg',
+    caseFileImage: 'case-file-photos/lockwood-mathews-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:NorwalkCTLockwoodMansEastSide09032007.JPG',
+    credit: 'Noroton — CC BY-SA 3.0/GFDL'
+  },
+  'ct-newhaven-green': {
+    image: 'case-file-photos/new-haven-green.jpg',
+    caseFileImage: 'case-file-photos/new-haven-green-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:New_Haven_Green_%2854106261478%29.jpg',
+    credit: 'ajay_suresh — CC BY 2.0'
+  },
+  'ct-derby-sterlingopera': {
+    image: 'case-file-photos/sterling-opera-house.jpg',
+    caseFileImage: 'case-file-photos/sterling-opera-house-case-file.jpg',
+    source: 'https://www.cthauntedhouses.com/real-haunt/sterling-opera-house.html',
+    credit: 'Exact source image; reuse terms not stated'
+  },
+  'ct-preston-norwichstate': {
+    image: 'case-file-photos/norwich-state-hospital.jpg',
+    caseFileImage: 'case-file-photos/norwich-state-hospital-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Norwich_Hospital_District_-_Admin_Building_%285804251174%29.jpg',
+    credit: 'CLK Hatcher — CC BY-SA 2.0'
+  },
+  'ct-easthaddam-gillettecastle': {
+    image: 'case-file-photos/gillette-castle.jpg',
+    caseFileImage: 'case-file-photos/gillette-castle-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Gillette_Castle_01_%289366277272%29.jpg',
+    credit: 'Joe Mabel — CC BY-SA 2.0/3.0/GFDL'
+  },
+  'ct-hartford-wadsworth': {
+    image: 'case-file-photos/wadsworth-atheneum.jpg',
+    caseFileImage: 'case-file-photos/wadsworth-atheneum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Wadsworth_Atheneum%2C_Hartford%2C_Connecticut.JPG',
+    credit: 'Daderot — CC BY-SA 3.0/GFDL'
+  },
+  'ct-essex-griswold': {
+    image: 'case-file-photos/griswold-inn.jpg',
+    caseFileImage: 'case-file-photos/griswold-inn-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Essex_CT_Griswold_Inn_01_(9363065815).jpg',
+    credit: 'Joe Mabel — CC BY-SA 2.0/3.0/GFDL'
   }
 };

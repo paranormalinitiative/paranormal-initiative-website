@@ -269,6 +269,26 @@ The owner supplied exact source photographs for Central City Cemetery and Third
 Bridge. Both are now copied with TPI-use attribution and have matching case-file
 treatments; no generic or AI-invented landmark substitute is used.
 
+### Connecticut legacy batch
+
+- `union-cemetery.jpg` / `union-cemetery-case-file.jpg` — Union Cemetery, Easton; 2112guy, public domain. Source: <https://commons.wikimedia.org/wiki/File:Unioncemetery01.jpg>
+- `captain-grants-1754.jpg` / `captain-grants-1754-case-file.jpg` — Captain Grant's 1754, Preston; exact official source image, reuse terms not stated. Source: <https://captaingrants.com/>
+- `fairfield-hills.jpg` / `fairfield-hills-case-file.jpg` — Fairfield Hills Campus, Newtown; Marty Aligata, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Main_building_at_abandoned_Fairfield_Hills_Hospital,_Newtown,_CT_(November_2017).jpg>
+- `seaside-sanatorium.jpg` / `seaside-sanatorium-case-file.jpg` — Seaside Sanatorium, Waterford; Marty Aligata, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Seaside_Sanatorium_(front)_in_Waterford,_CT_(August_2024).jpg>
+- `mark-twain-house.jpg` / `mark-twain-house-case-file.jpg` — Mark Twain House, Hartford; ajay_suresh, CC BY 4.0. Source: <https://commons.wikimedia.org/wiki/File:Mark_Twain_House_%26_Museum_%2855618783510%29.jpg>
+- `nathan-hale-homestead.jpg` / `nathan-hale-homestead-case-file.jpg` — Nathan Hale Homestead, Coventry; Sphilbrick, CC BY-SA 3.0/GFDL. Source: <https://commons.wikimedia.org/wiki/File:Nathan_Hale_Homestead_original.JPG>
+- `lockwood-mathews.jpg` / `lockwood-mathews-case-file.jpg` — Lockwood-Mathews Mansion Museum, Norwalk; Noroton, CC BY-SA 3.0/GFDL. Source: <https://commons.wikimedia.org/wiki/File:NorwalkCTLockwoodMansEastSide09032007.JPG>
+- `new-haven-green.jpg` / `new-haven-green-case-file.jpg` — New Haven Green; ajay_suresh, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:New_Haven_Green_%2854106261478%29.jpg>
+- `sterling-opera-house.jpg` / `sterling-opera-house-case-file.jpg` — Sterling Opera House, Derby; exact source image, reuse terms not stated. Source: <https://www.cthauntedhouses.com/real-haunt/sterling-opera-house.html>
+- `norwich-state-hospital.jpg` / `norwich-state-hospital-case-file.jpg` — Norwich State Hospital; CLK Hatcher, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Norwich_Hospital_District_-_Admin_Building_%285804251174%29.jpg>
+- `gillette-castle.jpg` / `gillette-castle-case-file.jpg` — Gillette Castle State Park; Joe Mabel, CC BY-SA 2.0/3.0/GFDL. Source: <https://commons.wikimedia.org/wiki/File:Gillette_Castle_01_%289366277272%29.jpg>
+- `wadsworth-atheneum.jpg` / `wadsworth-atheneum-case-file.jpg` — Wadsworth Atheneum Museum of Art, Hartford; Daderot, CC BY-SA 3.0/GFDL. Source: <https://commons.wikimedia.org/wiki/File:Wadsworth_Atheneum%2C_Hartford%2C_Connecticut.JPG>
+- `griswold-inn.jpg` / `griswold-inn-case-file.jpg` — The Griswold Inn, Essex; Joe Mabel, CC BY-SA 2.0/3.0/GFDL. Source: <https://commons.wikimedia.org/wiki/File:Essex_CT_Griswold_Inn_01_(9363065815).jpg>
+
+Dudleytown remains intentionally pending. It is private property, and no exact
+source photograph with compatible reuse terms was confirmed. No different
+Dudleytown-named place or generic substitute is used.
+
 ### Arkansas legacy batch
 
 - `crescent-hotel.jpg` / `crescent-hotel-case-file.jpg` — Crescent Hotel, Eureka Springs; TXphotolady, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Crescent_Hotel_from_Magnetic_Mountain,_Eureaka_Springs_Arkansas.jpg>
