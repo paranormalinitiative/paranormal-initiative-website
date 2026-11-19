@@ -23,6 +23,7 @@ const library = read("lib/board-members.js");
 const admin = read("admin-center-app/src/app.tsx");
 const profile = read("member-login.js");
 const css = read("profile-style.css");
+const publicAdvisoryBoard = read("advisory-board.html");
 const ignore = read(".assetsignore");
 const badge256 = resolve(root, "assets/board-members/web/board-member-256.png");
 const badge512 = resolve(root, "assets/board-members/web/board-member-512.png");
@@ -47,6 +48,8 @@ check("rank metadata migration is additive", rankMigration.includes("ALTER TABLE
 check("board role catalog uses one universal Board Member medallion", library.includes("BOARD_MEMBER_MEDALLION") && library.includes('code: "board-member"') && !library.includes('medallionCode: "gold"') && !library.includes('medallionCode: "silver"') && !library.includes('medallionCode: "bronze"') && admin.includes("universal Board Member medallion"));
 check("board domains cover paranormal umbrella", library.includes("research-investigation") && library.includes("ethics-professional-conduct") && library.includes("community-outreach"));
 check("board API rejects free-text rank assignment", api.includes("Choose an approved Board role") && api.includes("boardRolePayload(data.roleCode, data.domainCode)"));
+check("public advisory board excludes revoked former members", !/\bMichelle\b|\bRick Hale\b|michelle-board\.jpg|RickHale\.jpeg/i.test(publicAdvisoryBoard));
+check("public advisory board retains current founder profiles", publicAdvisoryBoard.includes("Todd Wayne") && publicAdvisoryBoard.includes("Roni Healan"));
 
 const failed = checks.filter(item => !item.pass);
 console.log(`\nBoard Member contract: ${checks.length - failed.length}/${checks.length} PASS`);
