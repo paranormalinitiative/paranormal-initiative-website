@@ -106,5 +106,71 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/cedarhurst-mansion-case-file.png',
     source: 'https://www.huntsville.org/blog/list/post/ghosts-of-the-rocket-city-huntsvilles-haunted-history/',
     credit: 'Visit Huntsville source image; reuse terms not stated on retrieved page'
+  },
+  'ak-skagway-goldennorth': {
+    image: 'case-file-photos/golden-north-hotel.jpg',
+    caseFileImage: 'case-file-photos/golden-north-hotel-case-file.png',
+    source: 'https://media.voicemap.me/uploads/sound_bite_image/image/38733/original/13_A_-_Golden_North_Hotel.jpg',
+    credit: 'VoiceMap source image; reuse terms not stated on retrieved page'
+  },
+  'ak-juneau-reddog': {
+    image: 'case-file-photos/red-dog-saloon.jpg',
+    caseFileImage: 'case-file-photos/red-dog-saloon-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Red_Dog_Saloon_in_Juneau,_Alaska.jpg',
+    credit: 'Wknight94 — CC BY-SA 3.0 / GFDL'
+  },
+  'ak-whittier-buckner': {
+    image: 'case-file-photos/buckner-building.jpg',
+    caseFileImage: 'case-file-photos/buckner-building-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Buckner_Building,_Whittier.jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'ak-mccarthy-kennecott': {
+    image: 'case-file-photos/kennecott-mines.jpg',
+    caseFileImage: 'case-file-photos/kennecott-mines-case-file.png',
+    source: 'https://www.nps.gov/common/uploads/structured_data/3C7AB124-1DD8-B71B-0B224A3B96A7304E.jpg?height=742&mode=crop&quality=90&width=990',
+    credit: 'National Park Service — public domain government source'
+  },
+  'ak-anchorage-pioneerhome': {
+    image: 'case-file-photos/anchorage-pioneer-home.webp',
+    caseFileImage: 'case-file-photos/anchorage-pioneer-home-case-file.png',
+    source: 'https://dfcs.alaska.gov/alaska-pioneer-homes/our-homes/anchorage-pioneer-home/',
+    credit: 'Alaska Pioneer Homes source image; reuse terms not stated on retrieved page'
+  },
+  'ak-anchorage-fourthave': {
+    image: 'case-file-photos/fourth-avenue-theatre.jpg',
+    caseFileImage: 'case-file-photos/fourth-avenue-theatre-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:4th_Avenue_Theater_color.jpg',
+    credit: 'Jet Lowe / Historic American Buildings Survey — public domain NPS source'
+  },
+  'ak-juneau-capitol': {
+    image: 'case-file-photos/alaska-state-capitol.jpg',
+    caseFileImage: 'case-file-photos/alaska-state-capitol-case-file.png',
+    source: 'https://w3.akleg.gov/capitolupdates/CAPITAL%202025.jpg',
+    credit: 'Alaska State Legislature source image; reuse terms not stated on retrieved page'
+  },
+  'ak-talkeetna-roadhouse': {
+    image: 'case-file-photos/talkeetna-roadhouse.jpg',
+    caseFileImage: 'case-file-photos/talkeetna-roadhouse-case-file.png',
+    source: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0a/38/af/26/the-roadhouse.jpg?h=1000&s=1&w=1800',
+    credit: 'Tripadvisor listing source image; reuse terms not stated on retrieved page'
+  },
+  'ak-sitka-nationalcemetery': {
+    image: 'case-file-photos/sitka-national-cemetery.png',
+    caseFileImage: 'case-file-photos/sitka-national-cemetery-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:905_sitka.png',
+    credit: 'United States Department of Veterans Affairs — public domain government source'
+  },
+  'ak-sitka-castlehill': {
+    image: 'case-file-photos/castle-hill.jpg',
+    caseFileImage: 'case-file-photos/castle-hill-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:American_Flag-Raising_Site_(20357938078).jpg',
+    credit: 'National Park Service, Alaska Region — public domain / CC BY 2.0 source'
+  },
+  'ak-se-tongass': {
+    image: 'case-file-photos/tongass-national-forest.jpg',
+    caseFileImage: 'case-file-photos/tongass-national-forest-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:TongasNF.jpg',
+    credit: 'USDA Forest Service — public domain government source'
   }
 };

@@ -46,6 +46,31 @@ license obligations.
 - `cedarhurst-mansion.jpg` — Visit Huntsville source image. Source: <https://www.huntsville.org/blog/list/post/ghosts-of-the-rocket-city-huntsvilles-haunted-history/>; reuse terms were not stated on the retrieved page.
 - `cedarhurst-mansion-case-file.png` — stylized TPI case-file treatment derived from the exact local photo; retain the source-rights note.
 
+### Alaska legacy batch
+
+- `golden-north-hotel.jpg` — VoiceMap source image. Source: <https://media.voicemap.me/uploads/sound_bite_image/image/38733/original/13_A_-_Golden_North_Hotel.jpg>; reuse terms were not stated on the retrieved page.
+- `golden-north-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `red-dog-saloon.jpg` — Wknight94, CC BY-SA 3.0 / GFDL. Source: <https://commons.wikimedia.org/wiki/File:Red_Dog_Saloon_in_Juneau,_Alaska.jpg>
+- `red-dog-saloon-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `buckner-building.jpg` — Wikimedia Commons source photograph; license is recorded on the file page. Source: <https://commons.wikimedia.org/wiki/File:Buckner_Building,_Whittier.jpg>
+- `buckner-building-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `kennecott-mines.jpg` — National Park Service, public domain government source. Source: <https://www.nps.gov/common/uploads/structured_data/3C7AB124-1DD8-B71B-0B224A3B96A7304E.jpg?height=742&mode=crop&quality=90&width=990>
+- `kennecott-mines-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `anchorage-pioneer-home.webp` — Alaska Pioneer Homes source image. Source: <https://dfcs.alaska.gov/alaska-pioneer-homes/our-homes/anchorage-pioneer-home/>; reuse terms were not stated on the retrieved page.
+- `anchorage-pioneer-home-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fourth-avenue-theatre.jpg` — Jet Lowe / Historic American Buildings Survey, public domain NPS source. Source: <https://commons.wikimedia.org/wiki/File:4th_Avenue_Theater_color.jpg>
+- `fourth-avenue-theatre-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `alaska-state-capitol.jpg` — Alaska State Legislature source image. Source: <https://w3.akleg.gov/capitolupdates/CAPITAL%202025.jpg>; reuse terms were not stated on the retrieved page.
+- `alaska-state-capitol-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `talkeetna-roadhouse.jpg` — Tripadvisor listing source image. Source: <https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0a/38/af/26/the-roadhouse.jpg?h=1000&s=1&w=1800>; reuse terms were not stated on the retrieved page.
+- `talkeetna-roadhouse-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `sitka-national-cemetery.png` — United States Department of Veterans Affairs, public domain government source. Source: <https://commons.wikimedia.org/wiki/File:905_sitka.png>
+- `sitka-national-cemetery-case-file.png` — respectful stylized TPI case-file treatment derived from the exact local photo.
+- `castle-hill.jpg` — National Park Service, Alaska Region, public domain / CC BY 2.0 source. Source: <https://commons.wikimedia.org/wiki/File:American_Flag-Raising_Site_(20357938078).jpg>
+- `castle-hill-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `tongass-national-forest.jpg` — USDA Forest Service, public domain government source. Source: <https://commons.wikimedia.org/wiki/File:TongasNF.jpg>
+- `tongass-national-forest-case-file.png` — stylized TPI case-file treatment derived from the exact local landscape reference.
+
 - `wabasha-street-caves.jpg` — Gobonobo, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Wabasha_Street_Caves.jpg>
 - `wabasha-street-caves-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo; it is labeled as a treatment in the directory.
 - `glensheen-mansion.jpg` — Ktoma, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Glensheen_Mansion.jpg>

@@ -140,8 +140,30 @@ The Alabama batch is now complete for all 18 exact locations:
 The original source photographs and TPI case-file treatments are stored under
 `haunted-location-directory/case-file-photos/`; the mappings and attribution
 are maintained in `legacy-case-file-sources.js`. Alabama now has no pending
-case-file image entries. The remaining 384 legacy locations stay visibly
+case-file image entries. After the completed Alaska batch below, the remaining
+373 legacy locations stay visibly
 pending until exact identity and reuse terms are verified. Three Alabama
 source records retain an explicit rights-review note because the retrieved
 pages did not state reuse terms; they are not represented as TPI-owned
+documentary photographs.
+
+The Alaska batch is now complete for all 11 exact locations:
+
+- Golden North Hotel — Skagway.
+- Red Dog Saloon — Juneau.
+- Buckner Building — Whittier.
+- Kennecott Mines — McCarthy.
+- Anchorage Pioneer Home — Anchorage.
+- Fourth Avenue Theatre — Anchorage.
+- Alaska State Capitol — Juneau.
+- Talkeetna Roadhouse — Talkeetna.
+- Sitka National Cemetery — Sitka.
+- Castle Hill — Sitka.
+- Tongass National Forest — Southeast Alaska region.
+
+Each Alaska entry has an untouched source photograph and a matching TPI case-file
+treatment. The treatment title uses **The Paranormal Initiative**; TPI is not
+expanded or labeled as “Paranormal Investigations.” The remaining legacy count
+after Alabama and Alaska is 373. Alaska source records with unclear reuse terms
+remain explicitly marked for rights review and are not represented as TPI-owned
 documentary photographs.
