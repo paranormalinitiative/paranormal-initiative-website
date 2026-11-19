@@ -225,6 +225,25 @@ updates cannot remain stuck in stale staged assets. See [Haunted Location
 Case-File Enrichment](300-COMPLETED-WORK/2026-11-18-HAUNTED-LOCATION-CASE-FILE-ENRICHMENT.md)
 for the image rule and verification record.
 
+## 2026-11-19 — Haunted location case-file image completion pass
+
+Status: **LOCALLY COMPLETE AND VERIFIED — production release pending repository transport recovery.** The owner-authorized continuation
+completed the exact-source image pass for the newer 25-state starter cohort:
+94 of 100 entries now have an exact locally stored source photograph, a
+separate TPI case-file treatment, and a recorded source/license entry. The
+new additions cover Washington, Nebraska, and New Mexico, and the Vermont
+Emily’s Bridge source key was corrected to match its canonical name. Duplicate
+location names resolve state-first so one state cannot inherit another state’s
+image. Six entries remain explicitly image-pending because no exact source with
+clear reuse terms was verified: Montana — Gold Hill Hotel; New York — Hinsdale
+House; North Dakota — Hotel Donaldson; Oklahoma — Gilcrease Museum; South
+Dakota — Sica Hollow State Park; and Tennessee — Old South Pittsburg Hospital.
+No AI landmark substitute is used. The focused local checks pass; production
+smoke and live acceptance remain pending because GitHub is resetting the
+branch upload before the guarded release can begin. See [Haunted Location Case-File Image
+Completion](300-COMPLETED-WORK/2026-11-19-HAUNTED-LOCATION-CASE-FILE-IMAGE-COMPLETION.md)
+for the source decisions and release verification.
+
 ## 2026-11-17 — Haunted-location member submissions and verification queue
 
 Status: **DEPLOYED AND LIVE VERIFIED.** Members can now submit a potential

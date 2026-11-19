@@ -55,6 +55,186 @@ license obligations.
 - `big-bay-point-light-station-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
 - `old-presque-isle-lighthouse.jpg` — Doug Coldwell, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Old_Presque_Isle_Light.JPG>
 - `old-presque-isle-lighthouse-case-file.jpg` — stylized TPI case-file treatment derived from the exact local photo.
+- `ohio-state-reformatory.jpg` — AmyTheOvenMitt at English Wikipedia, Copyrighted free use-link. Source: <https://commons.wikimedia.org/wiki/File:Ohio_State_Reformatory.JPG>
+- `ohio-state-reformatory-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `collingwood-arts-center.jpg` — Smithr1981, CC BY 3.0. Source: <https://commons.wikimedia.org/wiki/File:Collingwood_Arts_Center.jpg>
+- `collingwood-arts-center-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fairport-harbor-marine-museum-lighthouse.jpg` — Rona Proudfoot, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Fairport_Marine_Museum_and_lighthouse.jpg>
+- `fairport-harbor-marine-museum-lighthouse-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `punderson-manor-lodge.jpg` — Steven Miller, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Punderson_Manor_(16384220851).jpg>
+- `punderson-manor-lodge-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `skirvin-hotel.jpg` — Eejjmm8888, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Front_of_Skirvin_Hotel_in_Oklahoma_City,_Oklahoma.jpg>
+- `skirvin-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-reno.jpg` — danzil raines from El Reno Oklahoma, USA, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Fort_Reno_(OK)_010_(4470866835).jpg>
+- `fort-reno-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-washita-historic-site.jpg` — National Register of Historic Places / NPS; photo credited to Joseph Scott Mendinghall, public domain. Source: <https://commons.wikimedia.org/wiki/File:Fort_Washita_West_Barracks3.jpg>
+- `fort-washita-historic-site-case-file.png` — stylized TPI case-file treatment derived from the exact historic local photo.
+- `geiser-grand-hotel.jpg` — Joe Mabel, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Geiser_Grand_Hotel_01.jpg>
+- `geiser-grand-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `shanghai-tunnels.jpg` — unknown author, public domain. Source: <https://commons.wikimedia.org/wiki/File:Shanghai_Tunnels.jpg>
+- `shanghai-tunnels-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `elsinore-theatre.jpg` — M.O. Stevens, public domain. Source: <https://commons.wikimedia.org/wiki/File:Elsinore_Theatre_Salem_Oregon.JPG>
+- `elsinore-theatre-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `benson-hotel.jpg` — Steve Morgan, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Benson_Hotel_in_2011_-_Portland,_Oregon.jpg>
+- `benson-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `kings-tavern.jpg` — James Case, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:King%27s_Tavern,_Natchez_MS,_2018.jpg>
+- `kings-tavern-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `mcraven-house.jpg` — Zamburak, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:McRaven_House.jpg>
+- `mcraven-house-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `beauvoir.jpg` — George Armstrong / FEMA, public domain. Source: <https://commons.wikimedia.org/wiki/File:Beauvoir-Biloxi-Mississippi-west-wing-shutters-FEMA-2006.jpg>
+- `beauvoir-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `windsor-ruins.jpg` — Elisa Rolle, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Windsor_Ruins,_2.JPG>
+- `windsor-ruins-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `missouri-state-penitentiary.jpg` — CosmiCataclysm, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Missouri_State_Penitentiary,_Jefferson_City.jpg>
+- `missouri-state-penitentiary-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `pythian-castle.jpg` — JERRYE & ROY KLOTZ MD, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:PYTHIAN_HOME_OF_MISSOURI,_GREENE_COUNTY,_MO.jpg>
+- `pythian-castle-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `lemp-mansion.jpg` — MattHucke, CC BY 3.0. Source: <https://commons.wikimedia.org/wiki/File:Lemp-mansion.jpg>
+- `lemp-mansion-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `mark-twain-boyhood-home.jpg` — Andrew Balet, CC BY 2.5. Source: <https://commons.wikimedia.org/wiki/File:Mark_Twain%27s_Boyhood_Home;_Hannibal,_MO.jpg>
+- `mark-twain-boyhood-home-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `virginia-city-historic-district.jpg` — Parodygm, public domain. Source: <https://commons.wikimedia.org/wiki/File:VirginiaCityGhostTown.jpg>
+- `virginia-city-historic-district-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `copper-king-mansion.jpg` — Loren T. Vine, CC BY-SA 2.5. Source: <https://commons.wikimedia.org/wiki/File:Copper_King_Mansion_(Butte)_2002-05.jpg>
+- `copper-king-mansion-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `montana-territorial-prison.jpg` — Tanankyo, public domain. Source: <https://commons.wikimedia.org/wiki/File:OldMTPrisonT7CB1.jpg>
+- `montana-territorial-prison-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `nebraska-state-capitol.jpg` — Hurstbergn, CC BY 4.0. Source: <https://commons.wikimedia.org/wiki/File:Nebraska_State_Capitol,_July_2026.jpg>
+- `nebraska-state-capitol-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-robinson-state-park.jpg` — Ammodramus, CC0. Source: <https://commons.wikimedia.org/wiki/File:Fort_Robinson_post_HQ_2.jpg>
+- `fort-robinson-state-park-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `brownville-historic-district.jpg` — Ammodramus, CC0. Source: <https://commons.wikimedia.org/wiki/File:Brownville,_Nebraska_Main_Street_2.JPG>
+- `brownville-historic-district-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `mizpah-hotel.jpg` — Cullen328, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Mizpah_Hotel_2024.jpg>
+- `mizpah-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `washoe-club.jpg` — Brian W. Schaller, FAL. Source: <https://commons.wikimedia.org/wiki/File:A483,_Virginia_City,_Nevada,_USA,_Old_Washoe_Club,_2016.jpg>
+- `washoe-club-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `old-tonopah-cemetery.jpg` — samiamx, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Tonopah_NV_Cemetery_-_52132050982.jpg>
+- `old-tonopah-cemetery-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `gold-hill-hotel.jpg` — inkknife_2000, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Gold_Hill,_NV_Hotel_8-2010_(5815609403).jpg>
+- `gold-hill-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `omni-mount-washington-hotel.jpg` — King of Hearts, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Mount_Washington_Hotel_Bretton_Woods_October_2021_003.jpg>
+- `omni-mount-washington-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `ocean-born-mary-house.tif` — Historic American Buildings Survey / National Park Service, public domain. Source: <https://commons.wikimedia.org/wiki/File:GENERAL_VIEW_-_Ocean-Born-Mary_House,_Route_202_vicinty,_Henniker,_Merrimack_County,_NH_HABS_NH,7-HEN,2-1.tif>
+- `ocean-born-mary-house-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `the-balsams.jpg` — Tichnor Brothers, Publisher, public domain. Source: <https://commons.wikimedia.org/wiki/File:Aerial_View_of_the_Balsams,_Dixville_Notch,_New_Hampshire_(Notch_in_background)_(61709).jpg>
+- `the-balsams-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `willey-house-site.jpg` — alans1948, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Willey_house_(12913135205).jpg>
+- `willey-house-site-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `cape-may-historic-district.jpg` — King of Hearts, CC BY-SA 4.0; exact contributing-house reference for the district entry. Source: <https://commons.wikimedia.org/wiki/File:John_Forsythe_House_Cape_May_October_2020.jpg>
+- `cape-may-historic-district-case-file.png` — stylized TPI case-file treatment derived from the exact district reference photo.
+- `southern-mansion.jpg` — Zeete, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:The_Southern_Mansion,_Cape_May,_NJ.jpg>
+- `southern-mansion-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `battleship-new-jersey.jpg` — AGnias47, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Battleship_New_Jersey_Museum_and_Memorial.jpg>
+- `battleship-new-jersey-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `clinton-road.jpg` — Daniel Case, LGPL. Source: <https://commons.wikimedia.org/wiki/File:Clinton_Road.jpg>
+- `clinton-road-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `kimo-theater.jpg` — Daniel Schwen, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:KiMo_Albuquerque.jpg>
+- `kimo-theater-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `la-fonda-on-the-plaza.jpg` — Warren LeMay, CC0 / public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:La_Fonda_on_the_Plaza_Hotel_(28220936398).jpg>
+- `la-fonda-on-the-plaza-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `old-town-albuquerque.jpg` — A. E. Crane / U.S. Department of Transportation / NARA, public domain; exact Old Town anchor reference. Source: <https://commons.wikimedia.org/wiki/File:Historic_Route_66_-_San_Felipe_de_Neri_Church_in_Old_Town,_Albuquerque,_NM_-_NARA_-_7719418.jpg>
+- `old-town-albuquerque-case-file.png` — stylized TPI case-file treatment derived from the exact Old Town anchor reference.
+- `rolling-hills-asylum.jpg` — Adam Moss, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Rolling_Hills_Asylum.jpg>
+- `rolling-hills-asylum-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `beardslee-castle.jpg` — Apocheir, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Beardslee_Castle.jpg>
+- `beardslee-castle-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-william-henry.jpg` — Snapshot Sasquatch, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Fort_William_Henry_2026.jpg>
+- `fort-william-henry-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-raleigh-national-historic-site.jpg` — Ken Lund, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Fort_Raleigh_National_Historic_Site,_Manteo,_Roanoke_Island,_North_Carolina_(14460374755).jpg>
+- `fort-raleigh-national-historic-site-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
+- `cape-hatteras-lighthouse.jpg` — United States Coast Guard, public domain. Source: <https://commons.wikimedia.org/wiki/File:USCGHatteras.jpg>
+- `cape-hatteras-lighthouse-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `uss-north-carolina.jpg` — Charlottewitch1, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Wilmington%27s_USS_North_Carolina.jpg>
+- `uss-north-carolina-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `mordecai-historic-park.jpg` — Mark Turner, public domain. Source: <https://commons.wikimedia.org/wiki/File:Historic_Mordecai_House-Raleigh-NC-13_Sept_2010.jpeg>
+- `mordecai-historic-park-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-abraham-lincoln-state-park.jpg` — Indianertosset, CC0. Source: <https://commons.wikimedia.org/wiki/File:Fort_Abraham_Lincoln_State_Park,_N.D._Infantry_quarter.jpg>
+- `fort-abraham-lincoln-state-park-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
+- `fargo-theatre.jpg` — Andrew Filer, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Fargo_Theatre_-_Fargo.jpg>
+- `fargo-theatre-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `chateau-de-mores.jpg` — Podruznik, public domain. Source: <https://commons.wikimedia.org/wiki/File:Chateau_de_mores_in_medora.jpg>
+- `chateau-de-mores-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `eastern-state-penitentiary.jpg` — Mike Graham, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Eastern_State_Penitentiary.jpg>
+- `eastern-state-penitentiary-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-mifflin.jpg` — pwbaker, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Fort_Mifflin_01.jpg>
+- `fort-mifflin-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `gettysburg-battlefield.jpg` — Staecker, public domain. Source: <https://commons.wikimedia.org/wiki/File:Gettysburgbattlefield.jpg>
+- `gettysburg-battlefield-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `old-jail-museum.jpg` — Andrew Ratto, CC BY 2.0; exact historic jail-cell reference. Source: <https://commons.wikimedia.org/wiki/File:Jail_Cell_at_the_Old_Jail_Museum.jpg>
+- `old-jail-museum-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
+- `providence-city-hall.jpg` — A,Ocram, CC0 / public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:Providence_City_Hall.jpg>
+- `providence-city-hall-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `white-horse-tavern.jpg` — Kenneth C. Zirkel, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:White_Horse_Tavern_in_Newport,_Rhode_Island_in_Springtime.jpg>
+- `white-horse-tavern-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `fort-adams.jpg` — New York Public Library / Kilburn Brothers, public domain. Source: <https://commons.wikimedia.org/wiki/File:Fort_Adams,_Newport,_R.I,_by_Kilburn_Brothers.jpg>
+- `fort-adams-case-file.png` — stylized TPI case-file treatment derived from the exact historical Fort Adams reference.
+- `rose-island-lighthouse.jpg` — Kenneth C. Zirkel, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Rose_Island_Lighthouse.jpg>
+- `rose-island-lighthouse-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `old-charleston-jail.jpg` — Michael Rivera, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Old_Charleston_Jail_south_face_entrance.jpg>
+- `old-charleston-jail-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `poinsett-bridge.jpg` — P. Hughes, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Poinsett_Bridge_-_SC.jpg>
+- `poinsett-bridge-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `the-battery.jpg` — Ken Lund, CC BY-SA 2.0; exact East Battery reference. Source: <https://commons.wikimedia.org/wiki/File:Water_Street_and_East_Battery,_Charleston,_South_Carolina_2011.jpg>
+- `the-battery-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
+- `usc-horseshoe.jpg` — Totalcatharsis, public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:Usc_horseshoe.jpg>
+- `usc-horseshoe-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `bullock-hotel.jpg` — DXR, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Bullock_Hotel,_Deadwood_SD,_North_view_20110821_1.jpg>
+- `bullock-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local photo.
+- `saloon-no-10.jpg` — Jerry Rawlings, CC BY-SA 4.0; exact Saloon No. 10 interior reference. Source: <https://commons.wikimedia.org/wiki/File:JRawlings_Saloon_10_50th_anniversary.jpg>
+- `saloon-no-10-case-file.png` — stylized TPI case-file treatment derived from the exact local site reference.
+- `fort-meade.jpg` — John C. H. Grabill / Library of Congress, public domain. Source: <https://commons.wikimedia.org/wiki/File:Grabill_-_The_Officers_Line,_Fort_Meade.jpg>
+- `fort-meade-case-file.png` — stylized TPI case-file treatment derived from the exact historical Fort Meade reference.
+- `bell-witch-cave.jpg` — Www78, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Bell_Witch_Cave.JPG>
+- `bell-witch-cave-case-file.png` — stylized TPI case-file treatment derived from the exact local cave photograph.
+- `lotz-house.jpg` — Skye Marthaler, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Lotz_House.JPG>
+- `lotz-house-case-file.png` — stylized TPI case-file treatment derived from the exact local house photograph.
+- `thomas-house.jpg` — Brian Stansberry, CC BY 3.0. Source: <https://commons.wikimedia.org/wiki/File:Cloyd-hotel-thomas-house-tn1.jpg>
+- `thomas-house-case-file.png` — stylized TPI case-file treatment derived from the exact local hotel photograph.
+- `uss-lexington.jpg` — Liveon001 / Travis Witt, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:USS_Lexington_Corpus.JPG>
+- `uss-lexington-case-file.png` — stylized TPI case-file treatment derived from the exact local ship photograph.
+- `hotel-galvez.jpg` — Seawall Specialty Co. / University of Houston Libraries, public domain. Source: <https://commons.wikimedia.org/wiki/File:Hotel_Galvez,_Galveston,_Texas.jpg>
+- `hotel-galvez-case-file.png` — stylized TPI case-file treatment derived from the exact local hotel photograph.
+- `menger-hotel.jpg` — SMU Central University Libraries, no known copyright restrictions; cite DeGolyer Library. Source: <https://commons.wikimedia.org/wiki/File:Menger_Hotel,_San_Antonio,_Texas._(15711441765).jpg>
+- `menger-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact historic hotel photograph.
+- `the-alamo.jpg` — Ken Lund, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:The_Alamo,_San_Antonio,_Texas,_TX.jpg>
+- `the-alamo-case-file.png` — stylized TPI case-file treatment derived from the exact local mission photograph.
+- `peery-hotel.jpg` — Daniel Hanson, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Peery_Hotel_Salt_Lake_City_Utah.jpg>
+- `peery-hotel-case-file.png` — stylized TPI case-file treatment derived from the exact local hotel photograph.
+- `ogden-union-station.jpg` — David Jay Fullmer, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Ogden_Union_Station.jpg>
+- `ogden-union-station-case-file.png` — stylized TPI case-file treatment derived from the exact local station photograph.
+- `capitol-theatre.jpg` — Beneathtimp, CC0. Source: <https://commons.wikimedia.org/wiki/File:Capitol_Theatre_-_Salt_Lake_City,_Utah_-_13_April_2025.jpg>
+- `capitol-theatre-case-file.png` — stylized TPI case-file treatment derived from the exact local theatre photograph.
+- `slc-county-building.jpg` — Sean Breazeal, public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:Salt_lake_city_county_bldg.jpg>
+- `slc-county-building-case-file.png` — stylized TPI case-file treatment derived from the exact local civic-building photograph.
+- `wilson-castle.jpg` — Daderot, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Wilson_Castle_(Proctor,_VT).JPG>
+- `wilson-castle-case-file.png` — stylized TPI case-file treatment derived from the exact local castle photograph.
+- `emilys-bridge.jpg` — Mfwills, CC BY 3.0. Source: <https://commons.wikimedia.org/wiki/File:Emilysbridge.jpg>
+- `emilys-bridge-case-file.png` — stylized TPI case-file treatment derived from the exact local covered-bridge photograph.
+- `glastenbury-map.png` — Redjar, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Glastenbury_vt_highlight.png>
+- `glastenbury-map-case-file.png` — stylized TPI case-file treatment derived from the exact Glastenbury site-map reference; this entry is a map reference rather than a building photograph.
+- `hartness-house.jpg` — Tyler Goodrich, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Hartness_House,_Front.JPG>
+- `hartness-house-case-file.png` — stylized TPI case-file treatment derived from the exact local inn photograph.
+- `peyton-randolph-house.jpg` — Jrcla2, public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:Peyton_Randolph_House.jpg>
+- `peyton-randolph-house-case-file.png` — stylized TPI case-file treatment derived from the exact local historic-house photograph.
+- `st-albans-sanatorium.jpg` — Nyttend, public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:St._Albans_Hospital,_Fairlawn.jpg>
+- `st-albans-sanatorium-case-file.png` — stylized TPI case-file treatment derived from the exact local hospital photograph.
+- `ferry-plantation-house.jpg` — Rlevse, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:FerryPlantationHouse.jpg>
+- `ferry-plantation-house-case-file.png` — stylized TPI case-file treatment derived from the exact local plantation-house photograph.
+- `hollywood-cemetery.jpg` — Tony, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Hollywood_Cemetery,_Richmond_Virginia.jpg>
+- `hollywood-cemetery-case-file.png` — stylized TPI case-file treatment derived from the exact local cemetery photograph.
+- `pike-place-market.jpg` — Daniel Schwen, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Pike_Place_Market_Seattle.jpg>
+- `pike-place-market-case-file.jpg` — stylized TPI case-file treatment derived from the exact local market photograph.
+- `northern-state-recreation-area.jpg` — Joe Mabel, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Northern_State_Hospital_-_Denny_Building_01.jpg>
+- `northern-state-recreation-area-case-file.jpg` — stylized TPI case-file treatment derived from the exact Denny Building photograph.
+- `arctic-club-building.jpg` — Visitor7, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Arctic_Building-1.jpg>
+- `arctic-club-building-case-file.jpg` — stylized TPI case-file treatment derived from the exact Arctic Club Building photograph.
+- `thornewood-castle.jpg` — Joe Mabel, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Thornewood_02.jpg>
+- `thornewood-castle-case-file.jpg` — stylized TPI case-file treatment derived from the exact Thornewood photograph.
+- `museum-of-shadows.jpg` — Ammodramus, CC0; exact Christian Specht Building at 1110 Douglas Street. Source: <https://commons.wikimedia.org/wiki/File:Specht_building_%28Omaha%29_from_SW_1.JPG>
+- `museum-of-shadows-case-file.jpg` — stylized TPI case-file treatment derived from the exact Museum of Shadows building photograph.
+- `james-hotel.jpg` — National Trails Office / U.S. National Park Service, public domain. Source: <https://commons.wikimedia.org/wiki/File:St._James_Hotel_in_Cimarron,_NM_%2838592df46522437b996453d55b241784%29.JPG>
+- `james-hotel-case-file.jpg` — stylized TPI case-file treatment derived from the exact St. James Hotel photograph.
 
 Do not replace an exact location photograph with an AI-generated landmark
 likeness. If a location does not have a verified exact image and reuse record,

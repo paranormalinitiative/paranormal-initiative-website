@@ -47,7 +47,7 @@
   document.getElementById('state-nav').innerHTML = navStates.map(([stateSlug, name]) => `<a href="${stateSlug}.html" ${stateSlug === slug ? 'aria-current="page"' : ''}>${name}</a>`).join('');
 
   const renderImage = name => {
-    const image = imageSources[name];
+    const image = imageSources[`${state.name}::${name}`] || imageSources[name];
     if (!image) {
       return '<div class="tpi-image-pending"><strong>Exact case-file photograph pending</strong><span>TPI will add a verified image of this location when a source photo and reuse terms are confirmed. No AI substitute is used.</span></div>';
     }
