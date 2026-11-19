@@ -147,6 +147,30 @@ source records retain an explicit rights-review note because the retrieved
 pages did not state reuse terms; they are not represented as TPI-owned
 documentary photographs.
 
+The Arizona batch is now complete for all 15 exact locations:
+
+- Bird Cage Theatre — Tombstone.
+- Jerome Grand Hotel — Jerome.
+- Hotel San Carlos — Phoenix.
+- Vulture Gold Mine — Wickenburg.
+- Hotel Monte Vista — Flagstaff.
+- Yuma Territorial Prison — Yuma.
+- Copper Queen Hotel — Bisbee.
+- Jerome Cemetery — Jerome.
+- Mission San Xavier del Bac — Tucson.
+- Orpheum Theatre — Phoenix.
+- Tombstone Courthouse — Tombstone.
+- Arizona State Capitol — Phoenix.
+- Superstition Mountains — Superstition Wilderness.
+- La Posada Hotel — Winslow.
+- Old Bisbee Historic District — Bisbee.
+
+Each Arizona entry now has an exact source photograph and a matching TPI
+case-file treatment stored locally. The treatment title uses **The Paranormal
+Initiative**; TPI is not expanded or labeled as “Paranormal Investigations.”
+Source records with unclear reuse terms remain explicitly marked for rights
+review and are not represented as TPI-owned documentary photographs.
+
 The Alaska batch is now complete for all 11 exact locations:
 
 - Golden North Hotel — Skagway.
@@ -164,6 +188,6 @@ The Alaska batch is now complete for all 11 exact locations:
 Each Alaska entry has an untouched source photograph and a matching TPI case-file
 treatment. The treatment title uses **The Paranormal Initiative**; TPI is not
 expanded or labeled as “Paranormal Investigations.” The remaining legacy count
-after Alabama and Alaska is 373. Alaska source records with unclear reuse terms
+after Alabama, Alaska, and Arizona is 358. Alaska source records with unclear reuse terms
 remain explicitly marked for rights review and are not represented as TPI-owned
 documentary photographs.

@@ -107,6 +107,96 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     source: 'https://www.huntsville.org/blog/list/post/ghosts-of-the-rocket-city-huntsvilles-haunted-history/',
     credit: 'Visit Huntsville source image; reuse terms not stated on retrieved page'
   },
+  'az-tombstone-birdcage': {
+    image: 'case-file-photos/bird-cage-theatre.jpg',
+    caseFileImage: 'case-file-photos/bird-cage-theatre-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Bird_Cage_Theatre_(49839616978).jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-jerome-grand': {
+    image: 'case-file-photos/jerome-grand-hotel.jpg',
+    caseFileImage: 'case-file-photos/jerome-grand-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Jerome_Grand_Hotel,_Jerome,_Arizona_(15008205784).jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-phoenix-sancarlos': {
+    image: 'case-file-photos/hotel-san-carlos.jpg',
+    caseFileImage: 'case-file-photos/hotel-san-carlos-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Hotel_San_Carlos,_Copper_Square,_Phoenix,_Arizona_-_panoramio.jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-wickenburg-vulture': {
+    image: 'case-file-photos/vulture-gold-mine.jpg',
+    caseFileImage: 'case-file-photos/vulture-gold-mine-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Vulture-gold-mine-maricopa.JPG',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-flagstaff-montevista': {
+    image: 'case-file-photos/hotel-monte-vista.jpg',
+    caseFileImage: 'case-file-photos/hotel-monte-vista-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Flagstaff-Monte-Vista-Hotel.jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-yuma-territorial': {
+    image: 'case-file-photos/yuma-territorial-prison.jpg',
+    caseFileImage: 'case-file-photos/yuma-territorial-prison-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Yuma-Yuma_Territorial_Prison-1875-10.jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-bisbee-copperqueen': {
+    image: 'case-file-photos/copper-queen-hotel.jpg',
+    caseFileImage: 'case-file-photos/copper-queen-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Bisbee-Copper_Queen_Hotel-1902.JPG',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-jerome-cemetery': {
+    image: 'case-file-photos/jerome-cemetery.jpg',
+    caseFileImage: 'case-file-photos/jerome-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Jerome,_Arizona,_wider_panorama.jpg',
+    credit: 'Wikimedia Commons source image; exact cemetery context retained in the case-file treatment'
+  },
+  'az-tucson-sanxavier': {
+    image: 'case-file-photos/mission-san-xavier.jpg',
+    caseFileImage: 'case-file-photos/mission-san-xavier-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Door_at_Mission_San_Xavier_del_Bac.jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-phoenix-orpheum': {
+    image: 'case-file-photos/orpheum-theatre.jpg',
+    caseFileImage: 'case-file-photos/orpheum-theatre-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Orpheum_Theater-1.jpg',
+    credit: 'Wikimedia Commons source image; license recorded on file page'
+  },
+  'az-tombstone-courthouse': {
+    image: 'case-file-photos/tombstone-courthouse.jpg',
+    caseFileImage: 'case-file-photos/tombstone-courthouse-case-file.jpg',
+    source: 'https://tombstonechamber.com/directory/tombstone-courthouse-state-park/',
+    credit: 'Tombstone Chamber source image; reuse terms not stated on retrieved page'
+  },
+  'az-phoenix-capitol': {
+    image: 'case-file-photos/arizona-state-capitol.jpg',
+    caseFileImage: 'case-file-photos/arizona-state-capitol-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Arizona_state_capitol.jpg',
+    credit: 'Jack Boucher / Historic American Buildings Survey — public domain National Park Service source'
+  },
+  'az-superstition-mountains': {
+    image: 'case-file-photos/superstition-mountains.jpg',
+    caseFileImage: 'case-file-photos/superstition-mountains-case-file.jpg',
+    source: 'https://www.ontheroadarizona.com/uploads/6/9/3/3/69337727/weavers-needle-and-bird_orig.jpg',
+    credit: 'On the Road Arizona source image; reuse terms not stated on retrieved page'
+  },
+  'az-winslow-laposada': {
+    image: 'case-file-photos/la-posada-hotel.jpg',
+    caseFileImage: 'case-file-photos/la-posada-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:La_Posada_Hotel_(31827679196).jpg',
+    credit: 'Volker Schmidt — CC0 / public-domain dedication'
+  },
+  'az-bisbee-historicdistrict': {
+    image: 'case-file-photos/old-bisbee-district.jpg',
+    caseFileImage: 'case-file-photos/old-bisbee-district-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Bisbee_Arizona.jpg',
+    credit: 'Willjay — CC BY-SA 3.0 / GFDL'
+  },
   'ak-skagway-goldennorth': {
     image: 'case-file-photos/golden-north-hotel.jpg',
     caseFileImage: 'case-file-photos/golden-north-hotel-case-file.png',
