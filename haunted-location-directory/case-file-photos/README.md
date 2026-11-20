@@ -429,3 +429,10 @@ the directory must keep its **Exact case-file photograph pending** state.
 - `columbia-state-historic-park.jpg` / `columbia-state-historic-park-case-file.jpg` — exact Columbia State Historic Park reference; bilbord99, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Columbia_State_Historic_Park,_California_in_2022_-_1.jpg>
 - `fort-humboldt-state-historic-park.jpg` / `fort-humboldt-state-historic-park-case-file.jpg` — exact Fort Humboldt House reference; JP Smith, public domain. Source: <https://commons.wikimedia.org/wiki/File:Fort_Humboldt_House.JPG>
 - `point-sur-lighthouse.jpg` / `point-sur-lighthouse-case-file.jpg` — exact Point Sur Lighthouse reference; Bjorn, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Point_Sur_Lighthouse_(5063709302).jpg>
+
+### Delaware legacy batch
+
+- `fort-delaware.jpg` / `fort-delaware-case-file.jpg` — exact Fort Delaware reference on Pea Patch Island; Michael Romagnoli, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Fort_Delaware.JPG>
+- `rockwood-park-museum.jpg` / `rockwood-park-museum-case-file.jpg` — exact Rockwood Park & Museum mansion reference; Smallbones, public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:Rockwood_DE.JPG>
+- `woodburn.jpg` / `woodburn-case-file.jpg` — exact Woodburn reference in Dover; w_lemay, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Woodburn_(Delaware_Governor%E2%80%99s_Mansion),_Kings_Highway,_Dover,_DE_-_54435062561.jpg>
+- `old-swedes-church.jpg` / `old-swedes-church-case-file.jpg` — exact Old Swedes Church south-porch reference; Historic American Buildings Survey / Library of Congress, public domain. Source: <https://commons.wikimedia.org/wiki/File:Old_Swedes_South_Porch.jpeg>

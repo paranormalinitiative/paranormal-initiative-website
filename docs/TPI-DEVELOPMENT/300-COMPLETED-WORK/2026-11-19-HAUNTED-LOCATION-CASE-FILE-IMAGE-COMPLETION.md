@@ -301,3 +301,23 @@ The Cornwall Dudleytown entry was removed from the directory because its
 restricted, disputed folklore record did not meet the current haunted-location
 catalog standard. The separately named Dudleytown Historic District in Guilford
 was not substituted into the directory.
+
+## Delaware legacy batch — completed
+
+Delaware contains 4 directory entries. All 4 now have an exact source
+photograph, a matching TPI case-file treatment, local asset copies, and a
+source/credit record:
+
+- Fort Delaware
+- Rockwood Park & Museum
+- Woodburn
+- Old Swedes Church
+
+The treatments use **The Paranormal Initiative** branding and a **DELAWARE**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Each treatment preserves the exact source subject and is presented as a
+stylized case-file image, not an unedited documentary photograph. Original
+access notes remain in the directory: Fort Delaware requires ferry access,
+Woodburn has limited access, and Old Swedes Church is accessed through public
+tours or site rules. The case files do not direct members to trespass or bypass
+those conditions.

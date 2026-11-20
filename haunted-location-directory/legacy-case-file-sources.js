@@ -628,5 +628,29 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/griswold-inn-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Essex_CT_Griswold_Inn_01_(9363065815).jpg',
     credit: 'Joe Mabel — CC BY-SA 2.0/3.0/GFDL'
+  },
+  'de-delawarecity-fortdelaware': {
+    image: 'case-file-photos/fort-delaware.jpg',
+    caseFileImage: 'case-file-photos/fort-delaware-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Fort_Delaware.JPG',
+    credit: 'Michael Romagnoli — CC BY-SA 3.0'
+  },
+  'de-wilmington-rockwood': {
+    image: 'case-file-photos/rockwood-park-museum.jpg',
+    caseFileImage: 'case-file-photos/rockwood-park-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Rockwood_DE.JPG',
+    credit: 'Smallbones — public domain dedication'
+  },
+  'de-dover-woodburn': {
+    image: 'case-file-photos/woodburn.jpg',
+    caseFileImage: 'case-file-photos/woodburn-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Woodburn_(Delaware_Governor%E2%80%99s_Mansion),_Kings_Highway,_Dover,_DE_-_54435062561.jpg',
+    credit: 'w_lemay — CC BY-SA 2.0'
+  },
+  'de-wilmington-oldswedes': {
+    image: 'case-file-photos/old-swedes-church.jpg',
+    caseFileImage: 'case-file-photos/old-swedes-church-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Old_Swedes_South_Porch.jpeg',
+    credit: 'Historic American Buildings Survey / Library of Congress — public domain'
   }
 };
