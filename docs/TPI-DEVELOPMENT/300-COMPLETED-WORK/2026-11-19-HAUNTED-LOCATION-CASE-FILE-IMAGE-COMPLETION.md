@@ -106,6 +106,65 @@ StudioFlow source or shared runtime changed.
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
+## Idaho legacy batch — completed
+
+Idaho contains 20 directory entries. All 20 now have an exact local source
+photograph, a matching TPI case-file treatment, a local asset copy, and a
+source/credit record:
+
+- Old Idaho Penitentiary
+- Egyptian Theatre
+- Idanha Hotel
+- Idaho State Capitol
+- Morris Hill Cemetery
+- Boot Hill / Idaho City Pioneer Cemetery
+- Boise Basin Museum
+- Idaho Hotel
+- Oasis Bordello Museum
+- Northern Pacific Depot Railroad Museum
+- Jameson Saloon
+- Albion State Normal School
+- Howells Opera House
+- Lava Hot Springs Inn
+- Enders Hotel
+- State Hospital South Cemetery
+- Stricker Ranch & Rock Creek Station
+- Cataldo Mission (Mission of the Sacred Heart)
+- Mountain View Cemetery
+- Roseberry Historic Site
+
+The treatments use **The Paranormal Initiative** branding and an **IDAHO**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Each treatment preserves the exact source subject and is presented as a
+stylized case-file image, not an unedited documentary photograph. The State
+Hospital South Cemetery treatment was corrected to show the exact cemetery
+and marker without the unrelated presenter visible in the source frame.
+
+The Idaho City Pioneer Cemetery, Boise Basin Museum, Jameson Saloon, Albion
+State Normal School, Howells Opera House, Lava Hot Springs Inn, State Hospital
+South Cemetery, Stricker Ranch & Rock Creek Station, Mountain View Cemetery,
+and Roseberry Historic Site source records remain explicitly flagged for rights
+review because the retrieved source pages did not state reuse terms. Those
+files are not represented as TPI-owned documentary photographs. Public,
+guest, guided, permission-required, and limited-hours access notes remain
+authoritative; no case file directs members to trespass or bypass site rules.
+
+## Idaho release record
+
+- Source commit: `7048daf5691b71620af11e2c663c947cb1026027`
+- Release candidate: `rel-7048daf5691b-e1e9c3b2f632`
+- Production Worker version: `85dee51d-7255-448e-98de-8f7ee32d3ce9`
+- Rollback target: `0aa6bce9-69f9-41d9-9b41-49f42302570a`
+- Release profile: full; protected application integrity and StudioFlow/Nova
+  maintenance checks preserved
+- Certification: **40/40 gates passed**, manifest sealed as
+  `ccd42bced8f335ff9166e491d0082c08fc88803df01884e2a70819f9503fcbfe`
+- Production smoke: **10/10 passed**
+- Live Firefox acceptance: **65/65 passed**
+- Live Idaho page: **200**, 20 entries rendered, all 40 source/treatment
+  assets returned **200**
+- Final release state: **DEPLOYED_AND_VERIFIED**
+
 ## Idaho legacy batch — completed in this continuation
 
 Idaho contains 20 directory entries. All 20 now have an exact local source
