@@ -321,3 +321,41 @@ access notes remain in the directory: Fort Delaware requires ferry access,
 Woodburn has limited access, and Old Swedes Church is accessed through public
 tours or site rules. The case files do not direct members to trespass or bypass
 those conditions.
+
+## Florida legacy batch — completed
+
+Florida contains 20 directory entries. All 20 now have an exact local source
+photograph, a matching TPI case-file treatment, and a source/credit record:
+
+- Castillo de San Marcos
+- St. Augustine Lighthouse & Maritime Museum
+- Lightner Museum
+- Old Jail
+- Casa Monica Resort & Spa
+- Huguenot Cemetery
+- Tolomato Cemetery
+- Fort Clinch State Park
+- Fort Pickens
+- Fort Zachary Taylor Historic State Park
+- Biltmore Hotel
+- The Vinoy Resort & Golf Club
+- Riddle House
+- May-Stringer House
+- Ashley’s of Rockledge
+- Tampa Theatre
+- Ybor City Museum State Park
+- Henry B. Plant Museum / Plant Hall
+- Greenwood Cemetery
+- Devil’s Tree at Oak Hammock Park
+
+The treatments use **The Paranormal Initiative** branding and a **FLORIDA**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Each treatment preserves the exact source subject and is presented as a
+stylized case-file image rather than an unedited documentary photograph.
+
+The May-Stringer House, Ashley’s of Rockledge, Greenwood Cemetery, and Devil’s
+Tree source records have explicit rights-review notes because the retrieved
+source pages did not state reuse terms. The directory retains those credits and
+does not represent those source photographs as TPI-owned. Public, guest,
+guided, and limited-hours access notes remain authoritative; no case file
+directs members to trespass or bypass site rules.

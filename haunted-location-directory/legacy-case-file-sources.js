@@ -652,5 +652,125 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/old-swedes-church-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Old_Swedes_South_Porch.jpeg',
     credit: 'Historic American Buildings Survey / Library of Congress — public domain'
+  },
+  'fl-staugustine-castillo': {
+    image: 'case-file-photos/castillo-de-san-marcos.jpg',
+    caseFileImage: 'case-file-photos/castillo-de-san-marcos-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Castillo_de_San_Marcos,_St._Augustine,_FL_-_50857005933.jpg',
+    credit: 'w_lemay — CC BY-SA 2.0'
+  },
+  'fl-staugustine-lighthouse': {
+    image: 'case-file-photos/st-augustine-lighthouse.jpg',
+    caseFileImage: 'case-file-photos/st-augustine-lighthouse-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:StAugustineLighthouse.jpg',
+    credit: 'Wikimedia Commons source image — public domain'
+  },
+  'fl-staugustine-lightner': {
+    image: 'case-file-photos/lightner-museum.jpg',
+    caseFileImage: 'case-file-photos/lightner-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Lightner_Museum_from_King_Street.jpg',
+    credit: 'Elenapphotography — CC BY-SA 4.0'
+  },
+  'fl-staugustine-oldjail': {
+    image: 'case-file-photos/old-jail-st-augustine.jpg',
+    caseFileImage: 'case-file-photos/old-jail-st-augustine-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:St_Aug_old_county_jail08.jpg',
+    credit: 'Ebyabe — CC BY-SA 3.0'
+  },
+  'fl-staugustine-casamonica': {
+    image: 'case-file-photos/casa-monica.jpg',
+    caseFileImage: 'case-file-photos/casa-monica-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:A1A_Scenic_and_Historic_Coastal_Byway_-_Casa_Monica_Hotel_-_NARA_-_7716755.jpg',
+    credit: 'National Archives source image — public domain'
+  },
+  'fl-staugustine-huguenot': {
+    image: 'case-file-photos/huguenot-cemetery.jpg',
+    caseFileImage: 'case-file-photos/huguenot-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Huguenot_Cemetery_gate,_St._Augustine.JPG',
+    credit: 'Michael Rivera — CC BY-SA 3.0'
+  },
+  'fl-staugustine-tolomato': {
+    image: 'case-file-photos/tolomato-cemetery.jpg',
+    caseFileImage: 'case-file-photos/tolomato-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Tolomato_Cemetery_entryway_July_2012.jpg',
+    credit: 'Mdnghtshdw — CC BY-SA 3.0'
+  },
+  'fl-fernandinabeach-fortclinch': {
+    image: 'case-file-photos/fort-clinch.jpg',
+    caseFileImage: 'case-file-photos/fort-clinch-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Fernandina_Beach_FL_Fort_Clinch_fort_bldg01a.jpg',
+    credit: 'Ebyabe — CC BY-SA 3.0'
+  },
+  'fl-pensacola-fortpickens': {
+    image: 'case-file-photos/fort-pickens.jpg',
+    caseFileImage: 'case-file-photos/fort-pickens-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Fort_Pickens.jpg',
+    credit: 'Jsweida — CC BY-SA 3.0'
+  },
+  'fl-keywest-fortzachary': {
+    image: 'case-file-photos/fort-zachary-taylor.jpg',
+    caseFileImage: 'case-file-photos/fort-zachary-taylor-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Ft_Zachary_Taylor.jpg',
+    credit: 'Moon lake airs — CC BY-SA 4.0'
+  },
+  'fl-coralgables-biltmore': {
+    image: 'case-file-photos/biltmore-hotel-coral-gables.jpg',
+    caseFileImage: 'case-file-photos/biltmore-hotel-coral-gables-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Biltmore_Hotel_at_Coral_Gables_001.jpg',
+    credit: 'Leonard J. DeFrancisci — CC BY-SA 3.0'
+  },
+  'fl-stpetersburg-vinoy': {
+    image: 'case-file-photos/vinoy.jpg',
+    caseFileImage: 'case-file-photos/vinoy-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:2021_Vinoy_Renaissance_Resort,_St._Petersburg.jpg',
+    credit: 'Beyond My Ken — CC BY-SA 4.0'
+  },
+  'fl-westpalm-riddlehouse': {
+    image: 'case-file-photos/riddle-house.jpg',
+    caseFileImage: 'case-file-photos/riddle-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Riddlehouse1920.jpg',
+    credit: 'Palm Beach Post — public domain'
+  },
+  'fl-brooksville-maystringer': {
+    image: 'case-file-photos/may-stringer-house.jpg',
+    caseFileImage: 'case-file-photos/may-stringer-house-case-file.jpg',
+    source: 'https://www.hernandohistoricalmuseumassoc.com/may-stringer-house/',
+    credit: 'Hernando Historical Museum Association source image; reuse terms not stated'
+  },
+  'fl-rockledge-ashleys': {
+    image: 'case-file-photos/ashleys-rockledge.jpg',
+    caseFileImage: 'case-file-photos/ashleys-rockledge-case-file.jpg',
+    source: 'https://familydestinationsguide.com/florida-haunted-restaurant-story/',
+    credit: 'Family Destinations Guide / Jay St John source image; reuse terms not stated'
+  },
+  'fl-tampa-tampatheatre': {
+    image: 'case-file-photos/tampa-theatre.jpg',
+    caseFileImage: 'case-file-photos/tampa-theatre-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:TampaTheatre_front01.jpg',
+    credit: 'Ebyabe — CC BY 2.5'
+  },
+  'fl-tampa-ybormuseum': {
+    image: 'case-file-photos/ybor-city-museum.jpg',
+    caseFileImage: 'case-file-photos/ybor-city-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:YborMuseumAug08Exterior.jpg',
+    credit: 'Infrogmation of New Orleans — CC BY-SA 3.0'
+  },
+  'fl-tampa-plantmuseum': {
+    image: 'case-file-photos/henry-b-plant-museum.jpg',
+    caseFileImage: 'case-file-photos/henry-b-plant-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Plant_Hall_University_of_Tampa.jpg',
+    credit: 'Piperlilybattaglia — CC BY-SA 4.0'
+  },
+  'fl-orlando-greenwood': {
+    image: 'case-file-photos/greenwood-cemetery-orlando.jpg',
+    caseFileImage: 'case-file-photos/greenwood-cemetery-orlando-case-file.jpg',
+    source: 'https://www.orlando.gov/Our-Government/Departments-Offices/Executive-Offices/City-Clerk/Greenwood-Cemetery',
+    credit: 'City of Orlando source image; reuse terms not stated'
+  },
+  'fl-portstlucie-devilstree': {
+    image: 'case-file-photos/devils-tree.jpg',
+    caseFileImage: 'case-file-photos/devils-tree-case-file.jpg',
+    source: 'https://thehauntedplaces.com/devil-tree-direction-florida/',
+    credit: 'The Haunted Places source image; reuse terms not stated'
   }
 };

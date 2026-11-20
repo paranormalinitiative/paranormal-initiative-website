@@ -436,3 +436,36 @@ the directory must keep its **Exact case-file photograph pending** state.
 - `rockwood-park-museum.jpg` / `rockwood-park-museum-case-file.jpg` — exact Rockwood Park & Museum mansion reference; Smallbones, public domain dedication. Source: <https://commons.wikimedia.org/wiki/File:Rockwood_DE.JPG>
 - `woodburn.jpg` / `woodburn-case-file.jpg` — exact Woodburn reference in Dover; w_lemay, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Woodburn_(Delaware_Governor%E2%80%99s_Mansion),_Kings_Highway,_Dover,_DE_-_54435062561.jpg>
 - `old-swedes-church.jpg` / `old-swedes-church-case-file.jpg` — exact Old Swedes Church south-porch reference; Historic American Buildings Survey / Library of Congress, public domain. Source: <https://commons.wikimedia.org/wiki/File:Old_Swedes_South_Porch.jpeg>
+
+### Florida legacy batch
+
+The Florida page contains 20 legacy locations. Each now has an exact local
+source photograph and a matching stylized case-file treatment with the
+**FLORIDA** state badge and **The Paranormal Initiative** branding:
+
+- `castillo-de-san-marcos.jpg` / `castillo-de-san-marcos-case-file.jpg` — exact Castillo de San Marcos reference; w_lemay, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Castillo_de_San_Marcos,_St._Augustine,_FL_-_50857005933.jpg>
+- `st-augustine-lighthouse.jpg` / `st-augustine-lighthouse-case-file.jpg` — exact St. Augustine Lighthouse reference; public domain. Source: <https://commons.wikimedia.org/wiki/File:StAugustineLighthouse.jpg>
+- `lightner-museum.jpg` / `lightner-museum-case-file.jpg` — exact Lightner Museum reference; Elenapphotography, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Lightner_Museum_from_King_Street.jpg>
+- `old-jail-st-augustine.jpg` / `old-jail-st-augustine-case-file.jpg` — exact Old Jail reference; Ebyabe, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:St_Aug_old_county_jail08.jpg>
+- `casa-monica.jpg` / `casa-monica-case-file.jpg` — exact Casa Monica Hotel reference; National Archives source image, public domain. Source: <https://commons.wikimedia.org/wiki/File:A1A_Scenic_and_Historic_Coastal_Byway_-_Casa_Monica_Hotel_-_NARA_-_7716755.jpg>
+- `huguenot-cemetery.jpg` / `huguenot-cemetery-case-file.jpg` — exact Huguenot Cemetery gate reference; Michael Rivera, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Huguenot_Cemetery_gate,_St._Augustine.JPG>
+- `tolomato-cemetery.jpg` / `tolomato-cemetery-case-file.jpg` — exact Tolomato Cemetery entryway reference; Mdnghtshdw, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Tolomato_Cemetery_entryway_July_2012.jpg>
+- `fort-clinch.jpg` / `fort-clinch-case-file.jpg` — exact Fort Clinch fort-building reference; Ebyabe, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Fernandina_Beach_FL_Fort_Clinch_fort_bldg01a.jpg>
+- `fort-pickens.jpg` / `fort-pickens-case-file.jpg` — exact Fort Pickens reference; Jsweida, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Fort_Pickens.jpg>
+- `fort-zachary-taylor.jpg` / `fort-zachary-taylor-case-file.jpg` — exact Fort Zachary Taylor reference; Moon lake airs, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Ft_Zachary_Taylor.jpg>
+- `biltmore-hotel-coral-gables.jpg` / `biltmore-hotel-coral-gables-case-file.jpg` — exact Biltmore Hotel reference; Leonard J. DeFrancisci, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Biltmore_Hotel_at_Coral_Gables_001.jpg>
+- `vinoy.jpg` / `vinoy-case-file.jpg` — exact Vinoy Resort & Golf Club reference; Beyond My Ken, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:2021_Vinoy_Renaissance_Resort,_St._Petersburg.jpg>
+- `riddle-house.jpg` / `riddle-house-case-file.jpg` — exact Riddle House reference; Palm Beach Post, public domain. Source: <https://commons.wikimedia.org/wiki/File:Riddlehouse1920.jpg>
+- `may-stringer-house.jpg` / `may-stringer-house-case-file.jpg` — exact May-Stringer House reference from the Hernando Historical Museum Association; reuse terms not stated on the source page. Source: <https://www.hernandohistoricalmuseumassoc.com/may-stringer-house/>
+- `ashleys-rockledge.jpg` / `ashleys-rockledge-case-file.jpg` — exact Ashley’s of Rockledge reference from the cited feature; credit recorded as Family Destinations Guide / Jay St John and reuse terms not stated. Source: <https://familydestinationsguide.com/florida-haunted-restaurant-story/>
+- `tampa-theatre.jpg` / `tampa-theatre-case-file.jpg` — exact Tampa Theatre front reference; Ebyabe, CC BY 2.5. Source: <https://commons.wikimedia.org/wiki/File:TampaTheatre_front01.jpg>
+- `ybor-city-museum.jpg` / `ybor-city-museum-case-file.jpg` — exact Ybor City Museum exterior reference; Infrogmation of New Orleans, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:YborMuseumAug08Exterior.jpg>
+- `henry-b-plant-museum.jpg` / `henry-b-plant-museum-case-file.jpg` — exact Plant Hall reference for the Henry B. Plant Museum; Piperlilybattaglia, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Plant_Hall_University_of_Tampa.jpg>
+- `greenwood-cemetery-orlando.jpg` / `greenwood-cemetery-orlando-case-file.jpg` — exact Greenwood Cemetery angel-statue reference from the City of Orlando page; reuse terms not stated. Source: <https://www.orlando.gov/Our-Government/Departments-Offices/Executive-Offices/City-Clerk/Greenwood-Cemetery>
+- `devils-tree.jpg` / `devils-tree-case-file.jpg` — exact Devil’s Tree reference from The Haunted Places; reuse terms not stated. Source: <https://thehauntedplaces.com/devil-tree-direction-florida/>
+
+The treatments are presentation derivatives of the exact source photographs,
+not documentary photographs owned by TPI. Original access notes remain in the
+directory; the case files do not direct members to trespass or bypass public,
+guest, guided, or limited-hours access rules. Sources with unstated reuse terms
+remain flagged for rights review in the mapping and completion record.
