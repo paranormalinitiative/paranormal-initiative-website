@@ -556,7 +556,7 @@ unstated reuse terms remain explicitly flagged for permission/reuse review
 before broader redistribution. The case files do not direct members to
 trespass or bypass public, guest, guided, or limited-hours access rules.
 
-### Illinois legacy batch — in progress
+### Illinois legacy batch — completed and live
 
 Illinois contains 18 directory entries. Each now has an exact local source
 photograph and a matching **ILLINOIS** case-file treatment using **The

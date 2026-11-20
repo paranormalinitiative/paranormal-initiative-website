@@ -420,7 +420,7 @@ Woodburn has limited access, and Old Swedes Church is accessed through public
 tours or site rules. The case files do not direct members to trespass or bypass
 those conditions.
 
-## Illinois legacy batch — completed locally, release pending
+## Illinois legacy batch — completed and live
 
 Illinois contains 18 directory entries. All 18 now have an exact local source
 photograph, a matching **ILLINOIS** case-file treatment, and a source/credit
@@ -459,6 +459,20 @@ not state reuse terms remain explicitly flagged for rights review in
 documentary photographs. Original attribution and license obligations remain
 recorded. The case files do not direct members to trespass or bypass public,
 guest, guided, or limited-hours access rules.
+
+## Illinois release record
+
+- Source commit: `8cb8be4dd38f8bf8e5950fe27df0fb129b01db7d`
+- Release candidate: `rel-8cb8be4dd38f-3d8533583da1`
+- Production Worker version: `138004e5-ae97-4da2-8768-e50c9dc9f170`
+- Rollback target: `85dee51d-7255-448e-98de-8f7ee32d3ce9`
+- Release profile: website; protected StudioFlow and Nova bytes remained locked
+- Certification: **10/10 gates passed**, manifest sealed as
+  `66d38be701de6c191f5b3e4f0f1825bcc9dc9d15d74b9b273c104c521fc65160`
+- Production smoke: **10/10 passed**
+- Live Illinois page: **200**, 18 locations rendered
+- Live Illinois assets: **36/36 returned HTTP 200**
+- Final release state: **DEPLOYED_AND_VERIFIED**
 
 ## Florida legacy batch — completed
 
