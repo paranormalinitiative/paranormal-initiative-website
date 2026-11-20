@@ -733,3 +733,26 @@ guided, school, secure-facility, or limited-hours access rules.
 The Kentucky page is live and verified: HTTP 200, 20 locations rendered, and
 all 40 image references returned HTTP 200 in production (39 unique assets
 because Ditto House intentionally reuses its one labeled reconstruction).
+
+### Louisiana legacy batch — completed locally, release pending
+
+Louisiana contains 46 directory entries. Each now has a Louisiana-marked case-
+file treatment branded for **The Paranormal Initiative**, with the full
+subject preserved for card display and click-to-enlarge viewing. The clean
+Laura Plantation reference replaced an earlier Tripadvisor collage; no
+Tripadvisor badge, unrelated people, or promotional overlay is retained in the
+Louisiana source set.
+
+The exact source and credit for every Louisiana entry are recorded in
+`legacy-case-file-sources.js`. Port Hudson and Fort Jesup use clearly labeled
+TPI historical reconstructions because the official source pages were
+available but their direct image downloads were not; they are not documentary
+photographs. Sources whose retrieved pages did not state reuse terms remain
+explicitly flagged for rights review. Private, closed, restricted, and
+tour-controlled sites retain their access context, and the directory does not
+direct members to trespass or bypass public, guest, guided, or limited-hours
+rules.
+
+The Louisiana batch is source-checked and locally mapped: **46/46 location
+IDs**, **46/46 case-file images**, and **92/92 local image references** are
+present. Production release and live HTTP/image smoke checks remain pending.
