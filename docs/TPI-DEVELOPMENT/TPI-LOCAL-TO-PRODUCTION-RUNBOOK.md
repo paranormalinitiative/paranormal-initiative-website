@@ -397,6 +397,12 @@ After preflight reports `READY`, deploy the exact verified commit:
 TPI_PRODUCTION_DEPLOY=approved npm run release:production
 ```
 
+The production version check defaults to a 45-second Cloudflare propagation
+window. When Cloudflare is reporting deployment state slowly, the same guarded
+check may be given a longer window with `TPI_PRODUCTION_VERSION_TIMEOUT_MS` at
+or above 45000; it still requires the candidate to be reported at 100% traffic
+and still rolls back automatically on failure.
+
 The command repeats preflight, records the current Worker as rollback target,
 deploys through the guarded Wrangler package, runs live public smoke, opens an
 isolated Firefox Developer Edition profile for authenticated production
