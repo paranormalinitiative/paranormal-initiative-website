@@ -106,7 +106,7 @@ StudioFlow source or shared runtime changed.
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
-## Iowa legacy batch — completed locally, release pending
+## Iowa legacy batch — completed and live
 
 Iowa has 16 directory entries and now has 16 exact source photographs plus 16
 matching case-file treatments. Each treatment uses the exact **IOWA** marker
@@ -139,6 +139,21 @@ review in the source map. The Black Hawk Hotel source was corrected to an
 exterior photograph before treatment generation. The directory does not direct
 members to trespass or bypass public, guest, guided, or limited-hours access
 rules. TPI is **The Paranormal Initiative**, never “Paranormal Investigations.”
+
+Release evidence:
+
+- Source commits: `4da1be69`, `40a3a41b`, `83b0e918`, `7c806b77`,
+  `6b754fb1`, `e21dc509`, `3f082a31`
+- Release candidate: `rel-3f082a319e66-d1810c243f08`
+- Source commit certified: `3f082a319e66cf48692b72242b025cc66fc7ad1b`
+- Release profile: website; protected StudioFlow and Nova application bytes
+  remained under the maintenance lock
+- Certified gates: **10 passed**; production smoke: **10/10 passed**
+- Deployed Worker version: `cc39a39a-6775-46d8-a9af-b3ee71e38287`
+- Rollback target: `cd6a89d8-20b9-4a0c-9a0a-c67bca22cccd`
+- Live Iowa page: **200**, 16 entries rendered
+- Live Iowa assets: **32/32 returned 200**
+- Final release state: **DEPLOYED_AND_VERIFIED**
 
 ## Idaho legacy batch — completed
 
