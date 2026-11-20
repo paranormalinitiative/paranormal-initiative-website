@@ -691,3 +691,41 @@ terms remain explicitly flagged for rights review before broader
 redistribution. Restricted or private locations retain their access context,
 and the directory does not direct members to trespass or bypass public, guest,
 guided, or limited-hours access rules.
+
+### Kentucky legacy batch — completed locally, release pending
+
+Kentucky contains 20 directory entries. Each now has a matching **KENTUCKY**
+case-file treatment using **The Paranormal Initiative** branding. Nineteen
+entries use an exact local reference photograph; Ditto House uses a clearly
+labeled historical reconstruction because the National Register record was
+available but no directly reusable exterior photograph was found.
+
+- `waverly-hills.jpg` / `waverly-hills-case-file.png` — Waverly Hills Sanatorium.
+- `cave-hill-cemetery.jpg` / `cave-hill-cemetery-case-file.png` — Cave Hill Cemetery.
+- `seelbach-hilton.jpg` / `seelbach-hilton-case-file.png` — The Seelbach Hilton Louisville.
+- `old-talbott-tavern.jpg` / `old-talbott-tavern-case-file.png` — Old Talbott Tavern.
+- `my-old-kentucky-home.jpg` / `my-old-kentucky-home-case-file.png` — My Old Kentucky Home State Park.
+- `liberty-hall.jpg` / `liberty-hall-case-file.png` — Liberty Hall Historic Site.
+- `ditto-house-case-file.png` — Ditto House Inn historical reconstruction; not a documentary photograph.
+- `fort-duffield.jpg` / `fort-duffield-case-file.png` — Fort Duffield.
+- `perryville-battlefield.jpg` / `perryville-battlefield-case-file.png` — Perryville Battlefield State Historic Site.
+- `bobby-mackeys.jpg` / `bobby-mackeys-case-file.png` — Bobby Mackey’s Music World historical-location record.
+- `trinity-centre.jpg` / `trinity-centre-case-file.png` — Theatre Workshop of Owensboro / Trinity Centre.
+- `ben-hawes-state-park.jpg` / `ben-hawes-state-park-case-file.png` — Ben Hawes State Park.
+- `daviess-county-middle-school.jpg` / `daviess-county-middle-school-case-file.png` — Daviess County Middle School.
+- `hiestand-house.jpg` / `hiestand-house-case-file.png` — Hiestand House / Taylor County Museum.
+- `wb-muncy-school.jpg` / `wb-muncy-school-case-file.png` — W.B. Muncy School.
+- `octagon-hall.jpg` / `octagon-hall-case-file.png` — Octagon Hall Museum.
+- `rohs-opera-house.jpg` / `rohs-opera-house-case-file.png` — Rohs Opera House.
+- `lexington-opera-house.jpg` / `lexington-opera-house-case-file.png` — Lexington Opera House.
+- `anderson-hotel.jpg` / `anderson-hotel-case-file.png` — Anderson Hotel historical record.
+- `kentucky-state-penitentiary.jpg` / `kentucky-state-penitentiary-case-file.png` — Kentucky State Penitentiary.
+
+The exact source, credit, reuse status, reconstruction disclosure, and access
+context for every Kentucky entry are recorded in
+`legacy-case-file-sources.js`. Sources whose retrieved pages did not state
+reuse terms remain explicitly flagged for rights review. The case-file
+treatments are presentation derivatives, not documentary photographs owned by
+TPI. TPI is **The Paranormal Initiative**, never “Paranormal Investigations.”
+The directory does not direct members to trespass or bypass public, guest,
+guided, school, secure-facility, or limited-hours access rules.

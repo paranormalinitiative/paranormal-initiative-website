@@ -1486,5 +1486,125 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/mollys-hollow-case-file.png',
     source: 'https://www.travelks.com/listing/jackson-park/21285/',
     credit: 'Jackson Park source image used for the outdoor Molly’s Hollow landscape reference; reuse terms not stated — rights review required'
+  },
+  'ky-louisville-waverlyhills': {
+    image: 'case-file-photos/waverly-hills.jpg',
+    caseFileImage: 'case-file-photos/waverly-hills-case-file.png',
+    source: 'https://thewaverlyhillssanatorium.com/',
+    credit: 'Waverly Hills Sanatorium official source image; reuse terms not stated — rights review required; access is by authorized tour or event only'
+  },
+  'ky-louisville-cavehill': {
+    image: 'case-file-photos/cave-hill-cemetery.jpg',
+    caseFileImage: 'case-file-photos/cave-hill-cemetery-case-file.png',
+    source: 'https://www.cavehillcemetery.com/',
+    credit: 'Cave Hill Cemetery official and Wikimedia Commons reference; reuse terms recorded on source page; public cemetery rules and entrance notices apply'
+  },
+  'ky-louisville-seelbach': {
+    image: 'case-file-photos/seelbach-hilton.jpg',
+    caseFileImage: 'case-file-photos/seelbach-hilton-case-file.png',
+    source: 'https://www.hilton.com/en-gb/hotels/sdfshhf-the-seelbach-hilton-louisville/gallery/',
+    credit: 'Seelbach Hilton gallery and Wikimedia Commons source image; reuse terms should be confirmed for this file'
+  },
+  'ky-bardstown-talbott': {
+    image: 'case-file-photos/old-talbott-tavern.jpg',
+    caseFileImage: 'case-file-photos/old-talbott-tavern-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Old_Talbott_Tavern.jpg',
+    credit: 'C. Bedford Crenshaw via Wikimedia Commons; source page permits reuse with attribution'
+  },
+  'ky-bardstown-myoldkentuckyhome': {
+    image: 'case-file-photos/my-old-kentucky-home.jpg',
+    caseFileImage: 'case-file-photos/my-old-kentucky-home-case-file.png',
+    source: 'https://parks.ky.gov/explore/my-old-kentucky-home-state-park-7821',
+    credit: 'Kentucky State Parks and National Archives reference image; government archive source, reuse terms should be confirmed for this file'
+  },
+  'ky-frankfort-libertyhall': {
+    image: 'case-file-photos/liberty-hall.jpg',
+    caseFileImage: 'case-file-photos/liberty-hall-case-file.png',
+    source: 'https://www.libertyhall.org/',
+    credit: 'Liberty Hall Historic Site and Wikimedia Commons source image; reuse terms should be confirmed for this file'
+  },
+  'ky-westpoint-dittohouse': {
+    image: 'case-file-photos/ditto-house-case-file.png',
+    caseFileImage: 'case-file-photos/ditto-house-case-file.png',
+    source: 'https://npgallery.nps.gov/GetAsset/822a4644-03cc-4365-af84-4cb4934db776',
+    credit: 'Historical reconstruction based on the National Register archival description and 1988 Kentucky Heritage Council record; not a documentary photograph; no exact reusable exterior file was available'
+  },
+  'ky-westpoint-fortduffield': {
+    image: 'case-file-photos/fort-duffield.jpg',
+    caseFileImage: 'case-file-photos/fort-duffield-case-file.png',
+    source: 'https://fortduffield.com/',
+    credit: 'Fort Duffield official and Wikimedia Commons reference image; reuse terms should be confirmed for this file'
+  },
+  'ky-perryville-battlefield': {
+    image: 'case-file-photos/perryville-battlefield.jpg',
+    caseFileImage: 'case-file-photos/perryville-battlefield-case-file.png',
+    source: 'https://parks.ky.gov/explore/perryville-battlefield-state-historic-site-7804',
+    credit: 'Kentucky State Parks and Wikimedia Commons reference image; reuse terms should be confirmed for this file; public park rules apply'
+  },
+  'ky-wilder-bobbymackeys': {
+    image: 'case-file-photos/bobby-mackeys.jpg',
+    caseFileImage: 'case-file-photos/bobby-mackeys-case-file.png',
+    source: 'https://www.yourclassical.org/story/2016/10/31/10-haunted-american-music-venues',
+    credit: 'Public media historical reference image; former venue is treated as a historical record and not as a current building or accessible destination; reuse terms not stated — rights review required'
+  },
+  'ky-owensboro-theatreworkshop': {
+    image: 'case-file-photos/trinity-centre.jpg',
+    caseFileImage: 'case-file-photos/trinity-centre-case-file.png',
+    source: 'https://theatreworkshop.org/venues/',
+    credit: 'Theatre Workshop official venue page and Wikimedia Commons reference image; reuse terms should be confirmed for this file'
+  },
+  'ky-owensboro-benhawes': {
+    image: 'case-file-photos/ben-hawes-state-park.jpg',
+    caseFileImage: 'case-file-photos/ben-hawes-state-park-case-file.png',
+    source: 'https://www.14news.com/2023/12/05/pickleball-courts-possibly-coming-ben-hawes-park/',
+    credit: 'Ben Hawes State Park source image; reuse terms not stated — rights review required; use public park access rules'
+  },
+  'ky-owensboro-daviessmiddle': {
+    image: 'case-file-photos/daviess-county-middle-school.jpg',
+    caseFileImage: 'case-file-photos/daviess-county-middle-school-case-file.png',
+    source: 'https://wbkr.com/creepy-accounts-of-ghostly-activity-at-daviess-county-middle-school-in-owensboro-kentucky/',
+    credit: 'WBKR source image; reuse terms not stated — rights review required; school property is not a public investigation destination'
+  },
+  'ky-campbellsville-hiestandhouse': {
+    image: 'case-file-photos/hiestand-house.jpg',
+    caseFileImage: 'case-file-photos/hiestand-house-case-file.png',
+    source: 'https://www.kentuckytourism.com/explore/hiestand-house-taylor-county-museum-2906',
+    credit: 'Kentucky Tourism and Taylor County Museum reference image; reuse terms not stated — rights review required'
+  },
+  'ky-wooton-muncyschool': {
+    image: 'case-file-photos/wb-muncy-school.jpg',
+    caseFileImage: 'case-file-photos/wb-muncy-school-case-file.png',
+    source: 'https://www.cmta.com/results/briefs/leslie-county-schools',
+    credit: 'CMTA source image; reuse terms not stated — rights review required; school property is not a public investigation destination'
+  },
+  'ky-franklin-octagonhall': {
+    image: 'case-file-photos/octagon-hall.jpg',
+    caseFileImage: 'case-file-photos/octagon-hall-case-file.png',
+    source: 'https://www.octagonhallmuseum.com/',
+    credit: 'Octagon Hall official source and Library of Congress reference image; archival source terms should be confirmed for this file'
+  },
+  'ky-cynthiana-rohsopera': {
+    image: 'case-file-photos/rohs-opera-house.jpg',
+    caseFileImage: 'case-file-photos/rohs-opera-house-case-file.png',
+    source: 'https://www.rohsoperahouse.com/',
+    credit: 'Rohs Opera House official source image; reuse terms not stated — rights review required'
+  },
+  'ky-lexington-opera': {
+    image: 'case-file-photos/lexington-opera-house.jpg',
+    caseFileImage: 'case-file-photos/lexington-opera-house-case-file.png',
+    source: 'https://photosbyravi.com/2024/10/26/visiting-northside-district-lexington-opera-house/',
+    credit: 'Photos by Ravi source image; reuse terms not stated — rights review required'
+  },
+  'ky-lawrenceburg-andersonhotel': {
+    image: 'case-file-photos/anderson-hotel.jpg',
+    caseFileImage: 'case-file-photos/anderson-hotel-case-file.png',
+    source: 'https://visitlawrenceburgky.com/our-spirit/',
+    credit: 'Lawrenceburg historical record and illustrated source reference; reuse terms not stated — rights review required; hotel closed and is treated as a historical record'
+  },
+  'ky-eddyville-statepenitentiary': {
+    image: 'case-file-photos/kentucky-state-penitentiary.jpg',
+    caseFileImage: 'case-file-photos/kentucky-state-penitentiary-case-file.png',
+    source: 'https://corrections.ky.gov/Facilities/AI/ksp/Pages/default.aspx',
+    credit: 'Kentucky Department of Corrections official site and historical reference image; reuse terms not stated — rights review required; no public access or trespass'
   }
 };

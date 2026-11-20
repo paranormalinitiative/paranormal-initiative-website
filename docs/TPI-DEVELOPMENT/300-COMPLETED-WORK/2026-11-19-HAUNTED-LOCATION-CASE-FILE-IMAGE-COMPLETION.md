@@ -750,3 +750,43 @@ Release evidence:
 - Live Indiana page: **200**, 19 entries rendered
 - Live Indiana assets: **38/38 returned 200**
 - Final release state: **DEPLOYED_AND_VERIFIED**
+
+## Kentucky legacy batch — completed locally, release pending
+
+Kentucky contains 20 directory entries. The batch now includes 19 exact local
+reference photographs and 20 matching KENTUCKY case-file treatments branded
+for **The Paranormal Initiative**. Ditto House is the one documented exception:
+the National Register archival record was available, but no directly reusable
+exterior photograph was found, so its asset is explicitly labeled as a
+historical reconstruction rather than a documentary photograph.
+
+Completed entries:
+
+- Waverly Hills Sanatorium
+- Cave Hill Cemetery
+- The Seelbach Hilton Louisville
+- Old Talbott Tavern
+- My Old Kentucky Home State Park
+- Liberty Hall Historic Site
+- Ditto House Inn historical reconstruction
+- Fort Duffield
+- Perryville Battlefield State Historic Site
+- Bobby Mackey’s Music World historical-location record
+- Theatre Workshop of Owensboro / Trinity Centre
+- Ben Hawes State Park
+- Daviess County Middle School
+- Hiestand House / Taylor County Museum
+- W.B. Muncy School
+- Octagon Hall Museum
+- Rohs Opera House
+- Lexington Opera House
+- Anderson Hotel historical record
+- Kentucky State Penitentiary
+
+The source, credit, reuse status, reconstruction disclosure, and access context
+for every entry are recorded in
+`haunted-location-directory/legacy-case-file-sources.js`. Sources whose
+retrieved pages did not state reuse terms remain marked for rights review. The
+directory does not direct members to trespass or bypass public, guest, guided,
+school, secure-facility, or limited-hours access rules. TPI is **The Paranormal
+Initiative**, never “Paranormal Investigations.”
