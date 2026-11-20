@@ -589,3 +589,47 @@ source subjects.
 - Live Hawaii page: **200**, 10 entries rendered, all 20 source/treatment
   assets returned **200**
 - Final release state: **DEPLOYED_AND_VERIFIED**
+
+## Indiana legacy batch — completed locally, release pending
+
+Indiana contains 19 directory entries. The batch now has 19 exact source
+photographs and 19 matching TPI case-file treatments, for 38 local assets.
+The treatments use the exact **INDIANA** marker and **The Paranormal
+Initiative** branding. TPI is never expanded or labeled as “Paranormal
+Investigations.”
+
+Completed entries:
+
+- Hannah House
+- Indiana Medical History Museum / former Central State Hospital pathology building
+- Crown Hill Cemetery
+- Willard Public Library
+- Indiana State Sanatorium
+- Story Inn / Blue Lady location
+- Lindenwood Cemetery
+- Stepp Cemetery
+- Roads Hotel
+- Rotary Jail Museum
+- Randolph County Asylum / Infirmary
+- Culbertson Mansion State Historic Site
+- Avon Haunted Bridge
+- Whispers Estate
+- Tunnelton Tunnel
+- Rivoli Theatre
+- Slippery Noodle Inn
+- Old Lake County Jail / Sheriff’s House
+- French Lick Springs Hotel
+
+The source photograph and treatment mapping is recorded in
+`haunted-location-directory/legacy-case-file-sources.js`. During source
+verification, the initially downloaded file labeled for the Indiana Medical
+History Museum was found to be a Rivoli Theatre image and was removed from the
+batch. It was replaced with the exact exterior photograph from Huw Williams’s
+public-domain Wikimedia Commons file. This correction is part of the Indiana
+completion record so the directory does not publish a mislabeled location.
+
+Several Indiana source pages did not state reuse terms. Those entries remain
+marked **rights review required** in the mapping and README; the generated
+case-file images are presentation derivatives and are not represented as
+TPI-owned documentary photographs. The directory does not direct members to
+trespass or bypass public, guest, guided, or limited-hours access rules.

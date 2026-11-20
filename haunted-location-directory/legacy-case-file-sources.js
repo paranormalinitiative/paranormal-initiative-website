@@ -1150,5 +1150,119 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/uiuc-english-building-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:English_Building_University_of_Illinois_at_Urbana-Champaign_from_south.jpg',
     credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'in-indianapolis-hannahhouse': {
+    image: 'case-file-photos/hannah-house.jpg',
+    caseFileImage: 'case-file-photos/hannah-house-case-file.png',
+    source: 'https://hauntbound.com/locations/in/hannah-house/',
+    credit: 'Hauntbound source image; reuse terms not stated — rights review required'
+  },
+  'in-indianapolis-centralstate': {
+    image: 'case-file-photos/indiana-medical-history-museum.png',
+    caseFileImage: 'case-file-photos/indiana-medical-history-museum-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Indiana_Medical_History_Museum.png',
+    credit: 'Huw Williams / Wikimedia Commons — public-domain dedication'
+  },
+  'in-indianapolis-crownhill': {
+    image: 'case-file-photos/crown-hill-cemetery.jpg',
+    caseFileImage: 'case-file-photos/crown-hill-cemetery-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Entrance_gates,_Crown_Hill_Cemetery_(Indianapolis,_Ind.)_-_DPLA_-_68b603a55c28932a6dd7bc827df86b98.jpg',
+    credit: 'Wikimedia Commons/DPLA source image; reuse terms recorded on source page'
+  },
+  'in-evansville-willardlibrary': {
+    image: 'case-file-photos/willard-public-library.jpg',
+    caseFileImage: 'case-file-photos/willard-public-library-case-file.png',
+    source: 'https://www.historicevansville.com/site.php?id=willard',
+    credit: 'Historic Evansville source image; reuse terms not stated — rights review required'
+  },
+  'in-rockville-statesanatorium': {
+    image: 'case-file-photos/indiana-state-sanatorium.jpg',
+    caseFileImage: 'case-file-photos/indiana-state-sanatorium-case-file.png',
+    source: 'https://hauntedus.com/indiana/indiana-state-sanatorium-haunted/',
+    credit: 'Haunted US source image; reuse terms not stated — rights review required'
+  },
+  'in-nashville-storyinn': {
+    image: 'case-file-photos/story-inn.jpg',
+    caseFileImage: 'case-file-photos/story-inn-case-file.png',
+    source: 'https://money.com/indiana-town-for-sale/?amp=true',
+    credit: 'Money source image; reuse terms not stated — rights review required'
+  },
+  'in-fortwayne-lindenwood': {
+    image: 'case-file-photos/lindenwood-cemetery.jpg',
+    caseFileImage: 'case-file-photos/lindenwood-cemetery-case-file.png',
+    source: 'https://www.acgsi.org/genweb/cemeteries/lindenwood-cemetery-of-allen-county-indiana.html',
+    credit: 'Allen County Genealogical Society source image; reuse terms not stated — rights review required'
+  },
+  'in-bloomington-steppcemetery': {
+    image: 'case-file-photos/stepp-cemetery.jpg',
+    caseFileImage: 'case-file-photos/stepp-cemetery-case-file.png',
+    source: 'https://www.mripa.net/investigations/M_stepp.htm',
+    credit: 'MRIPA source image; reuse terms not stated — rights review required'
+  },
+  'in-atlanta-roadshotel': {
+    image: 'case-file-photos/roads-hotel.jpg',
+    caseFileImage: 'case-file-photos/roads-hotel-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Roads_Hotel.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'in-crawfordsville-rotaryjail': {
+    image: 'case-file-photos/rotary-jail-museum.jpg',
+    caseFileImage: 'case-file-photos/rotary-jail-museum-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Rotary_Jail_Museum_(14609994818).jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'in-winchester-randolphasylum': {
+    image: 'case-file-photos/randolph-county-asylum.jpg',
+    caseFileImage: 'case-file-photos/randolph-county-asylum-case-file.png',
+    source: 'https://www.hauntbound.com/locations/in/randolph-county-infirmary/',
+    credit: 'Hauntbound source image; reuse terms not stated — rights review required'
+  },
+  'in-newalbany-culbertsonmansion': {
+    image: 'case-file-photos/culbertson-mansion.jpg',
+    caseFileImage: 'case-file-photos/culbertson-mansion-case-file.png',
+    source: 'https://preserveindiana.com/images/NewAlbany/Residential/CulbertsonMansion044.jpg',
+    credit: 'Preserve Indiana source image; reuse terms not stated — rights review required'
+  },
+  'in-avon-hauntedbridge': {
+    image: 'case-file-photos/avon-haunted-bridge.jpg',
+    caseFileImage: 'case-file-photos/avon-haunted-bridge-case-file.png',
+    source: 'https://www.visithendrickscounty.com/blog/stories/post/your-guide-to-the-bridges-of-hendricks-county-indiana/',
+    credit: 'Visit Hendricks County source image; reuse terms not stated — rights review required'
+  },
+  'in-mitchell-whispersestate': {
+    image: 'case-file-photos/whispers-estate.jpg',
+    caseFileImage: 'case-file-photos/whispers-estate-case-file.png',
+    source: 'https://thelittlehouseofhorrors.com/whispers-estate/',
+    credit: 'The Little House of Horrors source image; reuse terms not stated — rights review required'
+  },
+  'in-tunnelton-tunnel': {
+    image: 'case-file-photos/tunnelton-tunnel.jpg',
+    caseFileImage: 'case-file-photos/tunnelton-tunnel-case-file.png',
+    source: 'https://www.flickr.com/photos/cindy47452/74605586',
+    credit: 'Cindy Cornett Seigle source image — Flickr terms shown on source page; reuse review required'
+  },
+  'in-indianapolis-rivoli': {
+    image: 'case-file-photos/rivoli-theatre.jpg',
+    caseFileImage: 'case-file-photos/rivoli-theatre-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Rivoli_Theater_in_Indianapolis.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'in-indianapolis-slipperynoodle': {
+    image: 'case-file-photos/slippery-noodle-inn.jpg',
+    caseFileImage: 'case-file-photos/slippery-noodle-inn-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Slippery_Noodle_Inn_-_June_2022_-_Sarah_Stierch.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'in-crownpoint-oldlakejail': {
+    image: 'case-file-photos/old-lake-county-jail.jpg',
+    caseFileImage: 'case-file-photos/old-lake-county-jail-case-file.png',
+    source: 'https://www.oldsheriffshouse.org/home-mixed.html',
+    credit: 'Old Sheriff’s House Foundation source image; reuse terms not stated — rights review required'
+  },
+  'in-frenchlick-frenchlicksprings': {
+    image: 'case-file-photos/french-lick-springs-hotel.jpg',
+    caseFileImage: 'case-file-photos/french-lick-springs-hotel-case-file.png',
+    source: 'https://www.frenchlick.com/',
+    credit: 'French Lick Resort source image; reuse terms not stated — rights review required'
   }
 };

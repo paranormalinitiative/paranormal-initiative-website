@@ -588,3 +588,37 @@ Sources with unstated reuse terms remain explicitly flagged for permission or
 reuse review before broader redistribution. The case files do not direct
 members to trespass or bypass public, guest, guided, or limited-hours access
 rules.
+
+### Indiana legacy batch — completed locally, release pending
+
+Indiana contains 19 directory entries. Each now has an exact local source
+photograph and a matching **INDIANA** case-file treatment using **The
+Paranormal Initiative** branding:
+
+- `hannah-house.jpg` / `hannah-house-case-file.png` — Hannah House.
+- `indiana-medical-history-museum.png` / `indiana-medical-history-museum-case-file.png` — Indiana Medical History Museum / former Central State Hospital pathology building; public-domain Wikimedia Commons source.
+- `crown-hill-cemetery.jpg` / `crown-hill-cemetery-case-file.png` — Crown Hill Cemetery entrance.
+- `willard-public-library.jpg` / `willard-public-library-case-file.png` — Willard Public Library.
+- `indiana-state-sanatorium.jpg` / `indiana-state-sanatorium-case-file.png` — Indiana State Sanatorium.
+- `story-inn.jpg` / `story-inn-case-file.png` — Story Inn / Blue Lady location.
+- `lindenwood-cemetery.jpg` / `lindenwood-cemetery-case-file.png` — Lindenwood Cemetery.
+- `stepp-cemetery.jpg` / `stepp-cemetery-case-file.png` — Stepp Cemetery.
+- `roads-hotel.jpg` / `roads-hotel-case-file.png` — Roads Hotel.
+- `rotary-jail-museum.jpg` / `rotary-jail-museum-case-file.png` — Rotary Jail Museum.
+- `randolph-county-asylum.jpg` / `randolph-county-asylum-case-file.png` — Randolph County Asylum / Infirmary.
+- `culbertson-mansion.jpg` / `culbertson-mansion-case-file.png` — Culbertson Mansion State Historic Site.
+- `avon-haunted-bridge.jpg` / `avon-haunted-bridge-case-file.png` — Avon Haunted Bridge.
+- `whispers-estate.jpg` / `whispers-estate-case-file.png` — Whispers Estate.
+- `tunnelton-tunnel.jpg` / `tunnelton-tunnel-case-file.png` — Tunnelton Tunnel.
+- `rivoli-theatre.jpg` / `rivoli-theatre-case-file.png` — Rivoli Theatre.
+- `slippery-noodle-inn.jpg` / `slippery-noodle-inn-case-file.png` — Slippery Noodle Inn.
+- `old-lake-county-jail.jpg` / `old-lake-county-jail-case-file.png` — Old Lake County Jail / Sheriff’s House.
+- `french-lick-springs-hotel.jpg` / `french-lick-springs-hotel-case-file.png` — French Lick Springs Hotel.
+
+The exact source and credit for every Indiana pair are recorded in
+`legacy-case-file-sources.js`. The public-domain Medical History Museum source
+is from Huw Williams through Wikimedia Commons. Other sources whose retrieved
+pages did not state reuse terms remain explicitly flagged for rights review;
+the case-file treatments are presentation derivatives, not documentary images
+owned by TPI. The case files do not direct members to trespass or bypass
+public, guest, guided, or limited-hours access rules.
