@@ -654,3 +654,40 @@ terms remain explicitly flagged for rights review before broader
 redistribution. TPI is **The Paranormal Initiative**, never “Paranormal
 Investigations.” The directory does not direct members to trespass or bypass
 public, guest, guided, or limited-hours access rules.
+
+### Kansas legacy batch — completed locally, release pending
+
+Kansas contains 21 directory entries. Each now has an exact local source
+photograph and a matching **KANSAS** case-file treatment using **The
+Paranormal Initiative** branding:
+
+- `sallie-house.jpg` / `sallie-house-case-file.png` — Sallie House.
+- `mcinteer-villa.jpg` / `mcinteer-villa-case-file.png` — 1889 McInteer Villa.
+- `evah-cray-home.jpg` / `evah-cray-home-case-file.png` — Evah C. Cray Historical Home.
+- `eldridge-hotel.jpg` / `eldridge-hotel-case-file.png` — Eldridge Hotel.
+- `stull-cemetery.jpg` / `stull-cemetery-case-file.png` — Stull Cemetery.
+- `fort-leavenworth.jpg` / `fort-leavenworth-case-file.png` — Fort Leavenworth.
+- `fort-hays.jpg` / `fort-hays-case-file.png` — Fort Hays State Historic Site.
+- `santa-fe-depot-dodge-city.jpg` / `santa-fe-depot-dodge-city-case-file.png` — Santa Fe Depot and Harvey House.
+- `midland-railroad-hotel.jpg` / `midland-railroad-hotel-case-file.png` — Midland Railroad Hotel.
+- `kansas-state-capitol.jpg` / `kansas-state-capitol-case-file.png` — Kansas State Capitol.
+- `pawnee-rock.jpg` / `pawnee-rock-case-file.png` — Pawnee Rock State Historic Site.
+- `wolf-hotel.jpg` / `wolf-hotel-case-file.png` — Historic Wolf Hotel.
+- `beaumont-hotel.jpg` / `beaumont-hotel-case-file.png` — Beaumont Hotel.
+- `fort-riley.jpg` / `fort-riley-case-file.png` — Fort Riley.
+- `sauer-castle.jpg` / `sauer-castle-case-file.png` — Sauer Castle.
+- `rocky-ford-bridge.jpg` / `rocky-ford-bridge-case-file.png` — Rocky Ford Bridge.
+- `brown-grand-theatre.jpg` / `brown-grand-theatre-case-file.png` — Brown Grand Theatre.
+- `le-hunt-ruins.jpg` / `le-hunt-ruins-case-file.png` — Le Hunt Cement Plant ruins.
+- `oak-hill-cemetery.jpg` / `oak-hill-cemetery-case-file.png` — Oak Hill Cemetery / Witch’s Grave.
+- `hutchinson-public-library.jpg` / `hutchinson-public-library-case-file.png` — Hutchinson Public Library.
+- `mollys-hollow.jpg` / `mollys-hollow-case-file.png` — Molly’s Hollow / Jackson Park landscape reference.
+
+The exact source and credit for every Kansas pair are recorded in
+`legacy-case-file-sources.js`. The case-file treatments preserve the exact
+source location; they are presentation derivatives, not documentary
+photographs owned by TPI. Sources whose retrieved pages did not state reuse
+terms remain explicitly flagged for rights review before broader
+redistribution. Restricted or private locations retain their access context,
+and the directory does not direct members to trespass or bypass public, guest,
+guided, or limited-hours access rules.

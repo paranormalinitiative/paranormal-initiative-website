@@ -1360,5 +1360,131 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/argonne-armory-case-file.png',
     source: 'https://www.desmoinesbonds.com/des-moines-ia-investor-relations-ia/about/news/i2811?newsId=55789',
     credit: 'City of Des Moines source image; reuse terms not stated — rights review required'
+  },
+  'ks-atchison-salliehouse': {
+    image: 'case-file-photos/sallie-house.jpg',
+    caseFileImage: 'case-file-photos/sallie-house-case-file.png',
+    source: 'https://visitatchison.com/highlight/sallie-house',
+    credit: 'Sallie House source image; reuse terms not stated — rights review required'
+  },
+  'ks-atchison-mcinteervilla': {
+    image: 'case-file-photos/mcinteer-villa.jpg',
+    caseFileImage: 'case-file-photos/mcinteer-villa-case-file.png',
+    source: 'https://www.travelks.com/listing/the-haunted-1889-mcinteer-villa/47925/',
+    credit: 'Travel Kansas source image; reuse terms not stated — rights review required'
+  },
+  'ks-atchison-evahcray': {
+    image: 'case-file-photos/evah-cray-home.jpg',
+    caseFileImage: 'case-file-photos/evah-cray-home-case-file.png',
+    source: 'https://www.evahcraymuseum.com/',
+    credit: 'Evah C. Cray Historical Home official source image; reuse terms not stated — rights review required'
+  },
+  'ks-lawrence-eldridgehotel': {
+    image: 'case-file-photos/eldridge-hotel.jpg',
+    caseFileImage: 'case-file-photos/eldridge-hotel-case-file.png',
+    source: 'https://eldridgehotel.com/',
+    credit: 'Eldridge Hotel source image; reuse terms not stated — rights review required'
+  },
+  'ks-lecompton-stullcemetery': {
+    image: 'case-file-photos/stull-cemetery.jpg',
+    caseFileImage: 'case-file-photos/stull-cemetery-case-file.png',
+    source: 'https://www.trackpacking.com/v/index/4ba69576f964a5205b6039e3',
+    credit: 'Stull Cemetery source image; reuse terms not stated — rights review required'
+  },
+  'ks-fortleavenworth-fortleavenworth': {
+    image: 'case-file-photos/fort-leavenworth.jpg',
+    caseFileImage: 'case-file-photos/fort-leavenworth-case-file.png',
+    source: 'https://home.army.mil/leavenworth/',
+    credit: 'U.S. Army source image; reuse terms should be confirmed for this file'
+  },
+  'ks-hays-forthays': {
+    image: 'case-file-photos/fort-hays.jpg',
+    caseFileImage: 'case-file-photos/fort-hays-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Fort_Hays_Blockhouse_01.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ks-dodgecity-santafedepot': {
+    image: 'case-file-photos/santa-fe-depot-dodge-city.jpg',
+    caseFileImage: 'case-file-photos/santa-fe-depot-dodge-city-case-file.png',
+    source: 'https://www.travelks.com/listing/historic-santa-fe-depot-%26-harvey-hotel/602/',
+    credit: 'Travel Kansas source image; reuse terms not stated — rights review required'
+  },
+  'ks-wilson-midlandrailroadhotel': {
+    image: 'case-file-photos/midland-railroad-hotel.jpg',
+    caseFileImage: 'case-file-photos/midland-railroad-hotel-case-file.png',
+    source: 'https://www.midlandrailroadhotel.com/',
+    credit: 'Midland Railroad Hotel source image; reuse terms not stated — rights review required'
+  },
+  'ks-topeka-statecapitol': {
+    image: 'case-file-photos/kansas-state-capitol.jpg',
+    caseFileImage: 'case-file-photos/kansas-state-capitol-case-file.png',
+    source: 'https://www.kshs.org/p/kansas-state-capitol-plan-your-visit/18649',
+    credit: 'Kansas State Capitol source image; reuse terms not stated — rights review required'
+  },
+  'ks-pawneerock-pawneerock': {
+    image: 'case-file-photos/pawnee-rock.jpg',
+    caseFileImage: 'case-file-photos/pawnee-rock-case-file.png',
+    source: 'https://www.nps.gov/places/pawnee-rock-state-historic-site.htm',
+    credit: 'National Park Service source image; public-domain government source'
+  },
+  'ks-ellinwood-wolfhotel': {
+    image: 'case-file-photos/wolf-hotel.jpg',
+    caseFileImage: 'case-file-photos/wolf-hotel-case-file.png',
+    source: 'https://historicsignatureinn.com/',
+    credit: 'Historic Wolf Hotel source image; reuse terms not stated — rights review required'
+  },
+  'ks-beaumont-beaumonthotel': {
+    image: 'case-file-photos/beaumont-hotel.jpg',
+    caseFileImage: 'case-file-photos/beaumont-hotel-case-file.png',
+    source: 'https://beaumonthotelks.com/',
+    credit: 'Beaumont Hotel official source image; reuse terms not stated — rights review required'
+  },
+  'ks-fort-riley-fortriley': {
+    image: 'case-file-photos/fort-riley.jpg',
+    caseFileImage: 'case-file-photos/fort-riley-case-file.png',
+    source: 'https://home.army.mil/riley/',
+    credit: 'U.S. Army / DVIDS source image; reuse terms should be confirmed for this file'
+  },
+  'ks-kansascity-sauercastle': {
+    image: 'case-file-photos/sauer-castle.jpg',
+    caseFileImage: 'case-file-photos/sauer-castle-case-file.png',
+    source: 'https://kcyesterday.com/articles/sauer-castle',
+    credit: 'KC Yesterday source image; reuse terms not stated — rights review required; private property'
+  },
+  'ks-emporia-rockyfordbridge': {
+    image: 'case-file-photos/rocky-ford-bridge.jpg',
+    caseFileImage: 'case-file-photos/rocky-ford-bridge-case-file.png',
+    source: 'https://www.theclio.com/entry/141906',
+    credit: 'The Clio source image; reuse terms not stated — rights review required'
+  },
+  'ks-concordia-browngrandtheatre': {
+    image: 'case-file-photos/brown-grand-theatre.jpg',
+    caseFileImage: 'case-file-photos/brown-grand-theatre-case-file.png',
+    source: 'https://www.browngrand.org/',
+    credit: 'Brown Grand Theatre source image; reuse terms not stated — rights review required'
+  },
+  'ks-montgomerycounty-lehunt': {
+    image: 'case-file-photos/le-hunt-ruins.jpg',
+    caseFileImage: 'case-file-photos/le-hunt-ruins-case-file.png',
+    source: 'https://abandonedks.com/lehunt-cement-plant/',
+    credit: 'Abandoned Kansas source image; reuse terms not stated — rights review required'
+  },
+  'ks-galena-oakhillcemetery': {
+    image: 'case-file-photos/oak-hill-cemetery.jpg',
+    caseFileImage: 'case-file-photos/oak-hill-cemetery-case-file.png',
+    source: 'https://www.kansashauntedhouses.com/real-haunt/oak-hill-cemetery--witchs-grave.html',
+    credit: 'Kansas Haunted Houses source image; reuse terms not stated — rights review required'
+  },
+  'ks-hutchinson-publiclibrary': {
+    image: 'case-file-photos/hutchinson-public-library.jpg',
+    caseFileImage: 'case-file-photos/hutchinson-public-library-case-file.png',
+    source: 'https://www.hutchpl.org/',
+    credit: 'Hutchinson Public Library source image; reuse terms not stated — rights review required'
+  },
+  'ks-atchison-mollyshollow': {
+    image: 'case-file-photos/mollys-hollow.jpg',
+    caseFileImage: 'case-file-photos/mollys-hollow-case-file.png',
+    source: 'https://www.travelks.com/listing/jackson-park/21285/',
+    credit: 'Jackson Park source image used for the outdoor Molly’s Hollow landscape reference; reuse terms not stated — rights review required'
   }
 };

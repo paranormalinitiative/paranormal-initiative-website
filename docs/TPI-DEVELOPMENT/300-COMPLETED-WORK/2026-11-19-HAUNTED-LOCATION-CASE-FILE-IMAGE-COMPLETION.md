@@ -106,6 +106,47 @@ StudioFlow source or shared runtime changed.
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
+## Kansas legacy batch — completed locally, release pending
+
+Kansas has 21 directory entries and now has 21 exact source photographs plus
+21 matching case-file treatments. Each treatment uses the exact **KANSAS**
+marker and **The Paranormal Initiative** branding. The source map is recorded
+in `haunted-location-directory/legacy-case-file-sources.js`.
+
+Completed Kansas entries:
+
+- Sallie House
+- 1889 McInteer Villa
+- Evah C. Cray Historical Home
+- Eldridge Hotel
+- Stull Cemetery
+- Fort Leavenworth
+- Fort Hays State Historic Site
+- Santa Fe Depot and Harvey House
+- Midland Railroad Hotel
+- Kansas State Capitol
+- Pawnee Rock State Historic Site
+- Historic Wolf Hotel
+- Beaumont Hotel
+- Fort Riley
+- Sauer Castle
+- Rocky Ford Bridge
+- Brown Grand Theatre
+- Le Hunt Cement Plant ruins
+- Oak Hill Cemetery / Witch’s Grave
+- Hutchinson Public Library
+- Molly’s Hollow / Jackson Park landscape reference
+
+The case-file images are presentation derivatives of the exact source
+photographs, not documentary photographs owned by TPI. Sources whose
+retrieved pages did not state reuse terms remain explicitly flagged for rights
+review in the source map. Stull Cemetery and Sauer Castle retain their access
+and private-property context; Le Hunt is represented as ruins, not an intact
+factory; Molly’s Hollow is represented as an outdoor Jackson Park landscape,
+not a fabricated building. The directory does not direct members to trespass
+or bypass access rules. TPI is **The Paranormal Initiative**, never
+“Paranormal Investigations.”
+
 ## Iowa legacy batch — completed and live
 
 Iowa has 16 directory entries and now has 16 exact source photographs plus 16
