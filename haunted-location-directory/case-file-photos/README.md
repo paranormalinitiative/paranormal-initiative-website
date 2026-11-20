@@ -469,3 +469,31 @@ not documentary photographs owned by TPI. Original access notes remain in the
 directory; the case files do not direct members to trespass or bypass public,
 guest, guided, or limited-hours access rules. Sources with unstated reuse terms
 remain flagged for rights review in the mapping and completion record.
+
+### Georgia legacy batch
+
+Georgia contains 15 directory entries. Each now has an exact local source
+photograph and a matching **GEORGIA** case-file treatment using **The
+Paranormal Initiative** branding:
+
+- `marshall-house.jpg` / `marshall-house-case-file.jpg` — exact Marshall House reference; Historic54321, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Marshall_House_Historic_Savannah_Hotel-5.jpg>
+- `sorrel-weed-house.jpg` / `sorrel-weed-house-case-file.jpg` — exact Sorrel-Weed House reference; Jud McCranie, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Sorrel%E2%80%93Weed_House,_Savannah,_GA,_US_(1).jpg>
+- `17hundred90-inn.jpg` / `17hundred90-inn-case-file.jpg` — exact 17Hundred90 Inn exterior from the official site. Source: <https://1790restaurant.com/wp-content/uploads/2017/02/Car-and-Exterior.jpg>; reuse terms are not stated and remain flagged for rights review.
+- `colonial-park-cemetery.jpg` / `colonial-park-cemetery-case-file.jpg` — exact Colonial Park Cemetery reference; Ebyabe, GFDL / CC BY-SA. Source: <https://commons.wikimedia.org/wiki/File:GA_Savannah_HD_Colonial_Park_Cem_grave01.jpg>
+- `bonaventure-cemetery.jpg` / `bonaventure-cemetery-case-file.jpg` — exact Bonaventure Cemetery reference. Source: <https://commons.wikimedia.org/wiki/File:GA_Savannah_Bonaventure_Cem01.jpg>; reuse terms are recorded on the source page.
+- `kehoe-house.jpg` / `kehoe-house-case-file.jpg` — exact Kehoe House reference; Ebyabe, GFDL / CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:GA_Savannah_HD_Kehoe_House01.jpg>
+- `mercer-williams-house.jpg` / `mercer-williams-house-case-file.jpg` — exact Mercer-Williams House reference; Kyle Kesselring, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Mercerhouse001.jpg>
+- `olde-pink-house.jpg` / `olde-pink-house-case-file.jpg` — exact Olde Pink House reference; Daniel Mayer, CC BY-SA / GFDL. Source: <https://commons.wikimedia.org/wiki/File:The_Olde_Pink_House_in_Savannah,_Georgia.JPG>
+- `hay-house.jpg` / `hay-house-case-file.jpg` — exact Johnston-Felton-Hay House reference. Source: <https://commons.wikimedia.org/wiki/File:17_Hay_House,_Macon,_Georgia.jpg>; reuse terms are recorded on the source page.
+- `jekyll-island-club-resort.jpg` / `jekyll-island-club-resort-case-file.jpg` — exact Jekyll Island Club Resort reference; CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Jekyll_Island_Club_Resort,_GA.jpg>
+- `andersonville-national-historic-site.jpg` / `andersonville-national-historic-site-case-file.jpg` — exact Andersonville National Historic Site stockade reference. Source: <https://commons.wikimedia.org/wiki/File:Andersonville_National_Historic_Site,_GA,_US.jpg>; reuse terms are recorded on the source page.
+- `kennesaw-mountain-battlefield.jpg` / `kennesaw-mountain-battlefield-case-file.jpg` — exact Kennesaw Mountain battlefield approach reference. Source: <https://commons.wikimedia.org/wiki/File:KennesawMountainBattlefieldApproach.jpg>; reuse terms are recorded on the source page.
+- `tybee-island-light.jpg` / `tybee-island-light-case-file.jpg` — exact Tybee Island Light Station reference; Winkelvi, CC BY 4.0. Source: <https://commons.wikimedia.org/wiki/File:Tybee_Island_Light,_Georgia.jpg>
+- `oakland-cemetery.jpg` / `oakland-cemetery-case-file.jpg` — exact Oakland Cemetery reference; Mike Schinkel, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Oakland_Cemetery_and_Atlanta_Skyscrapers.jpg>
+- `bulloch-hall.jpg` / `bulloch-hall-case-file.jpg` — exact Bulloch Hall reference. Source: <https://commons.wikimedia.org/wiki/File:Bulloch_Hall_Roswell_GA.JPG>; reuse terms are recorded on the source page.
+
+The case-file treatments are presentation derivatives of the exact source
+photographs, not documentary photographs owned by TPI. Original attribution
+and license obligations remain recorded, and the 17Hundred90 source is
+explicitly flagged for rights review. The case files do not direct members to
+trespass or bypass public, guest, guided, or limited-hours access rules.

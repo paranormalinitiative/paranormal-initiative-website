@@ -359,3 +359,37 @@ source pages did not state reuse terms. The directory retains those credits and
 does not represent those source photographs as TPI-owned. Public, guest,
 guided, and limited-hours access notes remain authoritative; no case file
 directs members to trespass or bypass site rules.
+
+## Georgia legacy batch — completed
+
+Georgia contains 15 directory entries. All 15 now have an exact source
+photograph, a matching TPI case-file treatment, local asset copies, and a
+source/credit record:
+
+- The Marshall House
+- Sorrel-Weed House
+- 17Hundred90 Inn
+- Colonial Park Cemetery
+- Bonaventure Cemetery
+- Kehoe House
+- Mercer-Williams House Museum
+- The Olde Pink House
+- Hay House
+- Jekyll Island Club Resort
+- Andersonville National Historic Site
+- Kennesaw Mountain National Battlefield Park
+- Tybee Island Light Station & Museum
+- Oakland Cemetery
+- Bulloch Hall
+
+The treatments use **The Paranormal Initiative** branding and a **GEORGIA**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Each treatment preserves the exact source subject and is presented as a
+stylized case-file image, not an unedited documentary photograph.
+
+The 17Hundred90 Inn source is from the official inn website and its reuse
+terms were not stated on the retrieved page, so that source remains explicitly
+flagged for rights review. The remaining Georgia source and license records
+are retained in `legacy-case-file-sources.js` and the photo README. Public,
+guest, guided, and limited-hours access notes remain authoritative; no case
+file directs members to trespass or bypass site rules.

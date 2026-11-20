@@ -772,5 +772,95 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/devils-tree-case-file.jpg',
     source: 'https://thehauntedplaces.com/devil-tree-direction-florida/',
     credit: 'The Haunted Places source image; reuse terms not stated'
+  },
+  'ga-savannah-marshallhouse': {
+    image: 'case-file-photos/marshall-house.jpg',
+    caseFileImage: 'case-file-photos/marshall-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Marshall_House_Historic_Savannah_Hotel-5.jpg',
+    credit: 'Historic54321 — CC BY-SA 4.0'
+  },
+  'ga-savannah-sorrelweed': {
+    image: 'case-file-photos/sorrel-weed-house.jpg',
+    caseFileImage: 'case-file-photos/sorrel-weed-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Sorrel%E2%80%93Weed_House,_Savannah,_GA,_US_(1).jpg',
+    credit: 'Jud McCranie — CC BY-SA 4.0'
+  },
+  'ga-savannah-17hundred90': {
+    image: 'case-file-photos/17hundred90-inn.jpg',
+    caseFileImage: 'case-file-photos/17hundred90-inn-case-file.jpg',
+    source: 'https://1790restaurant.com/wp-content/uploads/2017/02/Car-and-Exterior.jpg',
+    credit: '17Hundred90 Inn official source image; reuse terms not stated — rights review required'
+  },
+  'ga-savannah-colonialpark': {
+    image: 'case-file-photos/colonial-park-cemetery.jpg',
+    caseFileImage: 'case-file-photos/colonial-park-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:GA_Savannah_HD_Colonial_Park_Cem_grave01.jpg',
+    credit: 'Ebyabe — GFDL / CC BY-SA; see source page'
+  },
+  'ga-savannah-bonaventure': {
+    image: 'case-file-photos/bonaventure-cemetery.jpg',
+    caseFileImage: 'case-file-photos/bonaventure-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:GA_Savannah_Bonaventure_Cem01.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ga-savannah-kehoehouse': {
+    image: 'case-file-photos/kehoe-house.jpg',
+    caseFileImage: 'case-file-photos/kehoe-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:GA_Savannah_HD_Kehoe_House01.jpg',
+    credit: 'Ebyabe — GFDL / CC BY-SA 3.0'
+  },
+  'ga-savannah-mercerwilliams': {
+    image: 'case-file-photos/mercer-williams-house.jpg',
+    caseFileImage: 'case-file-photos/mercer-williams-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Mercerhouse001.jpg',
+    credit: 'Kyle Kesselring — CC BY 2.0'
+  },
+  'ga-savannah-oldepink': {
+    image: 'case-file-photos/olde-pink-house.jpg',
+    caseFileImage: 'case-file-photos/olde-pink-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:The_Olde_Pink_House_in_Savannah,_Georgia.JPG',
+    credit: 'Daniel Mayer — CC BY-SA / GFDL; see source page'
+  },
+  'ga-macon-hayhouse': {
+    image: 'case-file-photos/hay-house.jpg',
+    caseFileImage: 'case-file-photos/hay-house-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:17_Hay_House,_Macon,_Georgia.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ga-jekyll-jicr': {
+    image: 'case-file-photos/jekyll-island-club-resort.jpg',
+    caseFileImage: 'case-file-photos/jekyll-island-club-resort-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Jekyll_Island_Club_Resort,_GA.jpg',
+    credit: 'Wikimedia Commons source image — CC BY-SA 4.0'
+  },
+  'ga-andersonville-nhs': {
+    image: 'case-file-photos/andersonville-national-historic-site.jpg',
+    caseFileImage: 'case-file-photos/andersonville-national-historic-site-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Andersonville_National_Historic_Site,_GA,_US.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ga-kennesaw-battlefield': {
+    image: 'case-file-photos/kennesaw-mountain-battlefield.jpg',
+    caseFileImage: 'case-file-photos/kennesaw-mountain-battlefield-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:KennesawMountainBattlefieldApproach.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ga-tybee-lighthouse': {
+    image: 'case-file-photos/tybee-island-light.jpg',
+    caseFileImage: 'case-file-photos/tybee-island-light-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Tybee_Island_Light,_Georgia.jpg',
+    credit: 'Winkelvi — CC BY 4.0'
+  },
+  'ga-atlanta-oakland': {
+    image: 'case-file-photos/oakland-cemetery.jpg',
+    caseFileImage: 'case-file-photos/oakland-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Oakland_Cemetery_and_Atlanta_Skyscrapers.jpg',
+    credit: 'Mike Schinkel — CC BY 2.0'
+  },
+  'ga-roswell-bullochhall': {
+    image: 'case-file-photos/bulloch-hall.jpg',
+    caseFileImage: 'case-file-photos/bulloch-hall-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Bulloch_Hall_Roswell_GA.JPG',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
   }
 };
