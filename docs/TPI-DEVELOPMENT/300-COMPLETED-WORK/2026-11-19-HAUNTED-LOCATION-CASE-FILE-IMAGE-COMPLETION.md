@@ -106,6 +106,34 @@ StudioFlow source or shared runtime changed.
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
+## Louisiana legacy batch — completed locally, release pending
+
+Louisiana contains 46 directory entries. Each now has a Louisiana-marked
+case-file treatment branded for **The Paranormal Initiative**. The full subject
+is preserved for web cards and click-to-enlarge viewing.
+
+The source audit removed a Tripadvisor collage from the Laura Plantation
+reference because it contained a promotional badge and unrelated people. It
+was replaced with a clean exact exterior reference, and its case-file image was
+regenerated from that source. No Tripadvisor badge or promotional overlay is
+retained in the Louisiana source set.
+
+Port Hudson and Fort Jesup use explicit TPI historical reconstructions because
+the official source pages were available but their direct image downloads were
+not; neither is represented as a documentary source photograph. All other
+entries use a locally saved exact-site reference with source and credit recorded
+in `haunted-location-directory/legacy-case-file-sources.js`. Rights-review
+flags remain where the retrieved source did not state reuse terms. Restricted,
+private, closed, and tour-controlled locations retain their access context.
+
+Local evidence:
+
+- Louisiana location IDs mapped: **46/46**
+- Louisiana case-file images present: **46/46**
+- Local image references present: **92/92**
+- Source syntax and local path checks: **passed**
+- Production release: **pending**
+
 ## Kansas legacy batch — completed and live
 
 Kansas has 21 directory entries and now has 21 exact source photographs plus
