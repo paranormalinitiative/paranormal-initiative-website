@@ -590,7 +590,7 @@ source subjects.
   assets returned **200**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
-## Indiana legacy batch — completed locally, release pending
+## Indiana legacy batch — completed and live
 
 Indiana contains 19 directory entries. The batch now has 19 exact source
 photographs and 19 matching TPI case-file treatments, for 38 local assets.
@@ -633,3 +633,17 @@ marked **rights review required** in the mapping and README; the generated
 case-file images are presentation derivatives and are not represented as
 TPI-owned documentary photographs. The directory does not direct members to
 trespass or bypass public, guest, guided, or limited-hours access rules.
+
+Release evidence:
+
+- Source commits: `6a3c5861`, `518ff0ed`, `20d5a77c`, `9545f73e`
+- Release candidate: `rel-9545f73e6dc4-939554bec7bb`
+- Source commit certified: `9545f73e6dc42d66a8c4fdf4199d00ec0eacb6f7`
+- Release profile: website; protected StudioFlow and Nova application bytes
+  remained under the maintenance lock
+- Certified gates: **10 passed**; production smoke: **10/10 passed**
+- Deployed Worker version: `cd6a89d8-20b9-4a0c-9a0a-c67bca22cccd`
+- Rollback target: `138004e5-ae97-4da2-8768-e50c9dc9f170`
+- Live Indiana page: **200**, 19 entries rendered
+- Live Indiana assets: **38/38 returned 200**
+- Final release state: **DEPLOYED_AND_VERIFIED**
