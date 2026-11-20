@@ -692,7 +692,7 @@ redistribution. Restricted or private locations retain their access context,
 and the directory does not direct members to trespass or bypass public, guest,
 guided, or limited-hours access rules.
 
-### Kentucky legacy batch — completed locally, release pending
+### Kentucky legacy batch — completed and live
 
 Kentucky contains 20 directory entries. Each now has a matching **KENTUCKY**
 case-file treatment using **The Paranormal Initiative** branding. Nineteen
@@ -729,3 +729,7 @@ treatments are presentation derivatives, not documentary photographs owned by
 TPI. TPI is **The Paranormal Initiative**, never “Paranormal Investigations.”
 The directory does not direct members to trespass or bypass public, guest,
 guided, school, secure-facility, or limited-hours access rules.
+
+The Kentucky page is live and verified: HTTP 200, 20 locations rendered, and
+all 40 image references returned HTTP 200 in production (39 unique assets
+because Ditto House intentionally reuses its one labeled reconstruction).

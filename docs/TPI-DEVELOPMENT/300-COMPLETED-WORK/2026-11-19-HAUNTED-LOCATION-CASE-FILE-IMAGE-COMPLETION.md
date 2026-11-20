@@ -751,7 +751,7 @@ Release evidence:
 - Live Indiana assets: **38/38 returned 200**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
-## Kentucky legacy batch — completed locally, release pending
+## Kentucky legacy batch — completed and live
 
 Kentucky contains 20 directory entries. The batch now includes 19 exact local
 reference photographs and 20 matching KENTUCKY case-file treatments branded
@@ -790,3 +790,18 @@ retrieved pages did not state reuse terms remain marked for rights review. The
 directory does not direct members to trespass or bypass public, guest, guided,
 school, secure-facility, or limited-hours access rules. TPI is **The Paranormal
 Initiative**, never “Paranormal Investigations.”
+
+Release evidence:
+
+- Source commit certified: `56bed21d27e3dfb782c8b69e4eae648ad5419602`
+- Release candidate: `rel-56bed21d27e3-bbb5ccc8c800`
+- Release profile: website-only Tier 2; protected StudioFlow and Nova bytes
+  remained under the maintenance lock
+- Certified gates: **10 passed**; production smoke: **10/10 passed**
+- Deployed Worker version: `71aba09e-feb9-483c-94c4-a1be6c14252d`
+- Rollback target: `b800508d-3ee8-4ad4-8d4f-6b5c7fb969b3`
+- Live Kentucky page: **200**, 20 location IDs rendered
+- Live Kentucky image references: **40/40 returned 200** across 39 unique
+  assets; Ditto House intentionally reuses its single labeled reconstruction
+  for both the primary and case-file reference
+- Final release state: **DEPLOYED_AND_VERIFIED**
