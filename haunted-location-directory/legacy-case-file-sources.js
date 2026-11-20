@@ -1606,5 +1606,281 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/kentucky-state-penitentiary-case-file.png',
     source: 'https://corrections.ky.gov/Facilities/AI/ksp/Pages/default.aspx',
     credit: 'Kentucky Department of Corrections official site and historical reference image; reuse terms not stated — rights review required; no public access or trespass'
+  },
+  'la-neworleans-stlouiscemetery1': {
+    image: 'case-file-photos/st-louis-cemetery-no-1.jpg',
+    caseFileImage: 'case-file-photos/st-louis-cemetery-no-1-case-file.png',
+    source: 'https://tourlouisiana.com/attractions/St-Louis-Cemetery',
+    credit: 'Tour Louisiana reference image; reuse terms not stated — rights review required; tour-controlled access'
+  },
+  'la-neworleans-metairiecemetery': {
+    image: 'case-file-photos/metairie-cemetery.jpg',
+    caseFileImage: 'case-file-photos/metairie-cemetery-case-file.png',
+    source: 'https://www.neworleans.com/events/holidays-seasonal/day-of-the-dead/',
+    credit: 'NewOrleans.com reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-lafayettecemetery1': {
+    image: 'case-file-photos/lafayette-cemetery-no-1.jpg',
+    caseFileImage: 'case-file-photos/lafayette-cemetery-no-1-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File%3ATombs_at_Lafayette_Cemetery_No_1_Garden_District_New_Orleans_16.JPG',
+    credit: 'Wikimedia Commons reference image; verify current license attribution before public reuse'
+  },
+  'la-neworleans-lalauriemansion': {
+    image: 'case-file-photos/lalaurie-mansion.jpg',
+    caseFileImage: 'case-file-photos/lalaurie-mansion-case-file.png',
+    source: 'https://www.blackpast.org/african-american-history/sullivan-leon-howard-jr-1922-2001/',
+    credit: 'BlackPast reference image; reuse terms not stated — rights review required; private residence / no trespass'
+  },
+  'la-stfrancisville-myrtles': {
+    image: 'case-file-photos/myrtles-plantation.jpg',
+    caseFileImage: 'case-file-photos/myrtles-plantation-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Myrtles_Plantation.jpg',
+    credit: 'Wikimedia Commons reference image; verify current license attribution before public reuse'
+  },
+  'la-batonrouge-oldstatecapitol': {
+    image: 'case-file-photos/louisiana-old-state-capitol.jpg',
+    caseFileImage: 'case-file-photos/louisiana-old-state-capitol-case-file.png',
+    source: 'https://louisianaoldstatecapitol.org/',
+    credit: 'Louisiana Old State Capitol official reference image; reuse terms not stated — rights review required'
+  },
+  'la-vacherie-oakalley': {
+    image: 'case-file-photos/oak-alley-plantation.jpg',
+    caseFileImage: 'case-file-photos/oak-alley-plantation-case-file.png',
+    source: 'https://oakalleyplantation.org/',
+    credit: 'Oak Alley official reference image; reuse terms not stated — rights review required'
+  },
+  'la-destrehan-destrehanplantation': {
+    image: 'case-file-photos/destrehan-plantation.jpg',
+    caseFileImage: 'case-file-photos/destrehan-plantation-case-file.png',
+    source: 'https://www.destrehanplantation.org/',
+    credit: 'Destrehan Plantation official reference image; reuse terms not stated — rights review required'
+  },
+  'la-cheneyville-loydhall': {
+    image: 'case-file-photos/loyd-hall-plantation.jpg',
+    caseFileImage: 'case-file-photos/loyd-hall-plantation-case-file.png',
+    source: 'https://www.historic-structures.com/la/cheneyville/loyd-hall-plantation/',
+    credit: 'Historic Structures reference image; reuse terms not stated — rights review required; private property / no trespass'
+  },
+  'la-natchitoches-magnoliaplantation': {
+    image: 'case-file-photos/magnolia-plantation.jpg',
+    caseFileImage: 'case-file-photos/magnolia-plantation-case-file.png',
+    source: 'https://www.historic-structures.com/la/natchitoches/magnolia_plantation6.php',
+    credit: 'Historic Structures reference image; reuse terms not stated — rights review required'
+  },
+  'la-batonrouge-magnoliamound': {
+    image: 'case-file-photos/magnolia-mound-plantation.jpg',
+    caseFileImage: 'case-file-photos/magnolia-mound-plantation-case-file.png',
+    source: 'https://www.brec.org/facility/MagnoliaMound',
+    credit: 'BREC official reference image; reuse terms not stated — rights review required'
+  },
+  'la-darrow-houmashouse': {
+    image: 'case-file-photos/houmas-house-estate.jpg',
+    caseFileImage: 'case-file-photos/houmas-house-estate-case-file.png',
+    source: 'https://www.loc.gov/item/2021755857/',
+    credit: 'Carol M. Highsmith / Library of Congress reference image — public-domain source; confirm image-specific terms'
+  },
+  'la-whitecastle-nottoway': {
+    image: 'case-file-photos/nottoway-resort.jpg',
+    caseFileImage: 'case-file-photos/nottoway-resort-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File%3ANottoway_Plantation_House.jpg',
+    credit: 'Wikimedia Commons reference image; verify current CC attribution and share-alike terms before public reuse'
+  },
+  'la-edgard-whitneyplantation': {
+    image: 'case-file-photos/whitney-plantation.jpg',
+    caseFileImage: 'case-file-photos/whitney-plantation-case-file.png',
+    source: 'https://whitneyplantation.org/',
+    credit: 'Whitney Plantation official reference image; reuse terms not stated — rights review required'
+  },
+  'la-vacherie-lauraplantation': {
+    image: 'case-file-photos/laura-plantation.jpg',
+    caseFileImage: 'case-file-photos/laura-plantation-case-file.png',
+    source: 'https://countryroadsmagazine.com/art-and-culture/people-places/william-guion-photographer-laura-plantation/',
+    credit: 'Clean Laura Plantation exterior reference by William Guion / Country Roads Magazine; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-beauregardkeyes': {
+    image: 'case-file-photos/beauregard-keyes-house.jpg',
+    caseFileImage: 'case-file-photos/beauregard-keyes-house-case-file.png',
+    source: 'https://www.bkhouse.org/',
+    credit: 'Beauregard-Keyes House official reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-ursulineconvent': {
+    image: 'case-file-photos/old-ursuline-convent.jpg',
+    caseFileImage: 'case-file-photos/old-ursuline-convent-case-file.png',
+    source: 'https://www.neworleans.com/things-to-do/cultural-arts/museums/religious-museums/',
+    credit: 'NewOrleans.com reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-muriels': {
+    image: 'case-file-photos/muriels-jackson-square.jpg',
+    caseFileImage: 'case-file-photos/muriels-jackson-square-case-file.png',
+    source: 'https://www.neworleans.com/listing/muriels-jackson-square/4902/',
+    credit: 'NewOrleans.com reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-andrewjacksonhotel': {
+    image: 'case-file-photos/andrew-jackson-hotel.jpg',
+    caseFileImage: 'case-file-photos/andrew-jackson-hotel-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File%3AAndrew_Jackson_Hotel%2C_New_Orleans.jpg',
+    credit: 'Wikimedia Commons reference image; verify current license attribution before public reuse'
+  },
+  'la-neworleans-hotelmonteleone': {
+    image: 'case-file-photos/hotel-monteleone.jpg',
+    caseFileImage: 'case-file-photos/hotel-monteleone-case-file.png',
+    source: 'https://www.hotelmonteleone.com/',
+    credit: 'Hotel Monteleone official reference image; photographer credit present; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-bourbonorleans': {
+    image: 'case-file-photos/bourbon-orleans-hotel.jpg',
+    caseFileImage: 'case-file-photos/bourbon-orleans-hotel-case-file.png',
+    source: 'https://www.bourbonorleans.com/',
+    credit: 'Bourbon Orleans official reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-lepavillon': {
+    image: 'case-file-photos/le-pavillon-hotel.jpg',
+    caseFileImage: 'case-file-photos/le-pavillon-hotel-case-file.png',
+    source: 'https://secretneworleans.co/pavillon-hotel-new-orleans-haunted/',
+    credit: 'Secret New Orleans reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-lafittesblacksmith': {
+    image: 'case-file-photos/lafittes-blacksmith-shop.jpg',
+    caseFileImage: 'case-file-photos/lafittes-blacksmith-shop-case-file.png',
+    source: 'https://www.forbes.com/sites/bradjaphe/2020/08/20/is-this-the-worlds-most-haunted-bar/',
+    credit: 'Forbes reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-pharmacymuseum': {
+    image: 'case-file-photos/new-orleans-pharmacy-museum.jpg',
+    caseFileImage: 'case-file-photos/new-orleans-pharmacy-museum-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:New_Orleans_Pharmacy_Museum_2.jpg',
+    credit: 'Wikimedia Commons reference image; verify current license attribution before public reuse'
+  },
+  'la-neworleans-hermanngrima': {
+    image: 'case-file-photos/hermann-grima-house.jpg',
+    caseFileImage: 'case-file-photos/hermann-grima-house-case-file.png',
+    source: 'https://www.neworleans.com/listing/hermann-grima-house/332/',
+    credit: 'NewOrleans.com reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-gallierhouse': {
+    image: 'case-file-photos/gallier-house.jpg',
+    caseFileImage: 'case-file-photos/gallier-house-case-file.png',
+    source: 'https://www.neworleans.com/listing/gallier-house/354/',
+    credit: 'NewOrleans.com listing reference; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-madamejohnslegacy': {
+    image: 'case-file-photos/madame-johns-legacy.jpg',
+    caseFileImage: 'case-file-photos/madame-johns-legacy-case-file.png',
+    source: 'https://www.neworleans.com/listing/madame-johns-legacy/32599/',
+    credit: 'NewOrleans.com reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-presbytere': {
+    image: 'case-file-photos/presbytere.jpg',
+    caseFileImage: 'case-file-photos/presbytere-case-file.png',
+    source: 'https://louisianastatemuseum.org/museum/presbytere',
+    credit: 'Louisiana State Museum source page and archival reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-oldabsinthe': {
+    image: 'case-file-photos/old-absinthe-house.jpg',
+    caseFileImage: 'case-file-photos/old-absinthe-house-case-file.png',
+    source: 'https://www.neworleans.com/listing/old-absinthe-house/32161/',
+    credit: 'NewOrleans.com reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-arnauds': {
+    image: 'case-file-photos/arnauds-restaurant.jpg',
+    caseFileImage: 'case-file-photos/arnauds-restaurant-case-file.png',
+    source: 'https://www.arnaudsrestaurant.com/',
+    credit: 'Arnaud’s official location reference; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-napoleonhouse': {
+    image: 'case-file-photos/napoleon-house.jpg',
+    caseFileImage: 'case-file-photos/napoleon-house-case-file.png',
+    source: 'https://www.napoleonhouse.com/',
+    credit: 'Napoleon House official reference image; reuse terms not stated — rights review required'
+  },
+  'la-neworleans-fortmacomb': {
+    image: 'case-file-photos/fort-macomb.jpg',
+    caseFileImage: 'case-file-photos/fort-macomb-case-file.png',
+    source: 'https://www.slate.com/blogs/atlas_obscura/2014/03/11/here_s_the_real_location_of_true_detective_s_carcos.html',
+    credit: 'Slate / Atlas Obscura reference image; reuse terms not stated — rights review required; closed and unsafe for public entry'
+  },
+  'la-neworleans-fortpike': {
+    image: 'case-file-photos/fort-pike.jpg',
+    caseFileImage: 'case-file-photos/fort-pike-case-file.png',
+    source: 'https://www.jimosborne.net/historic-american-building-survey',
+    credit: 'Historic American Buildings Survey reference; reuse terms should be confirmed; site access must follow current official guidance'
+  },
+  'la-shreveport-loganmansion': {
+    image: 'case-file-photos/logan-mansion.jpg',
+    caseFileImage: 'case-file-photos/logan-mansion-case-file.png',
+    source: 'https://710keel.com/former-radio-station-historic-shreveport-mansion-for-sale/',
+    credit: '710 KEEL reference image; reuse terms not stated — rights review required'
+  },
+  'la-shreveport-municipalauditorium': {
+    image: 'case-file-photos/shreveport-municipal-auditorium.jpg',
+    caseFileImage: 'case-file-photos/shreveport-municipal-auditorium-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File%3AShreveport-municipal-auditorium-1995.jpg',
+    credit: 'Wikimedia Commons reference image; verify current license attribution before public reuse'
+  },
+  'la-shreveport-strandtheatre': {
+    image: 'case-file-photos/strand-theatre.jpg',
+    caseFileImage: 'case-file-photos/strand-theatre-case-file.png',
+    source: 'https://sah-archipedia.org/buildings/LA-01-CA24',
+    credit: 'SAH Archipedia reference image; reuse terms not stated — rights review required'
+  },
+  'la-lakecharles-courthouse': {
+    image: 'case-file-photos/calcasieu-parish-courthouse.jpg',
+    caseFileImage: 'case-file-photos/calcasieu-parish-courthouse-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File%3ACalcasieu_Parish_Courthouse%2C_Lake_Charles%2C_LA.jpg',
+    credit: 'Wikimedia Commons reference image; verify current CC attribution and share-alike terms before public reuse'
+  },
+  'la-lakecharles-charpentier': {
+    image: 'case-file-photos/charpentier-historic-district.jpg',
+    caseFileImage: 'case-file-photos/charpentier-historic-district-case-file.png',
+    source: 'https://www.houstonchronicle.com/life/travel/weekend-getaways/article/Where-to-stay-eat-and-play-in-Lake-Charles-12528825.php',
+    credit: 'Houston Chronicle reference image; reuse terms not stated — rights review required'
+  },
+  'la-alexandria-kenthouse': {
+    image: 'case-file-photos/kent-plantation-house.jpg',
+    caseFileImage: 'case-file-photos/kent-plantation-house-case-file.png',
+    source: 'https://www.theclio.com/entry/16766',
+    credit: 'Clio reference image; reuse terms not stated — rights review required'
+  },
+  'la-natchitoches-americancemetery': {
+    image: 'case-file-photos/american-cemetery.jpg',
+    caseFileImage: 'case-file-photos/american-cemetery-case-file.png',
+    source: 'https://www.tripadvisor.co/Attraction_Review-g40335-d13334842-Reviews-American_Cemetery-Natchitoches_Louisiana.html',
+    credit: 'Tripadvisor source reference without visible overlay; reuse terms not stated — rights review required'
+  },
+  'la-stfrancisville-rosedown': {
+    image: 'case-file-photos/rosedown-plantation.jpg',
+    caseFileImage: 'case-file-photos/rosedown-plantation-case-file.png',
+    source: 'https://www.loc.gov/pictures/item/2020744363/',
+    credit: 'Carol M. Highsmith / Library of Congress reference image — public-domain source; confirm image-specific terms'
+  },
+  'la-batonrouge-highlandroadpark': {
+    image: 'case-file-photos/highland-road-park-observatory.jpg',
+    caseFileImage: 'case-file-photos/highland-road-park-observatory-case-file.png',
+    source: 'https://www.brec.org/facility/HighlandRoadParkObservatory',
+    credit: 'BREC official reference image; reuse terms not stated — rights review required'
+  },
+  'la-porthudson-porthudson': {
+    image: 'case-file-photos/port-hudson-reference-reconstruction.png',
+    caseFileImage: 'case-file-photos/port-hudson-case-file.png',
+    source: 'https://www.explorelouisiana.com/articles/port-hudson-state-historic-site',
+    credit: 'TPI historical reconstruction based on the official Port Hudson reference and site description; not a source photograph'
+  },
+  'la-mansfield-mansfieldbattlefield': {
+    image: 'case-file-photos/mansfield-battlefield.jpg',
+    caseFileImage: 'case-file-photos/mansfield-battlefield-case-file.png',
+    source: 'https://www.louisianalife.com/remembering-the-past/',
+    credit: 'Louisiana Life reference image; reuse terms not stated — rights review required'
+  },
+  'la-many-fortjesup': {
+    image: 'case-file-photos/fort-jesup-reference-reconstruction.png',
+    caseFileImage: 'case-file-photos/fort-jesup-case-file.png',
+    source: 'https://www.lastateparks.com/historic-sites/fort-jesup-state-historic-site',
+    credit: 'TPI historical reconstruction based on Louisiana State Parks official references; not a source photograph'
+  },
+  'la-neworleans-chalmettebattlefield': {
+    image: 'case-file-photos/chalmette-battlefield.jpg',
+    caseFileImage: 'case-file-photos/chalmette-battlefield-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File%3AChalmetteMonumentRangerStairs.jpg',
+    credit: 'Wikimedia Commons reference image; verify current license attribution before public reuse'
   }
 };
