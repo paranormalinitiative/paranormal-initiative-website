@@ -106,6 +106,40 @@ StudioFlow source or shared runtime changed.
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
+## Iowa legacy batch — completed locally, release pending
+
+Iowa has 16 directory entries and now has 16 exact source photographs plus 16
+matching case-file treatments. Each treatment uses the exact **IOWA** marker
+and **The Paranormal Initiative** branding. The source map is recorded in
+`haunted-location-directory/legacy-case-file-sources.js`.
+
+Completed Iowa entries:
+
+- Villisca Axe Murder House
+- Squirrel Cage Jail
+- Mason House Inn
+- Black Hawk Hotel
+- Granger House Victorian Museum
+- Old Fairfield Opera House
+- Edinburgh Manor
+- Farrar Schoolhouse
+- Malvern Manor
+- Hotel Ottumwa
+- Cresco Theatre and Opera House
+- Black Angel / Oakland Cemetery
+- Historic Iowa State Penitentiary
+- Stony Hollow Road
+- Iowa State Capitol
+- Argonne Armory
+
+The case-file images are presentation derivatives of the exact source
+photographs, not documentary photographs owned by TPI. Sources whose
+retrieved pages did not state reuse terms remain explicitly flagged for rights
+review in the source map. The Black Hawk Hotel source was corrected to an
+exterior photograph before treatment generation. The directory does not direct
+members to trespass or bypass public, guest, guided, or limited-hours access
+rules. TPI is **The Paranormal Initiative**, never “Paranormal Investigations.”
+
 ## Idaho legacy batch — completed
 
 Idaho contains 20 directory entries. All 20 now have an exact local source

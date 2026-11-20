@@ -622,3 +622,35 @@ pages did not state reuse terms remain explicitly flagged for rights review;
 the case-file treatments are presentation derivatives, not documentary images
 owned by TPI. The case files do not direct members to trespass or bypass
 public, guest, guided, or limited-hours access rules.
+
+### Iowa legacy batch — completed locally, release pending
+
+Iowa contains 16 directory entries. Each now has an exact local source
+photograph and a matching **IOWA** case-file treatment using **The Paranormal
+Initiative** branding:
+
+- `villisca-axe-murder-house.jpg` / `villisca-axe-murder-house-case-file.png` — Villisca Axe Murder House.
+- `squirrel-cage-jail.jpg` / `squirrel-cage-jail-case-file.png` — Squirrel Cage Jail.
+- `mason-house-inn.jpg` / `mason-house-inn-case-file.png` — Mason House Inn.
+- `blackhawk-hotel.jpg` / `blackhawk-hotel-case-file.png` — Black Hawk Hotel exterior.
+- `granger-house.jpg` / `granger-house-case-file.png` — Granger House Victorian Museum.
+- `old-fairfield-opera-house.jpg` / `old-fairfield-opera-house-case-file.png` — Old Fairfield Opera House.
+- `edinburgh-manor.jpg` / `edinburgh-manor-case-file.png` — Edinburgh Manor.
+- `farrar-schoolhouse.jpg` / `farrar-schoolhouse-case-file.png` — Farrar Schoolhouse.
+- `malvern-manor.jpg` / `malvern-manor-case-file.png` — Malvern Manor.
+- `hotel-ottumwa.jpg` / `hotel-ottumwa-case-file.png` — Hotel Ottumwa.
+- `cresco-theatre.jpg` / `cresco-theatre-case-file.png` — Cresco Theatre and Opera House.
+- `black-angel-oakland-cemetery.jpg` / `black-angel-oakland-cemetery-case-file.png` — Black Angel / Oakland Cemetery.
+- `iowa-state-penitentiary.jpg` / `iowa-state-penitentiary-case-file.png` — Historic Iowa State Penitentiary.
+- `stony-hollow-road.jpg` / `stony-hollow-road-case-file.png` — Stony Hollow Road.
+- `iowa-state-capitol.jpg` / `iowa-state-capitol-case-file.png` — Iowa State Capitol.
+- `argonne-armory.jpg` / `argonne-armory-case-file.png` — Argonne Armory.
+
+The exact source and credit for every Iowa pair are recorded in
+`legacy-case-file-sources.js`. The case-file treatments preserve the exact
+source location; they are presentation derivatives, not documentary
+photographs owned by TPI. Sources whose retrieved pages did not state reuse
+terms remain explicitly flagged for rights review before broader
+redistribution. TPI is **The Paranormal Initiative**, never “Paranormal
+Investigations.” The directory does not direct members to trespass or bypass
+public, guest, guided, or limited-hours access rules.

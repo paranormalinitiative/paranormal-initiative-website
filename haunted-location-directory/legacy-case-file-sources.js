@@ -1264,5 +1264,101 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/french-lick-springs-hotel-case-file.png',
     source: 'https://www.frenchlick.com/',
     credit: 'French Lick Resort source image; reuse terms not stated — rights review required'
+  },
+  'ia-villisca-axemurderhouse': {
+    image: 'case-file-photos/villisca-axe-murder-house.jpg',
+    caseFileImage: 'case-file-photos/villisca-axe-murder-house-case-file.png',
+    source: 'https://murderhouse.com/',
+    credit: 'The Villisca Axe Murder House official source image; reuse terms not stated — rights review required'
+  },
+  'ia-councilbluffs-squirrelcagejail': {
+    image: 'case-file-photos/squirrel-cage-jail.jpg',
+    caseFileImage: 'case-file-photos/squirrel-cage-jail-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Pottawattamie_County_Jail.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ia-bentonsport-masonhouseinn': {
+    image: 'case-file-photos/mason-house-inn.jpg',
+    caseFileImage: 'case-file-photos/mason-house-inn-case-file.png',
+    source: 'https://www.nps.gov/mopi/images/MOPI-IA-VB-10_Facing_North.JPG?autorotate=false&maxwidth=1200',
+    credit: 'National Park Service source image; reuse terms should be confirmed for this file'
+  },
+  'ia-davenport-blackhawkhotel': {
+    image: 'case-file-photos/blackhawk-hotel.jpg',
+    caseFileImage: 'case-file-photos/blackhawk-hotel-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Hotel_Blackhawk_Entrance.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ia-marion-grangerhouse': {
+    image: 'case-file-photos/granger-house.jpg',
+    caseFileImage: 'case-file-photos/granger-house-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Granger_House_-_Marion_Iowa.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ia-fairfield-opera': {
+    image: 'case-file-photos/old-fairfield-opera-house.jpg',
+    caseFileImage: 'case-file-photos/old-fairfield-opera-house-case-file.png',
+    source: 'https://www.fairfieldoperahouse.com/',
+    credit: 'Fairfield Opera House official source image; reuse terms not stated — rights review required'
+  },
+  'ia-scotchgrove-edinburghmanor': {
+    image: 'case-file-photos/edinburgh-manor.jpg',
+    caseFileImage: 'case-file-photos/edinburgh-manor-case-file.png',
+    source: 'https://edinburghmanor.wixsite.com/edinburgh',
+    credit: 'Edinburgh Manor official source image; reuse terms not stated — rights review required'
+  },
+  'ia-farrar-schoolhouse': {
+    image: 'case-file-photos/farrar-schoolhouse.jpg',
+    caseFileImage: 'case-file-photos/farrar-schoolhouse-case-file.png',
+    source: 'https://farrarschoolhouse.com/',
+    credit: 'Farrar Schoolhouse source image; reuse terms not stated — rights review required'
+  },
+  'ia-malvern-malvernmanor': {
+    image: 'case-file-photos/malvern-manor.jpg',
+    caseFileImage: 'case-file-photos/malvern-manor-case-file.png',
+    source: 'https://www.traveliowa.com/content/images/malvern_manor_fb.jpg',
+    credit: 'Travel Iowa source image; reuse terms not stated — rights review required'
+  },
+  'ia-ottumwa-hotelottumwa': {
+    image: 'case-file-photos/hotel-ottumwa.jpg',
+    caseFileImage: 'case-file-photos/hotel-ottumwa-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Hotel_Ottumwa,_Ottumwa,_Iowa.JPG',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ia-cresco-theatre': {
+    image: 'case-file-photos/cresco-theatre.jpg',
+    caseFileImage: 'case-file-photos/cresco-theatre-case-file.png',
+    source: 'https://www.crescotheatreoperahouse.com/our-theatre',
+    credit: 'Cresco Theatre and Opera House official source image; reuse terms not stated — rights review required'
+  },
+  'ia-iowacity-oaklandblackangel': {
+    image: 'case-file-photos/black-angel-oakland-cemetery.jpg',
+    caseFileImage: 'case-file-photos/black-angel-oakland-cemetery-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Black_angel_iowa_city.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ia-fortmadison-statepenitentiary': {
+    image: 'case-file-photos/iowa-state-penitentiary.jpg',
+    caseFileImage: 'case-file-photos/iowa-state-penitentiary-case-file.png',
+    source: 'https://www.visitfortmadison.com/historic-iowa-state-penitentiary',
+    credit: 'Visit Fort Madison source image; reuse terms not stated — rights review required'
+  },
+  'ia-burlington-stonyhollowroad': {
+    image: 'case-file-photos/stony-hollow-road.jpg',
+    caseFileImage: 'case-file-photos/stony-hollow-road-case-file.png',
+    source: 'https://townsquare.media/site/726/files/2023/04/attachment-stony-hollow-1.jpg?a=t&format=natural&h=0&q=89&s=0&w=1200&zc=1',
+    credit: 'Stony Hollow Road source image; reuse terms not stated — rights review required'
+  },
+  'ia-desmoines-statecapitol': {
+    image: 'case-file-photos/iowa-state-capitol.jpg',
+    caseFileImage: 'case-file-photos/iowa-state-capitol-case-file.png',
+    source: 'https://commons.wikimedia.org/wiki/File:Iowa_State_Capitol_April_2010.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'ia-desmoines-argonnearmory': {
+    image: 'case-file-photos/argonne-armory.jpg',
+    caseFileImage: 'case-file-photos/argonne-armory-case-file.png',
+    source: 'https://www.desmoinesbonds.com/des-moines-ia-investor-relations-ia/about/news/i2811?newsId=55789',
+    credit: 'City of Des Moines source image; reuse terms not stated — rights review required'
   }
 };
