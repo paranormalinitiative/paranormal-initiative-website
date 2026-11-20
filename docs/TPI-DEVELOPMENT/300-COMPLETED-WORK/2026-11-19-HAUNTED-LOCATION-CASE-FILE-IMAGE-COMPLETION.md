@@ -106,7 +106,7 @@ StudioFlow source or shared runtime changed.
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
-## Kansas legacy batch — completed locally, release pending
+## Kansas legacy batch — completed and live
 
 Kansas has 21 directory entries and now has 21 exact source photographs plus
 21 matching case-file treatments. Each treatment uses the exact **KANSAS**
@@ -146,6 +146,19 @@ factory; Molly’s Hollow is represented as an outdoor Jackson Park landscape,
 not a fabricated building. The directory does not direct members to trespass
 or bypass access rules. TPI is **The Paranormal Initiative**, never
 “Paranormal Investigations.”
+
+Release evidence:
+
+- Source commits: `6e304dbf`, `eca1c53f`, `4861a26e`, `5f1e2760`, `b10e4f8a`, `dbe5a720`, `6e349512`, `c4711928`, `cb92c769`, `e7ea1484`, `ae5dcc34`; documentation commit: `ab4a8402`.
+- Release candidate: `rel-ab4a8402648f-86335190f687`.
+- Certified source commit: `ab4a8402648f8131bba47b0192f25ea132bf4bad`.
+- Release profile: website; StudioFlow and Nova remained under the protected-application maintenance lock.
+- Certified gates: 10 passed; live anonymous production smoke: 10/10 passed.
+- Deployed Worker version: `b800508d-3ee8-4ad4-8d4f-6b5c7fb969b3`.
+- Rollback target: `cc39a39a-6775-46d8-a9af-b3ee71e38287`.
+- Live Kansas page: HTTP 200 with 21 Kansas location IDs rendered.
+- Live Kansas case-file assets: 42/42 returned HTTP 200.
+- Final release state: **DEPLOYED_AND_VERIFIED**.
 
 ## Iowa legacy batch — completed and live
 
