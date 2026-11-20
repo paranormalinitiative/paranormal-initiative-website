@@ -1042,5 +1042,113 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/roseberry-historic-site-case-file.jpg',
     source: 'https://www.historicroseberry.org/pages/Townsite.php',
     credit: 'Historic Roseberry official source image; reuse terms not stated — rights review required'
+  },
+  'il-villa-kathrine': {
+    image: 'case-file-photos/villa-kathrine.jpg',
+    caseFileImage: 'case-file-photos/villa-kathrine-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Villa_Katherine_Quincy_IL.JPG',
+    credit: 'Wikimedia Commons source image — public domain'
+  },
+  'il-mcpike-mansion': {
+    image: 'case-file-photos/mcpike-mansion.jpg',
+    caseFileImage: 'case-file-photos/mcpike-mansion-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:McPike_Mansion.jpg',
+    credit: 'Wikimedia Commons source image — CC BY 2.0'
+  },
+  'il-alton-hauntings-mineral-springs-area': {
+    image: 'case-file-photos/alton-mineral-springs.jpg',
+    caseFileImage: 'case-file-photos/alton-mineral-springs-case-file.jpg',
+    source: 'https://www.riversandroutes.com/blog/mysterious-mineral-springs-has-a-recipe-for-paranormal-adventures/',
+    credit: 'Great Rivers & Routes source image; reuse terms not stated — rights review required'
+  },
+  'il-congress-plaza-hotel': {
+    image: 'case-file-photos/congress-plaza-hotel.jpg',
+    caseFileImage: 'case-file-photos/congress-plaza-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Congress_Plaza_Hotel_-_Chicago_-_October_2012.JPG',
+    credit: 'Wikimedia Commons source image — CC BY-SA 3.0'
+  },
+  'il-bachelor-s-grove-cemetery': {
+    image: 'case-file-photos/bachelors-grove-cemetery.jpg',
+    caseFileImage: 'case-file-photos/bachelors-grove-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Bachelors_Grove_2008_entrance.jpg',
+    credit: 'Wikimedia Commons source image — public domain'
+  },
+  'il-resurrection-cemetery': {
+    image: 'case-file-photos/resurrection-cemetery.jpg',
+    caseFileImage: 'case-file-photos/resurrection-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Resurrection_Cemetery_Justice_IL_1.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'il-old-joliet-prison': {
+    image: 'case-file-photos/old-joliet-prison.jpg',
+    caseFileImage: 'case-file-photos/old-joliet-prison-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Joliet_Prison.jpg',
+    credit: 'Wikimedia Commons source image — CC BY-SA 3.0'
+  },
+  'il-will-county-historical-museum': {
+    image: 'case-file-photos/will-county-historical-museum.jpg',
+    caseFileImage: 'case-file-photos/will-county-historical-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:The_Will_County_Historical_Society_Museum.jpg',
+    credit: 'Wikimedia Commons source image — CC BY-SA 3.0'
+  },
+  'il-kaskaskia-hotel': {
+    image: 'case-file-photos/kaskaskia-hotel.jpg',
+    caseFileImage: 'case-file-photos/kaskaskia-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:LaSalleIL_HotelKaskaskia.jpg',
+    credit: 'Wikimedia Commons source image — CC BY-SA 4.0'
+  },
+  'il-starved-rock-lodge-starved-rock-area': {
+    image: 'case-file-photos/starved-rock-lodge.jpg',
+    caseFileImage: 'case-file-photos/starved-rock-lodge-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:StarvedRockStatePark_LodgeExterior.jpg',
+    credit: 'Wikimedia Commons source image — CC BY-SA 4.0'
+  },
+  'il-greenwood-cemetery': {
+    image: 'case-file-photos/greenwood-cemetery.jpg',
+    caseFileImage: 'case-file-photos/greenwood-cemetery-case-file.jpg',
+    source: 'https://springfieldghostsociety.com/cemeteries/Greenwood/Greenwood.html',
+    credit: 'Springfield Ghost Society source image; reuse terms not stated — rights review required'
+  },
+  'il-miner-s-theatre': {
+    image: 'case-file-photos/miners-theatre.jpg',
+    caseFileImage: 'case-file-photos/miners-theatre-case-file.jpg',
+    source: 'https://www.city-data.com/picfilesc/picc25341.php',
+    credit: 'City-Data source image; reuse terms not stated — rights review required'
+  },
+  'il-cuba-road-white-cemetery': {
+    image: 'case-file-photos/white-cemetery.jpg',
+    caseFileImage: 'case-file-photos/white-cemetery-case-file.jpg',
+    source: 'https://1440wrok.com/haunted-cuba-road-barrington-illinois/',
+    credit: '1440 WROK source image; reuse terms not stated — rights review required'
+  },
+  'il-dole-mansion': {
+    image: 'case-file-photos/dole-mansion.jpg',
+    caseFileImage: 'case-file-photos/dole-mansion-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Dole_mansion_from_front.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'il-blood-s-point-road-cemetery': {
+    image: 'case-file-photos/bloods-point-cemetery.jpg',
+    caseFileImage: 'case-file-photos/bloods-point-cemetery-case-file.jpg',
+    source: 'https://graveyards.com/Illinois/Boone/Bloods-Point',
+    credit: 'Graveyards.com source image; reuse terms not stated — rights review required'
+  },
+  'il-haunted-rock-island-roadhouse': {
+    image: 'case-file-photos/rock-island-ymca.jpg',
+    caseFileImage: 'case-file-photos/rock-island-ymca-case-file.jpg',
+    source: 'https://www.hauntedus.com/illinois/haunted-rock-island-ymca/',
+    credit: 'Haunted US source image; reuse terms not stated — rights review required'
+  },
+  'il-peoria-state-hospital': {
+    image: 'case-file-photos/peoria-state-hospital.jpg',
+    caseFileImage: 'case-file-photos/peoria-state-hospital-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Peoria_State_Hospital.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'il-university-of-illinois-english-building': {
+    image: 'case-file-photos/uiuc-english-building.jpg',
+    caseFileImage: 'case-file-photos/uiuc-english-building-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:English_Building_University_of_Illinois_at_Urbana-Champaign_from_south.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
   }
 };

@@ -420,6 +420,46 @@ Woodburn has limited access, and Old Swedes Church is accessed through public
 tours or site rules. The case files do not direct members to trespass or bypass
 those conditions.
 
+## Illinois legacy batch — completed locally, release pending
+
+Illinois contains 18 directory entries. All 18 now have an exact local source
+photograph, a matching **ILLINOIS** case-file treatment, and a source/credit
+record:
+
+- Villa Kathrine
+- McPike Mansion
+- Alton Hauntings / Mineral Springs area
+- Congress Plaza Hotel
+- Bachelor’s Grove Cemetery
+- Resurrection Cemetery
+- Old Joliet Prison
+- Will County Historical Museum
+- Kaskaskia Hotel
+- Starved Rock Lodge / Starved Rock area
+- Greenwood Cemetery
+- Miner's Theatre
+- Cuba Road / White Cemetery
+- Dole Mansion
+- Blood’s Point Road & Cemetery
+- Haunted Rock Island Roadhouse
+- Peoria State Hospital
+- University of Illinois English Building
+
+The treatments use **The Paranormal Initiative** branding and an **ILLINOIS**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Each treatment preserves the exact source subject and is presented as a
+stylized case-file image, not an unedited documentary photograph. The Miner's
+Theatre source was corrected from an initial logo-only source to an exact
+exterior photograph of the Miner's Institute building before treatment.
+
+Mineral Springs, Greenwood Cemetery, Miner's Theatre, White Cemetery, Blood's
+Point Cemetery, Rock Island YMCA, and other sources whose retrieved pages did
+not state reuse terms remain explicitly flagged for rights review in
+`legacy-case-file-sources.js`. They are not represented as TPI-owned
+documentary photographs. Original attribution and license obligations remain
+recorded. The case files do not direct members to trespass or bypass public,
+guest, guided, or limited-hours access rules.
+
 ## Florida legacy batch — completed
 
 Florida contains 20 directory entries. All 20 now have an exact local source

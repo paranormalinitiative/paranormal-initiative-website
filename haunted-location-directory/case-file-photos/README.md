@@ -555,3 +555,36 @@ photographs, not documentary photographs owned by TPI. Idaho sources with
 unstated reuse terms remain explicitly flagged for permission/reuse review
 before broader redistribution. The case files do not direct members to
 trespass or bypass public, guest, guided, or limited-hours access rules.
+
+### Illinois legacy batch — in progress
+
+Illinois contains 18 directory entries. Each now has an exact local source
+photograph and a matching **ILLINOIS** case-file treatment using **The
+Paranormal Initiative** branding:
+
+- `villa-kathrine.jpg` / `villa-kathrine-case-file.jpg` — exact Villa Kathrine reference; public domain. Source: <https://commons.wikimedia.org/wiki/File:Villa_Katherine_Quincy_IL.JPG>
+- `mcpike-mansion.jpg` / `mcpike-mansion-case-file.jpg` — exact McPike Mansion reference; CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:McPike_Mansion.jpg>
+- `alton-mineral-springs.jpg` / `alton-mineral-springs-case-file.jpg` — exact Mineral Springs area reference. Source: <https://www.riversandroutes.com/blog/mysterious-mineral-springs-has-a-recipe-for-paranormal-adventures/>; reuse terms not stated and flagged for rights review.
+- `congress-plaza-hotel.jpg` / `congress-plaza-hotel-case-file.jpg` — exact Congress Plaza Hotel reference; CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Congress_Plaza_Hotel_-_Chicago_-_October_2012.JPG>
+- `bachelors-grove-cemetery.jpg` / `bachelors-grove-cemetery-case-file.jpg` — exact Bachelor’s Grove entrance reference; public domain. Source: <https://commons.wikimedia.org/wiki/File:Bachelors_Grove_2008_entrance.jpg>
+- `resurrection-cemetery.jpg` / `resurrection-cemetery-case-file.jpg` — exact Resurrection Cemetery reference. Source: <https://commons.wikimedia.org/wiki/File:Resurrection_Cemetery_Justice_IL_1.jpg>; reuse terms are recorded on the source page.
+- `old-joliet-prison.jpg` / `old-joliet-prison-case-file.jpg` — exact Old Joliet Prison reference; CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Joliet_Prison.jpg>
+- `will-county-historical-museum.jpg` / `will-county-historical-museum-case-file.jpg` — exact Will County Historical Society Museum reference; CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:The_Will_County_Historical_Society_Museum.jpg>
+- `kaskaskia-hotel.jpg` / `kaskaskia-hotel-case-file.jpg` — exact Kaskaskia Hotel reference; CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:LaSalleIL_HotelKaskaskia.jpg>
+- `starved-rock-lodge.jpg` / `starved-rock-lodge-case-file.jpg` — exact Starved Rock Lodge reference; CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:StarvedRockStatePark_LodgeExterior.jpg>
+- `greenwood-cemetery.jpg` / `greenwood-cemetery-case-file.jpg` — exact Greenwood Cemetery reference. Source: <https://springfieldghostsociety.com/cemeteries/Greenwood/Greenwood.html>; reuse terms not stated and flagged for rights review.
+- `miners-theatre.jpg` / `miners-theatre-case-file.jpg` — exact Miner's Theatre / Miner's Institute building reference. Source: <https://www.city-data.com/picfilesc/picc25341.php>; reuse terms not stated and flagged for rights review.
+- `white-cemetery.jpg` / `white-cemetery-case-file.jpg` — exact White Memorial Cemetery entrance reference. Source: <https://1440wrok.com/haunted-cuba-road-barrington-illinois/>; reuse terms not stated and flagged for rights review.
+- `dole-mansion.jpg` / `dole-mansion-case-file.jpg` — exact Dole Mansion reference. Source: <https://commons.wikimedia.org/wiki/File:Dole_mansion_from_front.jpg>; reuse terms are recorded on the source page.
+- `bloods-point-cemetery.jpg` / `bloods-point-cemetery-case-file.jpg` — exact Blood’s Point Cemetery entrance reference. Source: <https://graveyards.com/Illinois/Boone/Bloods-Point>; reuse terms not stated and flagged for rights review.
+- `rock-island-ymca.jpg` / `rock-island-ymca-case-file.jpg` — exact Rock Island YMCA / roadhouse building reference. Source: <https://www.hauntedus.com/illinois/haunted-rock-island-ymca/>; reuse terms not stated and flagged for rights review.
+- `peoria-state-hospital.jpg` / `peoria-state-hospital-case-file.jpg` — exact Peoria State Hospital reference. Source: <https://commons.wikimedia.org/wiki/File:Peoria_State_Hospital.jpg>; reuse terms are recorded on the source page.
+- `uiuc-english-building.jpg` / `uiuc-english-building-case-file.jpg` — exact University of Illinois English Building reference. Source: <https://commons.wikimedia.org/wiki/File:English_Building_University_of_Illinois_at_Urbana-Champaign_from_south.jpg>; reuse terms are recorded on the source page.
+
+The case-file treatments are presentation derivatives of the exact source
+photographs, not documentary photographs owned by TPI. Original attribution
+and license obligations remain recorded in `legacy-case-file-sources.js`.
+Sources with unstated reuse terms remain explicitly flagged for permission or
+reuse review before broader redistribution. The case files do not direct
+members to trespass or bypass public, guest, guided, or limited-hours access
+rules.
