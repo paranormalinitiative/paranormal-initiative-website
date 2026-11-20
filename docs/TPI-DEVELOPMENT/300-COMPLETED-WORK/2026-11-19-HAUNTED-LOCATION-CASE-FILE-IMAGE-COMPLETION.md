@@ -115,8 +115,10 @@ is preserved for web cards and click-to-enlarge viewing.
 The source audit removed a Tripadvisor collage from the Laura Plantation
 reference because it contained a promotional badge and unrelated people. It
 was replaced with a clean exact exterior reference, and its case-file image was
-regenerated from that source. No Tripadvisor badge or promotional overlay is
-retained in the Louisiana source set.
+regenerated from that source. The American Cemetery reference was subsequently
+replaced with a clean Library of Congress HABS photograph, so no Louisiana
+mapping relies on a Tripadvisor source. No Tripadvisor badge or promotional
+overlay is retained in the Louisiana source set.
 
 Port Hudson and Fort Jesup use explicit TPI historical reconstructions because
 the official source pages were available but their direct image downloads were

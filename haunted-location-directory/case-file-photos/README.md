@@ -744,7 +744,9 @@ Tripadvisor badge, unrelated people, or promotional overlay is retained in the
 Louisiana source set.
 
 The exact source and credit for every Louisiana entry are recorded in
-`legacy-case-file-sources.js`. Port Hudson and Fort Jesup use clearly labeled
+`legacy-case-file-sources.js`. The American Cemetery reference was replaced
+with a clean Library of Congress HABS photograph so no Louisiana mapping relies
+on a Tripadvisor source. Port Hudson and Fort Jesup use clearly labeled
 TPI historical reconstructions because the official source pages were
 available but their direct image downloads were not; they are not documentary
 photographs. Sources whose retrieved pages did not state reuse terms remain

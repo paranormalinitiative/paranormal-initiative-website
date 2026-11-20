@@ -1844,8 +1844,8 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
   'la-natchitoches-americancemetery': {
     image: 'case-file-photos/american-cemetery.jpg',
     caseFileImage: 'case-file-photos/american-cemetery-case-file.png',
-    source: 'https://www.tripadvisor.co/Attraction_Review-g40335-d13334842-Reviews-American_Cemetery-Natchitoches_Louisiana.html',
-    credit: 'Tripadvisor source reference without visible overlay; reuse terms not stated — rights review required'
+    source: 'https://www.loc.gov/resource/hhh.la0467.photos',
+    credit: 'Historic American Buildings Survey / Library of Congress reference image; no known restrictions on U.S. Government images'
   },
   'la-stfrancisville-rosedown': {
     image: 'case-file-photos/rosedown-plantation.jpg',
