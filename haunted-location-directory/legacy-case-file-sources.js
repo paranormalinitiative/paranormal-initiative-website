@@ -862,5 +862,65 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/bulloch-hall-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Bulloch_Hall_Roswell_GA.JPG',
     credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'hi-honolulu-iolani': {
+    image: 'case-file-photos/iolani-palace.jpg',
+    caseFileImage: 'case-file-photos/iolani-palace-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Iolani_Palace_(51872681413).jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'hi-kaneohe-pali': {
+    image: 'case-file-photos/nuuanu-pali-lookout.jpg',
+    caseFileImage: 'case-file-photos/nuuanu-pali-lookout-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Nu%E2%80%98uanu_Pali.Oahu_(10998871496).jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'hi-honolulu-moana': {
+    image: 'case-file-photos/moana-surfrider.jpg',
+    caseFileImage: 'case-file-photos/moana-surfrider-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Hawaii_Hotel_-_Moana_Surfrider,_A_Westin_Resort_%26_Spa,_Waikiki_Beach.jpg',
+    credit: 'Tony Webster — CC BY-SA 2.0'
+  },
+  'hi-honolulu-pearlharbor': {
+    image: 'case-file-photos/pearl-harbor-national-memorial.jpg',
+    caseFileImage: 'case-file-photos/pearl-harbor-national-memorial-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/Category:Pearl_Harbor_National_Memorial',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'hi-honolulu-ussarizona': {
+    image: 'case-file-photos/uss-arizona-memorial.jpg',
+    caseFileImage: 'case-file-photos/uss-arizona-memorial-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:The_USS_Arizona_Memorial_in_Pearl_Harbor,_Hawaii,_March_9,_2012_120309-D-NI589-096.jpg',
+    credit: 'Glenn Fawcett / U.S. Department of Defense — public domain'
+  },
+  'hi-honolulu-morganscorner': {
+    image: 'case-file-photos/morgans-corner.jpg',
+    caseFileImage: 'case-file-photos/morgans-corner-case-file.jpg',
+    source: 'https://www.sfgate.com/hawaii/article/hawaii-morgans-corner-nuuanu-21367463.php',
+    credit: 'SFGate / hdnux location photograph; reuse terms not stated — rights review required'
+  },
+  'hi-waipahu-plantationvillage': {
+    image: 'case-file-photos/hawaiis-plantation-village.webp',
+    caseFileImage: 'case-file-photos/hawaiis-plantation-village-case-file.jpg',
+    source: 'https://hawaiiplantationvillage.org/digitized-photos/IMG_6805.webp',
+    credit: 'Hawaii’s Plantation Village official source image; photos marked copyright by the institution — permission/reuse review required'
+  },
+  'hi-honolulu-judiciaryhistory': {
+    image: 'case-file-photos/judiciary-history-center.jpg',
+    caseFileImage: 'case-file-photos/judiciary-history-center-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Aliiolani_Hale_-_Honolulu.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page; Aliʻiōlani Hale houses the Judiciary History Center'
+  },
+  'hi-honolulu-kawaiahao': {
+    image: 'case-file-photos/kawaiahao-church.jpg',
+    caseFileImage: 'case-file-photos/kawaiahao-church-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Kawaiahao_Church_(2856777441).jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'hi-honolulu-hiltonvillage': {
+    image: 'case-file-photos/hilton-hawaiian-village.jpg',
+    caseFileImage: 'case-file-photos/hilton-hawaiian-village-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Hilton_Hawaiian_Village_from_sea,_Rainbow_tower_-_panoramio.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
   }
 };

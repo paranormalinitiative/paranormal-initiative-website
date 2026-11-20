@@ -497,3 +497,28 @@ photographs, not documentary photographs owned by TPI. Original attribution
 and license obligations remain recorded, and the 17Hundred90 source is
 explicitly flagged for rights review. The case files do not direct members to
 trespass or bypass public, guest, guided, or limited-hours access rules.
+
+### Hawaii legacy batch
+
+Hawaii contains 10 directory entries. Each now has an exact local source
+photograph and a matching **HAWAII** case-file treatment using **The
+Paranormal Initiative** branding:
+
+- `iolani-palace.jpg` / `iolani-palace-case-file.jpg` — exact ʻIolani Palace reference. Source: <https://commons.wikimedia.org/wiki/File:Iolani_Palace_(51872681413).jpg>; reuse terms are recorded on the source page.
+- `nuuanu-pali-lookout.jpg` / `nuuanu-pali-lookout-case-file.jpg` — exact Nuʻuanu Pali Lookout landscape reference. Source: <https://commons.wikimedia.org/wiki/File:Nu%E2%80%98uanu_Pali.Oahu_(10998871496).jpg>; reuse terms are recorded on the source page.
+- `moana-surfrider.jpg` / `moana-surfrider-case-file.jpg` — exact Moana Surfrider reference; Tony Webster, CC BY-SA 2.0. Source: <https://commons.wikimedia.org/wiki/File:Hawaii_Hotel_-_Moana_Surfrider,_A_Westin_Resort_%26_Spa,_Waikiki_Beach.jpg>
+- `pearl-harbor-national-memorial.jpg` / `pearl-harbor-national-memorial-case-file.jpg` — exact Pearl Harbor National Memorial shoreline and USS Arizona Memorial context. Source: <https://commons.wikimedia.org/wiki/Category:Pearl_Harbor_National_Memorial>; reuse terms are recorded on the selected source page.
+- `uss-arizona-memorial.jpg` / `uss-arizona-memorial-case-file.jpg` — exact USS Arizona Memorial reference; Glenn Fawcett / U.S. Department of Defense, public domain. Source: <https://commons.wikimedia.org/wiki/File:The_USS_Arizona_Memorial_in_Pearl_Harbor,_Hawaii,_March_9,_2012_120309-D-NI589-096.jpg>
+- `morgans-corner.jpg` / `morgans-corner-case-file.jpg` — exact Nuʻuanu Pali Drive road-context reference for Morgan’s Corner. Source: <https://www.sfgate.com/hawaii/article/hawaii-morgans-corner-nuuanu-21367463.php>; reuse terms are not stated and remain flagged for rights review.
+- `hawaiis-plantation-village.webp` / `hawaiis-plantation-village-case-file.jpg` — exact Hawaii’s Plantation Village lane and building reference. Source: <https://hawaiiplantationvillage.org/digitized-photos/IMG_6805.webp>; the institution marks its photos as copyrighted, so permission/reuse review is required.
+- `judiciary-history-center.jpg` / `judiciary-history-center-case-file.jpg` — exact Aliʻiōlani Hale reference, the building housing the King Kamehameha V Judiciary History Center. Source: <https://commons.wikimedia.org/wiki/File:Aliiolani_Hale_-_Honolulu.jpg>; reuse terms are recorded on the source page.
+- `kawaiahao-church.jpg` / `kawaiahao-church-case-file.jpg` — exact Kawaiahaʻo Church reference. Source: <https://commons.wikimedia.org/wiki/File:Kawaiahao_Church_(2856777441).jpg>; reuse terms are recorded on the source page.
+- `hilton-hawaiian-village.jpg` / `hilton-hawaiian-village-case-file.jpg` — exact Hilton Hawaiian Village Rainbow Tower and Waikīkī shoreline reference. Source: <https://commons.wikimedia.org/wiki/File:Hilton_Hawaiian_Village_from_sea,_Rainbow_tower_-_panoramio.jpg>; reuse terms are recorded on the source page.
+
+The case-file treatments are presentation derivatives of the exact source
+photographs, not documentary photographs owned by TPI. Morgan’s Corner is
+represented as a road-context location rather than an invented building, and
+the Hawaii’s Plantation Village source remains explicitly flagged for
+permission/reuse review. Original attribution and license obligations remain
+recorded. The case files do not direct members to trespass or bypass public,
+guest, guided, or limited-hours access rules.

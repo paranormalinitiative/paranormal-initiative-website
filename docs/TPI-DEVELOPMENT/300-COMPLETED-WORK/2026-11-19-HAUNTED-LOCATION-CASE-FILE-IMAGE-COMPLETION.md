@@ -393,3 +393,34 @@ flagged for rights review. The remaining Georgia source and license records
 are retained in `legacy-case-file-sources.js` and the photo README. Public,
 guest, guided, and limited-hours access notes remain authoritative; no case
 file directs members to trespass or bypass site rules.
+
+## Hawaii legacy batch — completed in this continuation
+
+Hawaii contains 10 directory entries. All 10 now have an exact local source
+photograph, a matching TPI case-file treatment, and a source/credit record:
+
+- ʻIolani Palace
+- Nuʻuanu Pali Lookout
+- Moana Surfrider
+- Pearl Harbor National Memorial
+- USS Arizona Memorial
+- Morgan’s Corner
+- Hawaii’s Plantation Village
+- King Kamehameha V Judiciary History Center
+- Kawaiahaʻo Church
+- Hilton Hawaiian Village
+
+The treatments use **The Paranormal Initiative** branding and a **HAWAII**
+state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
+Morgan’s Corner is treated as a road-context location, not a fabricated
+building. The Judiciary History Center treatment uses the exact Aliʻiōlani Hale
+building that houses the center. The untouched sources and transformed case
+files are stored under `haunted-location-directory/case-file-photos/`, with
+mapping and attribution in `legacy-case-file-sources.js`.
+
+Two source records remain explicitly flagged for rights review: the SFGate /
+hdnux photograph used for Morgan’s Corner does not state reuse terms, and
+Hawaii’s Plantation Village marks its photographs as institution-copyrighted.
+Those files are not represented as TPI-owned documentary photographs. The
+case-file images are clearly presentation treatments derived from the exact
+source subjects.
