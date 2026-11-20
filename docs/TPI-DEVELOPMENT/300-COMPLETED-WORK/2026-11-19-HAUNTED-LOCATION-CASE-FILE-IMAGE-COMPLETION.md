@@ -424,3 +424,16 @@ Hawaii’s Plantation Village marks its photographs as institution-copyrighted.
 Those files are not represented as TPI-owned documentary photographs. The
 case-file images are clearly presentation treatments derived from the exact
 source subjects.
+
+## Hawaii release record
+
+- Source commits: `7da00bdc` (mappings and documentation), `ffb51844` and
+  `76a98f19` (image assets)
+- Release candidate: `rel-76a98f19d8de-390b61ab3269`
+- Production Worker version: `0aa6bce9-69f9-41d9-9b41-49f42302570a`
+- Rollback target: `f4459813-d4b7-406b-9ef3-8c686b5c6fca`
+- Release profile: website; protected application maintenance lock preserved
+- Production smoke: **10/10 passed**
+- Live Hawaii page: **200**, 10 entries rendered, all 20 source/treatment
+  assets returned **200**
+- Final release state: **DEPLOYED_AND_VERIFIED**
