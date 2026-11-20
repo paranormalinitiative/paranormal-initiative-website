@@ -522,3 +522,36 @@ the Hawaii’s Plantation Village source remains explicitly flagged for
 permission/reuse review. Original attribution and license obligations remain
 recorded. The case files do not direct members to trespass or bypass public,
 guest, guided, or limited-hours access rules.
+
+### Idaho legacy batch
+
+Idaho contains 20 directory entries. Each now has an exact local source
+photograph and a matching **IDAHO** case-file treatment using **The Paranormal
+Initiative** branding:
+
+- `old-idaho-penitentiary.jpg` / `old-idaho-penitentiary-case-file.jpg` — exact Old Idaho Penitentiary reference. Source: <https://commons.wikimedia.org/wiki/File:Old_Idaho_State_Penitentiary.jpg>; reuse terms are recorded on the source page.
+- `egyptian-theatre.jpg` / `egyptian-theatre-case-file.jpg` — exact Egyptian Theatre reference; Duane Garrett / Historic American Buildings Survey, public domain. Source: <https://commons.wikimedia.org/wiki/File:Ada_Theater_Boise.jpg>
+- `idanha-hotel.jpg` / `idanha-hotel-case-file.jpg` — exact Idanha Hotel reference; Willowcast, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Idanha_Hotel_(Boise,_Idaho)_on_August_4,_2013.jpg>
+- `idaho-state-capitol.jpg` / `idaho-state-capitol-case-file.jpg` — exact Idaho State Capitol reference; JSquish, CC BY-SA 3.0. Source: <https://commons.wikimedia.org/wiki/File:Idaho_Capitol_Building.JPG>
+- `morris-hill-cemetery.jpg` / `morris-hill-cemetery-case-file.jpg` — exact Morris Hill Cemetery mausoleum reference; Tamanoeconomico, CC BY-SA 4.0. Source: <https://commons.wikimedia.org/wiki/File:Morris_Hill_Cemetery_Mausoleum_(6).jpg>
+- `idaho-city-pioneer-cemetery.jpg` / `idaho-city-pioneer-cemetery-case-file.jpg` — exact Idaho City Pioneer Cemetery entrance/grounds reference. Source: <https://idahocityhistoricalfoundation.org/?page_id=567>; reuse terms are not stated and remain flagged for rights review.
+- `boise-basin-museum.jpg` / `boise-basin-museum-case-file.jpg` — exact Boise Basin Museum reference. Source: <https://idahocityhistoricalfoundation.org/?page_id=163>; reuse terms are not stated and remain flagged for rights review.
+- `silver-city-idaho-hotel.jpg` / `silver-city-idaho-hotel-case-file.jpg` — exact Silver City ghost-town context reference; Bureau of Land Management, public domain. Source: <https://commons.wikimedia.org/wiki/File:My_Public_Lands_Road_Trip-_Silver_City_Ghost_Town_in_Idaho_(18532674869).jpg>
+- `oasis-bordello-museum.jpg` / `oasis-bordello-museum-case-file.jpg` — exact Oasis Bordello Museum reference; Mandy, CC BY 2.0. Source: <https://commons.wikimedia.org/wiki/File:Wallace_ID_-_bordello_museum.jpg>
+- `northern-pacific-depot.jpg` / `northern-pacific-depot-case-file.jpg` — exact Northern Pacific Depot Railroad Museum reference. Source: <https://commons.wikimedia.org/wiki/File:Northern_Pacific_Depot_in_Wallace.jpg>; reuse terms are recorded on the source page.
+- `jameson-saloon.jpg` / `jameson-saloon-case-file.jpg` — exact Jameson and Sweet Building / Jameson Saloon historic reference. Source: <https://www.lib.uidaho.edu/digital/barstock/items/barstock303.html>; reuse terms are not stated and remain flagged for rights review.
+- `albion-state-normal-school.jpg` / `albion-state-normal-school-case-file.jpg` — exact Albion State Normal School / Miller Hall reference. Source: <https://albionidaho.gov/about-albion/>; reuse terms are not stated and remain flagged for rights review.
+- `howells-opera-house.jpg` / `howells-opera-house-case-file.jpg` — exact Howells Opera House front-and-side survey reference; Idaho State Historical Society / Duane Garrett site survey. Source: <https://history.idaho.gov/wp-content/uploads/2018/09/Oakley_80001299.pdf>; reuse terms are not stated and remain flagged for rights review.
+- `lava-hot-springs-inn.jpg` / `lava-hot-springs-inn-case-file.jpg` — exact Lava Hot Springs Inn reference. Source: <https://www.lavahotspringsinn.com/overview.html>; reuse terms are not stated and remain flagged for rights review.
+- `enders-hotel.jpg` / `enders-hotel-case-file.jpg` — exact Enders Hotel reference; Ntsimp, CC0. Source: <https://commons.wikimedia.org/wiki/File:Enders_Hotel_Soda_Springs_Idaho.jpeg>
+- `state-hospital-south-cemetery.jpg` / `state-hospital-south-cemetery-case-file.jpg` — exact State Hospital South Cemetery sign and grounds reference. Source: <https://img1.wsimg.com/blobby/go/7c4463e3-109c-48af-b9be-98e22cdf2116/downloads/state_hospital_south_blackfoot_idaho_history.pdf>; reuse terms are not stated and remain flagged for rights review.
+- `stricker-ranch-rock-creek-station.jpg` / `stricker-ranch-rock-creek-station-case-file.jpg` — exact Stricker Ranch / Rock Creek Station homesite reference. Source: <https://visitsouthidaho.com/adventure/stricker-rock-creek-station/>; reuse terms are not stated and remain flagged for rights review.
+- `cataldo-mission.jpg` / `cataldo-mission-case-file.jpg` — exact Cataldo Mission front-facade reference; National Park Service, U.S. Department of the Interior, public domain. Source: <https://commons.wikimedia.org/wiki/File:1975-08-30,_Cataldo_Mission,_front_facade,_taken_from_the_northwest.jpg>
+- `mountain-view-cemetery.jpg` / `mountain-view-cemetery-case-file.jpg` — exact Mountain View Cemetery reference from the City of Pocatello. Source: <https://pocatello.gov/172/Mountain-View-Cemetery>; reuse terms are not stated and remain flagged for rights review.
+- `roseberry-historic-site.jpg` / `roseberry-historic-site-case-file.jpg` — exact Roseberry Historic Site barn reference. Source: <https://www.historicroseberry.org/pages/Townsite.php>; reuse terms are not stated and remain flagged for rights review.
+
+The case-file treatments are presentation derivatives of the exact source
+photographs, not documentary photographs owned by TPI. Idaho sources with
+unstated reuse terms remain explicitly flagged for permission/reuse review
+before broader redistribution. The case files do not direct members to
+trespass or bypass public, guest, guided, or limited-hours access rules.

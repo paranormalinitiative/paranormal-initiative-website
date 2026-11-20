@@ -922,5 +922,125 @@ window.TPI_LEGACY_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/hilton-hawaiian-village-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:Hilton_Hawaiian_Village_from_sea,_Rainbow_tower_-_panoramio.jpg',
     credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'id-boise-oldpen': {
+    image: 'case-file-photos/old-idaho-penitentiary.jpg',
+    caseFileImage: 'case-file-photos/old-idaho-penitentiary-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Old_Idaho_State_Penitentiary.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'id-boise-egyptian': {
+    image: 'case-file-photos/egyptian-theatre.jpg',
+    caseFileImage: 'case-file-photos/egyptian-theatre-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Ada_Theater_Boise.jpg',
+    credit: 'Duane Garrett / Historic American Buildings Survey — public domain'
+  },
+  'id-boise-idanha': {
+    image: 'case-file-photos/idanha-hotel.jpg',
+    caseFileImage: 'case-file-photos/idanha-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Idanha_Hotel_(Boise,_Idaho)_on_August_4,_2013.jpg',
+    credit: 'Willowcast — CC BY-SA 3.0'
+  },
+  'id-boise-capitol': {
+    image: 'case-file-photos/idaho-state-capitol.jpg',
+    caseFileImage: 'case-file-photos/idaho-state-capitol-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Idaho_Capitol_Building.JPG',
+    credit: 'JSquish — CC BY-SA 3.0'
+  },
+  'id-boise-morrishill': {
+    image: 'case-file-photos/morris-hill-cemetery.jpg',
+    caseFileImage: 'case-file-photos/morris-hill-cemetery-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Morris_Hill_Cemetery_Mausoleum_(6).jpg',
+    credit: 'Tamanoeconomico — CC BY-SA 4.0'
+  },
+  'id-idahocity-pioneer': {
+    image: 'case-file-photos/idaho-city-pioneer-cemetery.jpg',
+    caseFileImage: 'case-file-photos/idaho-city-pioneer-cemetery-case-file.jpg',
+    source: 'https://idahocityhistoricalfoundation.org/?page_id=567',
+    credit: 'Idaho City Historical Foundation source image; reuse terms not stated — rights review required'
+  },
+  'id-idahocity-boisebasin': {
+    image: 'case-file-photos/boise-basin-museum.jpg',
+    caseFileImage: 'case-file-photos/boise-basin-museum-case-file.jpg',
+    source: 'https://idahocityhistoricalfoundation.org/?page_id=163',
+    credit: 'Idaho City Historical Foundation source image; reuse terms not stated — rights review required'
+  },
+  'id-silvercity-idahohotel': {
+    image: 'case-file-photos/silver-city-idaho-hotel.jpg',
+    caseFileImage: 'case-file-photos/silver-city-idaho-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:My_Public_Lands_Road_Trip-_Silver_City_Ghost_Town_in_Idaho_(18532674869).jpg',
+    credit: 'Bureau of Land Management — public domain'
+  },
+  'id-wallace-oasis': {
+    image: 'case-file-photos/oasis-bordello-museum.jpg',
+    caseFileImage: 'case-file-photos/oasis-bordello-museum-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Wallace_ID_-_bordello_museum.jpg',
+    credit: 'Mandy — CC BY 2.0'
+  },
+  'id-wallace-depot': {
+    image: 'case-file-photos/northern-pacific-depot.jpg',
+    caseFileImage: 'case-file-photos/northern-pacific-depot-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Northern_Pacific_Depot_in_Wallace.jpg',
+    credit: 'Wikimedia Commons source image; reuse terms recorded on source page'
+  },
+  'id-wallace-jameson': {
+    image: 'case-file-photos/jameson-saloon.jpg',
+    caseFileImage: 'case-file-photos/jameson-saloon-case-file.jpg',
+    source: 'https://www.lib.uidaho.edu/digital/barstock/items/barstock303.html',
+    credit: 'University of Idaho Library Digital Collections source image; reuse terms not stated — rights review required'
+  },
+  'id-albion-normal': {
+    image: 'case-file-photos/albion-state-normal-school.jpg',
+    caseFileImage: 'case-file-photos/albion-state-normal-school-case-file.jpg',
+    source: 'https://albionidaho.gov/about-albion/',
+    credit: 'City of Albion source image; reuse terms not stated — rights review required'
+  },
+  'id-oakley-howells': {
+    image: 'case-file-photos/howells-opera-house.jpg',
+    caseFileImage: 'case-file-photos/howells-opera-house-case-file.jpg',
+    source: 'https://history.idaho.gov/wp-content/uploads/2018/09/Oakley_80001299.pdf',
+    credit: 'Idaho State Historical Society / Duane Garrett site survey source; reuse terms not stated — rights review required'
+  },
+  'id-lavahotsprings-inn': {
+    image: 'case-file-photos/lava-hot-springs-inn.jpg',
+    caseFileImage: 'case-file-photos/lava-hot-springs-inn-case-file.jpg',
+    source: 'https://www.lavahotspringsinn.com/overview.html',
+    credit: 'Lava Hot Springs Inn official source image; reuse terms not stated — rights review required'
+  },
+  'id-sodasprings-enders': {
+    image: 'case-file-photos/enders-hotel.jpg',
+    caseFileImage: 'case-file-photos/enders-hotel-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:Enders_Hotel_Soda_Springs_Idaho.jpeg',
+    credit: 'Ntsimp — CC0'
+  },
+  'id-blackfoot-statehospital': {
+    image: 'case-file-photos/state-hospital-south-cemetery.jpg',
+    caseFileImage: 'case-file-photos/state-hospital-south-cemetery-case-file.jpg',
+    source: 'https://img1.wsimg.com/blobby/go/7c4463e3-109c-48af-b9be-98e22cdf2116/downloads/state_hospital_south_blackfoot_idaho_history.pdf',
+    credit: 'State Hospital South historical source PDF; reuse terms not stated — rights review required'
+  },
+  'id-hansen-stricker': {
+    image: 'case-file-photos/stricker-ranch-rock-creek-station.jpg',
+    caseFileImage: 'case-file-photos/stricker-ranch-rock-creek-station-case-file.jpg',
+    source: 'https://visitsouthidaho.com/adventure/stricker-rock-creek-station/',
+    credit: 'Visit Southern Idaho source image; reuse terms not stated — rights review required'
+  },
+  'id-cataldo-oldmission': {
+    image: 'case-file-photos/cataldo-mission.jpg',
+    caseFileImage: 'case-file-photos/cataldo-mission-case-file.jpg',
+    source: 'https://commons.wikimedia.org/wiki/File:1975-08-30,_Cataldo_Mission,_front_facade,_taken_from_the_northwest.jpg',
+    credit: 'National Park Service, U.S. Department of the Interior — public domain'
+  },
+  'id-pocatello-mountainview': {
+    image: 'case-file-photos/mountain-view-cemetery.jpg',
+    caseFileImage: 'case-file-photos/mountain-view-cemetery-case-file.jpg',
+    source: 'https://pocatello.gov/172/Mountain-View-Cemetery',
+    credit: 'City of Pocatello official source image; reuse terms not stated — rights review required'
+  },
+  'id-roseberry-historic': {
+    image: 'case-file-photos/roseberry-historic-site.jpg',
+    caseFileImage: 'case-file-photos/roseberry-historic-site-case-file.jpg',
+    source: 'https://www.historicroseberry.org/pages/Townsite.php',
+    credit: 'Historic Roseberry official source image; reuse terms not stated — rights review required'
   }
 };

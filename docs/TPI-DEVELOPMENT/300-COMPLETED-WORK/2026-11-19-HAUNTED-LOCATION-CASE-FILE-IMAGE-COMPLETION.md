@@ -106,6 +106,45 @@ StudioFlow source or shared runtime changed.
 - Production smoke: **10/10 passed**
 - Final release state: **DEPLOYED_AND_VERIFIED**
 
+## Idaho legacy batch — completed in this continuation
+
+Idaho contains 20 directory entries. All 20 now have an exact local source
+photograph, a matching TPI case-file treatment, and a source/credit record:
+
+- Old Idaho Penitentiary
+- Egyptian Theatre
+- Idanha Hotel
+- Idaho State Capitol
+- Morris Hill Cemetery
+- Boot Hill / Idaho City Pioneer Cemetery
+- Boise Basin Museum
+- Idaho Hotel in Silver City
+- Oasis Bordello Museum
+- Northern Pacific Depot Railroad Museum
+- Jameson Saloon
+- Albion State Normal School
+- Howells Opera House
+- Lava Hot Springs Inn
+- Enders Hotel
+- State Hospital South Cemetery
+- Stricker Ranch & Rock Creek Station
+- Cataldo Mission (Mission of the Sacred Heart)
+- Mountain View Cemetery
+- Roseberry Historic Site
+
+The treatments use **The Paranormal Initiative** branding and a **IDAHO** state
+badge. TPI is not expanded or labeled as “Paranormal Investigations.” Each
+treatment preserves the exact source subject and is presented as a stylized
+case-file image rather than an unedited documentary photograph. The State
+Hospital South Cemetery treatment keeps the actual cemetery sign and grounds
+while removing an unrelated presenter from the source frame.
+
+Idaho sources with unstated reuse terms remain explicitly flagged for
+permission/reuse review in `legacy-case-file-sources.js` and the photo README.
+Those source photographs are not represented as TPI-owned. Public, guest,
+guided, and limited-hours access notes remain authoritative; no case file
+directs members to trespass or bypass site rules.
+
 ## Source rule
 
 An exact location photograph is added only when the source identifies the
