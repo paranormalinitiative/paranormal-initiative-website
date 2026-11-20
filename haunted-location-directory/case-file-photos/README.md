@@ -285,9 +285,10 @@ treatments; no generic or AI-invented landmark substitute is used.
 - `wadsworth-atheneum.jpg` / `wadsworth-atheneum-case-file.jpg` — Wadsworth Atheneum Museum of Art, Hartford; Daderot, CC BY-SA 3.0/GFDL. Source: <https://commons.wikimedia.org/wiki/File:Wadsworth_Atheneum%2C_Hartford%2C_Connecticut.JPG>
 - `griswold-inn.jpg` / `griswold-inn-case-file.jpg` — The Griswold Inn, Essex; Joe Mabel, CC BY-SA 2.0/3.0/GFDL. Source: <https://commons.wikimedia.org/wiki/File:Essex_CT_Griswold_Inn_01_(9363065815).jpg>
 
-Dudleytown remains intentionally pending. It is private property, and no exact
-source photograph with compatible reuse terms was confirmed. No different
-Dudleytown-named place or generic substitute is used.
+The Cornwall Dudleytown entry was removed from the directory because its
+restricted, disputed folklore record did not meet the current haunted-location
+catalog standard. The separately named Dudleytown Historic District in Guilford
+is not substituted into this directory entry.
 
 ### Arkansas legacy batch
 

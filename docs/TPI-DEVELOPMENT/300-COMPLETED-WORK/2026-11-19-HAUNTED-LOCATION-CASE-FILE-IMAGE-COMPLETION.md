@@ -6,7 +6,7 @@ Status: **DEPLOYED AND LIVE VERIFIED.**
 ## Scope
 
 This continuation completes the exact-location image pass for the 25 newer
-state pages. The directory still contains all 50 state pages and 563 total
+state pages. The directory still contains all 50 state pages and 562 total
 location entries. Of the 100 newer shared-rendered starter entries, 94 now
 have an exact, locally stored source photograph and a separate TPI archival
 case-file treatment.
@@ -272,9 +272,9 @@ The owner supplied exact source photographs for Central City Cemetery and Third
 Bridge. All 22 Colorado entries now have exact source photographs and matching
 TPI case-file treatments; no generic or AI-invented landmark substitute is used.
 
-## Connecticut legacy batch — 13 completed, 1 pending
+## Connecticut legacy batch — 13 completed
 
-Connecticut contains 14 directory entries. Thirteen now have an exact source
+Connecticut contains 13 directory entries. All 13 have an exact source
 photograph, a matching TPI case-file treatment, local asset copies, and a
 source/credit record:
 
@@ -297,7 +297,7 @@ state badge. TPI is not expanded or labeled as “Paranormal Investigations.”
 Each treatment preserves the exact source subject and is presented as a
 stylized case-file image, not an unedited documentary photograph.
 
-Dudleytown remains visibly **Exact case-file photograph pending**. It is private
-property, and no exact source photograph with compatible reuse terms was
-confirmed during this pass. No different Dudleytown-named place, generic
-landmark, or AI-invented substitute is used.
+The Cornwall Dudleytown entry was removed from the directory because its
+restricted, disputed folklore record did not meet the current haunted-location
+catalog standard. The separately named Dudleytown Historic District in Guilford
+was not substituted into the directory.
