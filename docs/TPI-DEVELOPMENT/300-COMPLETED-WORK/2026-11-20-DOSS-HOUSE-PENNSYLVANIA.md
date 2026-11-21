@@ -59,13 +59,17 @@ states remain unchanged.
 - Local JavaScript syntax check: PASS.
 - Haunted-location directory verification: PASS — 50 state pages, 100 new
   starter entries, no placeholders.
-- Source commit: `db14c5d1c0cc406e65d45cc96d6f3e1125a0d1fd`.
-- Release ID: `rel-db14c5d1c0cc-69130ccc91c9`.
+- Initial directory source commit: `db14c5d1c0cc406e65d45cc96d6f3e1125a0d1fd`.
+- Final wording source commit: `92b8e8959190fafd7e592e484d512ed9b0886a59`.
+- Final release ID: `rel-92b8e8959190-3a4a24ef9a95`.
 - Release profile: website-only; StudioFlow and Nova Editorial Workspace
   remained under the protected maintenance lock.
-- Production Worker version: `276beec7-c05b-4314-a6e9-fb3d483929b2`.
-- Rollback reference: `1cc1c6af-3ee8-4c48-b7b9-9ad79eb308a5`.
+- Production Worker version: `59f60efc-09a4-4ed7-8cdd-264b5805a3af`.
+- Rollback reference: `276beec7-c05b-4314-a6e9-fb3d483929b2`.
 - Live anonymous production smoke: PASS — 10/10.
 - Live Pennsylvania verification: PASS — page, supplement, source map, exact
   reference image, and TPI case-file treatment all returned HTTP 200; the
   runtime reported five Pennsylvania locations including The Doss House.
+- Live wording verification: PASS — the requested folklore/testimony sentence
+  is absent, and the directory now leaves the determination to visitors and
+  investigators while retaining access, safety, and permission requirements.
