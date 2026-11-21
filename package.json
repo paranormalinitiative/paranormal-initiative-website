@@ -58,6 +58,8 @@
     "verify:haunted-location-submissions": "node scripts/qa/tpi-haunted-location-submissions.mjs",
     "verify:haunted-location-directory": "node scripts/qa/tpi-haunted-location-directory.mjs",
     "verify:haunted-location-map": "node scripts/qa/tpi-haunted-location-map.mjs",
+    "verify:community-rules": "node scripts/verify/tpi-community-rules.mjs",
+    "verify:community-rules-firefox": "node scripts/verify/tpi-community-rules-firefox.mjs",
     "verify:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs --check",
     "update:markdown-reference": "node scripts/verify/generate-markdown-reference.mjs",
     "verify:leadership-distinctions": "node scripts/verify/tpi-governance-004-leadership-distinctions.mjs",

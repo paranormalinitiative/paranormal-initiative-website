@@ -2523,6 +2523,10 @@
         setMemberRegisterStatus("Passwords do not match.", true);
         return;
       }
+      if (!memberRegisterForm.querySelector("input[name='communityRulesAccepted']")?.checked) {
+        setMemberRegisterStatus("Please read and agree to the Community Rules before creating your account.", true);
+        return;
+      }
 
       // Mobile taps can arrive twice while a slow network request is still in
       // flight. Lock the actual submit control immediately so the first
@@ -2548,7 +2552,8 @@
             displayName,
             email,
             title: "Member",
-            commentSignatureEnabled: data.get("commentSignature") === "on"
+            commentSignatureEnabled: data.get("commentSignature") === "on",
+            communityRulesVersion: window.TPICommunityRules?.version || "2026-11-21"
           });
           if (!registration?.signedIn) throw new Error("Account was created, but the sign-in session was not ready. Use Member Login above.");
           setMemberRegisterStatus("Account created. Opening Member Home…", false);
@@ -2582,6 +2587,7 @@
         title: "Member",
         role: "member",
         commentSignatureEnabled: data.get("commentSignature") === "on",
+        communityRulesVersion: window.TPICommunityRules?.version || "2026-11-21",
         active: true
       });
       saveUsers(users);
@@ -2653,6 +2659,10 @@
       setStatus("Passwords do not match.", true);
       return;
     }
+    if (!registerForm.querySelector("input[name='communityRulesAccepted']")?.checked) {
+      setStatus("Please read and agree to the Community Rules before creating your contributor login.", true);
+      return;
+    }
     if (await cloudflareReady()) {
       try {
         await window.TPIApi.registerContributor({
@@ -2666,7 +2676,8 @@
           affiliation: String(data.get("affiliation") || "").trim(),
           organization: String(data.get("organization") || "").trim(),
           website: String(data.get("website") || "").trim(),
-          commentSignatureEnabled: data.get("commentSignature") === "on"
+          commentSignatureEnabled: data.get("commentSignature") === "on",
+          communityRulesVersion: window.TPICommunityRules?.version || "2026-11-21"
         });
         setStatus("Contributor login created. Go to Member Login and sign in.", false);
         window.setTimeout(() => {
@@ -2701,6 +2712,7 @@
       organization: String(data.get("organization") || "").trim(),
       website: String(data.get("website") || "").trim(),
       commentSignatureEnabled: data.get("commentSignature") === "on",
+      communityRulesVersion: window.TPICommunityRules?.version || "2026-11-21",
       active: true
     });
     invite.used = true;

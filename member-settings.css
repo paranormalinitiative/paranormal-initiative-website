@@ -16,6 +16,15 @@ body.member-mode .settings-main-inner { max-width: 1440px; }
 .tpi-settings .settings-nav-group a:hover, .tpi-settings .settings-nav-group a[aria-current=page] { background: var(--accent-muted); border-color: var(--accent-border); color: var(--text-primary); }
 .tpi-settings .settings-content, .tpi-settings [data-settings-panel] { min-width: 0; }
 .tpi-settings [data-settings-panel] > * + * { margin-top: 18px; }
+.tpi-settings .community-rules-content { line-height: 1.65; }
+.tpi-settings .community-rules-content .community-rule { margin: 26px 0; padding-bottom: 22px; border-bottom: 1px solid var(--border-subtle); }
+.tpi-settings .community-rules-content .community-rule:last-child { border-bottom: 0; }
+.tpi-settings .community-rules-content .community-rule h3 { margin-bottom: 12px; }
+.tpi-settings .community-rules-content .community-rule p,
+.tpi-settings .community-rules-content .community-rule li { color: var(--text-secondary); line-height: 1.65; }
+.tpi-settings .community-rules-content .community-rules-callout,
+.tpi-settings .community-rules-content .community-rules-agreement,
+.tpi-settings .community-rules-content .community-rules-promise { margin: 0 0 24px; padding: 18px 20px; border: 1px solid var(--accent-border); border-radius: var(--radius-md); background: color-mix(in srgb, var(--accent) 6%, transparent); }
 .tpi-settings .settings-card, .tpi-settings .editor-access-card { width: 100%; box-sizing: border-box; padding: 26px; border-radius: var(--radius-md); border: 1px solid var(--border-default); background: var(--bg-card); box-shadow: var(--shadow-sm); min-width: 0; }
 .tpi-settings .settings-card h2 { margin: 4px 0 12px; }
 .tpi-settings .settings-card h3 { margin: 0 0 12px; }

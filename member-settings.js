@@ -9,7 +9,7 @@
     ['Privacy & Safety', [['privacy-safety','Privacy & Safety'],['blocked-users','Blocked Users']]],
     ['Creator & Content', [['content-ownership','Content Ownership & Publishing']]],
     ['Preferences', [['personalization','Personalization'],['notifications','Notifications'],['content-feed','Content & Feed']]],
-    ['Data & Support', [['data','Data & Account Files'],['help-support','Help & Support'],['legal','Legal & Policies']]],
+    ['Data & Support', [['data','Data & Account Files'],['help-support','Help & Support'],['community-rules','Community Rules'],['legal','Legal & Policies']]],
     ['Monetization', [['payments','Payments']]]
   ];
   const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -68,7 +68,11 @@
     'help-support': intro('Help & Support','Find account help, privacy and safety tools, data requests, technical support, and policy information.')+
       card('Contact support','<p>Our existing contact page remains the working support path. The migrated in-app form is not connected yet. Never send a password or sensitive payment information.</p>'+contact+'<fieldset disabled><label>Topic<select><option>Account Help</option><option>Privacy & Safety</option><option>Report a Problem</option><option>Data / Delete Account</option><option>Payments</option><option>Bug Report</option><option>Legal / Policy</option><option>Other</option></select></label><label>Message<textarea rows="4" maxlength="5000" placeholder="In-app support form not connected yet"></textarea></label><button type="button">Send Message · Not connected</button></fieldset>')+
       card('Related settings','<div class="settings-actions">'+[['account','Account & Security'],['privacy-safety','Privacy & Safety'],['data','Data & Account Files'],['legal','Legal & Policies'],['payments','Payments']].map(([key,title])=>link(key,title)).join('')+'</div>'),
-    legal: intro('Legal & Policies','All eight policy areas from the reference are organized here. Reference legal documents are not adopted as The Paranormal Initiative’s policies.')+
+    'community-rules': intro('Community Rules & Code of Conduct','The official standards for members, creators, contributors, moderators, administrators, and Advisory Board members. The same rules apply to everyone, regardless of title, badge, medallion, or position.')+
+      card('Official Community Rules', `<div class="community-rules-content">${window.TPICommunityRules?.fullHtml || '<p>The Community Rules are temporarily unavailable. Refresh Settings and try again.</p>'}</div>`)+
+      card('Member-facing version','<p>Use the shorter version when inviting someone to review the rules before joining or participating.</p><div class="settings-actions"><a href="community-rules.html">Open the short Community Rules</a></div>'),
+    legal: intro('Legal & Policies','Our policy areas are organized here. The official TPI Community Rules & Code of Conduct is available as a complete, approved standard.')+
+      card('Community Rules & Code of Conduct','<p>The Community Rules define respectful conduct, research integrity, privacy, responsible exploration, reporting, moderation, and enforcement.</p><div class="settings-actions">'+link('community-rules','Open Community Rules')+'</div>')+
       grid(policies.map(([key,title,desc])=>card(title,`<p>${desc}</p><p><span class="settings-status">TPI wording pending</span></p>${link('legal/'+key,'Review policy area')}`)).join('')),
     payments: intro('Payments','Payments are not enabled. This section preserves the reference’s upcoming monetization areas for later discussion.')+
       grid(['Promoted Posts','Sponsored Posts','Business & Creator Tools','Billing History'].map(title=>card(title,'<p><span class="settings-status">Coming soon</span></p><p>No charges, new sponsored feed entries, billing, or promotion tools are enabled.</p>')).join('')),

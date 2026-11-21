@@ -1145,6 +1145,7 @@ async function handleMe(request, env) {
 
 async function handleMemberRegister(request, env, context = null) {
   const data = await readJson(request);
+  const communityRulesVersion = clean(data.communityRulesVersion);
   const username = clean(data.username);
   const password = String(data.password || "");
   const displayName = clean(data.displayName || username);
@@ -1155,6 +1156,7 @@ async function handleMemberRegister(request, env, context = null) {
   if (!isValidUsername(username)) return json({ error: "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols." }, 400);
   if (!email || !email.includes("@")) return json({ error: "A valid email address is required." }, 400);
   if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
+  if (!communityRulesVersion) return json({ error: "You must agree to the Community Rules before creating an account." }, 400);
   if (await getUserByUsername(env, username)) return json({ error: "That username already exists." }, 409);
   if (await getUserByEmail(env, email)) return json({ error: "That email is already connected to an account." }, 409);
 
@@ -1181,6 +1183,8 @@ async function handleMemberRegister(request, env, context = null) {
     bio: clean(data.bio).slice(0, 175),
     photo_url: clean(data.photoUrl),
     comment_signature_enabled: data.commentSignatureEnabled === false ? 0 : 1,
+    community_rules_version: communityRulesVersion,
+    community_rules_accepted_at: new Date().toISOString(),
     active: 1,
     created_at: new Date().toISOString(),
   };
@@ -1195,9 +1199,9 @@ async function handleMemberRegister(request, env, context = null) {
         INSERT INTO contributors (
           id, username, password_hash, display_name, title, role, correspondence,
           contact_name, phone, address_line1, address_line2, city, state, postal_code,
-          affiliation, organization, website, bio, photo_url, comment_signature_enabled, active
+          affiliation, organization, website, bio, photo_url, comment_signature_enabled, community_rules_version, community_rules_accepted_at, active
         )
-        VALUES (?, ?, ?, ?, ?, 'member', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        VALUES (?, ?, ?, ?, ?, 'member', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
       `).bind(
         id,
         username,
@@ -1217,7 +1221,9 @@ async function handleMemberRegister(request, env, context = null) {
         profile.website,
         profile.bio,
         profile.photo_url,
-        profile.comment_signature_enabled
+        profile.comment_signature_enabled,
+        profile.community_rules_version,
+        profile.community_rules_accepted_at
       ),
       env.TPI_DB.prepare("INSERT INTO sessions (token, contributor_id, expires_at) VALUES (?, ?, ?)")
         .bind(sessionToken, id, sessionExpires)
@@ -4846,11 +4852,13 @@ async function handleCheckInvite(request, env) {
 
 async function handleRegister(request, env) {
   const data = await readJson(request);
+  const communityRulesVersion = clean(data.communityRulesVersion);
   const invite = await getOpenInvite(env, clean(data.inviteCode));
   if (!invite) return json({ error: "Invite code was not found or has already been used." }, 404);
 
   const username = clean(data.username);
   const password = String(data.password || "");
+  if (!communityRulesVersion) return json({ error: "You must agree to the Community Rules before creating an account." }, 400);
   if (!username || !password || !clean(data.displayName)) {
     return json({ error: "Display name, username, and password are required." }, 400);
   }
@@ -4871,9 +4879,9 @@ async function handleRegister(request, env) {
       INSERT INTO contributors (
         id, username, password_hash, display_name, title, role, correspondence,
         contact_name, phone, address_line1, address_line2, city, state, postal_code,
-        affiliation, organization, website, bio, photo_url, comment_signature_enabled, active
+        affiliation, organization, website, bio, photo_url, comment_signature_enabled, community_rules_version, community_rules_accepted_at, active
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `).bind(
       id,
       username,
@@ -4894,7 +4902,9 @@ async function handleRegister(request, env) {
       clean(data.website),
       clean(data.bio).slice(0, 175),
       clean(data.photoUrl),
-      data.commentSignatureEnabled === false ? 0 : 1
+      data.commentSignatureEnabled === false ? 0 : 1,
+      communityRulesVersion,
+      new Date().toISOString()
     ),
     env.TPI_DB.prepare("UPDATE invite_codes SET used = 1, used_by = ?, used_at = CURRENT_TIMESTAMP WHERE code = ?").bind(username, invite.code)
   ]);
