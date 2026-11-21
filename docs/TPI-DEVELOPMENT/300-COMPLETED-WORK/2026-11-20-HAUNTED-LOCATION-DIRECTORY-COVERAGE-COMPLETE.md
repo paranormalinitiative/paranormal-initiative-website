@@ -66,3 +66,15 @@ node scripts/qa/tpi-haunted-location-directory.mjs
 
 No StudioFlow, Nova Editorial Workspace, authentication, administration, or
 member data was changed by this directory work.
+
+## Release evidence
+
+The guarded release completed successfully on 2026-11-21.
+
+- Release ID: `rel-a70d8de10283-ea655f622bca`
+- Source commit: `a70d8de10283ce836b3547acb5aca5847b326236`
+- Release profile: website
+- Certification status: `CERTIFIED` with 10 gates passed
+- Deployed Worker version: `ce07db63-5daf-40c7-886f-148e51384f9f`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Anonymous production smoke: 10/10 passed
