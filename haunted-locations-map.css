@@ -62,8 +62,8 @@
 
 .haunted-usa-map-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 250px;
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 14px;
     align-items: stretch;
 }
 
@@ -82,7 +82,7 @@
     display: block;
     width: 100%;
     height: auto;
-    min-height: 360px;
+    min-height: 430px;
 }
 
 .haunted-usa-map-state {
@@ -197,6 +197,6 @@
     }
 
     #haunted-usa-map {
-        min-height: 260px;
+        min-height: 280px;
     }
 }

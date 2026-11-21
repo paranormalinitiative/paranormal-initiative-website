@@ -6,7 +6,8 @@
   const selectedName = document.getElementById('haunted-usa-selected-name');
   const selectedCount = document.getElementById('haunted-usa-selected-count');
   const selectedLink = document.getElementById('haunted-usa-selected-link');
-  const stateCards = [...document.querySelectorAll('#state-directory a[href*="haunted-location-directory/"]')];
+  const stateDirectoryData = document.getElementById('state-directory-data');
+  const stateCards = [...(stateDirectoryData?.content.querySelectorAll('a[href*="haunted-location-directory/"]') || [])];
 
   if (!mapRoot || !stateLayer || !stateSelect || stateCards.length === 0) return;
 
@@ -52,7 +53,7 @@
       selectedName.textContent = 'Choose a state';
       selectedCount.textContent = 'Explore the map to see its current directory total.';
       selectedLink.href = 'haunted-location-directory/index.html';
-      selectedLink.setAttribute('aria-disabled', 'true');
+      selectedLink.removeAttribute('aria-disabled');
       return;
     }
     stateSelect.value = state.slug;

@@ -30,12 +30,13 @@ check("Haunted Locations includes the TPI map script", page.includes('src="haunt
 check("map has an accessible Haunted USA Locations heading", page.includes('id="haunted-usa-map-title">Haunted USA Locations</h2>'));
 check("map has a state selector and live status region", page.includes('id="haunted-usa-state-select"') && page.includes('id="haunted-usa-map-status"'));
 check("map has a selected-state directory link", page.includes('id="haunted-usa-selected-link"'));
-check("all 50 state cards remain available below the map", stateCards.length === 50, `found ${stateCards.length}`);
+check("all 50 state records remain available to the map", stateCards.length === 50, `found ${stateCards.length}`);
+check("duplicate state grid is retained only as non-rendered map data", page.includes('<template id="state-directory-data">') && !page.includes('<section id="state-directory"'));
 check("map loads local state-boundary geometry", mapAssets.length > 0 && mapAssets.every(asset => page.includes(asset)), `found ${mapAssets.length} map assets`);
 check("map geometry covers all 50 state codes", stateCodeSet.size === 50 && [...stateCodeSet].every(code => mapGroupIds.has(code)), `found ${mapGroupIds.size} geometry groups`);
 check("map geometry includes actual state boundary paths", mapAssets.every(asset => readFileSync(resolve(root, asset), "utf8").includes('class="boundary"')));
 check("map renders keyboard-accessible state controls", script.includes("setAttribute('role', 'button')") && script.includes("setAttribute('tabindex', '0')") && script.includes("event.key !== 'Enter'"));
-check("map derives displayed totals from the unified State Directory cards", script.includes("#state-directory a[href*="));
+check("map derives displayed totals from the unified state data template", script.includes("state-directory-data") && script.includes("stateCards"));
 check("map credits its boundary geometry source", page.includes("deytah/svg-us-map") && page.includes("CC BY-SA 3.0"));
 check("map has responsive layout rules", style.includes("@media (max-width: 900px)") && style.includes("@media (max-width: 680px)"));
 check("legacy split directory headings are absent", !page.includes("Complete State Directory") && !page.includes("New State Research Leads"));
