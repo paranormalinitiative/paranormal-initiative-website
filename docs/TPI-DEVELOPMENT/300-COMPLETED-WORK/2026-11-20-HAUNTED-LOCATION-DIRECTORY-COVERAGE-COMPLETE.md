@@ -87,3 +87,14 @@ The guarded release completed successfully on 2026-11-21.
 - Deployed Worker version: `ce07db63-5daf-40c7-886f-148e51384f9f`
 - Live result: `DEPLOYED_AND_VERIFIED`
 - Anonymous production smoke: 10/10 passed
+
+The unified-display correction was released and verified on 2026-11-21.
+
+- Release ID: `rel-5cc839c80869-2d63d65a021d`
+- Source commit: `5cc839c808693ed859d4cbe60b3b803038e08e3d`
+- Release profile: website
+- Certification status: `CERTIFIED` with 10 gates passed
+- Deployed Worker version: `f85c8f58-4e17-4957-84c0-bd54cb20c7e5`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Live directory checks: one `State Directory` heading, 50 state cards, no
+  legacy split headings, and the 775-entry status present on both public URLs
