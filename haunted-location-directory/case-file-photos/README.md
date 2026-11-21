@@ -758,3 +758,11 @@ rules.
 The Louisiana batch is source-checked and locally mapped: **46/46 location
 IDs**, **46/46 case-file images**, and **92/92 local image references** are
 present. Production release and live HTTP/image smoke checks remain pending.
+
+### Pennsylvania owner-authorized addition — The Doss House
+
+- `doss-house-loretto.jpg` — owner-provided exact reference photograph, used with permission from Shawnna Rigsby / The Doss House.
+- `doss-house-loretto-case-file.png` — TPI archival case-file treatment derived from the exact owner-provided reference. It is presentation artwork, not a documentary photograph.
+- Official reference: [The Doss House history](https://www.thedosshouse-pa.com/about-the-doss-house).
+
+This permission is specific to the supplied photograph and this TPI directory use. It is not a general reuse license for other photographs or materials from the official site.

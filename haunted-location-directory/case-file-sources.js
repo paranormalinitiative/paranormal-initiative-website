@@ -682,5 +682,11 @@ window.TPI_CASE_FILE_SOURCES = {
     caseFileImage: 'case-file-photos/james-hotel-case-file.jpg',
     source: 'https://commons.wikimedia.org/wiki/File:St._James_Hotel_in_Cimarron,_NM_%2838592df46522437b996453d55b241784%29.JPG',
     credit: 'National Trails Office / U.S. National Park Service — public domain'
+  },
+  'Pennsylvania::The Doss House': {
+    image: 'case-file-photos/doss-house-loretto.jpg',
+    caseFileImage: 'case-file-photos/doss-house-loretto-case-file.png',
+    source: 'https://www.thedosshouse-pa.com/about-the-doss-house',
+    credit: 'Owner-provided photograph, published with permission from Shawnna Rigsby / The Doss House'
   }
 };
