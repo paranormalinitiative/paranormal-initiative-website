@@ -126,5 +126,32 @@ The interactive map release was fully certified and deployed on 2026-11-21.
 - Deployed Worker version: `9eca74db-6265-4303-857c-17f5a7ba3e93`
 - Live result: `DEPLOYED_AND_VERIFIED`
 - Live anonymous production smoke: 10/10 passed
-- Live asset check: map heading present, 50 state cards, 50 coordinate
-  definitions, one map script, no legacy split headings, and 775 total entries
+- Live asset check: map heading present, 50 state cards, 50 state-boundary
+  controls, one map script, no legacy split headings, and 775 total entries
+
+## Boundary map correction
+
+The first interactive-map release used a stylized silhouette with floating
+state abbreviation markers. That did not match the requested reference map.
+On 2026-11-21, it was replaced with real state-boundary geometry. The state
+shapes themselves are now the interactive controls: hover, focus, and
+selection highlight the boundary; the dropdown and directory link remain
+available; and Alaska and Hawaii remain part of the same map asset set.
+The local geometry is attributed in the page to `deytah/svg-us-map` under
+CC BY-SA 3.0. Michigan is included through the companion local geometry
+fragment because its source group contains multiline geometry.
+
+Verification included local and production Firefox checks confirming 50
+rendered state controls, Pennsylvania selection, the Pennsylvania directory
+link, and the live geometry assets returning HTTP 200.
+
+The corrected boundary-map release was deployed on 2026-11-21.
+
+- Release ID: `rel-ab6600e50752-6d73309fa5ce`
+- Source commit: `ab6600e50752403fce650d11acf7c6010e9cda98`
+- Release profile: website with Tier 1 certification because verification
+  tooling changed
+- Certification status: `CERTIFIED` with 10 gates passed
+- Deployed Worker version: `14157112-a44c-4067-a6bd-bcd38b0008c0`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Live anonymous production smoke: 10/10 passed
