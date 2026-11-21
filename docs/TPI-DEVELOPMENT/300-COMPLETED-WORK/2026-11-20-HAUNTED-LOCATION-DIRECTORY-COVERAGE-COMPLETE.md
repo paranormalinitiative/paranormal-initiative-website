@@ -127,6 +127,29 @@ The interactive map release was fully certified and deployed on 2026-11-21.
 - Live result: `DEPLOYED_AND_VERIFIED`
 - Live anonymous production smoke: 10/10 passed
 
+## Map frame and section spacing
+
+On 2026-11-21, the map canvas received 14px of internal padding so the
+Northeast state callouts, including Massachusetts, Rhode Island, and
+Connecticut, no longer touch the frame. The complete map-and-selected-state
+section now also has 32px of separation before the lower information cards.
+The attribution remains outside the map's padded drawing area.
+
+Local verification passed the focused map and directory checks, and live
+Firefox measured 50 rendered state controls, 14px canvas padding, a 32px gap
+before the lower card grid, no visible duplicate directory heading, and
+Pennsylvania selection routing to its state page.
+
+The spacing correction was deployed on 2026-11-21.
+
+- Release ID: `rel-54ddc5ca7e13-358c01be03b4`
+- Source commit: `54ddc5ca7e13c2b2871c82745f36622474d07526`
+- Release profile: website
+- Certification status: `CERTIFIED` with 10 gates passed
+- Deployed Worker version: `c2914267-03b4-4b6f-807a-4415eb2ec0d0`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Live anonymous production smoke: 10/10 passed
+
 ## Map-focused page layout
 
 On 2026-11-21, the Haunted Locations page was simplified so the interactive
