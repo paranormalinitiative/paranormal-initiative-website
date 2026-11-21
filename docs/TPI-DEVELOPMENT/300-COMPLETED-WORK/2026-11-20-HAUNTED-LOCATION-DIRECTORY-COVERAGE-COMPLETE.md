@@ -11,7 +11,9 @@ Every state that was below the 12-location minimum was expanded to at least
 preserved rather than trimmed.
 
 The public directory index now records 775 location entries. The former New
-State Research Leads are presented in the completed State Directory section.
+State Research Leads are now merged into the same State Directory display, so
+each state appears once with one current entry total rather than being split
+between two headings or two sets of counts.
 The expanded states are:
 
 - Alaska, Delaware, Hawaii, and West Virginia: expanded to 12 entries.
@@ -66,6 +68,13 @@ node scripts/qa/tpi-haunted-location-directory.mjs
 
 No StudioFlow, Nova Editorial Workspace, authentication, administration, or
 member data was changed by this directory work.
+
+## Directory display correction
+
+On 2026-11-21, the public Haunted Locations page and the directory index were
+updated to use one `State Directory` heading and one combined state-card grid.
+The state totals remain the current verified totals above, and the directory
+regression gate continues to enforce 50 state pages and 775 indexed entries.
 
 ## Release evidence
 
