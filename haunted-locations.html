@@ -75,7 +75,7 @@
     </div>
     <div class="haunted-usa-map-layout">
         <div class="haunted-usa-map-canvas" aria-label="Interactive map of haunted locations across the United States">
-            <svg id="haunted-usa-map" viewBox="0 0 1000 650" role="img" aria-labelledby="haunted-usa-map-title haunted-usa-map-description">
+            <svg id="haunted-usa-map" data-map-assets="haunted-locations-us-map.svg haunted-locations-us-map-mi.svg" viewBox="0 0 961.84375 582.625" role="img" aria-labelledby="haunted-usa-map-title haunted-usa-map-description">
                 <desc id="haunted-usa-map-description">Select a state to view its current number of directory locations and open its state directory.</desc>
                 <defs>
                     <linearGradient id="haunted-usa-map-fill" x1="0" y1="0" x2="1" y2="1">
@@ -87,18 +87,9 @@
                         <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
                     </filter>
                 </defs>
-                <path class="haunted-usa-map-silhouette" d="M105 192 142 156 179 136 224 151 271 139 318 160 365 151 415 161 465 159 511 171 559 163 599 176 644 174 681 164 718 181 756 193 793 187 830 202 868 224 889 251 875 276 856 293 855 326 840 348 853 375 837 406 819 433 808 466 789 510 768 541 746 520 726 485 714 452 691 432 664 423 634 416 606 421 574 438 540 443 505 456 470 454 436 445 402 433 367 428 337 416 305 409 277 390 248 378 224 358 196 346 172 324 147 297 128 269 115 238Z" />
-                <path class="haunted-usa-map-route" d="M120 214 C260 118 382 188 501 176 S745 183 876 245" />
                 <g id="haunted-usa-map-states" aria-label="States"></g>
-                <g class="haunted-usa-map-insets" aria-hidden="true">
-                    <rect x="80" y="520" width="148" height="92" rx="14" />
-                    <text x="98" y="548">ALASKA</text>
-                    <path d="M102 572 133 550 166 564 194 551 211 576 182 596 145 588 112 600Z" />
-                    <rect x="244" y="520" width="148" height="92" rx="14" />
-                    <text x="262" y="548">HAWAII</text>
-                    <circle cx="278" cy="576" r="5" /><circle cx="303" cy="584" r="5" /><circle cx="331" cy="576" r="5" /><circle cx="359" cy="586" r="5" />
-                </g>
             </svg>
+            <p class="haunted-usa-map-attribution">State-boundary geometry adapted from <a href="https://github.com/deytah/svg-us-map" target="_blank" rel="noopener noreferrer">deytah/svg-us-map</a> under CC BY-SA 3.0.</p>
         </div>
         <aside class="haunted-usa-map-detail" aria-live="polite">
             <p class="portal-kicker">Selected state</p>

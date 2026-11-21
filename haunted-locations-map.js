@@ -10,25 +10,17 @@
 
   if (!mapRoot || !stateLayer || !stateSelect || stateCards.length === 0) return;
 
-  const coordinates = [
-    ['alabama', 'AL', 704, 525], ['alaska', 'AK', 148, 575], ['arizona', 'AZ', 252, 382],
-    ['arkansas', 'AR', 590, 418], ['california', 'CA', 156, 310], ['colorado', 'CO', 384, 345],
-    ['connecticut', 'CT', 914, 320], ['delaware', 'DE', 858, 376], ['florida', 'FL', 794, 574],
-    ['georgia', 'GA', 762, 522], ['hawaii', 'HI', 316, 575], ['idaho', 'ID', 252, 196],
-    ['illinois', 'IL', 652, 330], ['indiana', 'IN', 700, 337], ['iowa', 'IA', 575, 290],
-    ['kansas', 'KS', 500, 370], ['kentucky', 'KY', 694, 399], ['louisiana', 'LA', 596, 495],
-    ['maine', 'ME', 948, 198], ['maryland', 'MD', 840, 367], ['massachusetts', 'MA', 928, 288],
-    ['michigan', 'MI', 701, 236], ['minnesota', 'MN', 558, 194], ['mississippi', 'MS', 652, 500],
-    ['missouri', 'MO', 583, 350], ['montana', 'MT', 346, 160], ['nebraska', 'NE', 481, 307],
-    ['nevada', 'NV', 224, 294], ['new-hampshire', 'NH', 923, 244], ['new-jersey', 'NJ', 873, 345],
-    ['new-mexico', 'NM', 372, 430], ['new-york', 'NY', 858, 267], ['north-carolina', 'NC', 817, 426],
-    ['north-dakota', 'ND', 466, 178], ['ohio', 'OH', 749, 329], ['oklahoma', 'OK', 520, 435],
-    ['oregon', 'OR', 164, 238], ['pennsylvania', 'PA', 821, 319], ['rhode-island', 'RI', 943, 321],
-    ['south-carolina', 'SC', 800, 478], ['south-dakota', 'SD', 470, 245], ['tennessee', 'TN', 679, 455],
-    ['texas', 'TX', 493, 516], ['utah', 'UT', 284, 330], ['vermont', 'VT', 897, 231],
-    ['virginia', 'VA', 803, 382], ['washington', 'WA', 156, 165], ['west-virginia', 'WV', 785, 362],
-    ['wisconsin', 'WI', 650, 230], ['wyoming', 'WY', 350, 255]
-  ];
+  const stateCodes = {
+    alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA', colorado: 'CO',
+    connecticut: 'CT', delaware: 'DE', florida: 'FL', georgia: 'GA', hawaii: 'HI', idaho: 'ID',
+    illinois: 'IL', indiana: 'IN', iowa: 'IA', kansas: 'KS', kentucky: 'KY', louisiana: 'LA',
+    maine: 'ME', maryland: 'MD', massachusetts: 'MA', michigan: 'MI', minnesota: 'MN', mississippi: 'MS',
+    missouri: 'MO', montana: 'MT', nebraska: 'NE', nevada: 'NV', 'new-hampshire': 'NH', 'new-jersey': 'NJ',
+    'new-mexico': 'NM', 'new-york': 'NY', 'north-carolina': 'NC', 'north-dakota': 'ND', ohio: 'OH',
+    oklahoma: 'OK', oregon: 'OR', pennsylvania: 'PA', 'rhode-island': 'RI', 'south-carolina': 'SC',
+    'south-dakota': 'SD', tennessee: 'TN', texas: 'TX', utah: 'UT', vermont: 'VT', virginia: 'VA',
+    washington: 'WA', 'west-virginia': 'WV', wisconsin: 'WI', wyoming: 'WY'
+  };
 
   const cardData = new Map(stateCards.map(card => {
     const match = card.getAttribute('href').match(/([^/]+)\.html$/);
@@ -37,15 +29,14 @@
     return [match?.[1], { name, count }];
   }));
 
-  const states = coordinates.map(([slug, code, x, y]) => ({
-    slug, code, x, y, ...(cardData.get(slug) || { name: slug, count: 'Directory entry' })
+  const states = Object.keys(stateCodes).map(slug => ({
+    slug, code: stateCodes[slug], ...(cardData.get(slug) || { name: slug, count: 'Directory entry' })
   })).filter(state => cardData.has(state.slug));
 
   const esc = value => String(value).replace(/[&<>"]/g, character => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
   }[character]));
 
-  stateLayer.innerHTML = states.map(state => `<g class="haunted-usa-map-state" data-state="${esc(state.slug)}" role="button" tabindex="0" aria-pressed="false" aria-label="${esc(`${state.name}, ${state.count}`)}"><title>${esc(`${state.name} — ${state.count}`)}</title><circle cx="${state.x}" cy="${state.y}" r="14"></circle><text x="${state.x}" y="${state.y}">${state.code}</text></g>`).join('');
   stateSelect.insertAdjacentHTML('beforeend', states.map(state => `<option value="${esc(state.slug)}">${esc(state.name)} — ${esc(state.count)}</option>`).join(''));
 
   const selectState = slug => {
@@ -84,5 +75,41 @@
     selectState(state.dataset.state);
   });
   stateSelect.addEventListener('change', event => selectState(event.target.value));
-  selectState('');
+
+  const mapAssets = (mapRoot.dataset.mapAssets || 'haunted-locations-us-map.svg').split(/\s+/).filter(Boolean);
+  const renderStateMap = async () => {
+    const responses = await Promise.all(mapAssets.map(asset => fetch(asset, { credentials: 'same-origin' })));
+    const failedResponse = responses.find(response => !response.ok);
+    if (failedResponse) throw new Error(`Unable to load state-boundary map (${failedResponse.status})`);
+    const sources = await Promise.all(responses.map(response => response.text()));
+    const parser = new DOMParser();
+    const sourceGroups = new Map();
+    sources.forEach(sourceText => {
+      const source = parser.parseFromString(sourceText, 'image/svg+xml');
+      source.querySelectorAll('g[id]').forEach(group => sourceGroups.set(group.id, group));
+    });
+    const svgNamespace = 'http://www.w3.org/2000/svg';
+    stateLayer.innerHTML = states.map(state => {
+      const sourceGroup = sourceGroups.get(state.code);
+      if (!sourceGroup) return '';
+      const group = sourceGroup.cloneNode(true);
+      group.setAttribute('class', 'haunted-usa-map-state');
+      group.dataset.state = state.slug;
+      group.setAttribute('role', 'button');
+      group.setAttribute('tabindex', '0');
+      group.setAttribute('aria-pressed', 'false');
+      group.setAttribute('aria-label', `${state.name}, ${state.count}`);
+      group.querySelectorAll('text').forEach(label => label.setAttribute('aria-hidden', 'true'));
+      const title = document.createElementNS(svgNamespace, 'title');
+      title.textContent = `${state.name} — ${state.count}`;
+      group.prepend(title);
+      return group.outerHTML;
+    }).join('');
+    selectState('');
+  };
+
+  renderStateMap().catch(error => {
+    status.textContent = 'State-boundary map unavailable. Use the state directory below.';
+    console.error(error);
+  });
 }());
