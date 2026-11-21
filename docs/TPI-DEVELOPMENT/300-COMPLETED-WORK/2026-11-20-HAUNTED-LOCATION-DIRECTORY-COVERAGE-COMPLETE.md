@@ -115,3 +115,16 @@ npm run verify:haunted-location-map
 
 Result: `50 state cards and 50 interactive map states` passed, together with
 the existing 50-page / 775-entry haunted-location directory regression.
+
+The interactive map release was fully certified and deployed on 2026-11-21.
+
+- Release ID: `rel-9f8b8b6de40e-488e6e8b6e63`
+- Source commit: `9f8b8b6de40e27d6a4646c7224c12c980d42e7ab`
+- Release profile: full platform certification because release verification
+  tooling changed
+- Certification status: `CERTIFIED` with 20 gates passed
+- Deployed Worker version: `9eca74db-6265-4303-857c-17f5a7ba3e93`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Live anonymous production smoke: 10/10 passed
+- Live asset check: map heading present, 50 state cards, 50 coordinate
+  definitions, one map script, no legacy split headings, and 775 total entries
