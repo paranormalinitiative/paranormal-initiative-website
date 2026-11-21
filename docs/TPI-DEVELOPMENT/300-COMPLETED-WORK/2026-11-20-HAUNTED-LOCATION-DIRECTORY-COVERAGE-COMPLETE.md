@@ -127,6 +127,23 @@ The interactive map release was fully certified and deployed on 2026-11-21.
 - Live result: `DEPLOYED_AND_VERIFIED`
 - Live anonymous production smoke: 10/10 passed
 
+## Haunted Locations action cleanup
+
+On 2026-11-21, the standalone `View Florida` shortcut was removed from the
+Haunted Locations introduction. The public action row now contains only
+`Open State Directory` and `Submit a Location`; Florida remains available
+through the unified state directory and interactive map.
+
+The cleanup was deployed on 2026-11-21.
+
+- Release ID: `rel-480edd31ef92-640814e94bc3`
+- Source commit: `480edd31ef92c4d8403f8c4782cba27b627ee5e8`
+- Release profile: website
+- Certification status: `CERTIFIED` with 10 gates passed
+- Deployed Worker version: `1a520e9e-42ee-45ca-88a6-e8e70b88ecbd`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Live anonymous production smoke: 10/10 passed
+
 ## New Hampshire map styling correction
 
 The source map geometry contained inline gray fill and white-border styling
