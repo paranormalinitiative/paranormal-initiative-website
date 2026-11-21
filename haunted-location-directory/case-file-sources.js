@@ -324,7 +324,7 @@ window.TPI_CASE_FILE_SOURCES = {
     credit: 'King of Hearts — CC BY-SA 4.0'
   },
   'Ocean-Born Mary House': {
-    image: 'case-file-photos/ocean-born-mary-house.tif',
+    image: 'case-file-photos/ocean-born-mary-house.jpg',
     caseFileImage: 'case-file-photos/ocean-born-mary-house-case-file.png',
     source: 'https://commons.wikimedia.org/wiki/File:GENERAL_VIEW_-_Ocean-Born-Mary_House,_Route_202_vicinty,_Henniker,_Merrimack_County,_NH_HABS_NH,7-HEN,2-1.tif',
     credit: 'Historic American Buildings Survey / National Park Service — Public domain'
