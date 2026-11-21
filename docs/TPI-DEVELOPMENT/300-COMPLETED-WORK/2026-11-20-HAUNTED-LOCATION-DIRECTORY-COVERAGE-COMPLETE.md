@@ -98,3 +98,20 @@ The unified-display correction was released and verified on 2026-11-21.
 - Live result: `DEPLOYED_AND_VERIFIED`
 - Live directory checks: one `State Directory` heading, 50 state cards, no
   legacy split headings, and the 775-entry status present on both public URLs
+
+## Interactive map
+
+The Haunted Locations member page now includes a TPI-styled `Haunted USA
+Locations` interactive map above the unified state directory. Its 50 state
+controls derive their displayed totals from the same state-card list, provide
+keyboard and dropdown selection, and link directly to the existing state pages.
+The card directory remains below the map for direct browsing and accessibility.
+
+Verification command:
+
+```sh
+npm run verify:haunted-location-map
+```
+
+Result: `50 state cards and 50 interactive map states` passed, together with
+the existing 50-page / 775-entry haunted-location directory regression.
