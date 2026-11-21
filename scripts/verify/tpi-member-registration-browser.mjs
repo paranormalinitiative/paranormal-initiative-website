@@ -48,6 +48,8 @@ try {
   await fill("username", username);
   await fill("password", "sample-password-123");
   await fill("confirmPassword", "sample-password-123");
+  const communityRules = await driver.findElement(By.css('[data-member-register] input[name="communityRulesAccepted"]'));
+  if (!(await communityRules.isSelected())) await communityRules.click();
   const submitButton = await driver.findElement(By.css('[data-member-register] button[type="submit"]'));
   await submitButton.click();
 

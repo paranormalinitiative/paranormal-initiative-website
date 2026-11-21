@@ -108,6 +108,7 @@ const migrations = [
   { file: "migrations/0071_staff_role_appointments.sql", tables: ["staff_role_appointments"] },
   { file: "migrations/0072_moderation_enforcement_and_appeals.sql", tables: ["member_moderation_actions", "moderation_appeals"] },
   { file: "migrations/0074_haunted_location_submissions.sql", tables: ["haunted_location_submissions"] },
+  { file: "migrations/0075_community_rules_acceptance.sql", columns: ["community_rules_version", "community_rules_accepted_at"] },
 ];
 
 function missingParts(migration) {
