@@ -126,6 +126,32 @@ The interactive map release was fully certified and deployed on 2026-11-21.
 - Deployed Worker version: `9eca74db-6265-4303-857c-17f5a7ba3e93`
 - Live result: `DEPLOYED_AND_VERIFIED`
 - Live anonymous production smoke: 10/10 passed
+
+## Map-focused page layout
+
+On 2026-11-21, the Haunted Locations page was simplified so the interactive
+map is the primary state-navigation experience. The visible duplicate
+`Browse State Directory` grid was removed. Its 50 state records remain in a
+non-rendered data template so the map continues to use one maintained source
+for names and totals. The selected-state card remains beside the map, and its
+default `Open state directory` action now opens the complete state-by-state
+index; after a map selection, it opens that selected state's page.
+
+The map column was enlarged and the final live Firefox check confirmed 50
+state controls, a 493px map height at the acceptance viewport, no visible
+Browse State Directory heading, the complete-index default link, and
+Pennsylvania selection routing.
+
+The layout correction was deployed on 2026-11-21.
+
+- Release ID: `rel-f56157e7f7fa-703f48b9bfb9`
+- Source commit: `f56157e7f7fac32dabd272b8a2d81c3492296e3b`
+- Release profile: website with Tier 1 certification because verification
+  tooling changed
+- Certification status: `CERTIFIED` with 10 gates passed
+- Deployed Worker version: `c76d42bd-fe26-40a8-b699-878f17de5cfa`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Live anonymous production smoke: 10/10 passed
 - Live asset check: map heading present, 50 state cards, 50 state-boundary
   controls, one map script, no legacy split headings, and 775 total entries
 
