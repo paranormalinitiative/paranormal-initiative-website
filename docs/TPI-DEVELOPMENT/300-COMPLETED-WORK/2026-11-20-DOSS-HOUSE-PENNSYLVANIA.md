@@ -1,6 +1,6 @@
 # The Doss House — Pennsylvania Directory Addition
 
-Status: IMPLEMENTED LOCALLY — RELEASE PENDING
+Status: COMPLETE — PRODUCTION VERIFIED
 
 ## Scope
 
@@ -55,8 +55,16 @@ states remain unchanged.
 
 ## Verification and release record
 
-- Local JavaScript syntax check: pending final run.
-- Haunted-location directory verification: pending final run.
-- Git commit: pending.
-- Production release: pending.
-- Live Pennsylvania page and image smoke: pending.
+- Local JavaScript syntax check: PASS.
+- Haunted-location directory verification: PASS — 50 state pages, 100 new
+  starter entries, no placeholders.
+- Source commit: `db14c5d1c0cc406e65d45cc96d6f3e1125a0d1fd`.
+- Release ID: `rel-db14c5d1c0cc-69130ccc91c9`.
+- Release profile: website-only; StudioFlow and Nova Editorial Workspace
+  remained under the protected maintenance lock.
+- Production Worker version: `276beec7-c05b-4314-a6e9-fb3d483929b2`.
+- Rollback reference: `1cc1c6af-3ee8-4c48-b7b9-9ad79eb308a5`.
+- Live anonymous production smoke: PASS — 10/10.
+- Live Pennsylvania verification: PASS — page, supplement, source map, exact
+  reference image, and TPI case-file treatment all returned HTTP 200; the
+  runtime reported five Pennsylvania locations including The Doss House.
