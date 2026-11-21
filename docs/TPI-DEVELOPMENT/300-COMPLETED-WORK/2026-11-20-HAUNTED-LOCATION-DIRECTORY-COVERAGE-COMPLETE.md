@@ -127,6 +127,27 @@ The interactive map release was fully certified and deployed on 2026-11-21.
 - Live result: `DEPLOYED_AND_VERIFIED`
 - Live anonymous production smoke: 10/10 passed
 
+## New Hampshire map styling correction
+
+The source map geometry contained inline gray fill and white-border styling
+for New Hampshire. On 2026-11-21, the shared map CSS was strengthened to
+normalize both fill and border colors for all unselected state boundaries,
+while preserving the TPI highlight style for hover, focus, and selection.
+
+Local and live Firefox checks confirmed New Hampshire and Alabama now have
+matching computed fill and border colors, with all 50 state controls still
+rendered and the 32px lower-card separation preserved.
+
+The correction was deployed on 2026-11-21.
+
+- Release ID: `rel-cd10d26ea423-0e4eef75ed58`
+- Source commit: `cd10d26ea4239620fcdb843ddaa754a08ecf8194`
+- Release profile: website
+- Certification status: `CERTIFIED` with 10 gates passed
+- Deployed Worker version: `8a07d017-9685-454d-a358-a92c755ceeed`
+- Live result: `DEPLOYED_AND_VERIFIED`
+- Live anonymous production smoke: 10/10 passed
+
 ## Map frame and section spacing
 
 On 2026-11-21, the map canvas received 14px of internal padding so the
