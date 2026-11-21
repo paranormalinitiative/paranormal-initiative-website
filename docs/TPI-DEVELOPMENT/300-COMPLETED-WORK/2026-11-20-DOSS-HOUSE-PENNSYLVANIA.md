@@ -5,8 +5,9 @@ Status: COMPLETE — PRODUCTION VERIFIED
 ## Scope
 
 The Pennsylvania location directory now includes The Doss House in Loretto,
-Pennsylvania. This is an owner-authorized research-directory addition, not a
-claim that paranormal activity has been proven.
+Pennsylvania. This is an owner-authorized research-directory addition that
+leaves the question of whether the location is haunted to visitors and
+investigators.
 
 The owner, Shawnna Rigsby, directly confirmed ownership and permission to the
 TPI owner in the supplied conversation. The entry uses that permission for the
@@ -23,8 +24,8 @@ The official history describes an 1810 house and its changing community uses,
 including residence, medical, undertaking, and barber-shop history. The owner’s
 published account also describes reported figures, a child in a green dress,
 basement reports, an audible growl, unexplained mantle activity, and a reported
-stairway incident. The directory labels these as owner-attributed reports and
-does not present them as verified evidence.
+stairway incident. The directory identifies these as owner-attributed reports
+and leaves their interpretation to visitors and investigators.
 
 The official site describes tours and extended stays by appointment. The entry
 therefore keeps the access boundary as owner permission / appointment required

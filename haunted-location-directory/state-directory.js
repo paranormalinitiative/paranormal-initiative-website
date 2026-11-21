@@ -74,7 +74,7 @@
             <div class="tpi-box"><h4>Activity Reported</h4><ul>${claims.split(';').map(item => `<li>${esc(item)}</li>`).join('')}</ul></div>
             <div class="tpi-box"><h4>Structure / Research Zones</h4><ul>${zones.split(';').map(item => `<li>${esc(item)}</li>`).join('')}</ul></div>
             <div class="tpi-box"><h4>Location Data</h4><p><strong>Public reference:</strong> ${esc(address)}</p><p><strong>Access:</strong> ${esc(access)}</p><p><strong>Coordinates:</strong> Not published in this starter pass; verify with the official site or public map before field planning.</p><p><strong>State source:</strong> <a href="${esc(state.source)}" target="_blank" rel="noopener noreferrer">${esc(state.sourceLabel)}</a></p></div>
-            <div class="tpi-box"><h4>Classification</h4><p>${esc(type)}</p><p>Reported claims are preserved as folklore or testimony, not proof of paranormal activity.</p></div>
+            <div class="tpi-box"><h4>Classification</h4><p>${esc(type)}</p><p>Visitors and investigators may assess the reported activity for themselves while following the location’s access, safety, and permission requirements.</p></div>
             <div class="tpi-box"><h4>Research Status</h4><p><strong>Starter research lead — under review.</strong></p><p>Confirm the exact site identity, source trail, public access, safety conditions, and operator permission before field planning.</p></div>
           </div>
         </div>
