@@ -38,10 +38,10 @@
 
   document.title = `Location Reference Directory • ${state.name}`;
   document.getElementById('state-label').textContent = state.name;
-  document.getElementById('state-badge').textContent = `${state.name} • Research Leads`;
+  document.getElementById('state-badge').textContent = `${state.name} • State Directory`;
   document.getElementById('state-count').textContent = state.entries.length;
   document.getElementById('state-description').textContent = `A sourced ${state.name} field-reference page covering public historic places with documented history and reported paranormal claims. Claims remain claims; this directory does not present them as proven facts.`;
-  document.getElementById('state-intro').textContent = `${state.name} entries are starter research leads. TPI keeps history, folklore, reported experiences, access limits, and investigation questions separate so the directory can grow without turning a story into a fact.`;
+  document.getElementById('state-intro').textContent = `${state.name} entries are source-linked directory references. TPI keeps history, reported experiences, access limits, and investigation questions together so each location can be researched responsibly.`;
   document.getElementById('entry-count').textContent = `${state.entries.length} locations`;
   document.getElementById('source-note').innerHTML = `Primary starting source: <a href="${esc(state.source)}" target="_blank" rel="noopener noreferrer">${esc(state.sourceLabel)}</a>. Each location remains subject to source review, operator permission, safety review, and TPI’s haunted-location criteria before deeper field planning.`;
   document.getElementById('state-nav').innerHTML = navStates.map(([stateSlug, name]) => `<a href="${stateSlug}.html" ${stateSlug === slug ? 'aria-current="page"' : ''}>${name}</a>`).join('');
@@ -73,7 +73,7 @@
             <div class="tpi-box"><h4>Historical Context</h4><p>${esc(history)}</p></div>
             <div class="tpi-box"><h4>Activity Reported</h4><ul>${claims.split(';').map(item => `<li>${esc(item)}</li>`).join('')}</ul></div>
             <div class="tpi-box"><h4>Structure / Research Zones</h4><ul>${zones.split(';').map(item => `<li>${esc(item)}</li>`).join('')}</ul></div>
-            <div class="tpi-box"><h4>Location Data</h4><p><strong>Public reference:</strong> ${esc(address)}</p><p><strong>Access:</strong> ${esc(access)}</p><p><strong>Coordinates:</strong> Not published in this starter pass; verify with the official site or public map before field planning.</p><p><strong>State source:</strong> <a href="${esc(state.source)}" target="_blank" rel="noopener noreferrer">${esc(state.sourceLabel)}</a></p></div>
+            <div class="tpi-box"><h4>Location Data</h4><p><strong>Public reference:</strong> ${esc(address)}</p><p><strong>Access:</strong> ${esc(access)}</p><p><strong>Coordinates:</strong> Verify with the official site or public map before field planning.</p><p><strong>State source:</strong> <a href="${esc(state.source)}" target="_blank" rel="noopener noreferrer">${esc(state.sourceLabel)}</a></p></div>
             <div class="tpi-box"><h4>Classification</h4><p>${esc(type)}</p><p>Visitors and investigators may assess the reported activity for themselves while following the location’s access, safety, and permission requirements.</p></div>
             <div class="tpi-box"><h4>Research Status</h4><p><strong>Starter research lead — under review.</strong></p><p>Confirm the exact site identity, source trail, public access, safety conditions, and operator permission before field planning.</p></div>
           </div>

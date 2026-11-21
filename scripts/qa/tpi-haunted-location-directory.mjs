@@ -4,6 +4,14 @@ import vm from 'node:vm';
 
 const root = process.cwd();
 const directory = path.join(root, 'haunted-location-directory');
+const isImageFile = file => {
+  if (!fs.existsSync(file)) return false;
+  const buffer = fs.readFileSync(file).subarray(0, 12);
+  return (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff)
+    || (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47)
+    || (buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP')
+    || buffer.toString('ascii', 0, 3) === 'GIF';
+};
 const stateDataSource = fs.readFileSync(path.join(directory, 'state-data.js'), 'utf8');
 const context = { window: {} };
 vm.createContext(context);
@@ -11,6 +19,9 @@ vm.runInContext(stateDataSource, context);
 const imageSourcePath = path.join(directory, 'case-file-sources.js');
 const imageSourceSource = fs.readFileSync(imageSourcePath, 'utf8');
 vm.runInContext(imageSourceSource, context);
+vm.runInContext(fs.readFileSync(path.join(directory, 'state-directory-addition-sources.js'), 'utf8'), context);
+vm.runInContext(fs.readFileSync(path.join(directory, 'state-directory-additions.js'), 'utf8'), context);
+vm.runInContext(fs.readFileSync(path.join(directory, 'pennsylvania-doss-house.js'), 'utf8'), context);
 
 const allStates = [
   ['alabama', 'Alabama'], ['alaska', 'Alaska'], ['arizona', 'Arizona'], ['arkansas', 'Arkansas'],
@@ -31,6 +42,7 @@ const allStates = [
 const failures = [];
 const data = context.window.TPI_STATE_DATA || [];
 const dataBySlug = new Map(data.map(state => [state.slug, state]));
+const imageSources = context.window.TPI_CASE_FILE_SOURCES || {};
 
 const legacyStateSlugs = [
   'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado',
@@ -53,11 +65,14 @@ for (const [slug, name] of allStates) {
   }
   if (dataBySlug.has(slug)) {
     const state = dataBySlug.get(slug);
-    if (state.entries.length < 4) failures.push(`${name}: fewer than four starter entries`);
+    if (state.entries.length < 12) failures.push(`${name}: fewer than 12 completed directory entries (${state.entries.length})`);
     for (const entry of state.entries) {
       if (entry.length !== 8 || entry.some(value => !String(value).trim())) {
         failures.push(`${name}: incomplete entry ${entry[0] || '(unnamed)'}`);
       }
+      const image = imageSources[`${name}::${entry[0]}`] || imageSources[entry[0]];
+      if (!image?.image || !image.source || !image.credit) failures.push(`${name}: missing image attribution for ${entry[0]}`);
+      if (image?.image?.startsWith('case-file-photos/') && !isImageFile(path.join(directory, image.image))) failures.push(`${name}: missing or invalid local image for ${entry[0]}: ${image.image}`);
     }
     if (!source.includes('state-data.js') || !source.includes('case-file-sources.js') || !source.includes('state-directory.js')) {
       failures.push(`${name}: shared renderer is not loaded`);
@@ -69,26 +84,39 @@ for (const [slug, name] of allStates) {
       for (const requiredAsset of ['legacy-case-file.css', 'legacy-case-file-sources.js', 'legacy-case-file.js', 'case-file-viewer.js']) {
         if (!source.includes(requiredAsset)) failures.push(`${name}: legacy case-file layer is missing ${requiredAsset}`);
       }
-      const entryCount = (source.match(/class="entry"\s+data-location-id=/g) || []).length;
-      if (entryCount < 1) failures.push(`${name}: legacy page has no location entries`);
+      const legacyAdditions = legacyStateSlugs.includes(slug) && ['alaska', 'delaware', 'hawaii', 'west-virginia'].includes(slug)
+        ? JSON.parse(fs.readFileSync(path.join(directory, 'legacy-directory-additions.js'), 'utf8').match(/const additions = ([\s\S]*?);\n  const esc/)[1]).filter(item => item.code === dataBySlug.get(slug)?.code || item.state === name)
+        : [];
+      const entryCount = (source.match(/class="entry"\s+data-location-id=/g) || []).length + legacyAdditions.length;
+      if (entryCount < 12) failures.push(`${name}: fewer than 12 completed directory entries (${entryCount})`);
     }
   }
 }
 
-const imageSources = context.window.TPI_CASE_FILE_SOURCES || {};
 const legacySourceContext = { window: {} };
 vm.createContext(legacySourceContext);
 vm.runInContext(fs.readFileSync(path.join(directory, 'legacy-case-file-sources.js'), 'utf8'), legacySourceContext);
+vm.runInContext(fs.readFileSync(path.join(directory, 'legacy-directory-addition-sources.js'), 'utf8'), legacySourceContext);
 const legacyImageSources = legacySourceContext.window.TPI_LEGACY_CASE_FILE_SOURCES || {};
 for (const [id, image] of Object.entries(legacyImageSources)) {
   for (const asset of [image.image, image.caseFileImage]) {
-    if (asset?.startsWith('case-file-photos/') && !fs.existsSync(path.join(directory, asset))) {
-      failures.push(`missing legacy case-file asset for ${id}: ${asset}`);
+    if (asset?.startsWith('case-file-photos/') && !isImageFile(path.join(directory, asset))) {
+      failures.push(`missing or invalid legacy case-file asset for ${id}: ${asset}`);
     }
   }
   if (!image.source || !image.credit) failures.push(`missing legacy attribution record for ${id}`);
 }
 if (Object.keys(legacyImageSources).length < 4) failures.push('legacy Alabama image batch has fewer than four verified mappings');
+const legacyAdditions = JSON.parse(fs.readFileSync(path.join(directory, 'legacy-directory-additions.js'), 'utf8').match(/const additions = ([\s\S]*?);\n  const esc/)[1]);
+for (const item of legacyAdditions) {
+  const stateSlug = item.state.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const sourceId = `${item.code.toLowerCase()}-${item.id.slice(stateSlug.length + 1)}`;
+  const image = legacyImageSources[sourceId];
+  if (!image?.image || !image.source || !image.credit) failures.push(`missing legacy addition attribution record for ${item.id}`);
+  if (image?.image?.startsWith('case-file-photos/') && !isImageFile(path.join(directory, image.image))) {
+    failures.push(`missing or invalid legacy addition asset for ${item.id}: ${image.image}`);
+  }
+}
 const rendererSource = fs.readFileSync(path.join(directory, 'state-directory.js'), 'utf8');
 if (!rendererSource.includes('tpi-case-state-label') || !rendererSource.includes('${esc(state.name)}')) {
   failures.push('case-file renderer does not display the canonical state name on photographs');
@@ -108,8 +136,8 @@ for (const requiredImage of ['Wabasha Street Caves', 'Palmer House Hotel', 'Glen
   const image = imageSources[requiredImage]?.image;
   if (!image || !imageSources[requiredImage]?.source || !imageSources[requiredImage]?.credit) {
     failures.push(`missing exact-photo attribution record for ${requiredImage}`);
-  } else if (image.startsWith('case-file-photos/') && !fs.existsSync(path.join(directory, image))) {
-    failures.push(`missing local case-file photo for ${requiredImage}: ${image}`);
+  } else if (image.startsWith('case-file-photos/') && !isImageFile(path.join(directory, image))) {
+    failures.push(`missing or invalid local case-file photo for ${requiredImage}: ${image}`);
   }
   const treatment = imageSources[requiredImage]?.caseFileImage;
   if (treatment && !fs.existsSync(path.join(directory, treatment))) {
@@ -135,8 +163,8 @@ for (const name of michiganSourceNames) {
     continue;
   }
   for (const asset of [image.image, image.caseFileImage]) {
-    if (asset.startsWith('case-file-photos/') && !fs.existsSync(path.join(directory, asset))) {
-      failures.push(`missing local Michigan case-file asset for ${name}: ${asset}`);
+    if (asset.startsWith('case-file-photos/') && !isImageFile(path.join(directory, asset))) {
+      failures.push(`missing or invalid local Michigan case-file asset for ${name}: ${asset}`);
     }
   }
 }
@@ -158,6 +186,10 @@ const localDevSource = fs.readFileSync(path.join(root, 'scripts/local-dev.mjs'),
 if (!localDevSource.includes('"haunted-location-directory"')) {
   failures.push('local Worker refresh does not include haunted-location-directory assets');
 }
+for (const asset of fs.readdirSync(path.join(directory, 'case-file-photos'))) {
+  if (asset === 'README.md') continue;
+  if (!isImageFile(path.join(directory, 'case-file-photos', asset))) failures.push(`invalid case-file photo asset: ${asset}`);
+}
 
 for (const [file, expected] of [['haunted-locations.html', 50], ['haunted-location-directory/index.html', 50]]) {
   const source = fs.readFileSync(path.join(root, file), 'utf8');
@@ -172,4 +204,11 @@ if (failures.length) {
 }
 
 const newEntryCount = data.reduce((total, state) => total + state.entries.length, 0);
-console.log(`TPI haunted-location-directory verification passed: 50 state pages, ${newEntryCount} new starter entries, no placeholders.`);
+const directoryIndex = fs.readFileSync(path.join(directory, 'index.html'), 'utf8');
+const directoryCounts = [...directoryIndex.matchAll(/<span>(\d+) entries<\/span>/g)].map(match => Number(match[1]));
+const directoryTotal = directoryCounts.reduce((total, count) => total + count, 0);
+if (directoryCounts.length !== 50 || directoryCounts.some(count => count < 12)) {
+  console.error('TPI haunted-location-directory verification failed: directory index does not list 50 states at 12+ entries.');
+  process.exit(1);
+}
+console.log(`TPI haunted-location-directory verification passed: 50 state pages, ${directoryTotal} indexed directory entries, no placeholders.`);
