@@ -92,8 +92,8 @@
 }
 
 .haunted-usa-map-state .boundary {
-    fill: rgba(26, 23, 37, .96);
-    stroke: rgba(232, 201, 122, .72);
+    fill: rgba(26, 23, 37, .96) !important;
+    stroke: rgba(232, 201, 122, .72) !important;
     stroke-width: 1.25;
     stroke-linejoin: round;
     transition: fill .18s ease, stroke .18s ease, filter .18s ease;
@@ -121,8 +121,8 @@
 .haunted-usa-map-state:hover .boundary,
 .haunted-usa-map-state:focus .boundary,
 .haunted-usa-map-state.is-selected .boundary {
-    fill: #b5173c;
-    stroke: #f1d58e;
+    fill: #b5173c !important;
+    stroke: #f1d58e !important;
     filter: url(#haunted-usa-map-glow);
 }
 
